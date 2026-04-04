@@ -1,17 +1,18 @@
 package com.example.myapplication.adapters
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.myapplication.ApiListing
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemListingCardBinding
-import com.example.myapplication.models.Listing
 import java.text.SimpleDateFormat
 import java.util.*
 
 class ListingsAdapter(
-    private var items: List<Listing>
+    private var items: List<ApiListing>
 ) : RecyclerView.Adapter<ListingsAdapter.VH>() {
 
     inner class VH(val b: ItemListingCardBinding) : RecyclerView.ViewHolder(b.root)
@@ -26,26 +27,22 @@ class ListingsAdapter(
 
         b.tvTitle.text = item.title ?: "—"
 
-        val price = item.price
-        b.tvPrice.text = if (price != null) {
-            val fmt = if (price % 1 == 0.0) price.toLong().toString() else price.toString()
+        b.tvPrice.text = item.price?.let {
+            val fmt = if (it % 1 == 0.0) it.toLong().toString() else it.toString()
             "$fmt ر.س"
-        } else "—"
+        } ?: "—"
 
-        b.tvSeller.text = item.seller?.name ?: ""
-        b.tvLocation.text = "📍 ${item.region?.nameAr ?: item.city ?: ""}"
+        b.tvSeller.text = item.sellerName ?: ""
+        b.tvLocation.text = "📍 ${item.regionNameAr ?: item.city ?: ""}"
         b.tvTime.text = "🕐 ${formatTime(item.createdAt)}"
 
-        // Type badge
         val isOffer = item.listingType == "offer"
         b.tvType.text = if (isOffer) "عرض" else "طلب"
         b.tvType.setBackgroundColor(
-            if (isOffer) android.graphics.Color.parseColor("#34C759")
-            else android.graphics.Color.parseColor("#FF9500")
+            if (isOffer) Color.parseColor("#34C759") else Color.parseColor("#FF9500")
         )
 
-        // Image
-        val imageUrl = item.images?.firstOrNull()
+        val imageUrl = item.images.firstOrNull()
         if (!imageUrl.isNullOrEmpty()) {
             Glide.with(b.ivImage.context).load(imageUrl)
                 .placeholder(R.drawable.ic_photo_placeholder)
@@ -54,8 +51,7 @@ class ListingsAdapter(
             b.ivImage.setImageResource(R.drawable.ic_photo_placeholder)
         }
 
-        // Avatar
-        val avatar = item.seller?.avatar
+        val avatar = item.sellerAvatar
         if (!avatar.isNullOrEmpty()) {
             Glide.with(b.ivAvatar.context).load(avatar)
                 .placeholder(R.drawable.ic_avatar_placeholder)
@@ -65,7 +61,7 @@ class ListingsAdapter(
 
     override fun getItemCount() = items.size
 
-    fun updateData(newItems: List<Listing>) {
+    fun updateData(newItems: List<ApiListing>) {
         items = newItems
         notifyDataSetChanged()
     }
