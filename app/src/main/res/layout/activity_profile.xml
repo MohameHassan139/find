@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F2F2F2"
+    android:layoutDirection="rtl">
+
+    <!-- Top Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:orientation="horizontal"
+        android:elevation="4dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="حسابي"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary" />
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_chevron_left"
+            android:background="@drawable/ripple_circle"
+            android:contentDescription="back" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="32dp">
+
+            <!-- Avatar -->
+            <ImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/ic_avatar_placeholder"
+                android:scaleType="centerCrop" />
+
+            <!-- Fields card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/white"
+                android:layout_marginHorizontal="16dp"
+                android:paddingHorizontal="16dp">
+
+                <!-- Name row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="👤  الاسم"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginEnd="12dp" />
+
+                    <EditText
+                        android:id="@+id/etName"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:gravity="end|center_vertical"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_primary"
+                        android:hint="اسمك" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="@color/divider" />
+
+                <!-- Phone row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📞  الهاتف"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginEnd="12dp" />
+
+                    <TextView
+                        android:id="@+id/tvPhone"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_secondary" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Save button -->
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:text="حفظ التغييرات"
+                android:textSize="16sp"
+                android:backgroundTint="@color/find_primary"
+                style="@style/Widget.MaterialComponents.Button" />
+
+            <!-- My Ads button -->
+            <Button
+                android:id="@+id/btnMyAds"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:text="إعلاناتي"
+                android:textSize="16sp"
+                android:backgroundTint="@color/find_gray_bg"
+                android:textColor="@color/text_primary"
+                style="@style/Widget.MaterialComponents.Button" />
+
+            <!-- Sign out button -->
+            <Button
+                android:id="@+id/btnSignOut"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:text="تسجيل الخروج"
+                android:textSize="15sp"
+                android:backgroundTint="#1AFF3B30"
+                android:textColor="#FF3B30"
+                style="@style/Widget.MaterialComponents.Button" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

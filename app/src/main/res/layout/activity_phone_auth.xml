@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F2F2F2"
+    android:layoutDirection="rtl">
+
+    <!-- Top Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="فايند•"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/find_primary" />
+
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_menu_black"
+            android:background="@drawable/bg_menu_circle"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="menu" />
+
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_chevron_left"
+            android:background="@drawable/bg_menu_circle"
+            android:contentDescription="back"
+            android:onClick="finish" />
+    </LinearLayout>
+
+    <!-- Title Card -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="#FFF9E6"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="تسجيل الدخول / إنشاء حساب"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary" />
+    </LinearLayout>
+
+    <!-- ── STEP 1: Phone ── -->
+    <LinearLayout
+        android:id="@+id/layoutPhone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="24dp"
+        android:layout_marginHorizontal="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📱 رقم الهاتف"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary"
+            android:layout_gravity="end"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Phone input row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:orientation="horizontal">
+
+            <!-- Number field -->
+            <EditText
+                android:id="@+id/etPhone"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:gravity="end|center_vertical"
+                android:hint="5XXXXXXXX"
+                android:textSize="16sp"
+                android:paddingHorizontal="12dp"
+                android:inputType="phone" />
+
+            <!-- Country code - now editable -->
+            <EditText
+                android:id="@+id/etCountryCode"
+                android:layout_width="72dp"
+                android:layout_height="match_parent"
+                android:text="+966"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:background="@color/white"
+                android:inputType="phone"
+                android:maxLength="5"
+                android:layout_marginStart="4dp" />
+        </LinearLayout>
+
+        <!-- Send OTP button -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/white"
+            android:gravity="center"
+            android:layout_marginTop="12dp">
+
+            <ProgressBar
+                android:id="@+id/progressPhone"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/btnSendOtp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="إرسال رمز التحقق"
+                android:textSize="16sp"
+                android:textColor="@color/find_primary"
+                android:padding="8dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ── STEP 2: OTP ── -->
+    <LinearLayout
+        android:id="@+id/layoutOtp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="24dp"
+        android:layout_marginHorizontal="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvOtpHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="أرسل رمز التحقق إلى"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp" />
+
+        <!-- OTP input -->
+        <EditText
+            android:id="@+id/etOtp"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/white"
+            android:gravity="center"
+            android:hint="• • • • • •"
+            android:textSize="22sp"
+            android:inputType="numberPassword"
+            android:maxLength="6"
+            android:letterSpacing="0.5" />
+
+        <!-- Resend timer -->
+        <TextView
+            android:id="@+id/tvResend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="إعادة الإرسال بعد 60s"
+            android:textSize="13sp"
+            android:textColor="@color/find_primary"
+            android:layout_gravity="center_horizontal"
+            android:padding="8dp"
+            android:layout_marginTop="8dp" />
+
+        <!-- Verify button -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/white"
+            android:gravity="center"
+            android:layout_marginTop="12dp">
+
+            <ProgressBar
+                android:id="@+id/progressOtp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/btnVerifyOtp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="تحقق"
+                android:textSize="16sp"
+                android:textColor="@color/text_primary"
+                android:padding="8dp" />
+        </LinearLayout>
+
+        <!-- Change phone -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/white"
+            android:gravity="center"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/btnChangePhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="تغيير الرقم"
+                android:textSize="15sp"
+                android:textColor="@color/text_primary"
+                android:padding="8dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

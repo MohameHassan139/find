@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F2F2F2"
+    android:layoutDirection="rtl">
+
+    <!-- Top Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:orientation="horizontal"
+        android:elevation="4dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="إعلاناتي"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary" />
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_chevron_left"
+            android:background="@drawable/ripple_circle"
+            android:contentDescription="back" />
+    </LinearLayout>
+
+    <!-- Section header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="1dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="إعلاناتي:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:text="📢"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:background="#FFF9E6" />
+    </LinearLayout>
+
+    <!-- Filter tabs: عرض / طلب -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnFilterOffer"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="العرض"
+            android:textSize="13sp"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/find_primary"
+            android:textColor="@color/white"
+            style="@style/Widget.MaterialComponents.Button" />
+
+        <Button
+            android:id="@+id/btnFilterRequest"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="الطلب"
+            android:textSize="13sp"
+            android:backgroundTint="#EEEEEE"
+            android:textColor="@color/text_secondary"
+            style="@style/Widget.MaterialComponents.Button" />
+    </LinearLayout>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:background="@color/divider" />
+
+    <!-- Loading -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="48dp"
+        android:visibility="gone" />
+
+    <!-- Empty -->
+    <TextView
+        android:id="@+id/tvEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="48dp"
+        android:textSize="16sp"
+        android:textColor="@color/text_secondary"
+        android:visibility="gone" />
+
+    <!-- List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvAds"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="12dp"
+        android:clipToPadding="false"
+        android:visibility="gone" />
+
+</LinearLayout>

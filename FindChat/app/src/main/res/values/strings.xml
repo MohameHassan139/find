@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">فايند</string>
+    <string name="conversations">المحادثات</string>
+    <string name="search_hint">ابحث...</string>
+    <string name="filter_all">الكل</string>
+    <string name="filter_unread">غير مقروءة</string>
+    <string name="filter_favorite">المفضلة</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="no_conversations">لا توجد محادثات</string>
+    <string name="type_message">اكتب رسالة...</string>
+</resources>

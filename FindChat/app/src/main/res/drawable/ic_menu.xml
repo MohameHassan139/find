@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Circle border -->
+    <path
+        android:strokeColor="#CCCCCC"
+        android:strokeWidth="1.5"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,2 A10,10 0 1,1 11.999,2Z" />
+
+    <!-- Three horizontal lines -->
+    <path
+        android:strokeColor="#555555"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M8,9 L16,9" />
+    <path
+        android:strokeColor="#555555"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M8,12 L16,12" />
+    <path
+        android:strokeColor="#555555"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M8,15 L16,15" />
+</vector>

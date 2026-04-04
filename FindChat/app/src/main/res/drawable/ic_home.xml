@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Find-style flower icon for Home -->
+    <path
+        android:strokeColor="#AAAAAA"
+        android:strokeWidth="1.8"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,2 A10,10 0 1,1 11.999,2Z" />
+    <path
+        android:strokeColor="#AAAAAA"
+        android:strokeWidth="1.5"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,6 A4,4 0 1,1 11.999,6Z" />
+    <path android:strokeColor="#AAAAAA" android:strokeWidth="1.5" android:pathData="M12,2 L12,6" />
+    <path android:strokeColor="#AAAAAA" android:strokeWidth="1.5" android:pathData="M12,18 L12,22" />
+    <path android:strokeColor="#AAAAAA" android:strokeWidth="1.5" android:pathData="M2,12 L6,12" />
+    <path android:strokeColor="#AAAAAA" android:strokeWidth="1.5" android:pathData="M18,12 L22,12" />
+</vector>

@@ -1,0 +1,38 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+
+    <!-- Center circle -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M16,16m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+
+    <!-- Surrounding 8 petals (small circles) -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M16,7m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <path
+        android:fillColor="#000000"
+        android:pathData="M22.36,9.64m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <path
+        android:fillColor="#000000"
+        android:pathData="M25,16m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <path
+        android:fillColor="#000000"
+        android:pathData="M22.36,22.36m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <path
+        android:fillColor="#000000"
+        android:pathData="M16,25m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <path
+        android:fillColor="#000000"
+        android:pathData="M9.64,22.36m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <path
+        android:fillColor="#000000"
+        android:pathData="M7,16m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <path
+        android:fillColor="#000000"
+        android:pathData="M9.64,9.64m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+
+</vector>

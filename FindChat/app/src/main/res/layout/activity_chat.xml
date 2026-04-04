@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_screen"
+    android:layoutDirection="rtl">
+
+    <!-- Top Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="@color/white"
+        android:elevation="4dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="8dp">
+
+        <!-- Logo -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_find_logo"
+                android:layout_marginEnd="6dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="فايند"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="find"
+                    android:textSize="10sp"
+                    android:textColor="@color/text_secondary" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Action buttons -->
+        <ImageButton
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_menu"
+            android:background="@drawable/ripple_circle"
+            android:layout_marginEnd="6dp" />
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_arrow_forward"
+            android:background="@drawable/ripple_circle"
+            android:contentDescription="back" />
+    </LinearLayout>
+
+    <!-- Search Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_search"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/ic_search" />
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:gravity="center_vertical|end"
+                android:hint="ابحث..."
+                android:textSize="13sp"
+                android:paddingHorizontal="10dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Category Tabs -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@color/white"
+        android:scrollbars="none">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:gravity="center_vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="عقارات" android:textSize="12sp"
+                android:textColor="@color/text_secondary" android:paddingHorizontal="10dp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="مركبات ولوازمها" android:textSize="12sp"
+                android:textColor="@color/text_secondary" android:paddingHorizontal="10dp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="أجهزة إلكترونية" android:textSize="12sp"
+                android:textColor="@color/text_secondary" android:paddingHorizontal="10dp" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- Chat Header (user info) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:layout_marginTop="1dp">
+
+        <ImageView
+            android:id="@+id/ivChatAvatar"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:src="@drawable/ic_avatar_placeholder"
+            android:layout_marginStart="12dp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvChatName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="اسم المستخدم"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary" />
+
+            <TextView
+                android:id="@+id/tvChatStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="آخر ظهور الساعة 1:00PM"
+                android:textSize="11sp"
+                android:textColor="@color/text_secondary"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:background="@color/divider" />
+
+    <!-- Messages area -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- Shimmer loading for messages -->
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerChat"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <include layout="@layout/item_shimmer_message_received" />
+                <include layout="@layout/item_shimmer_message_sent" />
+                <include layout="@layout/item_shimmer_message_received" />
+                <include layout="@layout/item_shimmer_message_sent" />
+                <include layout="@layout/item_shimmer_message_received" />
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <!-- Messages RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvMessages"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingVertical="12dp"
+            android:paddingHorizontal="12dp"
+            android:clipToPadding="false"
+            android:visibility="gone" />
+
+        <!-- Error State -->
+        <LinearLayout
+            android:id="@+id/layoutError"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_error"
+                android:alpha="0.45" />
+
+            <TextView
+                android:id="@+id/tvErrorMsg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="حدث خطأ"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/btnRetry"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="24dp"
+                android:text="إعادة المحاولة"
+                android:backgroundTint="@color/find_primary"
+                style="@style/Widget.MaterialComponents.Button" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!-- Message Input Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:elevation="8dp">
+
+        <!-- Send Button -->
+        <ImageButton
+            android:id="@+id/btnSend"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:src="@drawable/ic_send"
+            android:background="@drawable/bg_send_button"
+            android:padding="10dp"
+            android:contentDescription="send" />
+
+        <!-- Text input -->
+        <EditText
+            android:id="@+id/etMessage"
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="8dp"
+            android:background="@drawable/bg_message_input"
+            android:gravity="center_vertical|end"
+            android:hint="اكتب رسالة..."
+            android:textSize="14sp"
+            android:textColor="@color/text_primary"
+            android:paddingHorizontal="14dp"
+            android:imeOptions="actionSend"
+            android:inputType="textMultiLine"
+            android:maxLines="3" />
+
+        <!-- Attachment (optional) -->
+        <ImageButton
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_attach"
+            android:background="@drawable/ripple_circle"
+            android:padding="6dp"
+            android:contentDescription="attach" />
+    </LinearLayout>
+
+</LinearLayout>

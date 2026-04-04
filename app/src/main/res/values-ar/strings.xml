@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">فايند</string>
+    <string name="search_hint">ابحث..</string>
+    <string name="no_ads">لا يوجد إعلان</string>
+    <string name="add_ad">أضف إعلان</string>
+    <string name="chats">المحادثات</string>
+    <string name="home">الرئيسية</string>
+    <string name="profile">حسابي</string>
+    <string name="favorites">المفضلة</string>
+    <!-- Menu screen -->
+    <string name="menu_login">تسجيل الدخول / إنشاء حساب</string>
+    <string name="menu_my_account">حسابي</string>
+    <string name="menu_my_ads">إعلاناتي</string>
+    <string name="menu_favorites">المفضلة</string>
+    <string name="menu_notifications">الإشعارات</string>
+    <string name="menu_settings">الإعدادات</string>
+    <string name="menu_share_app">شارك التطبيق</string>
+    <string name="menu_about">about us</string>
+    <string name="menu_contact">تواصل معنا</string>
+
+    <!-- Add Ad Screen -->
+    <string name="add_ad_title">أضف إعلان</string>
+    <string name="images_label">الصور:</string>
+    <string name="add_image">إضافة صورة</string>
+    <string name="ad_title_label">عنوان الإعلان:</string>
+    <string name="ad_text_label">نص الإعلان:</string>
+    <string name="location_label">المكان</string>
+    <string name="category_label">التصنيف</string>
+    <string name="price_label">السعر:</string>
+    <string name="publish_ad">نشر الإعلان</string>
+</resources>

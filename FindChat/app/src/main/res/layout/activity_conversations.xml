@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_screen"
+    android:layoutDirection="rtl">
+
+    <!-- Top Bar -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:elevation="4dp">
+
+        <!-- Logo Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_find_logo"
+                    android:contentDescription="logo" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="فايند"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="find"
+                        android:textSize="11sp"
+                        android:textColor="@color/text_secondary" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_menu"
+                android:background="@drawable/ripple_circle"
+                android:contentDescription="menu" />
+        </LinearLayout>
+
+        <!-- Search Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_search"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="12dp"
+                android:src="@drawable/ic_search"
+                android:contentDescription="search" />
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:gravity="center_vertical|end"
+                android:hint="ابحث..."
+                android:textSize="14sp"
+                android:paddingHorizontal="12dp"
+                android:imeOptions="actionSearch"
+                android:inputType="text" />
+        </LinearLayout>
+
+        <!-- Category Tabs -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:scrollbars="none"
+            android:fadingEdge="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:gravity="center_vertical">
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="الرئيسية" android:textSize="13sp"
+                    android:textColor="@color/text_primary" android:paddingHorizontal="12dp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="عقارات" android:textSize="13sp"
+                    android:textColor="@color/text_secondary" android:paddingHorizontal="12dp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="مركبات ولوازمها" android:textSize="13sp"
+                    android:textColor="@color/text_secondary" android:paddingHorizontal="12dp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="أجهزة إلكترونية" android:textSize="13sp"
+                    android:textColor="@color/text_secondary" android:paddingHorizontal="12dp" />
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <!-- Content -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="156dp"
+        android:layout_marginBottom="64dp">
+
+        <!-- Section Title + Filter Chips -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="المحادثات"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:paddingBottom="12dp" />
+
+            <!-- Filter Chips -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:gravity="end">
+
+                <TextView
+                    android:id="@+id/chipFavorite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="المفضلة"
+                    android:textSize="13sp"
+                    android:gravity="center"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_chip_unselected"
+                    android:textColor="@color/text_secondary" />
+
+                <TextView
+                    android:id="@+id/chipUnread"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="غير مقروءة"
+                    android:textSize="13sp"
+                    android:gravity="center"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_chip_unselected"
+                    android:textColor="@color/text_secondary" />
+
+                <TextView
+                    android:id="@+id/chipAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="الكل"
+                    android:textSize="13sp"
+                    android:gravity="center"
+                    android:paddingHorizontal="20dp"
+                    android:background="@drawable/bg_chip_selected"
+                    android:textColor="@color/text_primary" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View android:layout_width="match_parent" android:layout_height="8dp"
+            android:background="@color/bg_screen" />
+
+        <!-- Shimmer Loading -->
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <LinearLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/white">
+                <include layout="@layout/item_shimmer_conversation" />
+                <include layout="@layout/item_shimmer_conversation" />
+                <include layout="@layout/item_shimmer_conversation" />
+                <include layout="@layout/item_shimmer_conversation" />
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <!-- Conversation List -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvConversations"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:clipToPadding="false" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <!-- Empty State -->
+        <LinearLayout
+            android:id="@+id/layoutEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_chat_empty"
+                android:alpha="0.4" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="لا توجد محادثات"
+                android:textSize="16sp"
+                android:textColor="@color/text_secondary" />
+        </LinearLayout>
+
+        <!-- Error State -->
+        <LinearLayout
+            android:id="@+id/layoutError"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_error"
+                android:alpha="0.5" />
+
+            <TextView
+                android:id="@+id/tvErrorMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="حدث خطأ"
+                android:textSize="15sp"
+                android:gravity="center"
+                android:textColor="@color/text_secondary" />
+
+            <Button
+                android:id="@+id/btnRetry"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginTop="16dp"
+                android:text="إعادة المحاولة"
+                android:paddingHorizontal="24dp"
+                android:backgroundTint="@color/find_primary"
+                style="@style/Widget.MaterialComponents.Button" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Bottom Navigation -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        android:elevation="8dp"
+        android:orientation="horizontal">
+
+        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="24dp" android:layout_height="24dp"
+                android:src="@drawable/ic_home" android:alpha="0.5" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="الرئيسية" android:textSize="10sp" android:textColor="@color/text_secondary" />
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="28dp" android:layout_height="28dp"
+                android:src="@drawable/ic_add_circle" />
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="24dp" android:layout_height="24dp"
+                android:src="@drawable/ic_chat_nav" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="المحادثات" android:textSize="10sp" android:textColor="@color/find_primary" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

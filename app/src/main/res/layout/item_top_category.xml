@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/llCategoryRoot"
+    android:layout_width="wrap_content"
+    android:layout_height="56dp"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingHorizontal="12dp">
+
+    <TextView
+        android:id="@+id/tvCategoryName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="الرئيسية"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/vUnderline"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/find_active_blue"
+        android:visibility="invisible" />
+
+</LinearLayout>
