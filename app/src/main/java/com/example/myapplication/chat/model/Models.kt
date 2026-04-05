@@ -79,10 +79,12 @@ data class Message(
     val id: String,
     val text: String?,
     @SerializedName("sender_id") val senderId: String?,
-    @SerializedName("is_mine") val isMine: Boolean = false,
-    @SerializedName("created_at") val createdAt: String?,
-    @SerializedName("is_read") val isRead: Boolean = false
-)
+    val status: String? = null,
+    @SerializedName("created_at") val createdAt: String?
+) {
+    val isRead: Boolean get() = status == "read"
+    val isMine: Boolean get() = false // determined by comparing senderId with stored userId
+}
 
 // ─── Send Message ──────────────────────────────────────────────────────────────
 
@@ -110,7 +112,8 @@ data class CreateConversationResponse(
 
 data class NotificationsResponse(
     val data: List<AppNotification>?,
-    val meta: NotificationsMeta?
+    val meta: NotificationsMeta?,
+    @SerializedName("unread_count") val unreadCount: Int? = null
 )
 
 data class AppNotification(

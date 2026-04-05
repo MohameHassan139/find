@@ -4,19 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:gravity="start"
+    android:gravity="end"
+    android:layoutDirection="ltr"
     android:layout_marginVertical="3dp"
-    android:paddingHorizontal="4dp">
-
-    <!-- Spacer pushes bubble to the left (sent = left in RTL) -->
-    <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
+    android:paddingHorizontal="12dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="end"
-        android:maxWidth="260dp">
+        android:maxWidth="280dp">
 
         <TextView
             android:id="@+id/tvMessage"
@@ -25,19 +23,18 @@
             android:background="@drawable/bg_bubble_sent"
             android:paddingHorizontal="14dp"
             android:paddingTop="10dp"
-            android:paddingBottom="6dp"
-            android:text="رسالة مرسلة"
+            android:paddingBottom="8dp"
             android:textSize="14sp"
-            android:textColor="@color/text_primary"
-            android:maxWidth="260dp" />
+            android:textColor="#FFFFFF"
+            android:maxWidth="280dp"
+            android:layoutDirection="rtl" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginTop="2dp"
-            android:layout_gravity="start">
+            android:layout_marginTop="2dp">
 
             <ImageView
                 android:id="@+id/ivReadStatus"
@@ -50,9 +47,8 @@
                 android:id="@+id/tvTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="م 4:26"
                 android:textSize="10sp"
-                android:textColor="@color/text_tertiary" />
+                android:textColor="#CCFFFFFF" />
         </LinearLayout>
     </LinearLayout>
 

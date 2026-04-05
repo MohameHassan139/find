@@ -56,7 +56,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = MessagesAdapter()
+        adapter = MessagesAdapter(this)
         val lm = LinearLayoutManager(this).apply { stackFromEnd = true }
         binding.rvMessages.layoutManager = lm
         binding.rvMessages.adapter = adapter

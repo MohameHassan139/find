@@ -15,16 +15,19 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.adapters.CategoryGridAdapter
 import com.example.myapplication.adapters.ListingsAdapter
 import com.example.myapplication.adapters.SubCategoryGridAdapter
+import com.example.myapplication.auth.AuthRetrofitClient
 import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.chat.ui.conversations.ConversationsActivity
 import com.example.myapplication.databinding.ActivityMainBinding
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -57,6 +60,27 @@ class MainActivity : AppCompatActivity() {
         setupTypeChips()
         observeViewModel()
         setupNavigation()
+        refreshUserProfile()
+    }
+
+    private fun refreshUserProfile() {
+        val token = TokenManager.getToken(this) ?: return
+        lifecycleScope.launch {
+            try {
+                val response = AuthRetrofitClient.authService.getMe("Bearer $token")
+                if (response.isSuccessful) {
+                    val user = response.body()?.user ?: return@launch
+                    TokenManager.save(
+                        this@MainActivity,
+                        token,
+                        user.name ?: TokenManager.getName(this@MainActivity),
+                        user.phone ?: TokenManager.getPhone(this@MainActivity),
+                        user.avatar ?: TokenManager.getAvatar(this@MainActivity),
+                        user.id.toString()
+                    )
+                }
+            } catch (_: Exception) {}
+        }
     }
 
     // ── Adapters ──────────────────────────────────────────────────────────────

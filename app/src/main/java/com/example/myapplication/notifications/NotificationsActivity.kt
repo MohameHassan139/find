@@ -62,8 +62,11 @@ class NotificationsActivity : AppCompatActivity() {
                 val response = api.getNotifications()
                 binding.swipeRefresh.isRefreshing = false
                 if (response.isSuccessful) {
-                    val items = response.body()?.data ?: emptyList()
-                    val unread = response.body()?.meta?.unreadCount ?: 0
+                    val body = response.body()
+                    val items = body?.data ?: emptyList()
+                    val unread = body?.meta?.unreadCount
+                        ?: body?.unreadCount
+                        ?: items.count { !it.isRead }
                     binding.tvUnreadCount.text = if (unread > 0) "($unread غير مقروء)" else ""
                     binding.tvUnreadCount.visibility = if (unread > 0) View.VISIBLE else View.GONE
                     if (items.isEmpty()) showEmpty() else showList(items)

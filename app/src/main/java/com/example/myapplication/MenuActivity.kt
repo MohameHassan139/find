@@ -2,13 +2,17 @@ package com.example.myapplication
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.auth.TokenManager
+import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.profile.MyAdsActivity
 import com.example.myapplication.profile.ProfileActivity
 import com.example.myapplication.databinding.ActivityMenuBinding
+import kotlinx.coroutines.launch
 
 class MenuActivity : AppCompatActivity() {
 
@@ -82,5 +86,32 @@ class MenuActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(0, android.R.anim.slide_out_right)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (TokenManager.isLoggedIn(this)) fetchNotifBadge()
+    }
+
+    private fun fetchNotifBadge() {
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.build(this@MenuActivity).getNotifications()
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    // Try meta.unread_count first, fall back to counting is_read=false in data
+                    val unread = body?.meta?.unreadCount
+                        ?: body?.unreadCount
+                        ?: body?.data?.count { !it.isRead }
+                        ?: 0
+                    if (unread > 0) {
+                        binding.tvNotifBadge.text = if (unread > 99) "99+" else unread.toString()
+                        binding.tvNotifBadge.visibility = View.VISIBLE
+                    } else {
+                        binding.tvNotifBadge.visibility = View.GONE
+                    }
+                }
+            } catch (_: Exception) {}
+        }
     }
 }
