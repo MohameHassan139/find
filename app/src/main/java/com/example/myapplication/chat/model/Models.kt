@@ -13,74 +13,57 @@ data class ConversationsResponse(
 )
 
 data class Conversation(
-    val id: Int,
-    @SerializedName("other_user") val otherUser: OtherUser?,
-    @SerializedName("last_message") val lastMessage: LastMessage?,
-    @SerializedName("unread_count") val unreadCount: Int = 0,
-    @SerializedName("created_at") val createdAt: String?
+    val id: String,
+    @SerializedName("listing_id") val listingId: String?,
+    @SerializedName("listing_title") val listingTitle: String?,
+    @SerializedName("buyer_id") val buyerId: String?,
+    @SerializedName("seller_id") val sellerId: String?,
+    @SerializedName("seller_name") val sellerName: String?,
+    @SerializedName("seller_avatar") val sellerAvatar: String?,
+    @SerializedName("buyer_name") val buyerName: String?,
+    @SerializedName("buyer_avatar") val buyerAvatar: String?,
+    @SerializedName("last_message") val lastMessage: String?,
+    @SerializedName("last_message_at") val lastMessageAt: String?,
+    @SerializedName("buyer_unread") val buyerUnread: Int = 0,
+    @SerializedName("seller_unread") val sellerUnread: Int = 0
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readString() ?: "",
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
         parcel.readInt(),
-        parcel.readParcelable(OtherUser::class.java.classLoader),
-        parcel.readParcelable(LastMessage::class.java.classLoader),
-        parcel.readInt(),
-        parcel.readString()
+        parcel.readInt()
     )
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(id)
-        parcel.writeParcelable(otherUser, flags)
-        parcel.writeParcelable(lastMessage, flags)
-        parcel.writeInt(unreadCount)
-        parcel.writeString(createdAt)
+        parcel.writeString(id)
+        parcel.writeString(listingId)
+        parcel.writeString(listingTitle)
+        parcel.writeString(buyerId)
+        parcel.writeString(sellerId)
+        parcel.writeString(sellerName)
+        parcel.writeString(sellerAvatar)
+        parcel.writeString(buyerName)
+        parcel.writeString(buyerAvatar)
+        parcel.writeString(lastMessage)
+        parcel.writeString(lastMessageAt)
+        parcel.writeInt(buyerUnread)
+        parcel.writeInt(sellerUnread)
     }
+
     override fun describeContents() = 0
+
     companion object CREATOR : Parcelable.Creator<Conversation> {
         override fun createFromParcel(parcel: Parcel) = Conversation(parcel)
         override fun newArray(size: Int) = arrayOfNulls<Conversation>(size)
-    }
-}
-
-data class OtherUser(
-    val id: Int,
-    val name: String?,
-    val avatar: String?
-) : Parcelable {
-    constructor(parcel: Parcel) : this(
-        parcel.readInt(),
-        parcel.readString(),
-        parcel.readString()
-    )
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(id)
-        parcel.writeString(name)
-        parcel.writeString(avatar)
-    }
-    override fun describeContents() = 0
-    companion object CREATOR : Parcelable.Creator<OtherUser> {
-        override fun createFromParcel(parcel: Parcel) = OtherUser(parcel)
-        override fun newArray(size: Int) = arrayOfNulls<OtherUser>(size)
-    }
-}
-
-data class LastMessage(
-    val body: String?,
-    @SerializedName("created_at") val createdAt: String?,
-    @SerializedName("is_read") val isRead: Boolean = false
-) : Parcelable {
-    constructor(parcel: Parcel) : this(
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readByte() != 0.toByte()
-    )
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(body)
-        parcel.writeString(createdAt)
-        parcel.writeByte(if (isRead) 1 else 0)
-    }
-    override fun describeContents() = 0
-    companion object CREATOR : Parcelable.Creator<LastMessage> {
-        override fun createFromParcel(parcel: Parcel) = LastMessage(parcel)
-        override fun newArray(size: Int) = arrayOfNulls<LastMessage>(size)
     }
 }
 
@@ -93,9 +76,9 @@ data class MessagesResponse(
 )
 
 data class Message(
-    val id: Int,
-    val body: String?,
-    @SerializedName("sender_id") val senderId: Int,
+    val id: String,
+    val text: String?,
+    @SerializedName("sender_id") val senderId: String?,
     @SerializedName("is_mine") val isMine: Boolean = false,
     @SerializedName("created_at") val createdAt: String?,
     @SerializedName("is_read") val isRead: Boolean = false
@@ -103,7 +86,7 @@ data class Message(
 
 // ─── Send Message ──────────────────────────────────────────────────────────────
 
-data class SendMessageRequest(val body: String)
+data class SendMessageRequest(val text: String)
 
 data class SendMessageResponse(
     val data: Message?,
@@ -114,11 +97,33 @@ data class SendMessageResponse(
 // ─── Create Conversation ───────────────────────────────────────────────────────
 
 data class CreateConversationRequest(
-    @SerializedName("receiver_id") val receiverId: Int
+    @SerializedName("listing_id") val listingId: String
 )
 
 data class CreateConversationResponse(
     val data: Conversation?,
     val message: String?,
     val status: Boolean?
+)
+
+// ─── Notifications ────────────────────────────────────────────────────────────
+
+data class NotificationsResponse(
+    val data: List<AppNotification>?,
+    val meta: NotificationsMeta?
+)
+
+data class AppNotification(
+    val id: String,
+    val type: String?,
+    @SerializedName("title_ar") val titleAr: String?,
+    @SerializedName("body_ar") val bodyAr: String?,
+    @SerializedName("is_read") val isRead: Boolean = false,
+    @SerializedName("created_at") val createdAt: String?
+)
+
+data class NotificationsMeta(
+    @SerializedName("current_page") val currentPage: Int = 1,
+    val total: Int = 0,
+    @SerializedName("unread_count") val unreadCount: Int = 0
 )

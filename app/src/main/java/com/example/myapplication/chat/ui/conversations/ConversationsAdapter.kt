@@ -1,12 +1,14 @@
 package com.example.myapplication.chat.ui.conversations
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
+import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.chat.model.Conversation
 import com.example.myapplication.chat.utils.DateUtils
 import com.example.myapplication.databinding.ItemConversationBinding
@@ -30,23 +32,30 @@ class ConversationsAdapter(
         RecyclerView.ViewHolder(b.root) {
 
         fun bind(conv: Conversation) {
-            b.tvName.text = conv.otherUser?.name ?: "مجهول"
-            b.tvLastMessage.text = conv.lastMessage?.body ?: ""
-            b.tvTime.text = DateUtils.formatConversationTime(conv.lastMessage?.createdAt)
+            val myId = TokenManager.getUserId(b.root.context)
+            val isBuyer = conv.buyerId == myId
 
-            if (conv.unreadCount > 0) {
-                b.tvUnreadBadge.text = conv.unreadCount.toString()
-                b.tvUnreadBadge.visibility = android.view.View.VISIBLE
-                b.tvUnreadDay.visibility = android.view.View.VISIBLE
+            // Show the other party's info
+            val otherName = if (isBuyer) conv.sellerName else conv.buyerName
+            val otherAvatar = if (isBuyer) conv.sellerAvatar else conv.buyerAvatar
+            val unreadCount = if (isBuyer) conv.buyerUnread else conv.sellerUnread
+
+            b.tvName.text = otherName ?: "مجهول"
+            b.tvLastMessage.text = conv.lastMessage ?: ""
+            b.tvTime.text = DateUtils.formatConversationTime(conv.lastMessageAt)
+
+            if (unreadCount > 0) {
+                b.tvUnreadBadge.text = unreadCount.toString()
+                b.tvUnreadBadge.visibility = View.VISIBLE
+                b.tvUnreadDay.visibility = View.VISIBLE
             } else {
-                b.tvUnreadBadge.visibility = android.view.View.GONE
-                b.tvUnreadDay.visibility = android.view.View.GONE
+                b.tvUnreadBadge.visibility = View.GONE
+                b.tvUnreadDay.visibility = View.GONE
             }
 
-            val avatar = conv.otherUser?.avatar
-            if (!avatar.isNullOrEmpty()) {
+            if (!otherAvatar.isNullOrEmpty()) {
                 Glide.with(b.ivAvatar.context)
-                    .load(avatar)
+                    .load(otherAvatar)
                     .placeholder(R.drawable.ic_avatar_placeholder)
                     .circleCrop()
                     .into(b.ivAvatar)

@@ -39,12 +39,16 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        binding.tvChatName.text = conversation.otherUser?.name ?: "محادثة"
+        val myId = com.example.myapplication.auth.TokenManager.getUserId(this)
+        val isBuyer = conversation.buyerId == myId
+        val otherName = if (isBuyer) conversation.sellerName else conversation.buyerName
+        val otherAvatar = if (isBuyer) conversation.sellerAvatar else conversation.buyerAvatar
+
+        binding.tvChatName.text = otherName ?: "محادثة"
         binding.tvChatStatus.text = "آخر ظهور الساعة 1:00PM"
 
-        val avatar = conversation.otherUser?.avatar
-        if (!avatar.isNullOrEmpty()) {
-            Glide.with(this).load(avatar).placeholder(R.drawable.ic_avatar_placeholder)
+        if (!otherAvatar.isNullOrEmpty()) {
+            Glide.with(this).load(otherAvatar).placeholder(R.drawable.ic_avatar_placeholder)
                 .circleCrop().into(binding.ivChatAvatar)
         }
 

@@ -28,12 +28,16 @@ class ConversationsActivity : AppCompatActivity() {
         setupSwipeRefresh()
     }
 
+    private val chatLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
+    ) { viewModel.loadConversations() }
+
     private fun setupRecyclerView() {
         adapter = ConversationsAdapter { conv ->
             val intent = Intent(this, ChatActivity::class.java).apply {
                 putExtra(ChatActivity.EXTRA_CONVERSATION, conv)
             }
-            startActivity(intent)
+            chatLauncher.launch(intent)
         }
         binding.rvConversations.layoutManager = LinearLayoutManager(this)
         binding.rvConversations.adapter = adapter

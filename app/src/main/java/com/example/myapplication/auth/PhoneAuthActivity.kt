@@ -97,7 +97,8 @@ class PhoneAuthActivity : AppCompatActivity() {
                         TokenManager.save(
                             this@PhoneAuthActivity, token,
                             body.user?.name ?: "", body.user?.phone ?: "",
-                            body.user?.avatar ?: ""
+                            body.user?.avatar ?: "",
+                            body.user?.id?.toString() ?: ""
                         )
                         goToMain()
                     } else {

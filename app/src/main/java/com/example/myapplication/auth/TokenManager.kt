@@ -8,15 +8,20 @@ object TokenManager {
     private const val KEY_NAME = "user_name"
     private const val KEY_PHONE = "user_phone"
     private const val KEY_AVATAR = "user_avatar"
+    private const val KEY_USER_ID = "user_id"
 
-    fun save(context: Context, token: String, name: String = "", phone: String = "", avatar: String = "") {
+    fun save(context: Context, token: String, name: String = "", phone: String = "", avatar: String = "", userId: String = "") {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
             .putString(KEY_TOKEN, token)
             .putString(KEY_NAME, name)
             .putString(KEY_PHONE, phone)
             .putString(KEY_AVATAR, avatar)
+            .putString(KEY_USER_ID, userId)
             .apply()
     }
+
+    fun getUserId(context: Context): String =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY_USER_ID, "") ?: ""
 
     fun getToken(context: Context): String? =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY_TOKEN, null)

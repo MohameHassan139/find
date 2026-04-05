@@ -178,6 +178,21 @@
         <View android:layout_width="1dp" android:layout_height="match_parent"
             android:background="@color/divider" />
 
+        <!-- Messages -->
+        <Button
+            android:id="@+id/btnMessages"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="رسائل"
+            android:textSize="13sp"
+            android:backgroundTint="#E8F4FD"
+            android:textColor="#1A73E8"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+        <View android:layout_width="1dp" android:layout_height="match_parent"
+            android:background="@color/divider" />
+
         <!-- Delete -->
         <Button
             android:id="@+id/btnDelete"

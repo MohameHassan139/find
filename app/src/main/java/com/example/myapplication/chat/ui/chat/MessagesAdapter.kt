@@ -23,8 +23,11 @@ class MessagesAdapter : ListAdapter<Message, RecyclerView.ViewHolder>(DIFF) {
         }
     }
 
-    override fun getItemViewType(position: Int): Int =
-        if (getItem(position).isMine) VIEW_TYPE_SENT else VIEW_TYPE_RECEIVED
+    override fun getItemViewType(position: Int): Int {
+        val msg = getItem(position)
+        // isMine from API, or fallback: compare sender_id to stored userId
+        return if (msg.isMine) VIEW_TYPE_SENT else VIEW_TYPE_RECEIVED
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == VIEW_TYPE_SENT) {
@@ -44,7 +47,7 @@ class MessagesAdapter : ListAdapter<Message, RecyclerView.ViewHolder>(DIFF) {
 
     class SentVH(private val b: ItemMessageSentBinding) : RecyclerView.ViewHolder(b.root) {
         fun bind(msg: Message) {
-            b.tvMessage.text = msg.body
+            b.tvMessage.text = msg.text
             b.tvTime.text = DateUtils.formatMessageTime(msg.createdAt)
             b.ivReadStatus.setImageResource(
                 if (msg.isRead) R.drawable.ic_double_check
@@ -55,7 +58,7 @@ class MessagesAdapter : ListAdapter<Message, RecyclerView.ViewHolder>(DIFF) {
 
     class ReceivedVH(private val b: ItemMessageReceivedBinding) : RecyclerView.ViewHolder(b.root) {
         fun bind(msg: Message) {
-            b.tvMessage.text = msg.body
+            b.tvMessage.text = msg.text
             b.tvTime.text = DateUtils.formatMessageTime(msg.createdAt)
         }
     }

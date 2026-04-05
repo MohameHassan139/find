@@ -56,8 +56,8 @@ class ConversationsViewModel(app: Application) : AndroidViewModel(app) {
     private fun applyFilter(filter: Filter) {
         val filtered = when (filter) {
             Filter.ALL -> allConversations
-            Filter.UNREAD -> allConversations.filter { it.unreadCount > 0 }
-            Filter.FAVORITE -> allConversations.filter { it.id % 2 == 0 }
+            Filter.UNREAD -> allConversations.filter { it.buyerUnread > 0 || it.sellerUnread > 0 }
+            Filter.FAVORITE -> allConversations // no favorites concept in API yet
         }
         _conversations.value = Result.Success(filtered)
     }

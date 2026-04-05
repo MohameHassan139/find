@@ -98,7 +98,11 @@ class MainActivity : AppCompatActivity() {
         binding.rvSubCategoryGrid.adapter = subCategoryAdapter
 
         // Listings list
-        listingsAdapter = ListingsAdapter(emptyList()) { /* TODO: open detail */ }
+        listingsAdapter = ListingsAdapter(emptyList()) { listing ->
+            val intent = android.content.Intent(this, ListingDetailActivity::class.java)
+            intent.putExtra(ListingDetailActivity.EXTRA_LISTING_ID, listing.id)
+            startActivity(intent)
+        }
         val llm = LinearLayoutManager(this)
         binding.rvListings.layoutManager = llm
         binding.rvListings.adapter = listingsAdapter

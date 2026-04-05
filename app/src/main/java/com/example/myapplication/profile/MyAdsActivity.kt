@@ -177,6 +177,7 @@ class MyAdsAdapter(
         val tvTime: TextView = view.findViewById(R.id.tvTime)
         val tvLocation: TextView = view.findViewById(R.id.tvLocation)
         val btnEdit: View = view.findViewById(R.id.btnEdit)
+        val btnMessages: View = view.findViewById(R.id.btnMessages)
         val btnDelete: View = view.findViewById(R.id.btnDelete)
         val switchActive: SwitchCompat = view.findViewById(R.id.switchActive)
         val tvActiveLabel: TextView = view.findViewById(R.id.tvActiveLabel)
@@ -258,6 +259,14 @@ class MyAdsAdapter(
         }
 
         holder.btnDelete.setOnClickListener { onDelete(item) }
+        holder.btnMessages.setOnClickListener {
+            val intent = Intent(holder.itemView.context,
+                com.example.myapplication.chat.ui.conversations.ListingConversationsActivity::class.java).apply {
+                putExtra(com.example.myapplication.chat.ui.conversations.ListingConversationsActivity.EXTRA_LISTING_ID, item.id)
+                putExtra(com.example.myapplication.chat.ui.conversations.ListingConversationsActivity.EXTRA_LISTING_TITLE, item.title ?: "رسائل الإعلان")
+            }
+            holder.itemView.context.startActivity(intent)
+        }
         holder.btnEdit.setOnClickListener {
             val intent = Intent(holder.itemView.context, AddAdActivity::class.java).apply {
                 putExtra(AddAdActivity.EXTRA_LISTING_ID, item.id)

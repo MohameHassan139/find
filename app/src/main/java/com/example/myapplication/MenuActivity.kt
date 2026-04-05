@@ -55,7 +55,11 @@ class MenuActivity : AppCompatActivity() {
             Toast.makeText(this, getString(R.string.menu_favorites), Toast.LENGTH_SHORT).show()
         }
         binding.menuNotifications.setOnClickListener {
-            Toast.makeText(this, getString(R.string.menu_notifications), Toast.LENGTH_SHORT).show()
+            if (TokenManager.isLoggedIn(this)) {
+                startActivity(Intent(this, com.example.myapplication.notifications.NotificationsActivity::class.java))
+            } else {
+                startActivity(Intent(this, PhoneAuthActivity::class.java))
+            }
         }
         binding.menuSettings.setOnClickListener {
             Toast.makeText(this, getString(R.string.menu_settings), Toast.LENGTH_SHORT).show()

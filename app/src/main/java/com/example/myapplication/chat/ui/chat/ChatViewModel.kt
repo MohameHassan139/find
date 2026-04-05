@@ -21,10 +21,10 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
     private val _sendResult = MutableLiveData<Result<Message>>()
     val sendResult: LiveData<Result<Message>> = _sendResult
 
-    private var conversationId: Int = -1
+    private var conversationId: String = ""
     private val messageList = mutableListOf<Message>()
 
-    fun init(convId: Int) {
+    fun init(convId: String) {
         conversationId = convId
         loadMessages()
         markRead()
@@ -50,7 +50,7 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
                     )
                 }
             } catch (e: Exception) {
-                _messages.value = Result.Error("تعذر الاتصال بالخادم")
+                _messages.value = Result.Error("تعذر الاتصال بالخادم: ${e.javaClass.simpleName}: ${e.message}")
             }
         }
     }

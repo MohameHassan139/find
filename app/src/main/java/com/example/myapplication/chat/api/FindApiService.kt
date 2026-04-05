@@ -13,14 +13,20 @@ interface FindApiService {
     suspend fun createConversation(@Body request: CreateConversationRequest): Response<CreateConversationResponse>
 
     @GET("conversations/{id}/messages")
-    suspend fun getMessages(@Path("id") conversationId: Int): Response<MessagesResponse>
+    suspend fun getMessages(@Path("id") conversationId: String): Response<MessagesResponse>
 
     @POST("conversations/{id}/messages")
     suspend fun sendMessage(
-        @Path("id") conversationId: Int,
+        @Path("id") conversationId: String,
         @Body request: SendMessageRequest
     ): Response<SendMessageResponse>
 
     @PATCH("conversations/{id}/read")
-    suspend fun markRead(@Path("id") conversationId: Int): Response<Unit>
+    suspend fun markRead(@Path("id") conversationId: String): Response<Unit>
+
+    @GET("notifications")
+    suspend fun getNotifications(@Query("page") page: Int = 1): Response<NotificationsResponse>
+
+    @POST("notifications/mark-all-read")
+    suspend fun markAllNotificationsRead(): Response<Unit>
 }
