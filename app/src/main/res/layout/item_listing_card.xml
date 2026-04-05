@@ -1,121 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:orientation="horizontal"
-    android:background="@color/white"
+    android:layout_height="wrap_content"
     android:layout_marginHorizontal="10dp"
     android:layout_marginBottom="10dp"
-    android:layoutDirection="rtl">
+    app:cardCornerRadius="14dp"
+    app:cardElevation="3dp"
+    app:strokeWidth="0dp">
 
-    <!-- Info side (right in RTL) -->
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layoutDirection="rtl"
+        android:minHeight="130dp">
 
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:maxLines="3"
-            android:ellipsize="end"
-            android:gravity="end" />
-
-        <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="@color/divider" android:layout_marginVertical="6dp" />
-
-        <!-- Seller + price -->
+        <!-- Info side (right in RTL) -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:id="@+id/ivAvatar"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_avatar_placeholder"
-                android:scaleType="centerCrop" />
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="10dp">
 
             <TextView
-                android:id="@+id/tvSeller"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:textSize="11sp"
-                android:textColor="@color/text_secondary"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:layout_marginStart="4dp" />
-
-            <TextView
-                android:id="@+id/tvPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary" />
-        </LinearLayout>
-
-        <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="@color/divider" android:layout_marginVertical="6dp" />
-
-        <!-- Time + location -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tvTime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp"
-                android:textColor="@color/text_secondary"
+                android:textColor="@color/text_primary"
+                android:maxLines="3"
+                android:ellipsize="end"
                 android:gravity="end" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginVertical="6dp" />
+
+            <!-- Seller + price row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/ivAvatar"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_avatar_placeholder"
+                    android:scaleType="centerCrop" />
+
+                <TextView
+                    android:id="@+id/tvSeller"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="11sp"
+                    android:textColor="@color/text_secondary"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:layout_marginStart="4dp" />
+
+                <!-- Price — monospace bold gold -->
+                <TextView
+                    android:id="@+id/tvPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:fontFamily="monospace"
+                    android:textColor="#C8A96E" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginVertical="6dp" />
+
+            <!-- Time + location -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvTime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="11sp"
+                    android:textColor="@color/text_secondary"
+                    android:gravity="end" />
+
+                <TextView
+                    android:id="@+id/tvLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Square image (left in RTL) -->
+        <FrameLayout
+            android:layout_width="130dp"
+            android:layout_height="130dp">
+
+            <ImageView
+                android:id="@+id/ivImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_photo_placeholder" />
+
+            <!-- Type badge: green=offer, orange=request -->
             <TextView
-                android:id="@+id/tvLocation"
+                android:id="@+id/tvType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="11sp"
-                android:textColor="@color/text_secondary"
-                android:layout_marginStart="8dp" />
-        </LinearLayout>
+                android:layout_gravity="bottom|start"
+                android:layout_margin="8dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_type_badge" />
+        </FrameLayout>
     </LinearLayout>
-
-    <!-- Image side (left in RTL) -->
-    <FrameLayout
-        android:layout_width="155dp"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:id="@+id/ivImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_photo_placeholder" />
-
-        <!-- Type badge -->
-        <TextView
-            android:id="@+id/tvType"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start"
-            android:layout_margin="8dp"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="3dp"
-            android:textSize="10sp"
-            android:textStyle="bold"
-            android:textColor="@color/white" />
-    </FrameLayout>
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

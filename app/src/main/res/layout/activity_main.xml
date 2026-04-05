@@ -16,18 +16,15 @@
         android:orientation="vertical"
         android:background="@color/white"
         android:elevation="4dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Top bar: menu + logo -->
+        <!-- Top bar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingHorizontal="16dp"
-            android:background="@color/white">
+            android:paddingHorizontal="16dp">
 
             <ImageButton
                 android:id="@+id/btnMenu"
@@ -40,7 +37,6 @@
 
             <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
 
-            <!-- Logo: فايند + gold dot -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -54,8 +50,7 @@
                     android:text="فايند"
                     android:textSize="26sp"
                     android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:fontFamily="sans-serif-medium" />
+                    android:textColor="@color/black" />
 
                 <View
                     android:layout_width="8dp"
@@ -99,14 +94,13 @@
                 android:textColorHint="@color/find_gray_text" />
         </LinearLayout>
 
-        <!-- Top category tabs (horizontal scroll) -->
+        <!-- Top category tabs -->
         <HorizontalScrollView
             android:id="@+id/hsvTopTabs"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:scrollbars="none"
-            android:background="#FFF9E6"
-            android:fillViewport="false">
+            android:background="#FFF9E6">
 
             <LinearLayout
                 android:id="@+id/llTopTabs"
@@ -116,7 +110,7 @@
                 android:gravity="center_vertical" />
         </HorizontalScrollView>
 
-        <!-- Sub-category tabs row (hidden until a top tab is selected) -->
+        <!-- Sub-category tabs -->
         <HorizontalScrollView
             android:id="@+id/hsvSubTabs"
             android:layout_width="match_parent"
@@ -134,7 +128,7 @@
                 android:paddingHorizontal="8dp" />
         </HorizontalScrollView>
 
-        <!-- Extra (filter_option) tabs row -->
+        <!-- Extra (filter_option) tabs -->
         <HorizontalScrollView
             android:id="@+id/hsvExtraTabs"
             android:layout_width="match_parent"
@@ -152,7 +146,7 @@
                 android:paddingHorizontal="8dp" />
         </HorizontalScrollView>
 
-        <!-- Filter bar: type chips + region + city -->
+        <!-- Filter bar -->
         <LinearLayout
             android:id="@+id/llFilterBar"
             android:layout_width="match_parent"
@@ -164,7 +158,6 @@
             android:background="#FFF9E6"
             android:visibility="gone">
 
-            <!-- Type chips -->
             <TextView
                 android:id="@+id/chipAll"
                 android:layout_width="wrap_content"
@@ -202,7 +195,6 @@
                 android:background="@drawable/bg_chip_unselected"
                 android:layout_marginEnd="10dp" />
 
-            <!-- Region spinner -->
             <Spinner
                 android:id="@+id/spinnerRegion"
                 android:layout_width="0dp"
@@ -210,7 +202,6 @@
                 android:layout_height="32dp"
                 android:background="@color/white" />
 
-            <!-- City spinner -->
             <Spinner
                 android:id="@+id/spinnerCity"
                 android:layout_width="0dp"
@@ -219,10 +210,9 @@
                 android:layout_marginStart="6dp"
                 android:background="@color/white"
                 android:visibility="gone" />
-
         </LinearLayout>
 
-        <!-- Boot shimmer (shown while loading categories) -->
+        <!-- Boot shimmer -->
         <LinearLayout
             android:id="@+id/bootShimmer"
             android:layout_width="match_parent"
@@ -232,34 +222,19 @@
             android:paddingHorizontal="16dp"
             android:visibility="gone">
 
-            <View
-                android:layout_width="80dp"
-                android:layout_height="32dp"
-                android:layout_marginEnd="8dp"
+            <View android:layout_width="80dp" android:layout_height="32dp"
+                android:layout_marginEnd="8dp" android:background="@drawable/bg_category_shimmer" />
+            <View android:layout_width="100dp" android:layout_height="32dp"
+                android:layout_marginEnd="8dp" android:background="@drawable/bg_category_shimmer" />
+            <View android:layout_width="120dp" android:layout_height="32dp"
+                android:layout_marginEnd="8dp" android:background="@drawable/bg_category_shimmer" />
+            <View android:layout_width="70dp" android:layout_height="32dp"
                 android:background="@drawable/bg_category_shimmer" />
-
-            <View
-                android:layout_width="100dp"
-                android:layout_height="32dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/bg_category_shimmer" />
-
-            <View
-                android:layout_width="120dp"
-                android:layout_height="32dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/bg_category_shimmer" />
-
-            <View
-                android:layout_width="70dp"
-                android:layout_height="32dp"
-                android:background="@drawable/bg_category_shimmer" />
-
         </LinearLayout>
 
     </LinearLayout>
 
-    <!-- ── Scrollable content area ── -->
+    <!-- ── Content area ── -->
     <FrameLayout
         android:id="@+id/flContent"
         android:layout_width="match_parent"
@@ -267,64 +242,110 @@
         app:layout_constraintTop_toBottomOf="@id/llStickyHeader"
         app:layout_constraintBottom_toTopOf="@id/cvBottomNav">
 
-        <!-- Listings / category grid -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvContent"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="8dp" />
+            <!-- Case A-1: Top-level category grid (home, no selection) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCategoryGrid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:paddingHorizontal="10dp"
+                android:visibility="gone" />
 
-        <!-- Listings shimmer (shown while fetching) -->
-        <LinearLayout
-            android:id="@+id/llListingsShimmer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone">
+            <!-- Case A-2: Sub-category grid (after tapping a top-level category on home) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSubCategoryGrid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:paddingHorizontal="10dp"
+                android:visibility="gone" />
 
-            <include layout="@layout/item_listing_shimmer" />
-            <include layout="@layout/item_listing_shimmer" />
-            <include layout="@layout/item_listing_shimmer" />
-            <include layout="@layout/item_listing_shimmer" />
-        </LinearLayout>
+            <!-- Home grid loading spinner -->
+            <ProgressBar
+                android:id="@+id/pbHomeGrid"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/find_primary"
+                android:visibility="gone" />
 
-        <!-- Empty state -->
-        <LinearLayout
-            android:id="@+id/llEmptyState"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
+            <!-- Case B: Listings list -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvListings"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:visibility="gone" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="😕"
-                android:textSize="52sp" />
+            <!-- Listings shimmer (first page loading) -->
+            <LinearLayout
+                android:id="@+id/llListingsShimmer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingTop="8dp"
+                android:visibility="gone">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="لا توجد إعلانات في هذه المنطقة"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:gravity="center" />
+                <include layout="@layout/item_listing_shimmer" />
+                <include layout="@layout/item_listing_shimmer" />
+                <include layout="@layout/item_listing_shimmer" />
+                <include layout="@layout/item_listing_shimmer" />
+            </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="جرّب تغيير الفئة أو المنطقة"
-                android:textSize="13sp"
-                android:textColor="@color/find_gray_text"
-                android:gravity="center" />
-        </LinearLayout>
+            <!-- Empty state with Reset button -->
+            <LinearLayout
+                android:id="@+id/llEmptyState"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
 
-    </FrameLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="😕"
+                    android:textSize="52sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="لا توجد إعلانات"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="جرّب تغيير الفئة أو المنطقة"
+                    android:textSize="13sp"
+                    android:textColor="@color/find_gray_text"
+                    android:gravity="center" />
+
+                <Button
+                    android:id="@+id/btnResetFilters"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="20dp"
+                    android:text="إعادة تعيين الفلاتر"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/find_primary"
+                    android:paddingHorizontal="24dp"
+                    style="@style/Widget.MaterialComponents.Button" />
+            </LinearLayout>
+
+        </FrameLayout>
 
     <!-- ── Bottom Nav ── -->
     <androidx.cardview.widget.CardView

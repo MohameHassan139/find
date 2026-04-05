@@ -12,21 +12,28 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
-// ── Data models ──────────────────────────────────────────────────────────────
+private const val ICON_BASE = "https://ocebfvgwgpebjxetnixc.supabase.co/storage/v1/object/public/listings-images/subCatigory/"
+private const val PAGE_SIZE = 20
+
+// ── Data models ───────────────────────────────────────────────────────────────
 
 data class ApiCategory(
     val id: Int,
     val nameAr: String,
-    val iconUrl: String? = null,
+    val iconName: String? = null,
     val subCategories: List<ApiSubCategory> = emptyList()
-)
+) {
+    val iconUrl: String? get() = iconName?.let { "$ICON_BASE$it.png" }
+}
 
 data class ApiSubCategory(
     val id: Int,
     val nameAr: String,
-    val iconUrl: String? = null,
+    val iconName: String? = null,
     val filterOptions: List<ApiFilterOption> = emptyList()
-)
+) {
+    val iconUrl: String? get() = iconName?.let { "$ICON_BASE$it.png" }
+}
 
 data class ApiFilterOption(val id: Int, val nameAr: String)
 
@@ -57,6 +64,14 @@ class MainViewModel : ViewModel() {
     private val _categories = MutableLiveData<List<ApiCategory>>()
     val categories: LiveData<List<ApiCategory>> get() = _categories
 
+    /** Sub-categories shown in the home grid — updates when user taps a top tab on home */
+    private val _homeSubCategories = MutableLiveData<List<ApiSubCategory>>(emptyList())
+    val homeSubCategories: LiveData<List<ApiSubCategory>> get() = _homeSubCategories
+
+    /** True while the home grid is populating (boot loading covers initial state) */
+    private val _isHomeGridLoading = MutableLiveData<Boolean>(false)
+    val isHomeGridLoading: LiveData<Boolean> get() = _isHomeGridLoading
+
     private val _regions = MutableLiveData<List<RegionItem>>()
     val regions: LiveData<List<RegionItem>> get() = _regions
 
@@ -72,29 +87,37 @@ class MainViewModel : ViewModel() {
     private val _isListingsLoading = MutableLiveData<Boolean>(false)
     val isListingsLoading: LiveData<Boolean> get() = _isListingsLoading
 
+    /** True only when loading the first page (shows full shimmer) */
+    private val _isFirstPageLoading = MutableLiveData<Boolean>(false)
+    val isFirstPageLoading: LiveData<Boolean> get() = _isFirstPageLoading
+
+    /** True when loading additional pages (shows footer spinner) */
+    private val _isPagingLoading = MutableLiveData<Boolean>(false)
+    val isPagingLoading: LiveData<Boolean> get() = _isPagingLoading
+
     private val _isEmptyState = MutableLiveData<Boolean>(false)
     val isEmptyState: LiveData<Boolean> get() = _isEmptyState
 
     private val _errorEvent = MutableLiveData<String?>()
     val errorEvent: LiveData<String?> get() = _errorEvent
 
-    // ── Filter state (mirrors S.cat* in HTML) ─────────────────────────────────
+    // ── Filter state ──────────────────────────────────────────────────────────
 
-    /** 0 = home/all, 1..N = index into categories list */
     var catIdx: Int = 0
         private set
-
-    /** index into current category's sub_categories, null = "الكل" */
     var catSubIdx: Int? = null
         private set
-
-    /** index into selected sub's filter_options, null = "الكل" */
     var catExtraIdx: Int? = null
         private set
-
-    var catType: String? = null   // null=all, "offer", "request"
+    var catType: String? = null
     var catRegId: Int? = null
     var catCityId: Int? = null
+
+    // ── Pagination state ──────────────────────────────────────────────────────
+
+    private var currentPage = 1
+    private var lastPage = 1
+    private var isFetching = false
 
     // ── Boot ──────────────────────────────────────────────────────────────────
 
@@ -116,6 +139,8 @@ class MainViewModel : ViewModel() {
                         _allCities.value = cities
                         _isBootLoading.value = false
                     }
+                    // Now fetch full category details (with sub-category icons) for all categories
+                    fetchAllCategoryDetails(cats)
                 } else {
                     withContext(Dispatchers.Main) { _isBootLoading.value = false }
                 }
@@ -128,65 +153,217 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    // ── Selection logic ───────────────────────────────────────────────────────
+    /** Fetch /categories/{id} for every top-level category to get sub-category icons */
+    private suspend fun fetchAllCategoryDetails(cats: List<ApiCategory>) {
+        val enriched = cats.map { cat ->
+            try {
+                val conn = openGet("$api/categories/${cat.id}")
+                if (conn.responseCode == HttpURLConnection.HTTP_OK) {
+                    val body = JSONObject(conn.inputStream.bufferedReader().readText())
+                    val data = body.optJSONObject("data") ?: body
+                    val subArr = data.optJSONArray("sub_categories") ?: JSONArray()
+                    val subs = mutableListOf<ApiSubCategory>()
+                    for (i in 0 until subArr.length()) {
+                        val s = subArr.getJSONObject(i)
+                        if (s.optString("name_ar").trim() == "الكل") continue
+                        val opts = mutableListOf<ApiFilterOption>()
+                        val optArr = s.optJSONArray("filter_options") ?: JSONArray()
+                        for (k in 0 until optArr.length()) {
+                            val fo = optArr.getJSONObject(k)
+                            opts.add(ApiFilterOption(fo.getInt("id"), fo.getString("name_ar")))
+                        }
+                        subs.add(ApiSubCategory(
+                            id = s.getInt("id"),
+                            nameAr = s.getString("name_ar"),
+                            iconName = s.optString("icon").ifEmpty { null },
+                            filterOptions = opts
+                        ))
+                    }
+                    cat.copy(subCategories = subs)
+                } else cat
+            } catch (_: Exception) { cat }
+        }
+        withContext(Dispatchers.Main) {
+            _categories.value = enriched
+        }
+    }
 
-    /** Called when user taps a top-level category tab. Resets sub/extra/region/city. */
-    fun selectTopCategory(idx: Int) {
+    // ── Selection ─────────────────────────────────────────────────────────────
+
+    /** Fetch a single category's details and update _categories immediately */
+    fun fetchCategoryDetails(categoryId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val conn = openGet("$api/categories/$categoryId")
+                if (conn.responseCode == HttpURLConnection.HTTP_OK) {
+                    val body = JSONObject(conn.inputStream.bufferedReader().readText())
+                    val data = body.optJSONObject("data") ?: body
+                    val subArr = data.optJSONArray("sub_categories") ?: JSONArray()
+                    val subs = mutableListOf<ApiSubCategory>()
+                    for (i in 0 until subArr.length()) {
+                        val s = subArr.getJSONObject(i)
+                        if (s.optString("name_ar").trim() == "الكل") continue
+                        val opts = mutableListOf<ApiFilterOption>()
+                        val optArr = s.optJSONArray("filter_options") ?: JSONArray()
+                        for (k in 0 until optArr.length()) {
+                            val fo = optArr.getJSONObject(k)
+                            opts.add(ApiFilterOption(fo.getInt("id"), fo.getString("name_ar")))
+                        }
+                        subs.add(ApiSubCategory(
+                            id = s.getInt("id"),
+                            nameAr = s.getString("name_ar"),
+                            iconName = s.optString("icon").ifEmpty { null },
+                            filterOptions = opts
+                        ))
+                    }
+                    withContext(Dispatchers.Main) {
+                        val current = _categories.value ?: return@withContext
+                        _categories.value = current.map { cat ->
+                            if (cat.id == categoryId) cat.copy(subCategories = subs) else cat
+                        }
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
+    /** Sets catIdx only — no fetch, no state change. Used when showing sub-category grid. */
+    fun setCategoryIndex(idx: Int) {
         catIdx = idx
         catSubIdx = null
         catExtraIdx = null
         catRegId = null
         catCityId = null
-        if (idx > 0) fetchListings()
     }
 
-    /** Called when user taps a sub-category chip. Resets extra/region/city. */
-    fun selectSubCategory(subIdx: Int?) {
-        catSubIdx = if (catSubIdx == subIdx) null else subIdx   // toggle
+    fun selectTopCategory(idx: Int, fetchImmediately: Boolean = false) {
+        catIdx = idx
+        catSubIdx = null
         catExtraIdx = null
         catRegId = null
         catCityId = null
-        fetchListings()
+        if (idx == 0) {
+            _homeSubCategories.value = emptyList()
+        } else if (fetchImmediately) {
+            fetchListings(reset = true)
+        }
     }
 
-    /** Called when user taps a filter-option (extra) chip. */
+    /** Called when user taps a top-level category card in the home grid */
+    fun selectHomeCategoryForGrid(cat: ApiCategory) {
+        _isHomeGridLoading.value = true
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val conn = openGet("$api/categories/${cat.id}")
+                if (conn.responseCode == HttpURLConnection.HTTP_OK) {
+                    val body = JSONObject(conn.inputStream.bufferedReader().readText())
+                    val data = body.optJSONObject("data") ?: body
+                    val subArr = data.optJSONArray("sub_categories") ?: JSONArray()
+                    val subs = mutableListOf<ApiSubCategory>()
+                    for (i in 0 until subArr.length()) {
+                        val s = subArr.getJSONObject(i)
+                        if (s.optString("name_ar").trim() == "الكل") continue
+                        val opts = mutableListOf<ApiFilterOption>()
+                        val optArr = s.optJSONArray("filter_options") ?: JSONArray()
+                        for (k in 0 until optArr.length()) {
+                            val fo = optArr.getJSONObject(k)
+                            opts.add(ApiFilterOption(fo.getInt("id"), fo.getString("name_ar")))
+                        }
+                        subs.add(ApiSubCategory(
+                            id = s.getInt("id"),
+                            nameAr = s.getString("name_ar"),
+                            iconName = s.optString("icon").ifEmpty { null },
+                            filterOptions = opts
+                        ))
+                    }
+                    withContext(Dispatchers.Main) {
+                        _homeSubCategories.value = subs
+                        _isHomeGridLoading.value = false
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        // Fall back to whatever we already have from search-filters
+                        _homeSubCategories.value = cat.subCategories
+                        _isHomeGridLoading.value = false
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    _homeSubCategories.value = cat.subCategories
+                    _isHomeGridLoading.value = false
+                }
+            }
+        }
+    }
+
+    fun selectSubCategory(subIdx: Int?) {
+        catSubIdx = subIdx   // null = الكل (no sub filter)
+        catExtraIdx = null
+        catRegId = null
+        catCityId = null
+        fetchListings(reset = true)
+    }
+
     fun selectExtra(extraIdx: Int?) {
         catExtraIdx = if (catExtraIdx == extraIdx) null else extraIdx
-        fetchListings()
+        fetchListings(reset = true)
     }
 
-    /** Called when type chip changes. */
     fun selectType(type: String?) {
         catType = type
-        if (catIdx > 0) fetchListings()
+        if (catIdx > 0) fetchListings(reset = true)
     }
 
-    /** Called when region spinner changes. */
     fun selectRegion(regionId: Int?) {
         catRegId = regionId
         catCityId = null
-        if (catIdx > 0) fetchListings()
+        if (catIdx > 0) fetchListings(reset = true)
     }
 
-    /** Called when city spinner changes. */
     fun selectCity(cityId: Int?) {
         catCityId = cityId
-        if (catIdx > 0) fetchListings()
+        if (catIdx > 0) fetchListings(reset = true)
     }
+
+    /** Pull-to-refresh: reset and reload first page */
+    fun refresh() {
+        if (catIdx > 0) fetchListings(reset = true)
+    }
+
+    /** Called by scroll listener when user reaches the bottom */
+    fun loadNextPage() {
+        if (!isFetching && currentPage < lastPage) {
+            fetchListings(reset = false)
+        }
+    }
+
+    fun hasMorePages() = currentPage < lastPage
 
     // ── Fetch listings ────────────────────────────────────────────────────────
 
-    fun fetchListings() {
+    fun fetchListings(reset: Boolean = true) {
         val cats = _categories.value ?: return
         if (catIdx == 0 || catIdx > cats.size) return
+        if (isFetching) return
+
         val cat = cats[catIdx - 1]
-
         val subs = cat.subCategories
-        val ss = if (catSubIdx != null && catSubIdx!! < subs.size) subs[catSubIdx!!] else null
+        val ss = catSubIdx?.let { subs.getOrNull(it) }
         val extras = ss?.filterOptions ?: emptyList()
-        val se = if (catExtraIdx != null && catExtraIdx!! < extras.size) extras[catExtraIdx!!] else null
+        val se = catExtraIdx?.let { extras.getOrNull(it) }
 
-        val params = StringBuilder("page=1&category_id=${cat.id}")
+        if (reset) {
+            currentPage = 1
+            _listings.value = emptyList()
+            _isFirstPageLoading.value = true
+            _isEmptyState.value = false
+        } else {
+            currentPage++
+            _isPagingLoading.value = true
+        }
+
+        val page = currentPage
+        val params = StringBuilder("page=$page&per_page=$PAGE_SIZE&category_id=${cat.id}")
         ss?.let { params.append("&sub_category_id=${it.id}") }
         se?.let { params.append("&filter_option_id=${it.id}") }
         catRegId?.let { params.append("&region_id=$it") }
@@ -196,32 +373,39 @@ class MainViewModel : ViewModel() {
         }
         catType?.let { params.append("&listing_type=$it") }
 
-        _isListingsLoading.value = true
-        _isEmptyState.value = false
-        _listings.value = emptyList()
-
+        isFetching = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val conn = openGet("$api/listings?$params")
                 if (conn.responseCode == HttpURLConnection.HTTP_OK) {
-                    val arr = JSONObject(conn.inputStream.bufferedReader().readText())
-                        .optJSONArray("data") ?: JSONArray()
+                    val body = JSONObject(conn.inputStream.bufferedReader().readText())
+                    val arr = body.optJSONArray("data") ?: JSONArray()
+                    val meta = body.optJSONObject("meta")
+                    val fetchedLastPage = meta?.optInt("last_page", 1) ?: 1
                     val result = parseListings(arr)
                     withContext(Dispatchers.Main) {
-                        _listings.value = result
-                        _isListingsLoading.value = false
-                        _isEmptyState.value = result.isEmpty()
+                        lastPage = fetchedLastPage
+                        val current = if (reset) emptyList() else (_listings.value ?: emptyList())
+                        _listings.value = current + result
+                        _isFirstPageLoading.value = false
+                        _isPagingLoading.value = false
+                        _isEmptyState.value = reset && result.isEmpty()
+                        isFetching = false
                     }
                 } else {
                     withContext(Dispatchers.Main) {
-                        _isListingsLoading.value = false
-                        _isEmptyState.value = true
+                        _isFirstPageLoading.value = false
+                        _isPagingLoading.value = false
+                        _isEmptyState.value = reset
+                        isFetching = false
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    _isListingsLoading.value = false
+                    _isFirstPageLoading.value = false
+                    _isPagingLoading.value = false
                     _errorEvent.value = "تعذر تحميل الإعلانات"
+                    isFetching = false
                 }
             }
         }
@@ -250,7 +434,6 @@ class MainViewModel : ViewModel() {
             val subArr = o.optJSONArray("sub_categories") ?: JSONArray()
             for (j in 0 until subArr.length()) {
                 val s = subArr.getJSONObject(j)
-                // Skip any "الكل" items the API might return — we add it manually in the UI
                 if (s.optString("name_ar").trim() == "الكل") continue
                 val opts = mutableListOf<ApiFilterOption>()
                 val optArr = s.optJSONArray("filter_options") ?: JSONArray()
@@ -258,11 +441,19 @@ class MainViewModel : ViewModel() {
                     val fo = optArr.getJSONObject(k)
                     opts.add(ApiFilterOption(fo.getInt("id"), fo.getString("name_ar")))
                 }
-                subs.add(ApiSubCategory(s.getInt("id"), s.getString("name_ar"),
-                    s.optString("icon").ifEmpty { null }, opts))
+                subs.add(ApiSubCategory(
+                    id = s.getInt("id"),
+                    nameAr = s.getString("name_ar"),
+                    iconName = s.optString("icon").ifEmpty { null },
+                    filterOptions = opts
+                ))
             }
-            list.add(ApiCategory(o.getInt("id"), o.getString("name_ar"),
-                o.optString("icon").ifEmpty { null }, subs))
+            list.add(ApiCategory(
+                id = o.getInt("id"),
+                nameAr = o.getString("name_ar"),
+                iconName = o.optString("icon").ifEmpty { null },
+                subCategories = subs
+            ))
         }
         return list
     }

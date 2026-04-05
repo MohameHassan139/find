@@ -15,8 +15,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.myapplication.adapters.CategoryGridAdapter
 import com.example.myapplication.adapters.ListingsAdapter
+import com.example.myapplication.adapters.SubCategoryGridAdapter
 import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.chat.ui.conversations.ConversationsActivity
@@ -26,13 +30,15 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val vm: MainViewModel by viewModels()
+
+    private lateinit var categoryAdapter: CategoryGridAdapter
+    private lateinit var subCategoryAdapter: SubCategoryGridAdapter
     private lateinit var listingsAdapter: ListingsAdapter
 
     private var suppressSpinner = false
+    private var lastRegionList: List<RegionItem> = emptyList()
 
-    // Gold accent color
     private val gold = Color.parseColor("#C8A96E")
-    private val goldTint = Color.parseColor("#FFF9E6")
     private val gray = Color.parseColor("#888888")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,18 +53,65 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        setupListingsAdapter()
+        setupAdapters()
         setupTypeChips()
         observeViewModel()
         setupNavigation()
     }
 
-    // ── Listings adapter ──────────────────────────────────────────────────────
+    // ── Adapters ──────────────────────────────────────────────────────────────
 
-    private fun setupListingsAdapter() {
-        listingsAdapter = ListingsAdapter(emptyList())
-        binding.rvContent.layoutManager = LinearLayoutManager(this)
-        binding.rvContent.adapter = listingsAdapter
+    private fun setupAdapters() {
+        // Top-level category grid — tapping shows sub-categories
+        categoryAdapter = CategoryGridAdapter(emptyList()) { cat ->
+            openCategory(cat)
+        }
+        binding.rvCategoryGrid.layoutManager = GridLayoutManager(this, 3)
+        binding.rvCategoryGrid.adapter = categoryAdapter
+
+        // Sub-category grid — tapping highlights sub-tab AND fetches listings
+        subCategoryAdapter = SubCategoryGridAdapter(emptyList()) { sub ->
+            val cats = vm.categories.value ?: return@SubCategoryGridAdapter
+            val parentCat = cats.firstOrNull { c -> c.subCategories.any { it.id == sub?.id } }
+                ?: cats.getOrNull(vm.catIdx - 1)
+                ?: return@SubCategoryGridAdapter
+
+            if (sub == null) {
+                // "الكل" — stay in sub-category grid, fetch all ads for this category
+                vm.setCategoryIndex(cats.indexOfFirst { it.id == parentCat.id } + 1)
+                vm.selectSubCategory(null)
+                buildTopTabs(cats)
+                buildSubTabs(parentCat)
+                showListingsMode()
+            } else {
+                // Specific sub-category — fetch filtered ads
+                val catIdx = cats.indexOfFirst { it.id == parentCat.id } + 1
+                val subIdx = parentCat.subCategories.indexOfFirst { it.id == sub.id }
+                vm.setCategoryIndex(catIdx)
+                vm.selectSubCategory(subIdx)
+                buildTopTabs(cats)
+                buildSubTabs(parentCat)
+                showListingsMode()
+            }
+        }
+        binding.rvSubCategoryGrid.layoutManager = GridLayoutManager(this, 3)
+        binding.rvSubCategoryGrid.adapter = subCategoryAdapter
+
+        // Listings list
+        listingsAdapter = ListingsAdapter(emptyList()) { /* TODO: open detail */ }
+        val llm = LinearLayoutManager(this)
+        binding.rvListings.layoutManager = llm
+        binding.rvListings.adapter = listingsAdapter
+
+        // Pagination scroll listener
+        binding.rvListings.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
+                if (dy <= 0) return
+                val total = llm.itemCount
+                val lastVisible = llm.findLastVisibleItemPosition()
+                if (lastVisible >= total - 3 && vm.hasMorePages()) vm.loadNextPage()
+            }
+        })
     }
 
     // ── Type chips ────────────────────────────────────────────────────────────
@@ -80,52 +133,106 @@ class MainActivity : AppCompatActivity() {
         style(binding.chipRequest, active == "request")
     }
 
+    // ── Body state — single source of truth ──────────────────────────────────
+
+    private enum class BodyState { CATEGORIES, SUBCATEGORIES, GRID_LOADING, LOADING, ADS, EMPTY }
+
+    private fun applyBodyState(state: BodyState) {
+        binding.rvCategoryGrid.visibility    = if (state == BodyState.CATEGORIES)    View.VISIBLE else View.GONE
+        binding.rvSubCategoryGrid.visibility = if (state == BodyState.SUBCATEGORIES) View.VISIBLE else View.GONE
+        binding.pbHomeGrid.visibility        = if (state == BodyState.GRID_LOADING)  View.VISIBLE else View.GONE
+        binding.llListingsShimmer.visibility = if (state == BodyState.LOADING)       View.VISIBLE else View.GONE
+        binding.rvListings.visibility        = if (state == BodyState.ADS)           View.VISIBLE else View.GONE
+        binding.llEmptyState.visibility      = if (state == BodyState.EMPTY)         View.VISIBLE else View.GONE
+        if (state == BodyState.LOADING) animateShimmer(binding.llListingsShimmer)
+    }
+
     // ── Observers ─────────────────────────────────────────────────────────────
 
     private fun observeViewModel() {
         vm.isBootLoading.observe(this) { loading ->
             binding.bootShimmer.visibility = if (loading) View.VISIBLE else View.GONE
-            binding.hsvTopTabs.visibility = if (loading) View.GONE else View.VISIBLE
+            binding.hsvTopTabs.visibility  = if (loading) View.GONE   else View.VISIBLE
         }
 
         vm.categories.observe(this) { cats ->
             buildTopTabs(cats)
-        }
-
-        vm.regions.observe(this) { regions ->
-            buildRegionSpinner(regions)
-        }
-
-        vm.isListingsLoading.observe(this) { loading ->
-            binding.llListingsShimmer.visibility = if (loading) View.VISIBLE else View.GONE
-            if (loading) {
-                binding.rvContent.visibility = View.GONE
-                binding.llEmptyState.visibility = View.GONE
-                animateShimmer(binding.llListingsShimmer)
+            // If a category tap was pending (enrichment wasn't done), complete it now
+            val pending = pendingCategoryId
+            if (pending != null) {
+                val cat = cats.find { it.id == pending }
+                if (cat != null && cat.subCategories.isNotEmpty()) {
+                    pendingCategoryId = null
+                    isShowingSubGrid = true
+                    subCategoryAdapter.updateData(cat.subCategories)
+                    buildSubTabs(cat)
+                    applyBodyState(BodyState.SUBCATEGORIES)
+                    return@observe
+                }
+            }
+            if (vm.catIdx == 0) {
+                categoryAdapter.updateData(cats)
+                applyBodyState(BodyState.CATEGORIES)
             }
         }
 
+        vm.regions.observe(this) { regions -> buildRegionSpinner(regions) }
+
+        // Home grid loading spinner
+        vm.isHomeGridLoading.observe(this) { loading ->
+            if (loading) applyBodyState(BodyState.GRID_LOADING)
+        }
+
+        // Sub-category grid populated
+        vm.homeSubCategories.observe(this) { subs ->
+            if (subs.isEmpty()) {
+                // Back to top-level grid
+                categoryAdapter.updateData(vm.categories.value ?: emptyList())
+                applyBodyState(BodyState.CATEGORIES)
+            } else {
+                subCategoryAdapter.updateData(subs)
+                applyBodyState(BodyState.SUBCATEGORIES)
+            }
+        }
+
+        // Condition B loading — show shimmer skeleton
+        vm.isFirstPageLoading.observe(this) { loading ->
+            if (loading && pendingCategoryId == null && !isShowingSubGrid) {
+                applyBodyState(BodyState.LOADING)
+            }
+        }
+
+        vm.isPagingLoading.observe(this) { loading ->
+            listingsAdapter.setFooterLoading(loading)
+        }
+
         vm.listings.observe(this) { listings ->
-            if (listings.isNotEmpty()) {
-                listingsAdapter.updateData(listings)
-                binding.rvContent.visibility = View.VISIBLE
-                binding.llListingsShimmer.visibility = View.GONE
-                binding.llEmptyState.visibility = View.GONE
+            listingsAdapter.updateData(listings)
+            if (listings.isNotEmpty() && !isShowingSubGrid) {
+                applyBodyState(BodyState.ADS)
             }
         }
 
         vm.isEmptyState.observe(this) { empty ->
-            if (empty) {
-                binding.llEmptyState.visibility = View.VISIBLE
-                binding.rvContent.visibility = View.GONE
-                binding.llListingsShimmer.visibility = View.GONE
+            if (empty && pendingCategoryId == null && !isShowingSubGrid) {
+                applyBodyState(BodyState.EMPTY)
             }
         }
 
         vm.errorEvent.observe(this) { msg ->
-            if (!msg.isNullOrEmpty()) {
+            if (!msg.isNullOrEmpty())
                 android.widget.Toast.makeText(this, msg, android.widget.Toast.LENGTH_SHORT).show()
-            }
+        }
+
+        binding.btnResetFilters.setOnClickListener {
+            vm.selectTopCategory(0)
+            updateChipStyles(null)
+            buildTopTabs(vm.categories.value ?: emptyList())
+            categoryAdapter.updateData(vm.categories.value ?: emptyList())
+            binding.hsvSubTabs.visibility   = View.GONE
+            binding.hsvExtraTabs.visibility = View.GONE
+            binding.llFilterBar.visibility  = View.GONE
+            applyBodyState(BodyState.CATEGORIES)
         }
     }
 
@@ -134,71 +241,54 @@ class MainActivity : AppCompatActivity() {
     private fun buildTopTabs(cats: List<ApiCategory>) {
         val container = binding.llTopTabs
         container.removeAllViews()
-
-        // "الرئيسية" home tab
         container.addView(makeTopTab("الرئيسية", 0, vm.catIdx == 0))
-
         cats.forEachIndexed { i, cat ->
             container.addView(makeTopTab(cat.nameAr, i + 1, vm.catIdx == i + 1))
         }
     }
 
     private fun makeTopTab(label: String, idx: Int, isActive: Boolean): View {
-        val tv = TextView(this)
-        val lp = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.MATCH_PARENT
-        )
-        tv.layoutParams = lp
-        tv.text = label
-        tv.gravity = Gravity.CENTER
-        tv.setPadding(dp(14), 0, dp(14), 0)
-        tv.textSize = if (isActive) 18f else 15f
-        tv.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
-        tv.setTextColor(Color.BLACK)
-
-        // Gold underline via compound drawable bottom trick — use a bottom border view instead
-        // We wrap in a vertical LinearLayout to add the underline
         val wrapper = LinearLayout(this)
-        val wlp = LinearLayout.LayoutParams(
+        wrapper.layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.MATCH_PARENT
         )
-        wrapper.layoutParams = wlp
         wrapper.orientation = LinearLayout.VERTICAL
         wrapper.gravity = Gravity.CENTER_HORIZONTAL
 
-        val innerTv = TextView(this)
-        val innerLp = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            0, 1f
+        val tv = TextView(this)
+        tv.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT, 0, 1f
         )
-        innerTv.layoutParams = innerLp
-        innerTv.text = label
-        innerTv.gravity = Gravity.CENTER
-        innerTv.setPadding(dp(14), 0, dp(14), 0)
-        innerTv.textSize = if (isActive) 20f else 15f
-        innerTv.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
-        innerTv.setTextColor(Color.BLACK)
+        tv.text = label
+        tv.gravity = Gravity.CENTER
+        tv.setPadding(dp(14), 0, dp(14), 0)
+        tv.textSize = if (isActive) 20f else 15f
+        tv.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
+        tv.setTextColor(Color.BLACK)
 
         val underline = View(this)
-        val ulp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(3))
-        underline.layoutParams = ulp
+        underline.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT, dp(3)
+        )
         underline.setBackgroundColor(if (isActive) gold else Color.TRANSPARENT)
 
-        wrapper.addView(innerTv)
+        wrapper.addView(tv)
         wrapper.addView(underline)
 
         wrapper.setOnClickListener {
-            vm.selectTopCategory(idx)
-            buildTopTabs(vm.categories.value ?: emptyList())
+            val cats = vm.categories.value ?: return@setOnClickListener
             if (idx == 0) {
-                // Home: hide sub/extra/filter rows, show category grid
-                showHomeState()
+                vm.selectTopCategory(0)
+                buildTopTabs(cats)
+                categoryAdapter.updateData(cats)
+                binding.hsvSubTabs.visibility   = View.GONE
+                binding.hsvExtraTabs.visibility = View.GONE
+                binding.llFilterBar.visibility  = View.GONE
+                applyBodyState(BodyState.CATEGORIES)
             } else {
-                val cat = vm.categories.value?.getOrNull(idx - 1) ?: return@setOnClickListener
-                buildSubTabs(cat)
-                showListingsState()
+                val cat = cats.getOrNull(idx - 1) ?: return@setOnClickListener
+                openCategory(cat)
             }
         }
         return wrapper
@@ -214,37 +304,31 @@ class MainActivity : AppCompatActivity() {
             binding.llFilterBar.visibility = View.VISIBLE
             return
         }
-
         binding.hsvSubTabs.visibility = View.VISIBLE
         val container = binding.llSubTabs
         container.removeAllViews()
-
-        // "الكل" chip — only add manually, never comes from API at this level
         container.addView(makeSubTab("الكل", null, vm.catSubIdx == null))
         subs.forEachIndexed { i, sub ->
             container.addView(makeSubTab(sub.nameAr, i, vm.catSubIdx == i))
         }
-
-        // Build extra tabs for currently selected sub
-        val selectedSub = if (vm.catSubIdx != null) subs.getOrNull(vm.catSubIdx!!) else null
+        val selectedSub = vm.catSubIdx?.let { subs.getOrNull(it) }
         buildExtraTabs(selectedSub)
-
         binding.llFilterBar.visibility = View.VISIBLE
     }
 
     private fun makeSubTab(label: String, subIdx: Int?, isActive: Boolean): View {
         val wrapper = LinearLayout(this)
-        wrapper.orientation = LinearLayout.VERTICAL
-        wrapper.gravity = Gravity.CENTER_HORIZONTAL
-        val wlp = LinearLayout.LayoutParams(
+        wrapper.layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.MATCH_PARENT
         )
-        wrapper.layoutParams = wlp
+        wrapper.orientation = LinearLayout.VERTICAL
+        wrapper.gravity = Gravity.CENTER_HORIZONTAL
 
         val tv = TextView(this)
-        val tvlp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 0, 1f)
-        tv.layoutParams = tvlp
+        tv.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT, 0, 1f
+        )
         tv.text = label
         tv.gravity = Gravity.CENTER
         tv.setPadding(dp(14), 0, dp(14), 0)
@@ -253,8 +337,9 @@ class MainActivity : AppCompatActivity() {
         tv.setTextColor(if (isActive) Color.BLACK else gray)
 
         val underline = View(this)
-        val ulp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(3))
-        underline.layoutParams = ulp
+        underline.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT, dp(3)
+        )
         underline.setBackgroundColor(if (isActive) gold else Color.TRANSPARENT)
 
         wrapper.addView(tv)
@@ -264,22 +349,19 @@ class MainActivity : AppCompatActivity() {
             vm.selectSubCategory(subIdx)
             val cat = vm.categories.value?.getOrNull(vm.catIdx - 1) ?: return@setOnClickListener
             buildSubTabs(cat)
+            showListingsMode()   // unblock listing observers
         }
         return wrapper
     }
 
-    // ── Extra (filter_option) tabs ────────────────────────────────────────────
+    // ── Extra tabs ────────────────────────────────────────────────────────────
 
     private fun buildExtraTabs(sub: ApiSubCategory?) {
         val extras = sub?.filterOptions ?: emptyList()
-        if (extras.isEmpty()) {
-            binding.hsvExtraTabs.visibility = View.GONE
-            return
-        }
+        if (extras.isEmpty()) { binding.hsvExtraTabs.visibility = View.GONE; return }
         binding.hsvExtraTabs.visibility = View.VISIBLE
         val container = binding.llExtraTabs
         container.removeAllViews()
-
         container.addView(makeExtraTab("الكل", null, vm.catExtraIdx == null))
         extras.forEachIndexed { i, opt ->
             container.addView(makeExtraTab(opt.nameAr, i, vm.catExtraIdx == i))
@@ -288,17 +370,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun makeExtraTab(label: String, extraIdx: Int?, isActive: Boolean): View {
         val wrapper = LinearLayout(this)
-        wrapper.orientation = LinearLayout.VERTICAL
-        wrapper.gravity = Gravity.CENTER_HORIZONTAL
-        val wlp = LinearLayout.LayoutParams(
+        wrapper.layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.MATCH_PARENT
         )
-        wrapper.layoutParams = wlp
+        wrapper.orientation = LinearLayout.VERTICAL
+        wrapper.gravity = Gravity.CENTER_HORIZONTAL
 
         val tv = TextView(this)
-        val tvlp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 0, 1f)
-        tv.layoutParams = tvlp
+        tv.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT, 0, 1f
+        )
         tv.text = label
         tv.gravity = Gravity.CENTER
         tv.setPadding(dp(14), 0, dp(14), 0)
@@ -307,8 +389,9 @@ class MainActivity : AppCompatActivity() {
         tv.setTextColor(if (isActive) Color.BLACK else gray)
 
         val underline = View(this)
-        val ulp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(3))
-        underline.layoutParams = ulp
+        underline.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT, dp(3)
+        )
         underline.setBackgroundColor(if (isActive) gold else Color.TRANSPARENT)
 
         wrapper.addView(tv)
@@ -317,24 +400,21 @@ class MainActivity : AppCompatActivity() {
         wrapper.setOnClickListener {
             vm.selectExtra(extraIdx)
             val cat = vm.categories.value?.getOrNull(vm.catIdx - 1) ?: return@setOnClickListener
-            val sub = if (vm.catSubIdx != null) cat.subCategories.getOrNull(vm.catSubIdx!!) else null
+            val sub = vm.catSubIdx?.let { cat.subCategories.getOrNull(it) }
             buildExtraTabs(sub)
+            showListingsMode()
         }
         return wrapper
     }
 
     // ── Region / City spinners ────────────────────────────────────────────────
 
-    // Track last built list to avoid rebuilding when nothing changed
-    private var lastRegionList: List<RegionItem> = emptyList()
-
     private fun buildRegionSpinner(regions: List<RegionItem>) {
         if (regions == lastRegionList && binding.spinnerRegion.adapter != null) return
         lastRegionList = regions
 
         suppressSpinner = true
-        val names = regions.map { it.nameAr }
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, names)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, regions.map { it.nameAr })
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerRegion.adapter = adapter
         binding.spinnerRegion.setSelection(0)
@@ -349,20 +429,15 @@ class MainActivity : AppCompatActivity() {
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
-
         binding.spinnerCity.visibility = View.GONE
     }
 
     private fun buildCitySpinner(regionId: Int?) {
         val cities = vm.citiesForRegion(regionId)
-        if (regionId == null || cities.isEmpty()) {
-            binding.spinnerCity.visibility = View.GONE
-            return
-        }
+        if (regionId == null || cities.isEmpty()) { binding.spinnerCity.visibility = View.GONE; return }
         suppressSpinner = true
         binding.spinnerCity.visibility = View.VISIBLE
-        val names = cities.map { it.nameAr }
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, names)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, cities.map { it.nameAr })
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerCity.adapter = adapter
         binding.spinnerCity.setSelection(0)
@@ -377,19 +452,47 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ── View state helpers ────────────────────────────────────────────────────
-
-    private fun showHomeState() {
-        binding.hsvSubTabs.visibility = View.GONE
-        binding.hsvExtraTabs.visibility = View.GONE
-        binding.llFilterBar.visibility = View.GONE
-        binding.rvContent.visibility = View.GONE
-        binding.llListingsShimmer.visibility = View.GONE
-        binding.llEmptyState.visibility = View.GONE
+    private fun showCategoryGridMode() = applyBodyState(BodyState.CATEGORIES)
+    private fun showListingsMode() {
+        isShowingSubGrid = false
+        binding.rvCategoryGrid.visibility    = View.GONE
+        binding.rvSubCategoryGrid.visibility = View.GONE
+        binding.pbHomeGrid.visibility        = View.GONE
     }
 
-    private fun showListingsState() {
-        // listings/shimmer/empty visibility is managed by observers
+    /** Pending category id — set when user taps before enrichment finishes */
+    private var pendingCategoryId: Int? = null
+    /** True when we're intentionally showing the sub-category grid (block listing observers) */
+    private var isShowingSubGrid = false
+
+    /**
+     * Open a category: show its sub-categories grid.
+     * If sub-categories aren't loaded yet, fetch that category immediately.
+     */
+    private fun openCategory(cat: ApiCategory) {
+        val cats = vm.categories.value ?: return
+        val idx = cats.indexOfFirst { it.id == cat.id } + 1
+        if (idx <= 0) return
+
+        // Only update the index — do NOT trigger any listing fetch
+        vm.setCategoryIndex(idx)
+        buildTopTabs(cats)
+
+        val freshCat = cats.find { it.id == cat.id } ?: cat
+        val subs = freshCat.subCategories
+
+        if (subs.isNotEmpty()) {
+            pendingCategoryId = null
+            isShowingSubGrid = true
+            subCategoryAdapter.updateData(subs)
+            buildSubTabs(freshCat)
+            applyBodyState(BodyState.SUBCATEGORIES)
+        } else {
+            pendingCategoryId = cat.id
+            isShowingSubGrid = true
+            applyBodyState(BodyState.GRID_LOADING)
+            vm.fetchCategoryDetails(cat.id)
+        }
     }
 
     // ── Shimmer animation ─────────────────────────────────────────────────────
@@ -427,8 +530,5 @@ class MainActivity : AppCompatActivity() {
         binding.navChat.alpha = 0.45f
     }
 
-    // ── Util ──────────────────────────────────────────────────────────────────
-
-    private fun dp(value: Int): Int =
-        (value * resources.displayMetrics.density).toInt()
+    private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
 }
