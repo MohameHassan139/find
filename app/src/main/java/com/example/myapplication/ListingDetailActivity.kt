@@ -13,8 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.auth.TokenManager
-import com.example.myapplication.chat.ui.conversations.ConversationsActivity
 import com.example.myapplication.databinding.ActivityListingDetailBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,13 +29,8 @@ class ListingDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityListingDetailBinding
 
-    // Context list for prev/next navigation (passed as listing IDs)
-    private var listings: List<ApiListing> = emptyList()
-    private var currentIndex: Int = 0
-
     companion object {
         const val EXTRA_LISTING_ID = "listing_id"
-        const val EXTRA_LISTINGS_IDS = "listings_ids"   // comma-separated ids
         const val EXTRA_CURRENT_INDEX = "current_index"
     }
 
@@ -43,16 +38,12 @@ class ListingDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityListingDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         binding.btnBack.setOnClickListener { finish() }
-
-        // Receive the full listing object via the shared ViewModel cache
         val listingId = intent.getStringExtra(EXTRA_LISTING_ID) ?: run { finish(); return }
-        currentIndex = intent.getIntExtra(EXTRA_CURRENT_INDEX, 0)
-
-        // Load from API
         loadListing(listingId)
     }
+
+    // ── Load listing ──────────────────────────────────────────────────────────
 
     private fun loadListing(id: String) {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -62,49 +53,46 @@ class ListingDetailActivity : AppCompatActivity() {
                 conn.requestMethod = "GET"
                 conn.connectTimeout = 8000
                 conn.readTimeout = 8000
-                val token = TokenManager.getToken(this@ListingDetailActivity)
-                if (token != null) conn.setRequestProperty("Authorization", "Bearer $token")
+                TokenManager.getToken(this@ListingDetailActivity)
+                    ?.let { conn.setRequestProperty("Authorization", "Bearer $it") }
 
                 if (conn.responseCode == HttpURLConnection.HTTP_OK) {
-                    val body = JSONObject(conn.inputStream.bufferedReader().readText())
-                    val data = body.optJSONObject("data") ?: body
+                    val data = JSONObject(conn.inputStream.bufferedReader().readText())
+                        .optJSONObject("data") ?: return@launch
                     val listing = parseListing(data)
                     withContext(Dispatchers.Main) { bindListing(listing) }
                 } else {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@ListingDetailActivity,
-                            "تعذر تحميل الإعلان", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ListingDetailActivity, "تعذر تحميل الإعلان", Toast.LENGTH_SHORT).show()
                         finish()
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@ListingDetailActivity,
-                        "تعذر الاتصال", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ListingDetailActivity, "تعذر الاتصال", Toast.LENGTH_SHORT).show()
                     finish()
                 }
             }
         }
     }
 
+    // ── Bind ──────────────────────────────────────────────────────────────────
+
     private fun bindListing(l: DetailListing) {
         binding.tvTopTitle.text = l.title ?: ""
         binding.tvTitle.text = l.title ?: ""
 
-        // Price
         binding.tvPrice.text = l.price?.let {
             val fmt = if (it % 1 == 0.0) it.toLong().toString() else it.toString()
             "$fmt ر.س"
         } ?: "—"
 
-        // Type badge
         val isOffer = l.listingType == "offer"
         binding.tvTypeBadge.text = if (isOffer) "عرض" else "طلب"
         binding.tvTypeBadge.setBackgroundColor(
             if (isOffer) Color.parseColor("#34C759") else Color.parseColor("#FF9500")
         )
 
-        // Location + time
         val loc = listOfNotNull(l.regionNameAr, l.city).joinToString(" - ")
         binding.tvLocation.text = buildString {
             if (loc.isNotEmpty()) append("📍 $loc")
@@ -115,22 +103,18 @@ class ListingDetailActivity : AppCompatActivity() {
             }
         }
 
-        // Seller
         binding.tvSellerName.text = l.sellerName ?: ""
-        val avatar = l.sellerAvatar
-        if (!avatar.isNullOrEmpty()) {
-            Glide.with(binding.ivAvatar.context).load(avatar)
+        if (!l.sellerAvatar.isNullOrEmpty()) {
+            Glide.with(binding.ivAvatar.context).load(l.sellerAvatar)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.ic_avatar_placeholder)
                 .transition(withCrossFade(200))
                 .circleCrop().into(binding.ivAvatar)
         }
 
-        // Description
         binding.tvDescription.text = l.description ?: ""
         binding.tvDescription.visibility = if (l.description.isNullOrEmpty()) View.GONE else View.VISIBLE
 
-        // Action buttons
         val phone = l.sellerPhone
         binding.btnCall.setOnClickListener {
             if (!phone.isNullOrEmpty()) {
@@ -142,31 +126,27 @@ class ListingDetailActivity : AppCompatActivity() {
         binding.btnWhatsapp.setOnClickListener {
             if (!phone.isNullOrEmpty() && l.whatsappEnabled) {
                 val num = phone.replace(Regex("[^\\d+]"), "")
-                startActivity(Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://wa.me/$num")))
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/$num")))
             } else {
                 Toast.makeText(this, "واتساب غير متاح", Toast.LENGTH_SHORT).show()
             }
         }
         binding.btnChat.setOnClickListener {
-            startConversation(l.id)
+            startConversation(l.id, l.sellerId?.toString() ?: "")
         }
 
-        // Prev / Next (disabled for now — single listing view)
         binding.btnPrev.isEnabled = false
         binding.btnNext.isEnabled = false
         binding.btnPrev.alpha = 0.3f
         binding.btnNext.alpha = 0.3f
 
-        // Images — full width, stacked vertically
         binding.llImages.removeAllViews()
         l.images.forEach { url ->
             val iv = ImageView(this)
-            val lp = LinearLayout.LayoutParams(
+            iv.layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                resources.displayMetrics.widthPixels   // square-ish
+                resources.displayMetrics.widthPixels
             )
-            iv.layoutParams = lp
             iv.scaleType = ImageView.ScaleType.CENTER_CROP
             Glide.with(iv.context).load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -177,71 +157,86 @@ class ListingDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun startConversation(listingId: String) {
+    // ── Start conversation ────────────────────────────────────────────────────
+
+    private fun startConversation(listingId: String, sellerId: String) {
         if (!TokenManager.isLoggedIn(this)) {
-            startActivity(Intent(this, com.example.myapplication.auth.PhoneAuthActivity::class.java))
+            startActivity(Intent(this, PhoneAuthActivity::class.java))
             return
         }
+        val token = TokenManager.getToken(this) ?: return
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val token = TokenManager.getToken(this@ListingDetailActivity) ?: return@launch
                 val conn = URL("http://144.126.211.123/api/conversations")
                     .openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"
                 conn.doOutput = true
-                conn.setRequestProperty("Content-Type", "application/json")
+                val boundary = "----Boundary${System.currentTimeMillis()}"
+                conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=$boundary")
                 conn.setRequestProperty("Accept", "application/json")
                 conn.setRequestProperty("Authorization", "Bearer $token")
-                // API expects listing_id
-                val body = """{"listing_id":"$listingId"}"""
-                conn.outputStream.write(body.toByteArray())
+
+                val formBody = buildString {
+                    append("--$boundary\r\n")
+                    append("Content-Disposition: form-data; name=\"listing_id\"\r\n\r\n")
+                    append("$listingId\r\n")
+                    if (sellerId.isNotEmpty()) {
+                        append("--$boundary\r\n")
+                        append("Content-Disposition: form-data; name=\"seller_id\"\r\n\r\n")
+                        append("$sellerId\r\n")
+                    }
+                    append("--$boundary--\r\n")
+                }
+                conn.outputStream.write(formBody.toByteArray())
 
                 val code = conn.responseCode
                 val stream = if (code in 200..299) conn.inputStream else conn.errorStream
-                val resp = JSONObject(stream.bufferedReader().readText())
+                val rawJson = stream?.bufferedReader()?.readText() ?: ""
+                val root = JSONObject(rawJson)
+                val convObj = root.optJSONObject("data")
 
-                val convData = resp.optJSONObject("data")
-                if (convData != null) {
-                    val conversation = com.example.myapplication.chat.model.Conversation(
-                        id = convData.optString("id"),
-                        listingId = convData.optString("listing_id").ifEmpty { null },
-                        listingTitle = convData.optString("listing_title").ifEmpty { null },
-                        buyerId = convData.optString("buyer_id").ifEmpty { null },
-                        sellerId = convData.optString("seller_id").ifEmpty { null },
-                        sellerName = convData.optString("seller_name").ifEmpty { null },
-                        sellerAvatar = convData.optString("seller_avatar").ifEmpty { null },
-                        buyerName = convData.optString("buyer_name").ifEmpty { null },
-                        buyerAvatar = convData.optString("buyer_avatar").ifEmpty { null },
-                        lastMessage = null,
-                        lastMessageAt = convData.optString("last_message_at").ifEmpty { null },
-                        buyerUnread = 0,
-                        sellerUnread = 0
-                    )
+                if (code !in 200..299 || convObj == null) {
+                    val msg = root.optString("message").ifEmpty { "تعذر فتح المحادثة" }
                     withContext(Dispatchers.Main) {
-                        val intent = Intent(this@ListingDetailActivity,
+                        Toast.makeText(this@ListingDetailActivity, msg, Toast.LENGTH_SHORT).show()
+                    }
+                    return@launch
+                }
+
+                val conversation = com.example.myapplication.chat.model.Conversation(
+                    id = convObj.getString("id"),
+                    listingId = convObj.optString("listing_id").ifEmpty { null },
+                    listingTitle = convObj.optString("listing_title").ifEmpty { null },
+                    buyerId = convObj.optString("buyer_id").ifEmpty { null },
+                    sellerId = convObj.optString("seller_id").ifEmpty { null },
+                    sellerName = convObj.optString("seller_name").ifEmpty { null },
+                    sellerAvatar = convObj.optString("seller_avatar").ifEmpty { null },
+                    buyerName = convObj.optString("buyer_name").ifEmpty { null },
+                    buyerAvatar = if (convObj.isNull("buyer_avatar")) null else convObj.optString("buyer_avatar"),
+                    lastMessage = convObj.optString("last_message").ifEmpty { null },
+                    lastMessageAt = convObj.optString("last_message_at").ifEmpty { null },
+                    buyerUnread = convObj.optInt("buyer_unread", 0),
+                    sellerUnread = convObj.optInt("seller_unread", 0)
+                )
+                withContext(Dispatchers.Main) {
+                    startActivity(
+                        Intent(this@ListingDetailActivity,
                             com.example.myapplication.chat.ui.chat.ChatActivity::class.java)
-                        intent.putExtra(
-                            com.example.myapplication.chat.ui.chat.ChatActivity.EXTRA_CONVERSATION,
-                            conversation
-                        )
-                        startActivity(intent)
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(this@ListingDetailActivity,
-                            "تعذر فتح المحادثة", Toast.LENGTH_SHORT).show()
-                    }
+                            .putExtra(
+                                com.example.myapplication.chat.ui.chat.ChatActivity.EXTRA_CONVERSATION,
+                                conversation
+                            )
+                    )
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@ListingDetailActivity,
-                        "تعذر الاتصال", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ListingDetailActivity, "تعذر الاتصال", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    // ── Parsing ───────────────────────────────────────────────────────────────
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
     private fun parseListing(o: JSONObject): DetailListing {
         val images = mutableListOf<String>()
@@ -271,9 +266,9 @@ class ListingDetailActivity : AppCompatActivity() {
     private fun formatTime(dateStr: String?): String {
         if (dateStr.isNullOrEmpty()) return ""
         return try {
-            val fmt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.getDefault())
-            fmt.timeZone = TimeZone.getTimeZone("UTC")
-            val date = fmt.parse(dateStr) ?: return dateStr
+            val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+            sdf.timeZone = TimeZone.getTimeZone("UTC")
+            val date = sdf.parse(dateStr.take(19)) ?: return ""
             val diff = (System.currentTimeMillis() - date.time) / 1000
             when {
                 diff < 60 -> "الآن"
@@ -282,7 +277,7 @@ class ListingDetailActivity : AppCompatActivity() {
                 diff < 2592000 -> "${diff / 86400} يوم"
                 else -> SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
             }
-        } catch (_: Exception) { dateStr }
+        } catch (_: Exception) { "" }
     }
 }
 
