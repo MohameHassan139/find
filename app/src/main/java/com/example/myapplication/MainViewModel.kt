@@ -1,16 +1,36 @@
 package com.example.myapplication
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.myapplication.chat.api.RetrofitClient
+import com.example.myapplication.models.toApiListing
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
+import java.net.URLEncoderutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLEncoder
 
 private const val ICON_BASE = "https://ocebfvgwgpebjxetnixc.supabase.co/storage/v1/object/public/listings-images/subCatigory/"
 private const val PAGE_SIZE = 20
@@ -35,9 +55,10 @@ data class ApiSubCategory(
     val iconUrl: String? get() = iconName?.let { "$ICON_BASE$it.png" }
 }
 
-data class ApiFilterOption(val id: Int, val nameAr: String)
+class MainViewModel(app: Application) : AndroidViewModel(app) {
 
-data class RegionItem(val id: Int, val nameAr: String)
+    private val api = "http://144.126.211.123/api"
+    private val findApiService = RetrofitClient.build(app)ing)
 data class CityItem(val id: Int, val nameAr: String, val regionId: Int)
 
 data class ApiListing(
@@ -55,9 +76,10 @@ data class ApiListing(
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
-class MainViewModel : ViewModel() {
+class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     private val api = "http://144.126.211.123/api"
+    private val findApiService = RetrofitClient.build(app)
 
     // ── Exposed state ─────────────────────────────────────────────────────────
 
@@ -79,9 +101,54 @@ class MainViewModel : ViewModel() {
     val allCities: LiveData<List<CityItem>> get() = _allCities
 
     private val _listings = MutableLiveData<List<ApiListing>>()
-    val listings: LiveData<List<ApiListing>> get() = _listings
+    // ── Search state ──────────────────────────────────────────────────────────
 
-    private val _isBootLoading = MutableLiveData<Boolean>(true)
+    private val _srchDraft = MutableStateFlow("")
+    val srchDraft: StateFlow<String> get() = _srchDraft
+
+    private val _srchTags = MutableLiveData<List<String>>(emptyList())
+    val srchTags: LiveData<List<String>> get() = _srchTags
+
+    private val _searchResults = MutableLiveData<List<ApiListing>>()
+    val searchResults: LiveData<List<ApiListing>> get() = _searchResults
+
+    private val _isSearchLoading = MutableLiveData<Boolean>(false)
+    val isSearchLoading: LiveData<Boolean> get() = _isSearchLoading
+
+    private val _isSearchEmpty = MutableLiveData<Boolean>(false)
+    val isSearchEmpty: LiveData<Boolean> get() = _isSearchEmpty
+
+    private val _searchErrorEvent = MutableLiveData<String?>()
+    val searchErrorEvent: LiveData<String?> get() = _searchErrorEvent
+
+    init {
+        boot()
+        viewModelScope.launch {
+            _srchDraft
+                .debounce(400L)
+                .collect { draft ->
+                    val tags = _srchTags.value ?: emptyList()
+                    val active = tags.isNotEmpty() || draft.length >= 2
+                    if (active) runSearch() else if (draft.isEmpty() && tags.isEmpty()) clearSearch()
+                }
+        }
+    }ive: MediatorLiveData<Boolean> = MediatorLiveData<Boolean>().apply {
+        val srchDraftLiveData = _srchDraft.asLiveData()
+        addSource(_srchTags) { tags ->
+            val draft = _srchDraft.value
+            value = tags.isNotEmpty() || draft.length >= 2
+        }
+        addSource(srchDraftLiveData) { draft ->
+            val tags = _srchTags.value ?: emptyList()
+            value = tags.isNotEmpty() || draft.length >= 2
+        }
+    }
+
+    private var searchJob: Job? = null
+
+    // ── Filter state ──────────────────────────────────────────────────────────
+
+    var catIdx: Int = 0Loading = MutableLiveData<Boolean>(true)
     val isBootLoading: LiveData<Boolean> get() = _isBootLoading
 
     private val _isListingsLoading = MutableLiveData<Boolean>(false)
@@ -101,11 +168,93 @@ class MainViewModel : ViewModel() {
     private val _errorEvent = MutableLiveData<String?>()
     val errorEvent: LiveData<String?> get() = _errorEvent
 
+    // ── Search state ──────────────────────────────────────────────────────────
+
+    private val _srchDraft = MutableStateFlow("")
+    val srchDraft: StateFlow<String> get() = _srchDraft
+
+    private val _srchTags = MutableLiveData<List<String>>(emptyList())
+    val srchTags: LiveData<List<String>> get() = _srchTags
+
+    private val _searchResults = MutableLiveData<List<ApiListing>>()
+    val searchResults: LiveData<List<ApiListing>> get() = _searchResults
+
+    private val _isSearchLoading = MutableLiveData<Boolean>(false)
+    val isSearchLoading: LiveData<Boolean> get() = _isSearchLoading
+
+    private val _isSearchEmpty = MutableLiveData<Boolean>(false)
+    val isSearchEmpty: LiveData<Boolean> get() = _isSearchEmpty
+
+    private val _searchErrorEvent = MutableLiveData<String?>()
+    init {
+        boot()
+        // Debounce pipeline: react to draft changes with 400ms delay
+        viewModelScope.launch {
+            _srchDraft
+                .debounce(400L)
+                .collect { draft ->
+                    val tags = _srchTags.value ?: emptyList()
+                    val active = tags.isNotEmpty() || draft.length >= 2
+                    if (active) runSearch() else if (draft.isEmpty() && tags.isEmpty()) clearSearch()
+                }
+        }
+    }Event: LiveData<String?> get() = _searchErrorEvent
+
+    val isSearchActive: MediatorLiveData<Boolean> = MediatorLiveData<Boolean>().apply {
+        val srchDraftLiveData = _srchDraft.asLiveData()
+        addSource(_srchTags) { tags ->
+            val draft = _srchDraft.value
+            value = tags.isNotEmpty() || draft.length >= 2
+        }
+        addSource(srchDraftLiveData) { draft ->
+            val tags = _srchTags.value ?: emptyList()
+            value = tags.isNotEmpty() || draft.length >= 2
+        }
+    }
+
+    private var searchJob: Job? = null
+
     // ── Filter state ──────────────────────────────────────────────────────────
 
     var catIdx: Int = 0
         private set
     var catSubIdx: Int? = null
+        private set
+    var catExtraIdx: Int? = null
+        private set
+    var catType: String? = null
+    var catRegId: Int? = null
+    var catCityId: Int? = null = MutableLiveData<List<ApiListing>>()
+    val searchResults: LiveData<List<ApiListing>> get() = _searchResults
+
+MutableLiveData<Boolean>(false)
+    val isSearchLoading: LiveData<Boolean> get() = _isSearchLoading
+
+    private val _isSearchEmpty = MutableLiveData<Boolean>(false)
+    val isSearchEmpty: LiveData<Boolean> get() = _isSearchEmpty
+
+    private val _searchErrorEvent = MutableLiveData<String?>()
+    val searchErrorEvent: LiveData<String?> get() = _searchErrorEvent
+
+    val isSearchActive: MediatorLiveData<Boolean> = MediatorLiveData<Boolean>().apply {
+        val srchDraftLiveData = _srchDraft.asLiveData()
+        addSource(_srchTags) { tags ->
+            val draft = _srchDraft.value
+            value = tags.isNotEmpty() || draft.length >= 2
+        }
+        addSource(srchDraftLiveData) { draft ->
+            val tags = _srchTags.value ?: emptyList()
+            value = tags.isNotEmpty() || draft.length >= 2
+        }
+    }
+
+    private var searchJob: Job? = null
+
+    // ── Filter state ──────────────────────────────────────────────────────────
+
+    var catIdx: Int = 0
+        private set
+    var catSubIdx: Int? 
         private set
     var catExtraIdx: Int? = null
         private set
@@ -121,7 +270,19 @@ class MainViewModel : ViewModel() {
 
     // ── Boot ──────────────────────────────────────────────────────────────────
 
-    init { boot() }
+    init {
+        boot()
+        // Debounce pipeline: react to draft changes with 400ms delay
+        viewModelScope.launch {
+            _srchDraft
+                .debounce(400L)
+                .collect { draft ->
+                    val tags = _srchTags.value ?: emptyList()
+                    val active = tags.isNotEmpty() || draft.length >= 2
+                    if (active) runSearch() else if (draft.isEmpty() && tags.isEmpty()) clearSearch()
+                }
+        }
+    }
 
     private fun boot() {
         _isBootLoading.value = true
@@ -172,7 +333,7 @@ class MainViewModel : ViewModel() {
                             val fo = optArr.getJSONObject(k)
                             opts.add(ApiFilterOption(fo.getInt("id"), fo.getString("name_ar")))
                         }
-                        subs.add(ApiSubCategory(
+                        sSubCategory(
                             id = s.getInt("id"),
                             nameAr = s.getString("name_ar"),
                             iconName = s.optString("icon").ifEmpty { null },
@@ -196,7 +357,7 @@ class MainViewModel : ViewModel() {
             try {
                 val conn = openGet("$api/categories/$categoryId")
                 if (conn.responseCode == HttpURLConnection.HTTP_OK) {
-                    val body = JSONObject(conn.inputStream.bufferedReader().readText())
+                    val body = JSONObj
                     val data = body.optJSONObject("data") ?: body
                     val subArr = data.optJSONArray("sub_categories") ?: JSONArray()
                     val subs = mutableListOf<ApiSubCategory>()
@@ -212,7 +373,7 @@ class MainViewModel : ViewModel() {
                         subs.add(ApiSubCategory(
                             id = s.getInt("id"),
                             nameAr = s.getString("name_ar"),
-                            iconName = s.optString("icon").ifEmpty { null },
+                            iconName = s.optString("icon { null },
                             filterOptions = opts
                         ))
                     }
@@ -243,14 +404,75 @@ class MainViewModel : ViewModel() {
         catRegId = null
         catCityId = null
         if (idx == 0) {
-            _homeSubCategories.value = emptyList()
+            _home = emptyList()
         } else if (fetchImmediately) {
             fetchListings(reset = true)
         }
     }
 
     /** Called when user taps a top-level category card in the home grid */
-    fun selectHomeCategoryForGrid(cat: ApiCategory) {
+    // ── Search operations ─────────────────────────────────────────────────────
+
+    fun onDraftChanged(text: String) {
+        _srchDraft.value = text
+    }
+
+    fun commitDraftAsTag() {
+        val draft = _srchDraft.value.trim()
+        if (draft.isEmpty()) return
+        val current = _srchTags.value ?: emptyList()
+        if (current.any { it.equals(draft, ignoreCase = true) }) return
+        _srchTags.value = current + draft
+        _srchDraft.value = ""
+        runSearch()
+    }
+
+    fun removeTag(tag: String) {
+        val current = _srchTags.value ?: emptyList()
+        val updated = current.filter { it != tag }
+        _srchTags.value = updated
+        val draft = _srchDraft.value
+        if (updated.isEmpty() && draft.length < 2) {
+            clearSearch()
+        } else {
+            runSearch()
+        }
+    }
+
+    private fun buildQuery(): String {
+        val tags = _srchTags.value ?: emptyList()
+        val draft = _srchDraft.value.trim()
+        val combined = (tags + listOf(draft)).filter { it.isNotEmpty() }.joinToString(" ")
+        return URLEncoder.encode(combined, "UTF-8")
+    }
+
+    fun runSearch() {
+        searchJob?.cancel()
+        _isSearchLoading.value = true
+        searchJob = viewModelScope.launch {
+            try {
+                val response = findApiService.searchListings(buildQuery())
+                if (response.isSuccessful) {
+                    val results = response.body()?.data?.map { it.toApiListing() } ?: emptyList()
+                    _searchResults.value = results
+                    _isSearchEmpty.value = results.isEmpty()
+                } else {
+                    _searchErrorEvent.value = "تعذّر تنفيذ البحث"
+                }
+            } catch (e: Exception) {
+                _searchErrorEvent.value = "تعذّر تنفيذ البحث"
+            } finally {
+                _isSearchLoading.value = false
+            }
+        }
+    }
+
+    fun clearSearch() {
+        searchJob?.cancel()
+        searchJob = null
+        _srchDraft.value = ""
+        _srchTags.value = emptyList()
+  
         _isHomeGridLoading.value = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -263,7 +485,7 @@ class MainViewModel : ViewModel() {
                     for (i in 0 until subArr.length()) {
                         val s = subArr.getJSONObject(i)
                         if (s.optString("name_ar").trim() == "الكل") continue
-                        val opts = mutableListOf<ApiFilterOption>()
+                        val opts = mutableListOf<AprOption>()
                         val optArr = s.optJSONArray("filter_options") ?: JSONArray()
                         for (k in 0 until optArr.length()) {
                             val fo = optArr.getJSONObject(k)
@@ -315,7 +537,74 @@ class MainViewModel : ViewModel() {
     }
 
     fun selectRegion(regionId: Int?) {
-        catRegId = regionId
+    // ── Search operations ─────────────────────────────────────────────────────
+
+    fun onDraftChanged(text: String) {
+        _srchDraft.value = text
+    }
+
+    fun commitDraftAsTag() {
+        val draft = _srchDraft.value.trim()
+        if (draft.isEmpty()) return
+        val current = _srchTags.value ?: emptyList()
+        if (current.any { it.equals(draft, ignoreCase = true) }) return
+        _srchTags.value = current + draft
+        _srchDraft.value = ""
+        runSearch()
+    }
+
+    fun removeTag(tag: String) {
+        val current = _srchTags.value ?: emptyList()
+        val updated = current.filter { it != tag }
+        _srchTags.value = updated
+        val draft = _srchDraft.value
+        if (updated.isEmpty() && draft.length < 2) {
+            clearSearch()
+        } else {
+            runSearch()
+        }
+    }
+
+    private fun buildQuery(): String {
+        val tags = _srchTags.value ?: emptyList()
+        val draft = _srchDraft.value.trim()
+        val combined = (tags + listOf(draft)).filter { it.isNotEmpty() }.joinToString(" ")
+        return URLEncoder.encode(combined, "UTF-8")
+    }
+
+    fun runSearch() {
+        searchJob?.cancel()
+        _isSearchLoading.value = true
+        searchJob = viewModelScope.launch {
+            try {
+                val response = findApiService.searchListings(buildQuery())
+                if (response.isSuccessful) {
+                    val results = response.body()?.data?.map { it.toApiListing() } ?: emptyList()
+                    _searchResults.value = results
+                    _isSearchEmpty.value = results.isEmpty()
+                } else {
+                    _searchErrorEvent.value = "تعذّر تنفيذ البحث"
+                }
+            } catch (e: Exception) {
+                _searchErrorEvent.value = "تعذّر تنفيذ البحث"
+            } finally {
+                _isSearchLoading.value = false
+            }
+        }
+    }
+
+    fun clearSearch() {
+        searchJob?.cancel()
+        searchJob = null
+        _srchDraft.value = ""
+        _srchTags.value = emptyList()
+        _searchResults.value = emptyList()
+        _isSearchLoading.value = false
+        _isSearchEmpty.value = false
+        _searchErrorEvent.value = null
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
         catCityId = null
         if (catIdx > 0) fetchListings(reset = true)
     }
@@ -350,7 +639,7 @@ class MainViewModel : ViewModel() {
         val subs = cat.subCategories
         val ss = catSubIdx?.let { subs.getOrNull(it) }
         val extras = ss?.filterOptions ?: emptyList()
-        val se = catExtraIdx?.let { extras.getOrNull(it) }
+        val se = catEl(it) }
 
         if (reset) {
             currentPage = 1
@@ -377,7 +666,7 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val conn = openGet("$api/listings?$params")
-                if (conn.responseCode == HttpURLConnection.HTTP_OK) {
+(conn.responseCode == HttpURLConnection.HTTP_OK) {
                     val body = JSONObject(conn.inputStream.bufferedReader().readText())
                     val arr = body.optJSONArray("data") ?: JSONArray()
                     val meta = body.optJSONObject("meta")
@@ -394,7 +683,7 @@ class MainViewModel : ViewModel() {
                     }
                 } else {
                     withContext(Dispatchers.Main) {
-                        _isFirstPageLoading.value = false
+                        _isFirstPageLoadlue = false
                         _isPagingLoading.value = false
                         _isEmptyState.value = reset
                         isFetching = false
@@ -411,48 +700,80 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    // ── Search operations ─────────────────────────────────────────────────────
 
-    fun citiesForRegion(regionId: Int?): List<CityItem> {
-        if (regionId == null) return emptyList()
-        return _allCities.value?.filter { it.regionId == regionId } ?: emptyList()
+    fun onDraftChanged(text: String) {
+        _srchDraft.value = text
     }
 
-    private fun openGet(url: String): HttpURLConnection {
-        val conn = URL(url).openConnection() as HttpURLConnection
-        conn.requestMethod = "GET"
-        conn.connectTimeout = 8000
-        conn.readTimeout = 8000
-        return conn
+    fun commitDraftAsTag() {
+        val draft = _srchDraft.value.trim()
+        if (draft.isEmpty()) return
+        val current = _srchTags.value ?: emptyList()
+        if (current.any { it.equals(draft, ignoreCase = true) }) return
+        _srchTags.value = current + draft
+        _srchDraft.value = ""
+     
     }
 
-    private fun parseCategoriesFromFilters(arr: JSONArray): List<ApiCategory> {
-        val list = mutableListOf<ApiCategory>()
+    fun removeTag(tag: String) {
+        val current = _srchTags.value ?: emptyList()
+        val updated = current.filter { it != tag }
+        _srchTags.value = updated
+        val draft = _srchDraft.value
+        if (updated.isEmpty() && draft.length < 2) {
+            clearSearch()
+        } else {
+            runSearch()
+        }
+    }
+
+    private fun buildQuery(): String {
+        val tags = _srchTags.value ?: emptyList()
+        val draft = _srchDraft.value.trim()
+        val combined = (tags + listOf(draft)).filter { it.isNotEmpty() }.joinToString(" ")
+        return URLEncoder.encode(combined, "UTF-8")
+    }
+
+    fun runSearch() {
+        searchJob?.cancel()
+        _isSearchLoading.value = true
+        searchJob = viewModelScope.launch {
+            try {
+             createdAt = o.optString("created_at").ifEmpty { null },
+                images = images,
+                sellerName = seller?.optString("name")?.ifEmpty { null },
+                sellerAvatar = seller?.optString("avatar")?.ifEmpty { null },
+                regionNameAr = region?.optString("name_ar")?.ifEmpty { null },
+                city = o.optString("city").ifEmpty { null }
+            ))
+        }
+        return list
+    }
+}
+JSONArray("images")
+            if (imgArr != null) for (j in 0 until imgArr.length()) images.add(imgArr.getString(j))
+            val seller = o.optJSONObject("seller")
+            val region = o.optJSONObject("region")
+            list.add(ApiListing(
+                id = o.optString("id"),
+                title = o.optString("title").ifEmpty { null },
+                price = if (!o.isNull("price")) o.optDouble("price") else null,
+                listingType = o.optString("listing_type").ifEmpty { null },
+           for (j in 0 until cArr.length()) {
+                val c = cArr.getJSONObject(j)
+                cities.add(CityItem(c.getInt("id"), c.getString("name_ar"), rId))
+            }
+        }
+        return Pair(regions, cities)
+    }
+
+    private fun parseListings(arr: JSONArray): List<ApiListing> {
+        val list = mutableListOf<ApiListing>()
         for (i in 0 until arr.length()) {
             val o = arr.getJSONObject(i)
-            val subs = mutableListOf<ApiSubCategory>()
-            val subArr = o.optJSONArray("sub_categories") ?: JSONArray()
-            for (j in 0 until subArr.length()) {
-                val s = subArr.getJSONObject(j)
-                if (s.optString("name_ar").trim() == "الكل") continue
-                val opts = mutableListOf<ApiFilterOption>()
-                val optArr = s.optJSONArray("filter_options") ?: JSONArray()
-                for (k in 0 until optArr.length()) {
-                    val fo = optArr.getJSONObject(k)
-                    opts.add(ApiFilterOption(fo.getInt("id"), fo.getString("name_ar")))
-                }
-                subs.add(ApiSubCategory(
-                    id = s.getInt("id"),
-                    nameAr = s.getString("name_ar"),
-                    iconName = s.optString("icon").ifEmpty { null },
-                    filterOptions = opts
-                ))
-            }
-            list.add(ApiCategory(
-                id = o.getInt("id"),
-                nameAr = o.getString("name_ar"),
-                iconName = o.optString("icon").ifEmpty { null },
-                subCategories = subs
+            val images = mutableListOf<String>()
+            val imgArr = o.opt   subCategories = subs
             ))
         }
         return list
@@ -466,36 +787,72 @@ class MainViewModel : ViewModel() {
             val rId = r.getInt("id")
             regions.add(RegionItem(rId, r.getString("name_ar")))
             val cArr = r.optJSONArray("cities") ?: JSONArray()
-            for (j in 0 until cArr.length()) {
-                val c = cArr.getJSONObject(j)
-                cities.add(CityItem(c.getInt("id"), c.getString("name_ar"), rId))
+    ring("name_ar")))
+                }
+                subs.add(ApiSubCategory(
+                    id = s.getInt("id"),
+                    nameAr = s.getString("name_ar"),
+                    iconName = s.optString("icon").ifEmpty { null },
+                    filterOptions = opts
+                ))
             }
-        }
-        return Pair(regions, cities)
+            list.add(ApiCategory(
+                id = o.getInt("id"),
+                nameAr = o.getString("name_ar"),
+                iconName = o.optString("icon").ifEmpty { null },
+             y("sub_categories") ?: JSONArray()
+            for (j in 0 until subArr.length()) {
+                val s = subArr.getJSONObject(j)
+                if (s.optString("name_ar").trim() == "الكل") continue
+                val opts = mutableListOf<ApiFilterOption>()
+                val optArr = s.optJSONArray("filter_options") ?: JSONArray()
+                for (k in 0 until optArr.length()) {
+                    val fo = optArr.getJSONObject(k)
+                    opts.add(ApiFilterOption(fo.getInt("id"), fo.getSttpURLConnection {
+        val conn = URL(url).openConnection() as HttpURLConnection
+        conn.requestMethod = "GET"
+        conn.connectTimeout = 8000
+        conn.readTimeout = 8000
+        return conn
     }
 
-    private fun parseListings(arr: JSONArray): List<ApiListing> {
-        val list = mutableListOf<ApiListing>()
+    private fun parseCategoriesFromFilters(arr: JSONArray): List<ApiCategory> {
+        val list = mutableListOf<ApiCategory>()
         for (i in 0 until arr.length()) {
             val o = arr.getJSONObject(i)
-            val images = mutableListOf<String>()
-            val imgArr = o.optJSONArray("images")
-            if (imgArr != null) for (j in 0 until imgArr.length()) images.add(imgArr.getString(j))
-            val seller = o.optJSONObject("seller")
-            val region = o.optJSONObject("region")
-            list.add(ApiListing(
-                id = o.optString("id"),
-                title = o.optString("title").ifEmpty { null },
-                price = if (!o.isNull("price")) o.optDouble("price") else null,
-                listingType = o.optString("listing_type").ifEmpty { null },
-                createdAt = o.optString("created_at").ifEmpty { null },
-                images = images,
-                sellerName = seller?.optString("name")?.ifEmpty { null },
-                sellerAvatar = seller?.optString("avatar")?.ifEmpty { null },
-                regionNameAr = region?.optString("name_ar")?.ifEmpty { null },
-                city = o.optString("city").ifEmpty { null }
-            ))
-        }
-        return list
+            val subs = mutableListOf<ApiSubCategory>()
+            val subArr = o.optJSONArrasrchTags.value = emptyList()
+        _searchResults.value = emptyList()
+        _isSearchLoading.value = false
+        _isSearchEmpty.value = false
+        _searchErrorEvent.value = null
     }
-}
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    fun citiesForRegion(regionId: Int?): List<CityItem> {
+        if (regionId == null) return emptyList()
+        return _allCities.value?.filter { it.regionId == regionId } ?: emptyList()
+    }
+
+    private fun openGet(url: String): HtarchResults.value = results
+                    _isSearchEmpty.value = results.isEmpty()
+                } else {
+                    _searchErrorEvent.value = "تعذّر تنفيذ البحث"
+                }
+            } catch (e: Exception) {
+                _searchErrorEvent.value = "تعذّر تنفيذ البحث"
+            } finally {
+                _isSearchLoading.value = false
+            }
+        }
+    }
+
+    fun clearSearch() {
+        searchJob?.cancel()
+        searchJob = null
+        _srchDraft.value = ""
+        _                val response = findApiService.searchListings(buildQuery())
+                if (response.isSuccessful) {
+                    val results = response.body()?.data?.map { it.toApiListing() } ?: emptyList()
+                    _se
