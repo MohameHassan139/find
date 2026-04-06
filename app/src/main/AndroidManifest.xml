@@ -32,6 +32,8 @@
         <activity android:name=".LocationSelectionActivity" android:exported="false" />
         <activity android:name=".CategorySelectionActivity" android:exported="false" />
         <activity android:name=".ListingDetailActivity" android:exported="false" />
+        <activity android:name=".SearchActivity" android:exported="false"
+            android:windowSoftInputMode="stateVisible" />
 
         <!-- Profile -->
         <activity android:name=".profile.ProfileActivity" android:exported="false" />

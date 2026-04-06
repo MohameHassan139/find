@@ -60,7 +60,16 @@ class MainActivity : AppCompatActivity() {
         setupTypeChips()
         observeViewModel()
         setupNavigation()
+        setupSearch()
         refreshUserProfile()
+    }
+
+    private fun setupSearch() {
+        binding.etSearch.isFocusable = false
+        binding.etSearch.isFocusableInTouchMode = false
+        binding.etSearch.setOnClickListener {
+            startActivity(Intent(this, SearchActivity::class.java))
+        }
     }
 
     private fun refreshUserProfile() {
