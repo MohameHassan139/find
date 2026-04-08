@@ -29,4 +29,7 @@ interface FindApiService {
 
     @POST("notifications/mark-all-read")
     suspend fun markAllNotificationsRead(): Response<Unit>
+
+    @GET("listings")
+    suspend fun searchListings(@Query("query") query: String): Response<com.example.myapplication.models.ListingsApiResponse>
 }

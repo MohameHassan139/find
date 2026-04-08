@@ -40,3 +40,18 @@ data class ListingRegion(
     val id: Int = 0,
     @SerializedName("name_ar") val nameAr: String?
 )
+
+fun Listing.toApiListing(): com.example.myapplication.ApiListing {
+    return com.example.myapplication.ApiListing(
+        id = id,
+        title = title,
+        price = price,
+        listingType = listingType,
+        createdAt = createdAt,
+        images = images ?: emptyList(),
+        sellerName = seller?.name,
+        sellerAvatar = seller?.avatar,
+        regionNameAr = region?.nameAr,
+        city = city
+    )
+}

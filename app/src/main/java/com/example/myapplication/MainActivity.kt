@@ -23,7 +23,6 @@ import com.example.myapplication.adapters.CategoryGridAdapter
 import com.example.myapplication.adapters.ListingsAdapter
 import com.example.myapplication.adapters.SubCategoryGridAdapter
 import com.example.myapplication.auth.AuthRetrofitClient
-import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.chat.ui.conversations.ConversationsActivity
 import com.example.myapplication.databinding.ActivityMainBinding
@@ -95,14 +94,12 @@ class MainActivity : AppCompatActivity() {
     // ── Adapters ──────────────────────────────────────────────────────────────
 
     private fun setupAdapters() {
-        // Top-level category grid — tapping shows sub-categories
         categoryAdapter = CategoryGridAdapter(emptyList()) { cat ->
             openCategory(cat)
         }
         binding.rvCategoryGrid.layoutManager = GridLayoutManager(this, 3)
         binding.rvCategoryGrid.adapter = categoryAdapter
 
-        // Sub-category grid — tapping highlights sub-tab AND fetches listings
         subCategoryAdapter = SubCategoryGridAdapter(emptyList()) { sub ->
             val cats = vm.categories.value ?: return@SubCategoryGridAdapter
             val parentCat = cats.firstOrNull { c -> c.subCategories.any { it.id == sub?.id } }
@@ -110,14 +107,12 @@ class MainActivity : AppCompatActivity() {
                 ?: return@SubCategoryGridAdapter
 
             if (sub == null) {
-                // "الكل" — stay in sub-category grid, fetch all ads for this category
                 vm.setCategoryIndex(cats.indexOfFirst { it.id == parentCat.id } + 1)
                 vm.selectSubCategory(null)
                 buildTopTabs(cats)
                 buildSubTabs(parentCat)
                 showListingsMode()
             } else {
-                // Specific sub-category — fetch filtered ads
                 val catIdx = cats.indexOfFirst { it.id == parentCat.id } + 1
                 val subIdx = parentCat.subCategories.indexOfFirst { it.id == sub.id }
                 vm.setCategoryIndex(catIdx)
@@ -130,9 +125,8 @@ class MainActivity : AppCompatActivity() {
         binding.rvSubCategoryGrid.layoutManager = GridLayoutManager(this, 3)
         binding.rvSubCategoryGrid.adapter = subCategoryAdapter
 
-        // Listings list
         listingsAdapter = ListingsAdapter(emptyList()) { listing ->
-            val intent = android.content.Intent(this, ListingDetailActivity::class.java)
+            val intent = Intent(this, ListingDetailActivity::class.java)
             intent.putExtra(ListingDetailActivity.EXTRA_LISTING_ID, listing.id)
             startActivity(intent)
         }
@@ -140,7 +134,6 @@ class MainActivity : AppCompatActivity() {
         binding.rvListings.layoutManager = llm
         binding.rvListings.adapter = listingsAdapter
 
-        // Pagination scroll listener
         binding.rvListings.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
                 if (dy <= 0) return
@@ -150,8 +143,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-
-    // ── Type chips ────────────────────────────────────────────────────────────
 
     private fun setupTypeChips() {
         binding.chipAll.setOnClickListener { vm.selectType(null); updateChipStyles(null) }
@@ -170,8 +161,6 @@ class MainActivity : AppCompatActivity() {
         style(binding.chipRequest, active == "request")
     }
 
-    // ── Body state — single source of truth ──────────────────────────────────
-
     private enum class BodyState { CATEGORIES, SUBCATEGORIES, GRID_LOADING, LOADING, ADS, EMPTY }
 
     private fun applyBodyState(state: BodyState) {
@@ -184,8 +173,6 @@ class MainActivity : AppCompatActivity() {
         if (state == BodyState.LOADING) animateShimmer(binding.llListingsShimmer)
     }
 
-    // ── Observers ─────────────────────────────────────────────────────────────
-
     private fun observeViewModel() {
         vm.isBootLoading.observe(this) { loading ->
             binding.bootShimmer.visibility = if (loading) View.VISIBLE else View.GONE
@@ -194,7 +181,6 @@ class MainActivity : AppCompatActivity() {
 
         vm.categories.observe(this) { cats ->
             buildTopTabs(cats)
-            // If a category tap was pending (enrichment wasn't done), complete it now
             val pending = pendingCategoryId
             if (pending != null) {
                 val cat = cats.find { it.id == pending }
@@ -215,24 +201,22 @@ class MainActivity : AppCompatActivity() {
 
         vm.regions.observe(this) { regions -> buildRegionSpinner(regions) }
 
-        // Home grid loading spinner
         vm.isHomeGridLoading.observe(this) { loading ->
             if (loading) applyBodyState(BodyState.GRID_LOADING)
         }
 
-        // Sub-category grid populated
         vm.homeSubCategories.observe(this) { subs ->
             if (subs.isEmpty()) {
-                // Back to top-level grid
-                categoryAdapter.updateData(vm.categories.value ?: emptyList())
-                applyBodyState(BodyState.CATEGORIES)
+                if (vm.catIdx == 0) {
+                   categoryAdapter.updateData(vm.categories.value ?: emptyList())
+                   applyBodyState(BodyState.CATEGORIES)
+                }
             } else {
                 subCategoryAdapter.updateData(subs)
                 applyBodyState(BodyState.SUBCATEGORIES)
             }
         }
 
-        // Condition B loading — show shimmer skeleton
         vm.isFirstPageLoading.observe(this) { loading ->
             if (loading && pendingCategoryId == null && !isShowingSubGrid) {
                 applyBodyState(BodyState.LOADING)
@@ -272,8 +256,6 @@ class MainActivity : AppCompatActivity() {
             applyBodyState(BodyState.CATEGORIES)
         }
     }
-
-    // ── Top tabs ──────────────────────────────────────────────────────────────
 
     private fun buildTopTabs(cats: List<ApiCategory>) {
         val container = binding.llTopTabs
@@ -331,8 +313,6 @@ class MainActivity : AppCompatActivity() {
         return wrapper
     }
 
-    // ── Sub-category tabs ─────────────────────────────────────────────────────
-
     private fun buildSubTabs(cat: ApiCategory) {
         val subs = cat.subCategories
         if (subs.isEmpty()) {
@@ -386,12 +366,10 @@ class MainActivity : AppCompatActivity() {
             vm.selectSubCategory(subIdx)
             val cat = vm.categories.value?.getOrNull(vm.catIdx - 1) ?: return@setOnClickListener
             buildSubTabs(cat)
-            showListingsMode()   // unblock listing observers
+            showListingsMode()
         }
         return wrapper
     }
-
-    // ── Extra tabs ────────────────────────────────────────────────────────────
 
     private fun buildExtraTabs(sub: ApiSubCategory?) {
         val extras = sub?.filterOptions ?: emptyList()
@@ -444,8 +422,6 @@ class MainActivity : AppCompatActivity() {
         return wrapper
     }
 
-    // ── Region / City spinners ────────────────────────────────────────────────
-
     private fun buildRegionSpinner(regions: List<RegionItem>) {
         if (regions == lastRegionList && binding.spinnerRegion.adapter != null) return
         lastRegionList = regions
@@ -489,7 +465,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showCategoryGridMode() = applyBodyState(BodyState.CATEGORIES)
     private fun showListingsMode() {
         isShowingSubGrid = false
         binding.rvCategoryGrid.visibility    = View.GONE
@@ -497,21 +472,14 @@ class MainActivity : AppCompatActivity() {
         binding.pbHomeGrid.visibility        = View.GONE
     }
 
-    /** Pending category id — set when user taps before enrichment finishes */
     private var pendingCategoryId: Int? = null
-    /** True when we're intentionally showing the sub-category grid (block listing observers) */
     private var isShowingSubGrid = false
 
-    /**
-     * Open a category: show its sub-categories grid.
-     * If sub-categories aren't loaded yet, fetch that category immediately.
-     */
     private fun openCategory(cat: ApiCategory) {
         val cats = vm.categories.value ?: return
         val idx = cats.indexOfFirst { it.id == cat.id } + 1
         if (idx <= 0) return
 
-        // Only update the index — do NOT trigger any listing fetch
         vm.setCategoryIndex(idx)
         buildTopTabs(cats)
 
@@ -532,8 +500,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ── Shimmer animation ─────────────────────────────────────────────────────
-
     private fun animateShimmer(view: View) {
         android.animation.ObjectAnimator.ofFloat(view, "alpha", 0.4f, 1f, 0.4f).apply {
             duration = 1200
@@ -542,29 +508,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ── Navigation ────────────────────────────────────────────────────────────
-
     private fun setupNavigation() {
-        binding.btnMenu.setOnClickListener {
+        BottomNavHelper.setup(this, NavScreen.HOME)
+
+        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
             startActivity(Intent(this, MenuActivity::class.java))
+            @Suppress("DEPRECATION")
             overridePendingTransition(android.R.anim.slide_in_left, 0)
         }
-        binding.navAdd.setOnClickListener { startActivity(Intent(this, AddAdActivity::class.java)) }
-        binding.navChat.setOnClickListener {
-            if (!TokenManager.isLoggedIn(this)) {
-                startActivity(Intent(this, PhoneAuthActivity::class.java))
-                return@setOnClickListener
-            }
-            startActivity(Intent(this, ConversationsActivity::class.java))
-        }
-        binding.navHome.alpha = 1f
-        binding.navChat.alpha = 0.45f
     }
 
     override fun onResume() {
         super.onResume()
-        binding.navHome.alpha = 1f
-        binding.navChat.alpha = 0.45f
+        BottomNavHelper.setup(this, NavScreen.HOME)
     }
 
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
