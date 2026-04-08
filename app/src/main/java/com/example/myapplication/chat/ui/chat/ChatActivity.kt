@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
+import com.example.myapplication.MenuActivity
 import com.example.myapplication.chat.model.Conversation
 import com.example.myapplication.chat.utils.Result
 import com.example.myapplication.databinding.ActivityChatBinding
@@ -52,7 +53,10 @@ class ChatActivity : AppCompatActivity() {
                 .circleCrop().into(binding.ivChatAvatar)
         }
 
-        binding.btnBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
+            startActivity(android.content.Intent(this, MenuActivity::class.java))
+        }
     }
 
     private fun setupRecyclerView() {

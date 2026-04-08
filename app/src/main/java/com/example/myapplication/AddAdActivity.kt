@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -36,19 +37,15 @@ class AddAdActivity : AppCompatActivity() {
         const val EXTRA_PRICE = "listing_price"
         const val EXTRA_CITY = "listing_city"
         const val EXTRA_TYPE = "listing_type"
-        const val EXTRA_IMAGES = "listing_images" // ArrayList<String>
+        const val EXTRA_IMAGES = "listing_images"
     }
 
     private lateinit var binding: ActivityAddAdBinding
-    private val BASE_URL = "http://144.126.211.123/api"
+    private val apiBase = "http://144.126.211.123/api"
 
-    // Edit mode state
     private var editingId: String? = null
-    private var existingImageUrls: MutableList<String> = mutableListOf()
-
-    // New images picked from gallery
-    private var newImageUris: MutableList<Uri> = mutableListOf()
-
+    private val existingImageUrls: MutableList<String> = mutableListOf()
+    private val newImageUris: MutableList<Uri> = mutableListOf()
     private var selectedLocation = ""
     private var selectedCategory = ""
     private var adType = "offer"
@@ -62,7 +59,7 @@ class AddAdActivity : AppCompatActivity() {
     private val imagePickerLauncher = registerForActivityResult(
         ActivityResultContracts.GetMultipleContents()
     ) { uris ->
-        uris.filter { !newImageUris.contains(it) }.forEach { newImageUris.add(it) }
+        uris.filter { it !in newImageUris }.forEach { newImageUris.add(it) }
         refreshImageGallery()
     }
 
@@ -71,7 +68,7 @@ class AddAdActivity : AppCompatActivity() {
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             selectedLocation = result.data?.getStringExtra("selected_location") ?: ""
-            binding.tvLocationText?.text = selectedLocation.ifEmpty { getString(R.string.location_label) }
+            binding.tvLocationText.text = selectedLocation.ifEmpty { getString(R.string.location_label) }
         }
     }
 
@@ -80,7 +77,7 @@ class AddAdActivity : AppCompatActivity() {
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             selectedCategory = result.data?.getStringExtra("selected_category") ?: ""
-            binding.tvCategoryText?.text = selectedCategory.ifEmpty { getString(R.string.category_label) }
+            binding.tvCategoryText.text = selectedCategory.ifEmpty { getString(R.string.category_label) }
         }
     }
 
@@ -89,41 +86,42 @@ class AddAdActivity : AppCompatActivity() {
         binding = ActivityAddAdBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Check if editing
-        editingId = intent.getStringExtra(EXTRA_LISTING_ID)
-        if (editingId != null) {
-            // Pre-fill fields
-            binding.etAdTitle?.setText(intent.getStringExtra(EXTRA_TITLE) ?: "")
-            binding.etAdDescription?.setText(intent.getStringExtra(EXTRA_DESC) ?: "")
-            binding.etPrice?.setText(intent.getStringExtra(EXTRA_PRICE) ?: "")
-            selectedLocation = intent.getStringExtra(EXTRA_CITY) ?: ""
-            adType = intent.getStringExtra(EXTRA_TYPE) ?: "offer"
-            if (selectedLocation.isNotEmpty()) binding.tvLocationText?.text = selectedLocation
-            val imgs = intent.getStringArrayListExtra(EXTRA_IMAGES) ?: arrayListOf()
-            existingImageUrls.addAll(imgs)
-            binding.btnPublish?.text = "حفظ التعديلات"
+        // Wire appbar buttons via findViewById (they live inside <include>)
+        findViewById<ImageButton>(R.id.btnMenu).setOnClickListener {
+            startActivity(Intent(this, MenuActivity::class.java))
         }
 
-        binding.btnMenu?.setOnClickListener {
-            startActivity(Intent(this, MenuActivity::class.java))
-            overridePendingTransition(android.R.anim.slide_in_left, 0)
+        BottomNavHelper.setup(this, NavScreen.ADD)
+
+        editingId = intent.getStringExtra(EXTRA_LISTING_ID)
+        if (editingId != null) {
+            binding.etAdTitle.setText(intent.getStringExtra(EXTRA_TITLE) ?: "")
+            binding.etAdDescription.setText(intent.getStringExtra(EXTRA_DESC) ?: "")
+            binding.etPrice.setText(intent.getStringExtra(EXTRA_PRICE) ?: "")
+            selectedLocation = intent.getStringExtra(EXTRA_CITY) ?: ""
+            adType = intent.getStringExtra(EXTRA_TYPE) ?: "offer"
+            if (selectedLocation.isNotEmpty()) binding.tvLocationText.text = selectedLocation
+            val imgs = intent.getStringArrayListExtra(EXTRA_IMAGES) ?: arrayListOf()
+            existingImageUrls.addAll(imgs)
+            binding.btnPublish.text = "حفظ التعديلات"
         }
-        binding.llAddImageBtn?.setOnClickListener { imagePickerLauncher.launch("image/*") }
-        binding.llLocationContainer?.setOnClickListener {
+
+        binding.llAddImageBtn.setOnClickListener { imagePickerLauncher.launch("image/*") }
+        binding.llLocationContainer.setOnClickListener {
             locationPickerLauncher.launch(Intent(this, LocationSelectionActivity::class.java))
         }
-        binding.llCategoryContainer?.setOnClickListener {
+        binding.llCategoryContainer.setOnClickListener {
             categoryPickerLauncher.launch(Intent(this, CategorySelectionActivity::class.java))
         }
-        binding.btnPublish?.setOnClickListener { if (editingId != null) updateAd() else publishAd() }
+        binding.btnPublish.setOnClickListener { if (editingId != null) updateAd() else publishAd() }
 
         refreshImageGallery()
     }
 
-    // ── Image gallery ──────────────────────────────────────────────────────────
+    // ── Image gallery ─────────────────────────────────────────────────────────
 
     private fun refreshImageGallery() {
-        val gallery = binding.llImageGallery ?: return
+        val gallery = binding.llImageGallery
         val addBtn = gallery.findViewById<View>(R.id.llAddImageBtn)
         gallery.removeAllViews()
         gallery.addView(addBtn)
@@ -133,26 +131,20 @@ class AddAdActivity : AppCompatActivity() {
         val margin = (8 * dp).toInt()
         val closeSize = (22 * dp).toInt()
 
-        // Show existing remote images
-        for ((index, url) in existingImageUrls.withIndex()) {
+        existingImageUrls.forEachIndexed { index, url ->
             val frame = makeImageFrame(size, margin, closeSize)
-            val iv = frame.getChildAt(0) as ImageView
-            Glide.with(this).load(url).centerCrop().into(iv)
-            val removeBtn = frame.getChildAt(1) as ImageView
-            removeBtn.setOnClickListener {
+            Glide.with(this).load(url).centerCrop().into(frame.getChildAt(0) as ImageView)
+            (frame.getChildAt(1) as ImageView).setOnClickListener {
                 existingImageUrls.removeAt(index)
                 refreshImageGallery()
             }
             gallery.addView(frame)
         }
 
-        // Show new local images
-        for (uri in newImageUris.toList()) {
+        newImageUris.toList().forEach { uri ->
             val frame = makeImageFrame(size, margin, closeSize)
-            val iv = frame.getChildAt(0) as ImageView
-            iv.setImageURI(uri)
-            val removeBtn = frame.getChildAt(1) as ImageView
-            removeBtn.setOnClickListener {
+            (frame.getChildAt(0) as ImageView).setImageURI(uri)
+            (frame.getChildAt(1) as ImageView).setOnClickListener {
                 newImageUris.remove(uri)
                 refreshImageGallery()
             }
@@ -185,15 +177,15 @@ class AddAdActivity : AppCompatActivity() {
         return frame
     }
 
-    // ── Create new listing ─────────────────────────────────────────────────────
+    // ── Publish ───────────────────────────────────────────────────────────────
 
     private fun publishAd() {
         val token = TokenManager.getToken(this) ?: run {
             Toast.makeText(this, "يجب تسجيل الدخول أولاً", Toast.LENGTH_SHORT).show(); return
         }
-        val title = binding.etAdTitle?.text?.toString()?.trim() ?: ""
-        val desc = binding.etAdDescription?.text?.toString()?.trim() ?: ""
-        val price = binding.etPrice?.text?.toString()?.trim() ?: "0"
+        val title = binding.etAdTitle.text.toString().trim()
+        val desc = binding.etAdDescription.text.toString().trim()
+        val price = binding.etPrice.text.toString().trim()
         if (title.isEmpty()) { Toast.makeText(this, "أدخل عنوان الإعلان", Toast.LENGTH_SHORT).show(); return }
         if (selectedLocation.isEmpty()) { Toast.makeText(this, "اختر الموقع", Toast.LENGTH_SHORT).show(); return }
         if (selectedCategory.isEmpty()) { Toast.makeText(this, "اختر التصنيف", Toast.LENGTH_SHORT).show(); return }
@@ -221,34 +213,28 @@ class AddAdActivity : AppCompatActivity() {
         }
     }
 
-    // ── Update existing listing ────────────────────────────────────────────────
+    // ── Update ────────────────────────────────────────────────────────────────
 
     private fun updateAd() {
         val token = TokenManager.getToken(this) ?: run {
             Toast.makeText(this, "يجب تسجيل الدخول أولاً", Toast.LENGTH_SHORT).show(); return
         }
         val id = editingId ?: return
-        val title = binding.etAdTitle?.text?.toString()?.trim() ?: ""
-        val desc = binding.etAdDescription?.text?.toString()?.trim() ?: ""
-        val price = binding.etPrice?.text?.toString()?.trim() ?: "0"
+        val title = binding.etAdTitle.text.toString().trim()
+        val desc = binding.etAdDescription.text.toString().trim()
+        val price = binding.etPrice.text.toString().trim()
         if (title.isEmpty()) { Toast.makeText(this, "أدخل عنوان الإعلان", Toast.LENGTH_SHORT).show(); return }
 
         setPublishing(true)
         lifecycleScope.launch {
             try {
-                // Upload new images and collect their returned URLs
-                val newlyUploadedUrls = mutableListOf<String>()
+                val newUrls = mutableListOf<String>()
                 newImageUris.forEachIndexed { i, uri ->
                     setProgress("جارٍ رفع الصورة ${i + 1} / ${newImageUris.size}...")
-                    val url = uploadImageAndGetUrl(token, uri, id)
-                    if (url != null) newlyUploadedUrls.add(url)
+                    uploadImageAndGetUrl(token, uri, id)?.let { newUrls.add(it) }
                 }
-
-                // PATCH with existing + newly uploaded URLs
                 setProgress("جارٍ الحفظ...")
-                val allImages = existingImageUrls + newlyUploadedUrls
-                patchListing(token, id, title, desc, price, allImages)
-
+                patchListing(token, id, title, desc, price, existingImageUrls + newUrls)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@AddAdActivity, "✓ تم تحديث الإعلان", Toast.LENGTH_SHORT).show()
                     setResult(Activity.RESULT_OK)
@@ -263,100 +249,87 @@ class AddAdActivity : AppCompatActivity() {
         }
     }
 
-    // ── API calls ──────────────────────────────────────────────────────────────
+    // ── API ───────────────────────────────────────────────────────────────────
 
     private suspend fun createListing(token: String, title: String, desc: String, price: String): String? =
         withContext(Dispatchers.IO) {
             val body = JSONObject().apply {
-                put("title", title)
-                put("description", desc)
-                put("listing_type", adType)
-                put("city", selectedLocation)
+                put("title", title); put("description", desc)
+                put("listing_type", adType); put("city", selectedLocation)
                 put("price", price.toDoubleOrNull() ?: 0.0)
-                put("category_id", 1)
-                put("region_id", 1)
-                put("images", JSONArray())
+                put("category_id", 1); put("region_id", 1); put("images", JSONArray())
             }
-            val req = Request.Builder()
-                .url("$BASE_URL/listings")
+            val resp = httpClient.newCall(Request.Builder()
+                .url("$apiBase/listings")
                 .addHeader("Authorization", "Bearer $token")
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .post(body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
-                .build()
-            val resp = httpClient.newCall(req).execute()
+                .build()).execute()
             val respBody = resp.body?.string() ?: return@withContext null
-            if (!resp.isSuccessful) throw Exception("فشل إنشاء الإعلان (${resp.code}): $respBody")
+            if (!resp.isSuccessful) throw Exception("فشل إنشاء الإعلان (${resp.code})")
             JSONObject(respBody).optJSONObject("data")?.optString("id")?.takeIf { it.isNotEmpty() }
         }
 
     private suspend fun patchListing(token: String, id: String, title: String, desc: String, price: String, images: List<String>) =
         withContext(Dispatchers.IO) {
             val body = JSONObject().apply {
-                put("title", title)
-                put("description", desc)
-                put("listing_type", adType)
-                put("city", selectedLocation.ifEmpty { null })
+                put("title", title); put("description", desc)
+                put("listing_type", adType); put("city", selectedLocation.ifEmpty { null })
                 put("price", price.toDoubleOrNull() ?: 0.0)
                 put("images", JSONArray().apply { images.forEach { put(it) } })
             }
-            val req = Request.Builder()
-                .url("$BASE_URL/listings/$id")
+            val resp = httpClient.newCall(Request.Builder()
+                .url("$apiBase/listings/$id")
                 .addHeader("Authorization", "Bearer $token")
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .patch(body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
-                .build()
-            val resp = httpClient.newCall(req).execute()
+                .build()).execute()
             if (!resp.isSuccessful) throw Exception("فشل التحديث (${resp.code})")
         }
 
-    // Upload and return the URL (used in edit mode)
     private suspend fun uploadImageAndGetUrl(token: String, uri: Uri, listingId: String): String? =
         withContext(Dispatchers.IO) {
             val stream = contentResolver.openInputStream(uri) ?: return@withContext null
-            val bytes = stream.readBytes(); stream.close()
+            val bytes = stream.readBytes().also { stream.close() }
             val mime = contentResolver.getType(uri) ?: "image/jpeg"
-            val reqBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("listing_id", listingId)
-                .addFormDataPart("image", "img_${System.currentTimeMillis()}.jpg",
-                    bytes.toRequestBody(mime.toMediaTypeOrNull()))
-                .build()
-            val req = Request.Builder()
-                .url("$BASE_URL/upload-image")
+            val resp = httpClient.newCall(Request.Builder()
+                .url("$apiBase/upload-image")
                 .addHeader("Authorization", "Bearer $token")
                 .addHeader("Accept", "application/json")
-                .post(reqBody).build()
-            val resp = httpClient.newCall(req).execute()
-            val body = resp.body?.string() ?: return@withContext null
-            JSONObject(body).optString("url").takeIf { it.isNotEmpty() }
+                .post(MultipartBody.Builder().setType(MultipartBody.FORM)
+                    .addFormDataPart("listing_id", listingId)
+                    .addFormDataPart("image", "img_${System.currentTimeMillis()}.jpg",
+                        bytes.toRequestBody(mime.toMediaTypeOrNull()))
+                    .build()).build()).execute()
+            JSONObject(resp.body?.string() ?: return@withContext null).optString("url").takeIf { it.isNotEmpty() }
         }
 
     private suspend fun uploadImage(token: String, uri: Uri, listingId: String) =
         withContext(Dispatchers.IO) {
             val stream = contentResolver.openInputStream(uri) ?: return@withContext
-            val bytes = stream.readBytes(); stream.close()
+            val bytes = stream.readBytes().also { stream.close() }
             val mime = contentResolver.getType(uri) ?: "image/jpeg"
-            val reqBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("listing_id", listingId)
-                .addFormDataPart("image", "img_${System.currentTimeMillis()}.jpg",
-                    bytes.toRequestBody(mime.toMediaTypeOrNull()))
-                .build()
-            val req = Request.Builder()
-                .url("$BASE_URL/upload-image")
+            httpClient.newCall(Request.Builder()
+                .url("$apiBase/upload-image")
                 .addHeader("Authorization", "Bearer $token")
                 .addHeader("Accept", "application/json")
-                .post(reqBody).build()
-            httpClient.newCall(req).execute()
+                .post(MultipartBody.Builder().setType(MultipartBody.FORM)
+                    .addFormDataPart("listing_id", listingId)
+                    .addFormDataPart("image", "img_${System.currentTimeMillis()}.jpg",
+                        bytes.toRequestBody(mime.toMediaTypeOrNull()))
+                    .build()).build()).execute()
         }
 
     private fun setPublishing(on: Boolean) {
-        binding.btnPublish?.isEnabled = !on
-        binding.btnPublish?.text = if (on) "جارٍ الحفظ..." else
-            if (editingId != null) "حفظ التعديلات" else getString(R.string.publish_ad)
+        binding.btnPublish.isEnabled = !on
+        binding.btnPublish.text = if (on) "جارٍ الحفظ..."
+            else if (editingId != null) "حفظ التعديلات"
+            else getString(R.string.publish_ad)
     }
 
     private suspend fun setProgress(msg: String) = withContext(Dispatchers.Main) {
-        binding.btnPublish?.text = msg
+        binding.btnPublish.text = msg
     }
 }

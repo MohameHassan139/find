@@ -7,32 +7,7 @@
     android:layoutDirection="rtl">
 
     <!-- Top Bar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/white"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:orientation="horizontal"
-        android:elevation="4dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="إعلاناتي"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary" />
-
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_chevron_left"
-            android:background="@drawable/ripple_circle"
-            android:contentDescription="back" />
-    </LinearLayout>
+    <include layout="@layout/layout_appbar_back" />
 
     <!-- Section header -->
     <LinearLayout

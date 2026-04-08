@@ -30,7 +30,11 @@ class MenuActivity : AppCompatActivity() {
             else binding.btnLogin.text = "حسابي"
         }
 
-        binding.btnClose.setOnClickListener {
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener {
+            finish()
+            overridePendingTransition(0, android.R.anim.slide_out_right)
+        }
+        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
             finish()
             overridePendingTransition(0, android.R.anim.slide_out_right)
         }

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
+import com.example.myapplication.MenuActivity
 import com.example.myapplication.auth.AuthRetrofitClient
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.auth.UpdateProfileRequest
@@ -25,7 +26,10 @@ class ProfileActivity : AppCompatActivity() {
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnBack.setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
+            startActivity(Intent(this, MenuActivity::class.java))
+        }
         binding.btnSave.setOnClickListener { saveProfile() }
         binding.btnSignOut.setOnClickListener { confirmSignOut() }
         binding.btnMyAds.setOnClickListener {

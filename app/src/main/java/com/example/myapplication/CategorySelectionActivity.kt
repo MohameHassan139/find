@@ -48,8 +48,11 @@ class CategorySelectionActivity : AppCompatActivity() {
         binding = ActivityCategorySelectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnMenu.setOnClickListener { finish() }
-
+        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
+            startActivity(Intent(this, MenuActivity::class.java))
+        }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+        BottomNavHelper.setup(this, NavScreen.NONE)
         showTypes()
     }
 

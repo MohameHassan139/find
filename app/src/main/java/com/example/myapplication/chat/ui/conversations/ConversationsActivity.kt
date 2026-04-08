@@ -6,6 +6,8 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.myapplication.BottomNavHelper
+import com.example.myapplication.NavScreen
 import com.example.myapplication.R
 import com.example.myapplication.chat.ui.chat.ChatActivity
 import com.example.myapplication.chat.utils.Result
@@ -26,6 +28,11 @@ class ConversationsActivity : AppCompatActivity() {
         setupFilterChips()
         setupObservers()
         setupSwipeRefresh()
+        BottomNavHelper.setup(this, NavScreen.CHAT)
+
+        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
+            startActivity(Intent(this, com.example.myapplication.MenuActivity::class.java))
+        }
     }
 
     private val chatLauncher = registerForActivityResult(

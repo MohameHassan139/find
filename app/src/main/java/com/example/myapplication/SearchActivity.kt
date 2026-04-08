@@ -98,7 +98,10 @@ class SearchActivity : AppCompatActivity() {
     // ── Search input ──────────────────────────────────────────────────────────
 
     private fun setupSearchInput() {
-        binding.btnBack.setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
+            startActivity(Intent(this, MenuActivity::class.java))
+        }
 
         binding.etSearchQuery.addTextChangedListener { text ->
             val q = text?.toString() ?: ""
@@ -209,17 +212,7 @@ class SearchActivity : AppCompatActivity() {
     // ── Navigation ────────────────────────────────────────────────────────────
 
     private fun setupNavigation() {
-        binding.navHome.setOnClickListener { finish() }
-        binding.navAdd.setOnClickListener { startActivity(Intent(this, AddAdActivity::class.java)) }
-        binding.navChat.setOnClickListener {
-            if (!TokenManager.isLoggedIn(this)) {
-                startActivity(Intent(this, PhoneAuthActivity::class.java))
-                return@setOnClickListener
-            }
-            startActivity(Intent(this, ConversationsActivity::class.java))
-        }
-        binding.navHome.alpha = 0.45f
-        binding.navChat.alpha = 0.45f
+        BottomNavHelper.setup(this, NavScreen.NONE)
     }
 
     // ── Keyboard helpers ──────────────────────────────────────────────────────

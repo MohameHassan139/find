@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
+import com.example.myapplication.MenuActivity
 import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.chat.model.AppNotification
 import com.example.myapplication.chat.utils.DateUtils
@@ -35,7 +36,10 @@ class NotificationsActivity : AppCompatActivity() {
         binding.rvNotifications.layoutManager = LinearLayoutManager(this)
         binding.rvNotifications.adapter = adapter
 
-        binding.btnBack.setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
+            startActivity(android.content.Intent(this, MenuActivity::class.java))
+        }
 
         binding.btnMarkAllRead.setOnClickListener {
             lifecycleScope.launch {

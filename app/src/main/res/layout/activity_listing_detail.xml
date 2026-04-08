@@ -9,37 +9,7 @@
     android:layoutDirection="rtl">
 
     <!-- Top bar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="12dp"
-        android:background="@color/white"
-        android:elevation="4dp">
-
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/bg_menu_circle"
-            android:padding="10dp"
-            android:src="@drawable/ic_menu_black"
-            android:contentDescription="Back" />
-
-        <TextView
-            android:id="@+id/tvTopTitle"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="12dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:gravity="end" />
-    </LinearLayout>
+    <include layout="@layout/layout_appbar_back" />
 
     <!-- Scrollable body -->
     <androidx.core.widget.NestedScrollView

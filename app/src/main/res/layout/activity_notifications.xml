@@ -7,31 +7,24 @@
     android:layoutDirection="rtl">
 
     <!-- Top Bar -->
+    <include layout="@layout/layout_appbar_back" />
+
+    <!-- Mark all read bar -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/white"
+        android:layout_height="44dp"
+        android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingHorizontal="16dp"
-        android:orientation="horizontal"
-        android:elevation="4dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="الإشعارات"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary" />
+        android:background="@color/white">
 
         <TextView
             android:id="@+id/tvUnreadCount"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:textSize="13sp"
             android:textColor="@color/find_primary"
-            android:layout_marginEnd="8dp"
             android:visibility="gone" />
 
         <TextView
@@ -41,16 +34,7 @@
             android:text="تحديد الكل كمقروء"
             android:textSize="12sp"
             android:textColor="@color/find_primary"
-            android:padding="8dp"
-            android:layout_marginEnd="4dp" />
-
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_chevron_left"
-            android:background="@drawable/ripple_circle"
-            android:contentDescription="back" />
+            android:padding="8dp" />
     </LinearLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

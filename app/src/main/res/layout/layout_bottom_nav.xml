@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cvBottomNav"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    app:cardCornerRadius="30dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="#80FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layoutDirection="rtl"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="4dp">
+
+        <!-- الرئيسية -->
+        <LinearLayout
+            android:id="@+id/navHome"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingVertical="6dp">
+
+            <ImageView
+                android:id="@+id/ivNavHome"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_nav_home"
+                android:scaleType="fitCenter"
+                android:contentDescription="الرئيسية" />
+
+            <TextView
+                android:id="@+id/tvNavHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="الرئيسية"
+                android:textSize="9sp"
+                android:textColor="#AAAAAA" />
+        </LinearLayout>
+
+        <!-- أضف إعلان -->
+        <LinearLayout
+            android:id="@+id/navAdd"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingVertical="6dp">
+
+            <ImageView
+                android:id="@+id/ivNavAdd"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_nav_add"
+                android:scaleType="fitCenter"
+                android:contentDescription="أضف إعلان" />
+
+            <TextView
+                android:id="@+id/tvNavAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="أضف إعلان"
+                android:textSize="9sp"
+                android:textColor="#AAAAAA" />
+        </LinearLayout>
+
+        <!-- المحادثات -->
+        <LinearLayout
+            android:id="@+id/navChat"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingVertical="6dp">
+
+            <ImageView
+                android:id="@+id/ivNavChat"
+                android:layout_width="24dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_nav_chat"
+                android:scaleType="fitCenter"
+                android:contentDescription="المحادثات" />
+
+            <TextView
+                android:id="@+id/tvNavChat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="المحادثات"
+                android:textSize="9sp"
+                android:textColor="#AAAAAA" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

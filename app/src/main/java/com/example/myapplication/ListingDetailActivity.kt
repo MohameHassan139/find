@@ -38,7 +38,10 @@ class ListingDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityListingDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.btnBack.setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
+            startActivity(Intent(this, MenuActivity::class.java))
+        }
         val listingId = intent.getStringExtra(EXTRA_LISTING_ID) ?: run { finish(); return }
         loadListing(listingId)
     }
@@ -79,7 +82,6 @@ class ListingDetailActivity : AppCompatActivity() {
     // ── Bind ──────────────────────────────────────────────────────────────────
 
     private fun bindListing(l: DetailListing) {
-        binding.tvTopTitle.text = l.title ?: ""
         binding.tvTitle.text = l.title ?: ""
 
         binding.tvPrice.text = l.price?.let {
