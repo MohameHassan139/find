@@ -17,10 +17,15 @@ object RetrofitClient {
 
         val client = OkHttpClient.Builder()
             .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .header("Authorization", "Bearer $token")
-                    .build()
-                chain.proceed(request)
+                val originalRequest = chain.request()
+                if (token.isEmpty()) {
+                    chain.proceed(originalRequest)
+                } else {
+                    val authenticatedRequest = originalRequest.newBuilder()
+                        .header("Authorization", "Bearer $token")
+                        .build()
+                    chain.proceed(authenticatedRequest)
+                }
             }
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY

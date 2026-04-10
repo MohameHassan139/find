@@ -4,9 +4,6 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.example.myapplication.ApiSubCategory
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemSubcategoryGridBinding
@@ -17,46 +14,40 @@ import com.example.myapplication.databinding.ItemSubcategoryGridBinding
  */
 class SubCategoryGridAdapter(
     private var items: List<ApiSubCategory>,
-    private val onClick: (ApiSubCategory?) -> Unit   // null = "الكل"
+    private val onClick: (ApiSubCategory) -> Unit
 ) : RecyclerView.Adapter<SubCategoryGridAdapter.VH>() {
 
     class VH(val b: ItemSubcategoryGridBinding) : RecyclerView.ViewHolder(b.root)
 
-    // position 0 is always "الكل", real items start at 1
-    private fun subAt(position: Int): ApiSubCategory? =
-        if (position == 0) null else items[position - 1]
+    override fun getItemCount() = items.size
 
-    override fun getItemCount() = items.size + 1   // +1 for "الكل"
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = VH(
-        ItemSubcategoryGridBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-    )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+        val b = ItemSubcategoryGridBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        b.ivSubIcon.setBackgroundColor(0) // Transparent
+        b.ivSubIcon.isClickable = false
+        b.ivSubIcon.isFocusable = false
+        b.ivSubIcon.isFocusableInTouchMode = false
+        b.ivSubIcon.settings.apply {
+            javaScriptEnabled = true
+            useWideViewPort = true
+            loadWithOverviewMode = true
+        }
+        return VH(b)
+    }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        val sub = subAt(position)
+        val sub = items[position]
 
-        if (sub == null) {
-            // "الكل" card
-            holder.b.tvSubName.text = "الكل"
-            holder.b.ivSubIcon.setImageResource(R.drawable.ic_placeholder_sub)
+        holder.b.tvSubName.text = sub.nameAr
+        val url = sub.iconUrl
+        if (!url.isNullOrEmpty()) {
+            val html = "<html><head><style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;height:30%;width:30%;background:transparent;} img{width:80%;height:80%;object-fit:contain;}</style></head><body><img src=\"$url\"/></body></html>"
+            holder.b.ivSubIcon.loadDataWithBaseURL(url, html, "text/html", "UTF-8", null)
         } else {
-            holder.b.tvSubName.text = sub.nameAr
-            val url = sub.iconUrl
-            if (!url.isNullOrEmpty()) {
-                Glide.with(holder.b.ivSubIcon.context)
-                    .load(url)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.ic_placeholder_sub)
-                    .error(R.drawable.ic_placeholder_sub)
-                    .transition(withCrossFade(250))
-                    .fitCenter()
-                    .into(holder.b.ivSubIcon)
-            } else {
-                holder.b.ivSubIcon.setImageResource(R.drawable.ic_placeholder_sub)
-            }
+            holder.b.ivSubIcon.loadUrl("about:blank")
         }
 
-        holder.b.root.setOnClickListener { onClick(sub) }
+        holder.b.clickOverlay.setOnClickListener { onClick(sub) }
     }
 
     fun updateData(newItems: List<ApiSubCategory>) {

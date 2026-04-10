@@ -1,0 +1,51 @@
+package com.example.myapplication
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.myapplication.chat.api.RetrofitClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONObject
+
+private const val ICON_BASE = "https://ocebfvgwgpebjxetnixc.supabase.co/storage/v1/object/public/listings-images/subCatigory/"
+private const val PAGE_SIZE = 20
+
+// ── Data models ───────────────────────────────────────────────────────────────
+
+data class ApiCategory(
+    val id: Int,
+    val nameAr: String,
+    val iconName: String? = null,
+    val subCategories: List<ApiSubCategory> = emptyList()
+) {
+    val iconUrl: String? get() = iconName?.let { name ->
+        val cleanName = name.trim()
+        if (cleanName.isEmpty()) return@let null
+        if (cleanName.startsWith("http")) return@let cleanName
+        val finalName = if (cleanName.lowercase().endsWith(".png")) cleanName else "$cleanName.png"
+        "$ICON_BASE$finalName"
+    }
+}
+
+data class ApiSubCategory(
+    val id: Int,
+    val nameAr: String,
+    val iconName: String? = null,
+    val filterOptions: List<ApiFilterOption> = emptyList()
+) {
+    val iconUrl: String? get() = iconName?.let { name ->
+        val cleanName = name.trim()
+        if (cleanName.isEmpty()) return@let null
+        if (cleanName.startsWith("http")) return@let cleanName
+        val finalName = if (cleanName.lowercase().endsWith(".png")) cleanName else "$cleanName.png"
+        "$ICON_BASE$finalName"
+    }
+}
+
+data class ApiFilterOption(val id: Int, val nameAr: String)

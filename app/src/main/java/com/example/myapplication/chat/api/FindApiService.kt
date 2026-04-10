@@ -31,5 +31,23 @@ interface FindApiService {
     suspend fun markAllNotificationsRead(): Response<Unit>
 
     @GET("listings")
-    suspend fun searchListings(@Query("query") query: String): Response<com.example.myapplication.models.ListingsApiResponse>
+    suspend fun getListingsCombined(
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int,
+        @Query("category_id") categoryId: Int,
+        @Query("sub_category_id") subCategoryId: Int? = null,
+        @Query("filter_option_id") filterOptionId: Int? = null,
+        @Query("region_id") regionId: Int? = null,
+        @Query("city") city: String? = null,
+        @Query("listing_type") listingType: String? = null
+    ): Response<okhttp3.ResponseBody>
+
+    @GET("categories")
+    suspend fun getCategories(): Response<okhttp3.ResponseBody>
+
+    @GET("categories/{id}")
+    suspend fun getCategoryDetails(@Path("id") id: Int): Response<okhttp3.ResponseBody>
+
+    @GET("search-filters")
+    suspend fun getSearchFilters(): Response<okhttp3.ResponseBody>
 }

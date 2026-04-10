@@ -3,21 +3,16 @@ package com.example.myapplication
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.chat.api.RetrofitClient
-import com.example.myapplication.models.toApiListing
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
-import java.net.HttpURLConnection
-import java.net.URL
-import java.net.URLEncoder
-import java.util.Locale
 
 private const val ICON_BASE = "https://ocebfvgwgpebjxetnixc.supabase.co/storage/v1/object/public/listings-images/subCatigory/"
 private const val PAGE_SIZE = 20
@@ -30,7 +25,13 @@ data class ApiCategory(
     val iconName: String? = null,
     val subCategories: List<ApiSubCategory> = emptyList()
 ) {
-    val iconUrl: String? get() = iconName?.let { "$ICON_BASE$it.png" }
+    val iconUrl: String? get() = iconName?.let { name ->
+        val cleanName = name.trim()
+        if (cleanName.isEmpty()) return@let null
+        if (cleanName.startsWith("http")) return@let cleanName
+        val finalName = if (cleanName.lowercase().endsWith(".png")) cleanName else "$cleanName.png"
+        "$ICON_BASE$finalName"
+    }
 }
 
 data class ApiSubCategory(
@@ -39,7 +40,13 @@ data class ApiSubCategory(
     val iconName: String? = null,
     val filterOptions: List<ApiFilterOption> = emptyList()
 ) {
-    val iconUrl: String? get() = iconName?.let { "$ICON_BASE$it.png" }
+    val iconUrl: String? get() = iconName?.let { name ->
+        val cleanName = name.trim()
+        if (cleanName.isEmpty()) return@let null
+        if (cleanName.startsWith("http")) return@let cleanName
+        val finalName = if (cleanName.lowercase().endsWith(".png")) cleanName else "$cleanName.png"
+        "$ICON_BASE$finalName"
+    }
 }
 
 data class ApiFilterOption(val id: Int, val nameAr: String)
@@ -64,8 +71,7 @@ data class ApiListing(
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
 
-    private val api = "http://144.126.211.123/api"
-    private val findApiService = RetrofitClient.build(app)
+    private val apiPublic = RetrofitClient.apiService
 
     // ── Exposed state ─────────────────────────────────────────────────────────
 
@@ -125,128 +131,124 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         boot()
     }
 
+    fun setError(msg: String?) {
+        _errorEvent.value = msg
+    }
+
     private fun boot() {
         _isBootLoading.value = true
+        android.util.Log.d("MainVM", "Booting via Retrofit")
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val conn = openGet("$api/search-filters")
-                if (conn.responseCode == HttpURLConnection.HTTP_OK) {
-                    val text = conn.inputStream.bufferedReader().readText()
-                    val root = JSONObject(text)
-                    val data = root.optJSONObject("data") ?: root
-                    val cats = parseCategoriesFromFilters(data.optJSONArray("categories") ?: JSONArray())
-                    val (regions, cities) = parseRegions(data.optJSONArray("regions") ?: JSONArray())
+                // 1. Fetch Categories
+                val catRes = apiPublic.getCategories()
+                if (catRes.isSuccessful) {
+                    val bodyText = catRes.body()?.string() ?: ""
+                    android.util.Log.d("MainVM", "Categories RAW: $bodyText")
+                    
+                    val dataArr = try {
+                        val root = JSONObject(bodyText)
+                        root.optJSONArray("data") ?: JSONArray().apply { put(root) } 
+                    } catch (e: Exception) {
+                        try { JSONArray(bodyText) } catch (e2: Exception) { JSONArray() }
+                    }
+                    
+                    val parsed = parseMainCategories(dataArr)
+                    // Robust filter for duplicate Home
+                    val filtered = parsed.filter { 
+                        it.id != 1 && it.id != 0 && 
+                        it.nameAr.trim() != "الرئيسية" && 
+                        it.nameAr.trim() != "الرئيسيه" 
+                    }
+                    
                     withContext(Dispatchers.Main) {
-                        _categories.value = cats
-                        _regions.value = regions
-                        _allCities.value = cities
+                        _categories.value = filtered
                         _isBootLoading.value = false
                     }
-                    fetchAllCategoryDetails(cats)
+                    
+                    if (filtered.isNotEmpty()) {
+                        fetchAllCategoryDetails(filtered)
+                    }
                 } else {
-                    withContext(Dispatchers.Main) { _isBootLoading.value = false }
+                    withContext(Dispatchers.Main) {
+                        _isBootLoading.value = false
+                        _errorEvent.value = "فشل تحميل الأقسام: ${catRes.code()}"
+                    }
                 }
-            } catch (_: Exception) {
+
+                // 2. Fetch Regions
+                launch(Dispatchers.IO) {
+                    try {
+                        val res = apiPublic.getSearchFilters()
+                        if (res.isSuccessful) {
+                            val body = JSONObject(res.body()?.string() ?: "")
+                            val data = body.optJSONObject("data") ?: body
+                            val tuple = parseRegions(data.optJSONArray("regions") ?: JSONArray())
+                            withContext(Dispatchers.Main) {
+                                _regions.value = tuple.first
+                                _allCities.value = tuple.second
+                            }
+                        }
+                    } catch (_: Exception) {}
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("MainVM", "Boot error", e)
                 withContext(Dispatchers.Main) {
                     _isBootLoading.value = false
-                    _errorEvent.value = "تعذّر تحميل البيانات"
+                    _errorEvent.value = "خطأ: ${e.localizedMessage}"
                 }
             }
         }
     }
 
     private suspend fun fetchAllCategoryDetails(cats: List<ApiCategory>) {
-        val enriched = cats.map { cat ->
-            try {
-                val conn = openGet("$api/categories/${cat.id}")
-                if (conn.responseCode == HttpURLConnection.HTTP_OK) {
-                    val body = JSONObject(conn.inputStream.bufferedReader().readText())
-                    val data = body.optJSONObject("data") ?: body
-                    val subArr = data.optJSONArray("sub_categories") ?: JSONArray()
-                    val subs = mutableListOf<ApiSubCategory>()
-                    for (i in 0 until subArr.length()) {
-                        val s = subArr.getJSONObject(i)
-                        if (s.optString("name_ar").trim() == "الكل") continue
-                        val opts = mutableListOf<ApiFilterOption>()
-                        val optArr = s.optJSONArray("filter_options") ?: JSONArray()
-                        for (k in 0 until optArr.length()) {
-                            val fo = optArr.getJSONObject(k)
-                            opts.add(ApiFilterOption(fo.getInt("id"), fo.getString("name_ar")))
+        cats.map { cat ->
+            viewModelScope.async(Dispatchers.IO) {
+                try {
+                    val res = apiPublic.getCategoryDetails(cat.id)
+                    if (res.isSuccessful) {
+                        val body = JSONObject(res.body()?.string() ?: "")
+                        val data = body.optJSONObject("data") ?: body
+                        val subArr = data.optJSONArray("sub_categories") ?: JSONArray()
+                        val subs = mutableListOf<ApiSubCategory>()
+                        
+                        for (i in 0 until subArr.length()) {
+                            val s = subArr.getJSONObject(i)
+                            
+                            val opts = mutableListOf<ApiFilterOption>()
+                            val optArr = s.optJSONArray("filter_options") ?: JSONArray()
+                            for (k in 0 until optArr.length()) {
+                                val fo = optArr.getJSONObject(k)
+                                opts.add(ApiFilterOption(fo.getInt("id"), fo.optString("name_ar", "")))
+                            }
+                            
+                            subs.add(ApiSubCategory(
+                                id = s.getInt("id"),
+                                nameAr = s.optString("name_ar", ""),
+                                iconName = if (s.isNull("icon")) null else s.optString("icon").ifEmpty { null },
+                                filterOptions = opts
+                            ))
                         }
-                        subs.add(ApiSubCategory(
-                            id = s.getInt("id"),
-                            nameAr = s.getString("name_ar"),
-                            iconName = s.optString("icon").ifEmpty { null },
-                            filterOptions = opts
-                        ))
+                        
+                        val updated = cat.copy(subCategories = subs)
+                        withContext(Dispatchers.Main) {
+                            val current = _categories.value ?: emptyList()
+                            _categories.value = current.map { if (it.id == updated.id) updated else it }
+                        }
                     }
-                    cat.copy(subCategories = subs)
-                } else cat
-            } catch (_: Exception) { cat }
-        }
-        withContext(Dispatchers.Main) {
-            _categories.value = enriched
-        }
+                } catch (_: Exception) {}
+            }
+        }.awaitAll()
     }
 
-    fun fetchCategoryDetails(categoryId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val conn = openGet("$api/categories/$categoryId")
-                if (conn.responseCode == HttpURLConnection.HTTP_OK) {
-                    val text = conn.inputStream.bufferedReader().readText()
-                    val body = JSONObject(text)
-                    val data = body.optJSONObject("data") ?: body
-                    val subArr = data.optJSONArray("sub_categories") ?: JSONArray()
-                    val subs = mutableListOf<ApiSubCategory>()
-                    for (i in 0 until subArr.length()) {
-                        val s = subArr.getJSONObject(i)
-                        if (s.optString("name_ar").trim() == "الكل") continue
-                        val opts = mutableListOf<ApiFilterOption>()
-                        val optArr = s.optJSONArray("filter_options") ?: JSONArray()
-                        for (k in 0 until optArr.length()) {
-                            val fo = optArr.getJSONObject(k)
-                            opts.add(ApiFilterOption(fo.getInt("id"), fo.getString("name_ar")))
-                        }
-                        subs.add(ApiSubCategory(
-                            id = s.getInt("id"),
-                            nameAr = s.getString("name_ar"),
-                            iconName = s.optString("icon").ifEmpty { null },
-                            filterOptions = opts
-                        ))
-                    }
-                    withContext(Dispatchers.Main) {
-                        val current = _categories.value ?: return@withContext
-                        _categories.value = current.map { cat ->
-                            if (cat.id == categoryId) cat.copy(subCategories = subs) else cat
-                        }
-                    }
-                }
-            } catch (_: Exception) {}
-        }
-    }
+    // ── Actions ───────────────────────────────────────────────────────────────
 
-    // ── Selection ─────────────────────────────────────────────────────────────
-
-    fun setCategoryIndex(idx: Int) {
+    fun selectTopCategory(idx: Int) {
         catIdx = idx
         catSubIdx = null
         catExtraIdx = null
         catRegId = null
         catCityId = null
-    }
-
-    fun selectTopCategory(idx: Int, fetchImmediately: Boolean = false) {
-        catIdx = idx
-        catSubIdx = null
-        catExtraIdx = null
-        catRegId = null
-        catCityId = null
-        if (idx == 0) {
-            _homeSubCategories.value = emptyList()
-        } else if (fetchImmediately) {
-            fetchListings(reset = true)
-        }
     }
 
     fun selectSubCategory(subIdx: Int?) {
@@ -278,19 +280,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         if (catIdx > 0) fetchListings(reset = true)
     }
 
-    fun refresh() {
-        if (catIdx > 0) fetchListings(reset = true)
-    }
-
-    fun loadNextPage() {
-        if (!isFetching && currentPage < lastPage) {
-            fetchListings(reset = false)
-        }
-    }
-
     fun hasMorePages() = currentPage < lastPage
-
-    // ── Listings ──────────────────────────────────────────────────────────────
 
     fun fetchListings(reset: Boolean = true) {
         val cats = _categories.value ?: return
@@ -313,51 +303,47 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             _isPagingLoading.value = true
         }
 
-        val page = currentPage
-        val params = StringBuilder("page=$page&per_page=$PAGE_SIZE&category_id=${cat.id}")
-        ss?.let { params.append("&sub_category_id=${it.id}") }
-        se?.let { params.append("&filter_option_id=${it.id}") }
-        catRegId?.let { params.append("&region_id=$it") }
-        catCityId?.let { cId ->
-            val cityName = _allCities.value?.find { it.id == cId }?.nameAr
-            cityName?.let { params.append("&city=${URLEncoder.encode(it, "UTF-8")}") }
-        }
-        catType?.let { params.append("&listing_type=$it") }
-
         isFetching = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val conn = openGet("$api/listings?$params")
-                if (conn.responseCode == HttpURLConnection.HTTP_OK) {
-                    val body = JSONObject(conn.inputStream.bufferedReader().readText())
-                    val arr = body.optJSONArray("data") ?: JSONArray()
-                    val meta = body.optJSONObject("meta")
-                    val fetchedLastPage = meta?.optInt("last_page", 1) ?: 1
+                val cityId = catCityId
+                val cityName = if (cityId != null) {
+                    _allCities.value?.find { it.id == cityId }?.nameAr
+                } else null
+
+                val res = apiPublic.getListingsCombined(
+                    page = currentPage,
+                    perPage = PAGE_SIZE,
+                    categoryId = cat.id,
+                    subCategoryId = ss?.id,
+                    filterOptionId = se?.id,
+                    regionId = catRegId,
+                    city = cityName,
+                    listingType = catType
+                )
+
+                if (res.isSuccessful) {
+                    val root = JSONObject(res.body()?.string() ?: "")
+                    val arr = root.optJSONArray("data") ?: JSONArray()
+                    val meta = root.optJSONObject("meta")
+                    val fetchedLast = meta?.optInt("last_page", 1) ?: 1
                     val result = parseListings(arr)
+                    
                     withContext(Dispatchers.Main) {
-                        lastPage = fetchedLastPage
+                        lastPage = fetchedLast
                         val current = if (reset) emptyList() else (_listings.value ?: emptyList())
                         _listings.value = current + result
                         _isFirstPageLoading.value = false
                         _isPagingLoading.value = false
-                        _isEmptyState.value = reset && result.isEmpty()
-                        isFetching = false
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        _isFirstPageLoading.value = false
-                        _isPagingLoading.value = false
-                        _isEmptyState.value = reset
-                        isFetching = false
                     }
                 }
             } catch (_: Exception) {
                 withContext(Dispatchers.Main) {
                     _isFirstPageLoading.value = false
                     _isPagingLoading.value = false
-                    _errorEvent.value = "تعذر تحميل الإعلانات"
-                    isFetching = false
                 }
+            } finally {
+                isFetching = false
             }
         }
     }
@@ -369,74 +355,57 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         return _allCities.value?.filter { it.regionId == regionId } ?: emptyList()
     }
 
-    private fun openGet(url: String): HttpURLConnection {
-        val conn = URL(url).openConnection() as HttpURLConnection
-        conn.requestMethod = "GET"
-        conn.connectTimeout = 8000
-        conn.readTimeout = 8000
-        return conn
-    }
-
-    private fun parseCategoriesFromFilters(arr: JSONArray): List<ApiCategory> {
+    private fun parseMainCategories(arr: JSONArray): List<ApiCategory> {
         val list = mutableListOf<ApiCategory>()
         for (i in 0 until arr.length()) {
             val o = arr.getJSONObject(i)
-            val subs = mutableListOf<ApiSubCategory>()
-            val subArr = o.optJSONArray("sub_categories") ?: JSONArray()
-            for (j in 0 until subArr.length()) {
-                val s = subArr.getJSONObject(j)
-                subs.add(ApiSubCategory(
-                    id = s.getInt("id"),
-                    nameAr = s.getString("name_ar"),
-                    iconName = s.optString("icon").ifEmpty { null }
-                ))
-            }
             list.add(ApiCategory(
                 id = o.getInt("id"),
-                nameAr = o.getString("name_ar"),
-                iconName = o.optString("icon").ifEmpty { null },
-                subCategories = subs
+                nameAr = o.optString("name_ar", ""),
+                iconName = if (o.isNull("icon")) null else o.optString("icon").ifEmpty { null }
             ))
         }
         return list
     }
 
     private fun parseRegions(arr: JSONArray): Pair<List<RegionItem>, List<CityItem>> {
-        val regions = mutableListOf<RegionItem>()
+        val regs = mutableListOf<RegionItem>()
         val cities = mutableListOf<CityItem>()
         for (i in 0 until arr.length()) {
             val r = arr.getJSONObject(i)
             val rId = r.getInt("id")
-            regions.add(RegionItem(rId, r.getString("name_ar")))
+            regs.add(RegionItem(rId, r.optString("name_ar", "")))
             val cArr = r.optJSONArray("cities") ?: JSONArray()
             for (j in 0 until cArr.length()) {
                 val c = cArr.getJSONObject(j)
-                cities.add(CityItem(c.getInt("id"), c.getString("name_ar"), rId))
+                cities.add(CityItem(c.getInt("id"), c.optString("name_ar", ""), rId))
             }
         }
-        return Pair(regions, cities)
+        return regs to cities
     }
 
     private fun parseListings(arr: JSONArray): List<ApiListing> {
         val list = mutableListOf<ApiListing>()
         for (i in 0 until arr.length()) {
             val o = arr.getJSONObject(i)
-            val images = mutableListOf<String>()
-            val imgArr = o.optJSONArray("images")
-            if (imgArr != null) for (j in 0 until imgArr.length()) images.add(imgArr.getString(j))
-            val seller = o.optJSONObject("seller")
-            val region = o.optJSONObject("region")
+            val imgArr = o.optJSONArray("images") ?: JSONArray()
+            val imgs = mutableListOf<String>()
+            for (j in 0 until imgArr.length()) imgs.add(imgArr.optString(j))
+            
+            val seller = o.optJSONObject("user")
+            val reg = o.optJSONObject("region")
+            
             list.add(ApiListing(
-                id = o.optString("id"),
-                title = o.optString("title").ifEmpty { null },
-                price = if (!o.isNull("price")) o.optDouble("price") else null,
-                listingType = o.optString("listing_type").ifEmpty { null },
-                createdAt = o.optString("created_at").ifEmpty { null },
-                images = images,
-                sellerName = seller?.optString("name")?.ifEmpty { null },
-                sellerAvatar = seller?.optString("avatar")?.ifEmpty { null },
-                regionNameAr = region?.optString("name_ar")?.ifEmpty { null },
-                city = o.optString("city").ifEmpty { null }
+                id = o.optString("id", ""),
+                title = o.optString("title", ""),
+                price = o.optDouble("price", 0.0),
+                listingType = o.optString("listing_type", ""),
+                createdAt = o.optString("created_at", ""),
+                images = imgs,
+                sellerName = seller?.optString("name", ""),
+                sellerAvatar = seller?.optString("avatar", ""),
+                regionNameAr = reg?.optString("name_ar", ""),
+                city = o.optString("city", "")
             ))
         }
         return list

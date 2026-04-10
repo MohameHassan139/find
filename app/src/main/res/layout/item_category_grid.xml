@@ -5,96 +5,116 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="false"
     app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
     app:cardBackgroundColor="@color/white"
     app:strokeWidth="1dp"
     app:strokeColor="#E0E0E0">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="8dp">
+        android:layout_height="wrap_content">
 
-        <!-- 3×3 mini icon grid — fixed height so rowWeight works -->
-        <GridLayout
-            android:id="@+id/glSubIcons"
-            android:layout_width="match_parent"
-            android:layout_height="90dp"
-            android:columnCount="3"
-            android:rowCount="3"
-            android:useDefaultMargins="false">
-
-            <!-- Row 1 -->
-            <ImageView android:id="@+id/ivSub0"
-                android:layout_width="0dp" android:layout_height="0dp"
-                android:layout_columnWeight="1" android:layout_rowWeight="1"
-                android:scaleType="fitCenter" android:padding="3dp"
-                android:src="@drawable/ic_placeholder_sub" />
-            <ImageView android:id="@+id/ivSub1"
-                android:layout_width="0dp" android:layout_height="0dp"
-                android:layout_columnWeight="1" android:layout_rowWeight="1"
-                android:scaleType="fitCenter" android:padding="3dp"
-                android:src="@drawable/ic_placeholder_sub" />
-            <ImageView android:id="@+id/ivSub2"
-                android:layout_width="0dp" android:layout_height="0dp"
-                android:layout_columnWeight="1" android:layout_rowWeight="1"
-                android:scaleType="fitCenter" android:padding="3dp"
-                android:src="@drawable/ic_placeholder_sub" />
-
-            <!-- Row 2 -->
-            <ImageView android:id="@+id/ivSub3"
-                android:layout_width="0dp" android:layout_height="0dp"
-                android:layout_columnWeight="1" android:layout_rowWeight="1"
-                android:scaleType="fitCenter" android:padding="3dp"
-                android:src="@drawable/ic_placeholder_sub" />
-            <ImageView android:id="@+id/ivSub4"
-                android:layout_width="0dp" android:layout_height="0dp"
-                android:layout_columnWeight="1" android:layout_rowWeight="1"
-                android:scaleType="fitCenter" android:padding="3dp"
-                android:src="@drawable/ic_placeholder_sub" />
-            <ImageView android:id="@+id/ivSub5"
-                android:layout_width="0dp" android:layout_height="0dp"
-                android:layout_columnWeight="1" android:layout_rowWeight="1"
-                android:scaleType="fitCenter" android:padding="3dp"
-                android:src="@drawable/ic_placeholder_sub" />
-
-            <!-- Row 3 -->
-            <ImageView android:id="@+id/ivSub6"
-                android:layout_width="0dp" android:layout_height="0dp"
-                android:layout_columnWeight="1" android:layout_rowWeight="1"
-                android:scaleType="fitCenter" android:padding="3dp"
-                android:src="@drawable/ic_placeholder_sub" />
-            <ImageView android:id="@+id/ivSub7"
-                android:layout_width="0dp" android:layout_height="0dp"
-                android:layout_columnWeight="1" android:layout_rowWeight="1"
-                android:scaleType="fitCenter" android:padding="3dp"
-                android:src="@drawable/ic_placeholder_sub" />
-
-            <!-- Last slot: "more" dots -->
-            <TextView android:id="@+id/tvMoreDots"
-                android:layout_width="0dp" android:layout_height="0dp"
-                android:layout_columnWeight="1" android:layout_rowWeight="1"
-                android:gravity="center"
-                android:text="•••"
-                android:textSize="10sp"
-                android:textColor="#AAAAAA" />
-
-        </GridLayout>
-
-        <!-- Category name -->
-        <TextView
-            android:id="@+id/tvCategoryTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:gravity="center"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textSize="12sp"
-            android:textColor="@color/text_primary" />
+            android:orientation="vertical"
+            android:padding="8dp">
 
-    </LinearLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="90dp">
 
+                <!-- 3×3 mini icon grid — fixed height so rowWeight works -->
+                <GridLayout
+                    android:id="@+id/glSubIcons"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:columnCount="3"
+                    android:rowCount="3"
+                    android:useDefaultMargins="false">
+
+                <!-- Row 1 -->
+                <android.webkit.WebView android:id="@+id/ivSub0"
+                    android:layout_width="0dp" android:layout_height="0dp"
+                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
+                <android.webkit.WebView android:id="@+id/ivSub1"
+                    android:layout_width="0dp" android:layout_height="0dp"
+                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
+                <android.webkit.WebView android:id="@+id/ivSub2"
+                    android:layout_width="0dp" android:layout_height="0dp"
+                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
+
+                <!-- Row 2 -->
+                <android.webkit.WebView android:id="@+id/ivSub3"
+                    android:layout_width="0dp" android:layout_height="0dp"
+                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
+                <android.webkit.WebView android:id="@+id/ivSub4"
+                    android:layout_width="0dp" android:layout_height="0dp"
+                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
+                <android.webkit.WebView android:id="@+id/ivSub5"
+                    android:layout_width="0dp" android:layout_height="0dp"
+                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
+
+                <!-- Row 3 -->
+                <android.webkit.WebView android:id="@+id/ivSub6"
+                    android:layout_width="0dp" android:layout_height="0dp"
+                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
+                <android.webkit.WebView android:id="@+id/ivSub7"
+                    android:layout_width="0dp" android:layout_height="0dp"
+                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
+
+                <!-- Last slot: "more" dots -->
+                <TextView android:id="@+id/tvMoreDots"
+                    android:layout_width="0dp" android:layout_height="0dp"
+                    android:layout_columnWeight="1" android:layout_rowWeight="1"
+                    android:gravity="center"
+                    android:text="•••"
+                    android:textSize="10sp"
+                    android:textColor="#AAAAAA" />
+
+                </GridLayout>
+
+                <android.webkit.WebView
+                    android:id="@+id/wvSingleIcon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvSingleDots"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="•••"
+                    android:textSize="36sp"
+                    android:textColor="#AAAAAA"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+            <!-- Category name -->
+            <TextView
+                android:id="@+id/tvCategoryTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/clickOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true" />
+    </FrameLayout>
 </com.google.android.material.card.MaterialCardView>
