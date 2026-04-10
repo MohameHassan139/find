@@ -1,5 +1,6 @@
 package com.example.myapplication.chat.ui.chat
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -12,6 +13,7 @@ import com.example.myapplication.MenuActivity
 import com.example.myapplication.chat.model.Conversation
 import com.example.myapplication.chat.utils.Result
 import com.example.myapplication.databinding.ActivityChatBinding
+import com.example.myapplication.utils.LocaleHelper
 
 class ChatActivity : AppCompatActivity() {
 
@@ -24,7 +26,12 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var adapter: MessagesAdapter
     private lateinit var conversation: Conversation
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        LocaleHelper.applyLocale(this)
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)

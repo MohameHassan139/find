@@ -27,7 +27,7 @@
             android:textSize="14sp"
             android:textColor="#1A1A1A"
             android:maxWidth="280dp"
-            android:layoutDirection="rtl" />
+            android:layoutDirection="locale" />
 
         <TextView
             android:id="@+id/tvTime"

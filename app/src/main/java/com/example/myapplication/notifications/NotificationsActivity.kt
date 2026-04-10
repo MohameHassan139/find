@@ -1,5 +1,6 @@
 package com.example.myapplication.notifications
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,7 @@ import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.chat.model.AppNotification
 import com.example.myapplication.chat.utils.DateUtils
 import com.example.myapplication.databinding.ActivityNotificationsBinding
+import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
 
 class NotificationsActivity : AppCompatActivity() {
@@ -25,7 +27,12 @@ class NotificationsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNotificationsBinding
     private lateinit var adapter: NotificationsAdapter
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        LocaleHelper.applyLocale(this)
         super.onCreate(savedInstanceState)
         binding = ActivityNotificationsBinding.inflate(layoutInflater)
         setContentView(binding.root)

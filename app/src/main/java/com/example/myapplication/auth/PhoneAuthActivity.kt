@@ -1,6 +1,7 @@
 package com.example.myapplication.auth
 
 import com.example.myapplication.R
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.MainActivity
 import com.example.myapplication.databinding.ActivityPhoneAuthBinding
+import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
 
 class PhoneAuthActivity : AppCompatActivity() {
@@ -18,7 +20,12 @@ class PhoneAuthActivity : AppCompatActivity() {
     private var phoneNumber = ""
     private var resendTimer: CountDownTimer? = null
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        LocaleHelper.applyLocale(this)
         super.onCreate(savedInstanceState)
 
         if (TokenManager.isLoggedIn(this)) { goToMain(); return }

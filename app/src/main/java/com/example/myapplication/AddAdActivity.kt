@@ -3,6 +3,7 @@ package com.example.myapplication
 import com.example.myapplication.R
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -18,6 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.databinding.ActivityAddAdBinding
+import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -92,7 +94,12 @@ class AddAdActivity : AppCompatActivity() {
         }
     }
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        LocaleHelper.applyLocale(this)
         super.onCreate(savedInstanceState)
         binding = ActivityAddAdBinding.inflate(layoutInflater)
         setContentView(binding.root)

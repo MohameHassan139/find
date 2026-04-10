@@ -7,7 +7,7 @@
     android:paddingHorizontal="16dp"
     android:paddingVertical="14dp"
     android:layout_marginBottom="1dp"
-    android:layoutDirection="rtl"
+    android:layoutDirection="locale"
     android:gravity="center_vertical">
 
     <!-- Unread dot -->

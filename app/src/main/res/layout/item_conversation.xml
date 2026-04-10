@@ -5,7 +5,7 @@
     android:layout_height="72dp"
     android:background="@drawable/ripple_item"
     android:gravity="center_vertical"
-    android:layoutDirection="rtl"
+    android:layoutDirection="locale"
     android:orientation="horizontal"
     android:paddingHorizontal="16dp">
 

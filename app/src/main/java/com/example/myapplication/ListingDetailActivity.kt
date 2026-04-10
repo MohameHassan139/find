@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import com.example.myapplication.R
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -17,6 +18,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.databinding.ActivityListingDetailBinding
+import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -35,7 +37,12 @@ class ListingDetailActivity : AppCompatActivity() {
         const val EXTRA_CURRENT_INDEX = "current_index"
     }
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        LocaleHelper.applyLocale(this)
         super.onCreate(savedInstanceState)
         binding = ActivityListingDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)

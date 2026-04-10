@@ -1,6 +1,7 @@
 package com.example.myapplication.profile
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,6 +26,7 @@ import com.example.myapplication.auth.ListingItem
 import com.example.myapplication.auth.ToggleActiveRequest
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.databinding.ActivityMyAdsBinding
+import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -42,7 +44,12 @@ class MyAdsActivity : AppCompatActivity() {
         if (result.resultCode == Activity.RESULT_OK) loadMyAds()
     }
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        LocaleHelper.applyLocale(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMyAdsBinding.inflate(layoutInflater)
         setContentView(binding.root)

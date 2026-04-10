@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -22,7 +23,12 @@ class CategorySelectionActivity : AppCompatActivity() {
     private var selectedType = ""
     private var selectedMain: ApiCategory? = null
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        LocaleHelper.applyLocale(this)
         super.onCreate(savedInstanceState)
         binding = ActivityCategorySelectionBinding.inflate(layoutInflater)
         setContentView(binding.root)

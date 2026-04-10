@@ -1,6 +1,7 @@
 package com.example.myapplication.chat.ui.conversations
 
 import com.example.myapplication.R
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,6 +19,7 @@ import com.example.myapplication.chat.model.Conversation
 import com.example.myapplication.chat.ui.chat.ChatActivity
 import com.example.myapplication.chat.utils.DateUtils
 import com.example.myapplication.databinding.ActivityListingConversationsBinding
+import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
 
 class ListingConversationsActivity : AppCompatActivity() {
@@ -34,7 +36,12 @@ class ListingConversationsActivity : AppCompatActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { loadConversations() }
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        LocaleHelper.applyLocale(this)
         super.onCreate(savedInstanceState)
         binding = ActivityListingConversationsBinding.inflate(layoutInflater)
         setContentView(binding.root)

@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import com.example.myapplication.R
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -17,13 +18,19 @@ import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.profile.MyAdsActivity
 import com.example.myapplication.profile.ProfileActivity
 import com.example.myapplication.databinding.ActivityMenuBinding
+import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
 
 class MenuActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMenuBinding
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        LocaleHelper.applyLocale(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -83,9 +90,8 @@ class MenuActivity : AppCompatActivity() {
                 .setTitle(getString(R.string.menu_language))
                 .setItems(languages) { _, which ->
                     val locale = if (which == 0) "en" else "ar"
-                    // Call the framework API to set language.
-                    // This handles activity recreation automatically.
-                    AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(locale))
+                    // Save to local database and apply — triggers activity recreation
+                    LocaleHelper.setLanguage(this, locale)
                 }
                 .show()
         }

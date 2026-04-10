@@ -1,5 +1,6 @@
 package com.example.myapplication.profile
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -15,13 +16,19 @@ import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.auth.UpdateProfileRequest
 import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.databinding.ActivityProfileBinding
+import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
 
 class ProfileActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityProfileBinding
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        LocaleHelper.applyLocale(this)
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
