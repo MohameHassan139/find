@@ -71,8 +71,13 @@ class MainActivity : AppCompatActivity() {
     private fun setupSearch() {
         binding.etSearch.isFocusable = false
         binding.etSearch.isFocusableInTouchMode = false
+        
+        val searchIntent = Intent(this, SearchActivity::class.java)
         binding.llSearchContainer.setOnClickListener {
-            startActivity(Intent(this, SearchActivity::class.java))
+            startActivity(searchIntent)
+        }
+        binding.etSearch.setOnClickListener {
+            startActivity(searchIntent)
         }
     }
 
@@ -130,8 +135,10 @@ class MainActivity : AppCompatActivity() {
         binding.rvSubCategoryGrid.layoutManager = GridLayoutManager(this, 3)
         binding.rvSubCategoryGrid.adapter = subCategoryAdapter
 
-        listingsAdapter = ListingsAdapter(emptyList()) { _ ->
-            // Detail
+        listingsAdapter = ListingsAdapter(emptyList()) { listing ->
+            val intent = Intent(this, ListingDetailActivity::class.java)
+            intent.putExtra(ListingDetailActivity.EXTRA_LISTING_ID, listing.id)
+            startActivity(intent)
         }
         binding.rvListings.layoutManager = LinearLayoutManager(this)
         binding.rvListings.adapter = listingsAdapter
