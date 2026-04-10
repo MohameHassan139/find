@@ -70,10 +70,20 @@ class ConversationsActivity : AppCompatActivity() {
     }
 
     private fun setChipSelected(filter: ConversationsViewModel.Filter) {
-        binding.chipAll.isSelected = filter == ConversationsViewModel.Filter.ALL
-        binding.chipUnread.isSelected = filter == ConversationsViewModel.Filter.UNREAD
-        binding.chipFavorite.isSelected = filter == ConversationsViewModel.Filter.FAVORITE
+        setupChip(binding.chipAll, filter == ConversationsViewModel.Filter.ALL)
+        setupChip(binding.chipUnread, filter == ConversationsViewModel.Filter.UNREAD)
+        setupChip(binding.chipFavorite, filter == ConversationsViewModel.Filter.FAVORITE)
         viewModel.setFilter(filter)
+    }
+
+    private fun setupChip(chip: android.widget.TextView, isSelected: Boolean) {
+        if (isSelected) {
+            chip.setBackgroundResource(R.drawable.bg_chip_selected)
+            chip.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.text_primary))
+        } else {
+            chip.setBackgroundResource(R.drawable.bg_chip_unselected)
+            chip.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.text_secondary))
+        }
     }
 
     private fun setupObservers() {

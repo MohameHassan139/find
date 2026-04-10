@@ -52,19 +52,18 @@
                 android:layout_height="36dp"
                 android:orientation="horizontal"
                 android:paddingHorizontal="16dp"
-                android:gravity="end">
+                android:gravity="start">
 
                 <TextView
-                    android:id="@+id/chipFavorite"
+                    android:id="@+id/chipAll"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/favorites_tab"
+                    android:text="@string/filter_all"
                     android:textSize="13sp"
                     android:gravity="center"
-                    android:paddingHorizontal="16dp"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_chip_unselected"
-                    android:textColor="@color/text_secondary" />
+                    android:paddingHorizontal="20dp"
+                    android:background="@drawable/bg_chip_selected"
+                    android:textColor="@color/text_primary" />
 
                 <TextView
                     android:id="@+id/chipUnread"
@@ -79,15 +78,16 @@
                     android:textColor="@color/text_secondary" />
 
                 <TextView
-                    android:id="@+id/chipAll"
+                    android:id="@+id/chipFavorite"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/filter_all"
+                    android:text="@string/favorites_tab"
                     android:textSize="13sp"
                     android:gravity="center"
-                    android:paddingHorizontal="20dp"
-                    android:background="@drawable/bg_chip_selected"
-                    android:textColor="@color/text_primary" />
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_chip_unselected"
+                    android:textColor="@color/text_secondary" />
             </LinearLayout>
         </LinearLayout>
 

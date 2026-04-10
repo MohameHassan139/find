@@ -54,7 +54,7 @@
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
                     android:hint="@string/search_anything"
-                    android:gravity="end|center_vertical"
+                    android:gravity="start|center_vertical"
                     android:imeOptions="actionSearch"
                     android:inputType="text"
                     android:paddingHorizontal="8dp"

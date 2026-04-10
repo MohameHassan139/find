@@ -38,7 +38,7 @@
     <string name="str______________">اكتب رسالة...</string>
     <string name="nav_chats">Chats</string>
     <string name="favorites_tab">Favorites</string>
-    <string name="str___________">غير مقروءة</string>
+    <string name="str___________">Unread</string>
     <string name="filter_all">All</string>
     <string name="str________________">لا توجد إعلانات</string>
     <string name="btn_messages">Messages</string>
@@ -102,4 +102,5 @@
     <string name="kt_str_201aed2e">تم الحفظ ✓</string>
     <string name="kt_str_c5572cc3">فشل الحفظ</string>
     <string name="menu_language">Language</string>
+    <string name="filter">Filter</string>
 </resources>
