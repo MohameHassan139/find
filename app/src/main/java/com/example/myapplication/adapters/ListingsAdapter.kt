@@ -11,6 +11,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.myapplication.ApiListing
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemListingCardBinding
+import com.example.myapplication.utils.LocaleHelper
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -58,11 +59,12 @@ class ListingsAdapter(
 
         b.tvSeller.text = item.sellerName ?: ""
         b.tvLocation.text = "📍 ${item.regionNameAr ?: item.city ?: ""}"
-        b.tvTime.text = "🕐 ${formatTime(item.createdAt)}"
+        b.tvTime.text = "🕐 ${formatTime(item.createdAt, holder.itemView.context)}"
 
         // Type badge color
+        val ctx = holder.itemView.context
         val isOffer = item.listingType == "offer"
-        b.tvType.text = if (isOffer) "عرض" else "طلب"
+        b.tvType.text = if (isOffer) LocaleHelper.localizedName(ctx, "عرض", "Offer") else LocaleHelper.localizedName(ctx, "طلب", "Request")
         b.tvType.setBackgroundColor(
             if (isOffer) Color.parseColor("#34C759") else Color.parseColor("#FF9500")
         )
@@ -113,18 +115,19 @@ class ListingsAdapter(
         else notifyItemRemoved(items.size)
     }
 
-    private fun formatTime(dateStr: String?): String {
+    private fun formatTime(dateStr: String?, ctx: android.content.Context? = null): String {
         if (dateStr.isNullOrEmpty()) return ""
+        val isAr = ctx?.let { LocaleHelper.isArabic(it) } ?: true
         return try {
             val fmt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.getDefault())
             fmt.timeZone = TimeZone.getTimeZone("UTC")
             val date = fmt.parse(dateStr) ?: return dateStr
             val diff = (System.currentTimeMillis() - date.time) / 1000
             when {
-                diff < 60 -> "الآن"
-                diff < 3600 -> "${diff / 60} دقيقة"
-                diff < 86400 -> "${diff / 3600} ساعة"
-                diff < 2592000 -> "${diff / 86400} يوم"
+                diff < 60 -> if (isAr) "الآن" else "Now"
+                diff < 3600 -> if (isAr) "${diff / 60} دقيقة" else "${diff / 60}m ago"
+                diff < 86400 -> if (isAr) "${diff / 3600} ساعة" else "${diff / 3600}h ago"
+                diff < 2592000 -> if (isAr) "${diff / 86400} يوم" else "${diff / 86400}d ago"
                 else -> SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
             }
         } catch (_: Exception) { dateStr }

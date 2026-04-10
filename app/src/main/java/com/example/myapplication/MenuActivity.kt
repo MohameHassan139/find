@@ -1,10 +1,15 @@
 package com.example.myapplication
 
+import com.example.myapplication.R
+
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.auth.TokenManager
@@ -27,7 +32,7 @@ class MenuActivity : AppCompatActivity() {
         if (TokenManager.isLoggedIn(this)) {
             val name = TokenManager.getName(this)
             if (name.isNotEmpty()) binding.btnLogin.text = name
-            else binding.btnLogin.text = "حسابي"
+            else binding.btnLogin.text = getString(R.string.kt_str_c0f5269a)
         }
 
         findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener {
@@ -71,6 +76,18 @@ class MenuActivity : AppCompatActivity() {
         }
         binding.menuSettings.setOnClickListener {
             Toast.makeText(this, getString(R.string.menu_settings), Toast.LENGTH_SHORT).show()
+        }
+        binding.menuLanguage.setOnClickListener {
+            val languages = arrayOf("English", "العربية")
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.menu_language))
+                .setItems(languages) { _, which ->
+                    val locale = if (which == 0) "en" else "ar"
+                    // Call the framework API to set language.
+                    // This handles activity recreation automatically.
+                    AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(locale))
+                }
+                .show()
         }
         binding.menuShareApp.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {

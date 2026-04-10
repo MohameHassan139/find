@@ -144,7 +144,7 @@
                     android:layout_marginStart="16dp"
                     android:background="@null"
                     android:gravity="center_vertical|start"
-                    android:hint="أدخل عنوان الإعلان"
+                    android:hint="@string/str___________________"
                     android:inputType="text"
                     android:textColor="#000000"
                     android:textSize="14sp" />
@@ -297,7 +297,7 @@
                     android:layout_marginStart="16dp"
                     android:background="@null"
                     android:gravity="center_vertical|start"
-                    android:hint="أدخل السعر"
+                    android:hint="@string/price"
                     android:inputType="numberDecimal"
                     android:textColor="#000000"
                     android:textSize="14sp" />

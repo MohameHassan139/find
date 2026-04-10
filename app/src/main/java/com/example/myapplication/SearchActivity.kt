@@ -23,6 +23,7 @@ import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.chat.ui.conversations.ConversationsActivity
 import com.example.myapplication.databinding.ActivitySearchBinding
+import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -162,7 +163,8 @@ class SearchActivity : AppCompatActivity() {
     private fun setupRegionSpinner() {
         vm.regions.observe(this) { regions ->
             suppressSpinner = true
-            val labels = mutableListOf("كل المناطق") + regions.map { it.nameAr }
+            val allRegionsLabel = LocaleHelper.localizedName(this, "كل المناطق", "All Regions")
+            val labels = mutableListOf(allRegionsLabel) + regions.map { LocaleHelper.localizedName(this, it.nameAr, it.nameEn) }
             val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, labels)
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.spinnerRegion.adapter = adapter

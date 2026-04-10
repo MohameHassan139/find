@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="الرئيسية"
+                android:text="@string/nav_home"
                 android:textSize="9sp"
                 android:textColor="#AAAAAA" />
         </LinearLayout>
@@ -68,7 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="أضف إعلان"
+                android:text="@string/nav_add_ad"
                 android:textSize="9sp"
                 android:textColor="#AAAAAA" />
         </LinearLayout>
@@ -96,7 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="المحادثات"
+                android:text="@string/nav_chats"
                 android:textSize="9sp"
                 android:textColor="#AAAAAA" />
         </LinearLayout>

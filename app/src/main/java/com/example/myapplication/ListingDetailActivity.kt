@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import com.example.myapplication.R
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -66,13 +67,13 @@ class ListingDetailActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) { bindListing(listing) }
                 } else {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@ListingDetailActivity, "تعذر تحميل الإعلان", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ListingDetailActivity, getString(R.string.kt_str_21a15161), Toast.LENGTH_SHORT).show()
                         finish()
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@ListingDetailActivity, "تعذر الاتصال", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ListingDetailActivity, getString(R.string.kt_str_338558d2), Toast.LENGTH_SHORT).show()
                     finish()
                 }
             }
@@ -122,7 +123,7 @@ class ListingDetailActivity : AppCompatActivity() {
             if (!phone.isNullOrEmpty()) {
                 startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")))
             } else {
-                Toast.makeText(this, "رقم الهاتف غير متاح", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.kt_str_5abe0148), Toast.LENGTH_SHORT).show()
             }
         }
         binding.btnWhatsapp.setOnClickListener {
@@ -130,7 +131,7 @@ class ListingDetailActivity : AppCompatActivity() {
                 val num = phone.replace(Regex("[^\\d+]"), "")
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/$num")))
             } else {
-                Toast.makeText(this, "واتساب غير متاح", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.kt_str_d0f8a62d), Toast.LENGTH_SHORT).show()
             }
         }
         binding.btnChat.setOnClickListener {
@@ -232,7 +233,7 @@ class ListingDetailActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@ListingDetailActivity, "تعذر الاتصال", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ListingDetailActivity, getString(R.string.kt_str_338558d2), Toast.LENGTH_SHORT).show()
                 }
             }
         }

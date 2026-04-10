@@ -3,144 +3,144 @@ package com.example.myapplication
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.databinding.ActivityCategorySelectionBinding
+import com.example.myapplication.utils.LocaleHelper
 
 class CategorySelectionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCategorySelectionBinding
+    private lateinit var vm: MainViewModel
 
-    private enum class CategoryState { TYPE, MAIN, SUB, OFFER_TYPE }
-    private var currentState = CategoryState.TYPE
+    private enum class State { TYPE, MAIN, SUB }
+    private var currentState = State.TYPE
 
     private var selectedType = ""
-    private var selectedMain = ""
-    private var selectedSub = ""
-
-    private val types = listOf("عرض", "طلب")
-    private val mainCategories = listOf(
-        "عقارات",
-        "مركبات ولوازمها",
-        "أجهزة إلكترونية",
-        "أجهزة منزلية",
-        "أجهزة رياضية",
-        "أثاث",
-        "لوازم رحلات",
-        "حيوانات ولوازمها",
-        "نباتات",
-        "أخرى"
-    )
-
-    private val subVehicles = listOf(
-        "سيارات", "دراجات نارية", "دراجات هوائية", "شاحنات", "شاحنات خلاط", "سطحات", "معدات ثقيلة", "كرفانات", "سفن", "جت بوت"
-    )
-    
-    private val subRealEstate = listOf(
-        "شقق", "فلل", "أراضي", "عمائر", "محلات", "مكاتب", "مزارع", "استراحات", "شاليهات"
-    )
+    private var selectedMain: ApiCategory? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCategorySelectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        vm = ViewModelProvider(this)[MainViewModel::class.java]
+
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
             startActivity(Intent(this, MenuActivity::class.java))
         }
-        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         BottomNavHelper.setup(this, NavScreen.NONE)
+
         showTypes()
+
+        // Load categories if not already loaded
+        vm.categories.observe(this) { cats ->
+            if (currentState == State.MAIN) showMainCategories(cats)
+        }
     }
+
+    // ── Step 1: Offer / Request ──────────────────────────────────────────────
 
     private fun showTypes() {
-        currentState = CategoryState.TYPE
+        currentState = State.TYPE
         binding.llListContainer.removeAllViews()
-        for (type in types) {
-            val itemView = LayoutInflater.from(this).inflate(R.layout.item_category, binding.llListContainer, false)
-            itemView.findViewById<TextView>(R.id.tvItemName).text = type
-            itemView.setOnClickListener {
-                selectedType = type
-                showMainCategories()
+
+        val types = listOf(
+            LocaleHelper.localizedName(this, "عرض", "Offer") to "offer",
+            LocaleHelper.localizedName(this, "طلب", "Request") to "request"
+        )
+
+        for ((label, value) in types) {
+            val item = layoutInflater.inflate(R.layout.item_category, binding.llListContainer, false)
+            item.findViewById<TextView>(R.id.tvItemName).text = label
+            item.setOnClickListener {
+                selectedType = value
+                showMainCategories(vm.categories.value ?: emptyList())
             }
-            binding.llListContainer.addView(itemView)
+            binding.llListContainer.addView(item)
         }
     }
 
-    private fun showMainCategories() {
-        currentState = CategoryState.MAIN
+    // ── Step 2: Main categories from API ────────────────────────────────────
+
+    private fun showMainCategories(cats: List<ApiCategory>) {
+        currentState = State.MAIN
         binding.llListContainer.removeAllViews()
-        for (main in mainCategories) {
-            val itemView = LayoutInflater.from(this).inflate(R.layout.item_category, binding.llListContainer, false)
-            itemView.findViewById<TextView>(R.id.tvItemName).text = main
-            itemView.setOnClickListener {
-                selectedMain = main
-                if (main == "عقارات") {
-                    showSubCategories(subRealEstate, showIcons = false)
-                } else if (main == "مركبات ولوازمها") {
-                    showSubCategories(subVehicles, showIcons = true)
-                } else {
-                    showSubCategories(listOf("أخرى ١", "أخرى ٢"), showIcons = false)
-                }
+
+        if (cats.isEmpty()) {
+            val tv = TextView(this).apply {
+                text = LocaleHelper.localizedName(this@CategorySelectionActivity, "جارٍ التحميل...", "Loading...")
+                setPadding(32, 32, 32, 32)
             }
-            binding.llListContainer.addView(itemView)
+            binding.llListContainer.addView(tv)
+            return
+        }
+
+        for (cat in cats) {
+            val item = layoutInflater.inflate(R.layout.item_category, binding.llListContainer, false)
+            item.findViewById<TextView>(R.id.tvItemName).text =
+                LocaleHelper.localizedName(this, cat.nameAr, cat.nameEn)
+            item.setOnClickListener {
+                selectedMain = cat
+                showSubCategories(cat)
+            }
+            binding.llListContainer.addView(item)
         }
     }
 
-    private fun showSubCategories(subs: List<String>, showIcons: Boolean) {
-        currentState = CategoryState.SUB
-        binding.llListContainer.removeAllViews()
-        for (sub in subs) {
-            val itemView = LayoutInflater.from(this).inflate(R.layout.item_category, binding.llListContainer, false)
-            itemView.findViewById<TextView>(R.id.tvItemName).text = sub
-            
-            if (showIcons) {
-                val iconView = itemView.findViewById<ImageView>(R.id.ivItemIcon)
-                iconView.visibility = View.VISIBLE
-                iconView.setImageResource(R.drawable.ic_vehicle_placeholder)
-            }
+    // ── Step 3: Sub-categories from API ─────────────────────────────────────
 
-            itemView.setOnClickListener {
-                selectedSub = sub
-                if (selectedMain == "عقارات") {
-                    showRealEstateOfferType()
-                } else {
-                    val resultIntent = Intent()
-                    resultIntent.putExtra("selected_category", "$selectedType - $selectedMain - $sub")
-                    setResult(Activity.RESULT_OK, resultIntent)
-                    finish()
-                }
+    private fun showSubCategories(cat: ApiCategory) {
+        currentState = State.SUB
+        binding.llListContainer.removeAllViews()
+
+        if (cat.subCategories.isEmpty()) {
+            // If subs not loaded yet, return directly with only the main category
+            returnResult(cat, null)
+            return
+        }
+
+        for (sub in cat.subCategories) {
+            val item = layoutInflater.inflate(R.layout.item_category, binding.llListContainer, false)
+            item.findViewById<TextView>(R.id.tvItemName).text =
+                LocaleHelper.localizedName(this, sub.nameAr, sub.nameEn)
+            item.setOnClickListener {
+                returnResult(cat, sub)
             }
-            binding.llListContainer.addView(itemView)
+            binding.llListContainer.addView(item)
         }
     }
 
-    private fun showRealEstateOfferType() {
-        currentState = CategoryState.OFFER_TYPE
-        binding.llListContainer.removeAllViews()
-        val offers = listOf("للبيع", "للإيجار")
-        for (offer in offers) {
-            val itemView = LayoutInflater.from(this).inflate(R.layout.item_category, binding.llListContainer, false)
-            itemView.findViewById<TextView>(R.id.tvItemName).text = offer
-            itemView.setOnClickListener {
-                val resultIntent = Intent()
-                resultIntent.putExtra("selected_category", "$selectedType - $selectedMain - $selectedSub - $offer")
-                setResult(Activity.RESULT_OK, resultIntent)
-                finish()
-            }
-            binding.llListContainer.addView(itemView)
-        }
+    // ── Return result ────────────────────────────────────────────────────────
+
+    private fun returnResult(cat: ApiCategory, sub: ApiSubCategory?) {
+        val catLabel = LocaleHelper.localizedName(this, cat.nameAr, cat.nameEn)
+        val subLabel = if (sub != null) LocaleHelper.localizedName(this, sub.nameAr, sub.nameEn) else null
+        val typeLabel = if (selectedType == "offer")
+            LocaleHelper.localizedName(this, "عرض", "Offer")
+        else
+            LocaleHelper.localizedName(this, "طلب", "Request")
+
+        val displayText = listOfNotNull(typeLabel, catLabel, subLabel).joinToString(" - ")
+
+        val resultIntent = Intent()
+        resultIntent.putExtra("selected_category", displayText)
+        resultIntent.putExtra("selected_type", selectedType)
+        resultIntent.putExtra("selected_category_id", cat.id)
+        resultIntent.putExtra("selected_sub_category_id", sub?.id ?: -1)
+        setResult(Activity.RESULT_OK, resultIntent)
+        finish()
     }
 
     override fun onBackPressed() {
         when (currentState) {
-            CategoryState.OFFER_TYPE -> showSubCategories(subRealEstate, showIcons = false)
-            CategoryState.SUB -> showMainCategories()
-            CategoryState.MAIN -> showTypes()
-            CategoryState.TYPE -> super.onBackPressed()
+            State.SUB -> showMainCategories(vm.categories.value ?: emptyList())
+            State.MAIN -> showTypes()
+            State.TYPE -> super.onBackPressed()
         }
     }
 }

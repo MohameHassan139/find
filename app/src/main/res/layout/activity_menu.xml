@@ -316,6 +316,51 @@
                     android:contentDescription="Go" />
             </LinearLayout>
 
+            <!-- Language -->
+            <LinearLayout
+                android:id="@+id/menuLanguage"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="4dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="12dp"
+                android:background="@drawable/bg_menu_item">
+
+                <FrameLayout
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_menu_icon_yellow"
+                    android:padding="6dp">
+                    <!-- We can use ic_menu_settings or a world icon if present. Using ic_menu_settings for now -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_menu_settings"
+                        android:contentDescription="Language" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/menu_language"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_chevron_left"
+                    app:tint="#888888"
+                    android:rotationY="180"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="Go" />
+            </LinearLayout>
+
             <!-- Share App -->
             <LinearLayout
                 android:id="@+id/menuShareApp"

@@ -11,6 +11,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import com.example.myapplication.ApiCategory
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemCategoryGridBinding
+import com.example.myapplication.utils.LocaleHelper
 
 class CategoryGridAdapter(
     private var items: List<ApiCategory>,
@@ -60,7 +61,7 @@ class CategoryGridAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val cat = items[position]
-        holder.b.tvCategoryTitle.text = cat.nameAr
+        holder.b.tvCategoryTitle.text = LocaleHelper.localizedName(holder.itemView.context, cat.nameAr, cat.nameEn)
 
         val isOther = position == items.size - 1 || cat.nameAr.contains("اخرى") || cat.nameAr.contains("اخر") || cat.nameAr.contains("أخرى")
 

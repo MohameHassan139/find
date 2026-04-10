@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.ApiSubCategory
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemTopTabBinding
+import com.example.myapplication.utils.LocaleHelper
 
 class SubTabAdapter(
     private var items: List<ApiSubCategory>,
@@ -28,7 +29,7 @@ class SubTabAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val sub = items[position]
-        val label = sub.nameAr
+        val label = LocaleHelper.localizedName(holder.itemView.context, sub.nameAr, sub.nameEn)
         val isActive = selectedId == position
 
         holder.b.tvLabel.text = label

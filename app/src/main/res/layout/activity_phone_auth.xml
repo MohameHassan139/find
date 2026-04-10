@@ -19,7 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="فايند•"
+            android:text="@string/app_name_ar"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/find_primary" />
@@ -53,7 +53,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="تسجيل الدخول / إنشاء حساب"
+            android:text="@string/login_create_account"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/text_primary" />
@@ -71,7 +71,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="📱 رقم الهاتف"
+            android:text="@string/profile_phone"
             android:textSize="14sp"
             android:textColor="@color/text_secondary"
             android:layout_gravity="end"
@@ -91,7 +91,7 @@
                 android:layout_weight="1"
                 android:background="@color/white"
                 android:gravity="end|center_vertical"
-                android:hint="5XXXXXXXX"
+                android:hint="@string/str_5xxxxxxxx"
                 android:textSize="16sp"
                 android:paddingHorizontal="12dp"
                 android:inputType="phone" />
@@ -101,7 +101,7 @@
                 android:id="@+id/etCountryCode"
                 android:layout_width="72dp"
                 android:layout_height="match_parent"
-                android:text="+966"
+                android:text="@string/str_966"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -130,7 +130,7 @@
                 android:id="@+id/btnSendOtp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="إرسال رمز التحقق"
+                android:text="@string/send_otp"
                 android:textSize="16sp"
                 android:textColor="@color/find_primary"
                 android:padding="8dp" />
@@ -151,7 +151,7 @@
             android:id="@+id/tvOtpHint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="أرسل رمز التحقق إلى"
+            android:text="@string/send_otp_to"
             android:textSize="14sp"
             android:textColor="@color/text_secondary"
             android:layout_gravity="center_horizontal"
@@ -175,7 +175,7 @@
             android:id="@+id/tvResend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="إعادة الإرسال بعد 60s"
+            android:text="@string/resend_after_60s"
             android:textSize="13sp"
             android:textColor="@color/find_primary"
             android:layout_gravity="center_horizontal"
@@ -201,7 +201,7 @@
                 android:id="@+id/btnVerifyOtp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="تحقق"
+                android:text="@string/verify"
                 android:textSize="16sp"
                 android:textColor="@color/text_primary"
                 android:padding="8dp" />
@@ -219,7 +219,7 @@
                 android:id="@+id/btnChangePhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="تغيير الرقم"
+                android:text="@string/change_number"
                 android:textSize="15sp"
                 android:textColor="@color/text_primary"
                 android:padding="8dp" />

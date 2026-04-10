@@ -31,7 +31,7 @@
             android:id="@+id/btnMarkAllRead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="تحديد الكل كمقروء"
+            android:text="@string/filter_all"
             android:textSize="12sp"
             android:textColor="@color/find_primary"
             android:padding="8dp" />

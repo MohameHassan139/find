@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.ApiCategory
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemTopTabBinding
+import com.example.myapplication.utils.LocaleHelper
 
 class TopTabAdapter(
     private var items: List<ApiCategory>,
@@ -27,7 +28,11 @@ class TopTabAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val cat = if (position == 0) null else items[position - 1]
-        val label = cat?.nameAr ?: "الرئيسية"
+        val label = if (cat == null) {
+            LocaleHelper.localizedName(holder.itemView.context, "الرئيسية", "Home")
+        } else {
+            LocaleHelper.localizedName(holder.itemView.context, cat.nameAr, cat.nameEn)
+        }
         val isActive = selectedId == position
 
         holder.b.tvLabel.text = label

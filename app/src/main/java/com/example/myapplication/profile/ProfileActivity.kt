@@ -79,7 +79,7 @@ class ProfileActivity : AppCompatActivity() {
     private fun saveProfile() {
         val name = binding.etName.text.toString().trim()
         if (name.isEmpty()) {
-            Toast.makeText(this, "أدخل الاسم", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.kt_str_a0139053), Toast.LENGTH_SHORT).show()
             return
         }
         val token = TokenManager.getToken(this) ?: return
@@ -93,12 +93,12 @@ class ProfileActivity : AppCompatActivity() {
                     val user = response.body()?.user
                     TokenManager.save(this@ProfileActivity, token,
                         user?.name ?: name, user?.phone ?: "", user?.avatar ?: "")
-                    Toast.makeText(this@ProfileActivity, "تم الحفظ ✓", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ProfileActivity, getString(R.string.kt_str_201aed2e), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this@ProfileActivity, "فشل الحفظ", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ProfileActivity, getString(R.string.kt_str_c5572cc3), Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@ProfileActivity, "تعذر الاتصال", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ProfileActivity, getString(R.string.kt_str_338558d2), Toast.LENGTH_SHORT).show()
             } finally {
                 binding.btnSave.isEnabled = true
             }

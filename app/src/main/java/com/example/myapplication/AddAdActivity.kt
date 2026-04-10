@@ -1,5 +1,7 @@
 package com.example.myapplication
 
+import com.example.myapplication.R
+
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -49,6 +51,9 @@ class AddAdActivity : AppCompatActivity() {
     private var selectedLocation = ""
     private var selectedCategory = ""
     private var adType = "offer"
+    private var selectedCategoryId: Int = 1
+    private var selectedSubCategoryId: Int = -1
+    private var selectedRegionId: Int = 1
 
     private val httpClient = OkHttpClient.Builder()
         .connectTimeout(60, TimeUnit.SECONDS)
@@ -67,7 +72,9 @@ class AddAdActivity : AppCompatActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            selectedLocation = result.data?.getStringExtra("selected_location") ?: ""
+            val data = result.data
+            selectedLocation = data?.getStringExtra("selected_location") ?: ""
+            selectedRegionId = data?.getIntExtra("selected_region_id", 1) ?: 1
             binding.tvLocationText.text = selectedLocation.ifEmpty { getString(R.string.location_label) }
         }
     }
@@ -76,7 +83,11 @@ class AddAdActivity : AppCompatActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            selectedCategory = result.data?.getStringExtra("selected_category") ?: ""
+            val data = result.data
+            selectedCategory = data?.getStringExtra("selected_category") ?: ""
+            adType = data?.getStringExtra("selected_type") ?: "offer"
+            selectedCategoryId = data?.getIntExtra("selected_category_id", 1) ?: 1
+            selectedSubCategoryId = data?.getIntExtra("selected_sub_category_id", -1) ?: -1
             binding.tvCategoryText.text = selectedCategory.ifEmpty { getString(R.string.category_label) }
         }
     }
@@ -103,7 +114,7 @@ class AddAdActivity : AppCompatActivity() {
             if (selectedLocation.isNotEmpty()) binding.tvLocationText.text = selectedLocation
             val imgs = intent.getStringArrayListExtra(EXTRA_IMAGES) ?: arrayListOf()
             existingImageUrls.addAll(imgs)
-            binding.btnPublish.text = "حفظ التعديلات"
+            binding.btnPublish.text = getString(R.string.kt_str_91d6db7f)
         }
 
         binding.llAddImageBtn.setOnClickListener { imagePickerLauncher.launch("image/*") }
@@ -181,27 +192,29 @@ class AddAdActivity : AppCompatActivity() {
 
     private fun publishAd() {
         val token = TokenManager.getToken(this) ?: run {
-            Toast.makeText(this, "يجب تسجيل الدخول أولاً", Toast.LENGTH_SHORT).show(); return
+            Toast.makeText(this, getString(R.string.kt_str_2098437d), Toast.LENGTH_SHORT).show(); return
         }
         val title = binding.etAdTitle.text.toString().trim()
         val desc = binding.etAdDescription.text.toString().trim()
         val price = binding.etPrice.text.toString().trim()
-        if (title.isEmpty()) { Toast.makeText(this, "أدخل عنوان الإعلان", Toast.LENGTH_SHORT).show(); return }
-        if (selectedLocation.isEmpty()) { Toast.makeText(this, "اختر الموقع", Toast.LENGTH_SHORT).show(); return }
-        if (selectedCategory.isEmpty()) { Toast.makeText(this, "اختر التصنيف", Toast.LENGTH_SHORT).show(); return }
+        if (title.isEmpty()) { Toast.makeText(this, getString(R.string.kt_str_fb538cc7), Toast.LENGTH_SHORT).show(); return }
+        if (selectedLocation.isEmpty()) { Toast.makeText(this, getString(R.string.kt_str_629e4b86), Toast.LENGTH_SHORT).show(); return }
+        if (selectedCategory.isEmpty()) { Toast.makeText(this, getString(R.string.kt_str_113aacf2), Toast.LENGTH_SHORT).show(); return }
 
         setPublishing(true)
         lifecycleScope.launch {
             try {
-                setProgress("جارٍ إنشاء الإعلان...")
+                val creatingMsg = if (com.example.myapplication.utils.LocaleHelper.isArabic(this@AddAdActivity)) "جارٍ إنشاء الإعلان..." else "Creating ad..."
+                setProgress(creatingMsg)
                 val listingId = createListing(token, title, desc, price)
-                    ?: throw Exception("فشل إنشاء الإعلان")
+                    ?: throw Exception(if (com.example.myapplication.utils.LocaleHelper.isArabic(this@AddAdActivity)) "فشل إنشاء الإعلان" else "Failed to create ad")
                 newImageUris.forEachIndexed { i, uri ->
-                    setProgress("جارٍ رفع الصورة ${i + 1} / ${newImageUris.size}...")
+                    val uploadMsg = if (com.example.myapplication.utils.LocaleHelper.isArabic(this@AddAdActivity)) "جارٍ رفع الصورة ${i + 1} / ${newImageUris.size}..." else "Uploading image ${i + 1} / ${newImageUris.size}..."
+                    setProgress(uploadMsg)
                     uploadImage(token, uri, listingId)
                 }
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AddAdActivity, "✓ تم نشر الإعلان", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AddAdActivity, getString(R.string.kt_str_03c580df), Toast.LENGTH_SHORT).show()
                     finish()
                 }
             } catch (e: Exception) {
@@ -217,26 +230,28 @@ class AddAdActivity : AppCompatActivity() {
 
     private fun updateAd() {
         val token = TokenManager.getToken(this) ?: run {
-            Toast.makeText(this, "يجب تسجيل الدخول أولاً", Toast.LENGTH_SHORT).show(); return
+            Toast.makeText(this, getString(R.string.kt_str_2098437d), Toast.LENGTH_SHORT).show(); return
         }
         val id = editingId ?: return
         val title = binding.etAdTitle.text.toString().trim()
         val desc = binding.etAdDescription.text.toString().trim()
         val price = binding.etPrice.text.toString().trim()
-        if (title.isEmpty()) { Toast.makeText(this, "أدخل عنوان الإعلان", Toast.LENGTH_SHORT).show(); return }
+        if (title.isEmpty()) { Toast.makeText(this, getString(R.string.kt_str_fb538cc7), Toast.LENGTH_SHORT).show(); return }
 
         setPublishing(true)
         lifecycleScope.launch {
             try {
                 val newUrls = mutableListOf<String>()
                 newImageUris.forEachIndexed { i, uri ->
-                    setProgress("جارٍ رفع الصورة ${i + 1} / ${newImageUris.size}...")
+                    val uploadMsg = if (com.example.myapplication.utils.LocaleHelper.isArabic(this@AddAdActivity)) "جارٍ رفع الصورة ${i + 1} / ${newImageUris.size}..." else "Uploading image ${i + 1} / ${newImageUris.size}..."
+                    setProgress(uploadMsg)
                     uploadImageAndGetUrl(token, uri, id)?.let { newUrls.add(it) }
                 }
-                setProgress("جارٍ الحفظ...")
+                val savingMsg = if (com.example.myapplication.utils.LocaleHelper.isArabic(this@AddAdActivity)) "جارٍ الحفظ..." else "Saving..."
+                setProgress(savingMsg)
                 patchListing(token, id, title, desc, price, existingImageUrls + newUrls)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AddAdActivity, "✓ تم تحديث الإعلان", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AddAdActivity, getString(R.string.kt_str_1e253162), Toast.LENGTH_SHORT).show()
                     setResult(Activity.RESULT_OK)
                     finish()
                 }
@@ -267,7 +282,8 @@ class AddAdActivity : AppCompatActivity() {
                 .post(body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
                 .build()).execute()
             val respBody = resp.body?.string() ?: return@withContext null
-            if (!resp.isSuccessful) throw Exception("فشل إنشاء الإعلان (${resp.code})")
+            if (!resp.isSuccessful) throw Exception(
+                if (com.example.myapplication.utils.LocaleHelper.isArabic(this@AddAdActivity)) "فشل إنشاء الإعلان (${resp.code})" else "Failed to create ad (${resp.code})")
             JSONObject(respBody).optJSONObject("data")?.optString("id")?.takeIf { it.isNotEmpty() }
         }
 
@@ -324,9 +340,12 @@ class AddAdActivity : AppCompatActivity() {
 
     private fun setPublishing(on: Boolean) {
         binding.btnPublish.isEnabled = !on
-        binding.btnPublish.text = if (on) "جارٍ الحفظ..."
-            else if (editingId != null) "حفظ التعديلات"
-            else getString(R.string.publish_ad)
+        val isAr = com.example.myapplication.utils.LocaleHelper.isArabic(this)
+        binding.btnPublish.text = when {
+            on -> if (isAr) "جارٍ الحفظ..." else "Saving..."
+            editingId != null -> if (isAr) "حفظ التعديلات" else "Save Changes"
+            else -> getString(R.string.publish_ad)
+        }
     }
 
     private suspend fun setProgress(msg: String) = withContext(Dispatchers.Main) {

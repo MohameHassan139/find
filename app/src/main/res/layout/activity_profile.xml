@@ -49,7 +49,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="👤  الاسم"
+                        android:text="@string/profile_name"
                         android:textSize="14sp"
                         android:textColor="@color/text_secondary"
                         android:layout_marginEnd="12dp" />
@@ -63,7 +63,7 @@
                         android:gravity="end|center_vertical"
                         android:textSize="15sp"
                         android:textColor="@color/text_primary"
-                        android:hint="اسمك" />
+                        android:hint="@string/str_____" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp"
@@ -79,7 +79,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📞  الهاتف"
+                        android:text="@string/profile_phone"
                         android:textSize="14sp"
                         android:textColor="@color/text_secondary"
                         android:layout_marginEnd="12dp" />
@@ -102,7 +102,7 @@
                 android:layout_height="52dp"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
-                android:text="حفظ التغييرات"
+                android:text="@string/save_changes"
                 android:textSize="16sp"
                 android:backgroundTint="@color/find_primary"
                 style="@style/Widget.MaterialComponents.Button" />
@@ -114,7 +114,7 @@
                 android:layout_height="52dp"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="8dp"
-                android:text="إعلاناتي"
+                android:text="@string/my_ads_title"
                 android:textSize="16sp"
                 android:backgroundTint="@color/find_gray_bg"
                 android:textColor="@color/text_primary"
@@ -127,7 +127,7 @@
                 android:layout_height="52dp"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="8dp"
-                android:text="تسجيل الخروج"
+                android:text="@string/logout"
                 android:textSize="15sp"
                 android:backgroundTint="#1AFF3B30"
                 android:textColor="#FF3B30"

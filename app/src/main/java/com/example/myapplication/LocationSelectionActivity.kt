@@ -3,84 +3,104 @@ package com.example.myapplication
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.databinding.ActivityLocationSelectionBinding
+import com.example.myapplication.utils.LocaleHelper
 
 class LocationSelectionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLocationSelectionBinding
-    private var selectedRegion: String? = null
+    private lateinit var vm: MainViewModel
 
-    private val regions = listOf(
-        "منطقة مكة المكرمة",
-        "منطقة المدينة المنورة",
-        "منطقة القصيم",
-        "المنطقة الشرقية",
-        "منطقة عسير",
-        "منطقة تبوك",
-        "منطقة حائل",
-        "منطقة الحدود الشمالية",
-        "منطقة جازان"
-    )
-
-    private val citiesMap = mapOf(
-        "منطقة تبوك" to listOf("تبوك", "ضباء", "الوجه", "أملج", "حقل", "تيماء", "البدع"),
-        "منطقة مكة المكرمة" to listOf("مكة المكرمة", "جدة", "الطائف", "القنفذة"),
-        "منطقة المدينة المنورة" to listOf("المدينة المنورة", "ينبع", "العلا"),
-        "المنطقة الشرقية" to listOf("الدمام", "الخبر", "الظهران", "الأحساء", "الجبيل")
-    )
+    private var selectedRegion: RegionItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLocationSelectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        vm = ViewModelProvider(this)[MainViewModel::class.java]
+
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
             startActivity(Intent(this, MenuActivity::class.java))
         }
-        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
         BottomNavHelper.setup(this, NavScreen.NONE)
-        showRegions()
-    }
 
-    private fun showRegions() {
-        selectedRegion = null
-        binding.llListContainer.removeAllViews()
-        for (region in regions) {
-            val itemView = LayoutInflater.from(this).inflate(R.layout.item_location, binding.llListContainer, false)
-            itemView.findViewById<TextView>(R.id.tvItemName).text = region
-            itemView.setOnClickListener {
-                selectedRegion = region
-                showCities(region)
-            }
-            binding.llListContainer.addView(itemView)
+        vm.regions.observe(this) { regions ->
+            if (selectedRegion == null) showRegions(regions)
         }
     }
 
-    private fun showCities(region: String) {
+    // ── Regions ──────────────────────────────────────────────────────────────
+
+    private fun showRegions(regions: List<RegionItem>) {
+        selectedRegion = null
         binding.llListContainer.removeAllViews()
-        val cities = citiesMap[region] ?: listOf("مدينة ١", "مدينة ٢", "مدينة ٣") // Fallback
+
+        if (regions.isEmpty()) {
+            val tv = TextView(this).apply {
+                text = LocaleHelper.localizedName(this@LocationSelectionActivity, "جارٍ التحميل...", "Loading...")
+                setPadding(32, 32, 32, 32)
+            }
+            binding.llListContainer.addView(tv)
+            return
+        }
+
+        for (region in regions) {
+            val item = layoutInflater.inflate(R.layout.item_location, binding.llListContainer, false)
+            item.findViewById<TextView>(R.id.tvItemName).text =
+                LocaleHelper.localizedName(this, region.nameAr, region.nameEn)
+            item.setOnClickListener {
+                selectedRegion = region
+                showCities(region)
+            }
+            binding.llListContainer.addView(item)
+        }
+    }
+
+    // ── Cities ───────────────────────────────────────────────────────────────
+
+    private fun showCities(region: RegionItem) {
+        binding.llListContainer.removeAllViews()
+        val cities = vm.citiesForRegion(region.id)
+
+        if (cities.isEmpty()) {
+            val tv = TextView(this).apply {
+                text = LocaleHelper.localizedName(this@LocationSelectionActivity, "لا توجد مدن", "No cities")
+                setPadding(32, 32, 32, 32)
+            }
+            binding.llListContainer.addView(tv)
+            return
+        }
+
         for (city in cities) {
-            val itemView = LayoutInflater.from(this).inflate(R.layout.item_location, binding.llListContainer, false)
-            itemView.findViewById<TextView>(R.id.tvItemName).text = city
-            itemView.setOnClickListener {
+            val item = layoutInflater.inflate(R.layout.item_location, binding.llListContainer, false)
+            item.findViewById<TextView>(R.id.tvItemName).text =
+                LocaleHelper.localizedName(this, city.nameAr, city.nameEn)
+            item.setOnClickListener {
                 val resultIntent = Intent()
-                resultIntent.putExtra("selected_location", "$region $city")
+                val regionLabel = LocaleHelper.localizedName(this, region.nameAr, region.nameEn)
+                val cityLabel = LocaleHelper.localizedName(this, city.nameAr, city.nameEn)
+                resultIntent.putExtra("selected_location", "$regionLabel - $cityLabel")
+                resultIntent.putExtra("selected_region_id", region.id)
+                resultIntent.putExtra("selected_city_id", city.id)
                 setResult(Activity.RESULT_OK, resultIntent)
                 finish()
             }
-            binding.llListContainer.addView(itemView)
+            binding.llListContainer.addView(item)
         }
     }
 
     override fun onBackPressed() {
         if (selectedRegion != null) {
-            showRegions() // Go back to regions list
+            showRegions(vm.regions.value ?: emptyList())
         } else {
-            super.onBackPressed() // Exit activity
+            super.onBackPressed()
         }
     }
 }

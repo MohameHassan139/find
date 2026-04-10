@@ -38,7 +38,7 @@
                 android:id="@+id/tvChatName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="اسم المستخدم"
+                android:text="@string/username_placeholder"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
@@ -47,7 +47,7 @@
                 android:id="@+id/tvChatStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="آخر ظهور الساعة 1:00PM"
+                android:text="@string/str_________________100pm"
                 android:textSize="11sp"
                 android:textColor="@color/text_secondary"
                 android:layout_marginTop="2dp" />
@@ -115,7 +115,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:gravity="center"
-                android:text="حدث خطأ"
+                android:text="@string/error_occurred"
                 android:textColor="@color/text_secondary"
                 android:textSize="14sp" />
 
@@ -125,7 +125,7 @@
                 android:layout_height="44dp"
                 android:layout_marginTop="16dp"
                 android:paddingHorizontal="24dp"
-                android:text="إعادة المحاولة"
+                android:text="@string/str_______________"
                 android:backgroundTint="@color/find_primary"
                 style="@style/Widget.MaterialComponents.Button" />
         </LinearLayout>
@@ -161,7 +161,7 @@
             android:layout_marginHorizontal="8dp"
             android:background="@drawable/bg_message_input"
             android:gravity="center_vertical|end"
-            android:hint="اكتب رسالة..."
+            android:hint="@string/str______________"
             android:textSize="14sp"
             android:textColor="@color/text_primary"
             android:paddingHorizontal="14dp"

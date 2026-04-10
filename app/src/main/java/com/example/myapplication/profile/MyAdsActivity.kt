@@ -130,12 +130,12 @@ class MyAdsActivity : AppCompatActivity() {
                 if (response.isSuccessful || response.code() == 204) {
                     allAds = allAds.filter { it.id != item.id }
                     applyFilter()
-                    Toast.makeText(this@MyAdsActivity, "تم الحذف", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MyAdsActivity, getString(R.string.kt_str_3569a87c), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this@MyAdsActivity, "فشل الحذف", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MyAdsActivity, getString(R.string.kt_str_eb88417b), Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@MyAdsActivity, "تعذر الاتصال", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MyAdsActivity, getString(R.string.kt_str_338558d2), Toast.LENGTH_SHORT).show()
             }
         }
     }

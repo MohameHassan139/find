@@ -46,7 +46,7 @@ class ChatActivity : AppCompatActivity() {
         val otherAvatar = if (isBuyer) conversation.sellerAvatar else conversation.buyerAvatar
 
         binding.tvChatName.text = otherName ?: "محادثة"
-        binding.tvChatStatus.text = "آخر ظهور الساعة 1:00PM"
+        binding.tvChatStatus.text = getString(R.string.kt_str_b30c86e0)
 
         if (!otherAvatar.isNullOrEmpty()) {
             Glide.with(this).load(otherAvatar).placeholder(R.drawable.ic_avatar_placeholder)

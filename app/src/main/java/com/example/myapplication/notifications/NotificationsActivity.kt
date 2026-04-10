@@ -47,9 +47,9 @@ class NotificationsActivity : AppCompatActivity() {
                     api.markAllNotificationsRead()
                     // Refresh list after marking all read
                     loadNotifications(api)
-                    Toast.makeText(this@NotificationsActivity, "تم تحديد الكل كمقروء", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@NotificationsActivity, getString(R.string.kt_str_17c3b29d), Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
-                    Toast.makeText(this@NotificationsActivity, "تعذر التحديث", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@NotificationsActivity, getString(R.string.kt_str_e066498f), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -101,7 +101,7 @@ class NotificationsActivity : AppCompatActivity() {
         binding.progressBar.visibility = View.GONE
         binding.rvNotifications.visibility = View.GONE
         binding.tvEmpty.visibility = View.VISIBLE
-        binding.tvEmpty.text = "لا توجد إشعارات"
+        binding.tvEmpty.text = getString(R.string.kt_str_e9867f64)
     }
 
     private fun showError(msg: String) {

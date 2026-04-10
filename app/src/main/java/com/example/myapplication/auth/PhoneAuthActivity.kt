@@ -1,5 +1,6 @@
 package com.example.myapplication.auth
 
+import com.example.myapplication.R
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -52,7 +53,7 @@ class PhoneAuthActivity : AppCompatActivity() {
         val code = binding.etCountryCode.text.toString().trim()
         val number = binding.etPhone.text.toString().trim()
         if (number.isEmpty()) {
-            Toast.makeText(this, "أدخل رقم الهاتف", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.kt_str_7e371590), Toast.LENGTH_SHORT).show()
             return
         }
         phoneNumber = "${code}${number}"
@@ -68,10 +69,10 @@ class PhoneAuthActivity : AppCompatActivity() {
                     showOtpStep()
                 } else {
                     Toast.makeText(this@PhoneAuthActivity,
-                        "فشل إرسال الرمز: ${response.code()}", Toast.LENGTH_SHORT).show()
+                        getString(R.string.kt_str_4605bbeb), Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@PhoneAuthActivity, "تعذر الاتصال بالخادم", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@PhoneAuthActivity, getString(R.string.kt_str_6c8b9134), Toast.LENGTH_SHORT).show()
             } finally {
                 setPhoneLoading(false)
             }
@@ -81,7 +82,7 @@ class PhoneAuthActivity : AppCompatActivity() {
     private fun handleVerifyOtp() {
         val code = binding.etOtp.text.toString().trim()
         if (code.length < 4) {
-            Toast.makeText(this, "أدخل رمز التحقق", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.kt_str_175b78ed), Toast.LENGTH_SHORT).show()
             return
         }
         setOtpLoading(true)
@@ -111,7 +112,7 @@ class PhoneAuthActivity : AppCompatActivity() {
                         else "خطأ: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@PhoneAuthActivity, "تعذر الاتصال بالخادم", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@PhoneAuthActivity, getString(R.string.kt_str_6c8b9134), Toast.LENGTH_SHORT).show()
             } finally {
                 setOtpLoading(false)
             }
@@ -126,7 +127,7 @@ class PhoneAuthActivity : AppCompatActivity() {
                 binding.tvResend.text = "إعادة الإرسال بعد ${ms / 1000}s"
             }
             override fun onFinish() {
-                binding.tvResend.text = "إعادة إرسال الرمز"
+                binding.tvResend.text = getString(R.string.kt_str_9d645b32)
                 binding.tvResend.isEnabled = true
             }
         }.start()

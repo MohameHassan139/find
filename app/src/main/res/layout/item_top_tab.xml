@@ -16,7 +16,7 @@
             android:id="@+id/tvLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Label"
+            android:text="@string/str_label"
             android:textColor="@color/black"
             android:textSize="15sp" />
 

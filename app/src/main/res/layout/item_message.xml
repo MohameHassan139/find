@@ -10,7 +10,7 @@
         android:id="@+id/layoutSent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
+        android:layout_gravity="end"
         android:orientation="vertical"
         android:visibility="gone">
 
@@ -29,7 +29,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:layout_marginTop="2dp">
@@ -55,7 +55,7 @@
         android:id="@+id/layoutReceived"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left"
+        android:layout_gravity="start"
         android:orientation="vertical"
         android:visibility="gone">
 
@@ -75,7 +75,7 @@
             android:id="@+id/tvTimeReceived"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             android:layout_marginTop="2dp"
             android:textSize="10sp"
             android:textColor="#AAAAAA" />

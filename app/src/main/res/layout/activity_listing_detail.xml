@@ -101,7 +101,7 @@
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="📞" android:textSize="20sp" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="اتصال" android:textSize="11sp" android:textColor="@color/text_primary" />
+                            android:text="@string/str______" android:textSize="11sp" android:textColor="@color/text_primary" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -116,7 +116,7 @@
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="💬" android:textSize="20sp" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="واتساب" android:textSize="11sp" android:textColor="@color/text_primary" />
+                            android:text="@string/str_______" android:textSize="11sp" android:textColor="@color/text_primary" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -131,7 +131,7 @@
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="✉️" android:textSize="20sp" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="محادثة" android:textSize="11sp" android:textColor="@color/text_primary" />
+                            android:text="@string/str_______" android:textSize="11sp" android:textColor="@color/text_primary" />
                     </LinearLayout>
                 </LinearLayout>
 

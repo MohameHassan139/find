@@ -27,6 +27,7 @@ import com.example.myapplication.adapters.ExtraTabAdapter
 import com.example.myapplication.auth.AuthRetrofitClient
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.databinding.ActivityMainBinding
+import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -353,7 +354,7 @@ class MainActivity : AppCompatActivity() {
         if (regions == lastRegionList && binding.spinnerRegion.adapter != null) return
         lastRegionList = regions
         suppressSpinner = true
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, regions.map { it.nameAr })
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, regions.map { LocaleHelper.localizedName(this, it.nameAr, it.nameEn) })
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerRegion.adapter = adapter
         binding.spinnerRegion.setSelection(0)
@@ -375,7 +376,7 @@ class MainActivity : AppCompatActivity() {
         if (regionId == null || cities.isEmpty()) { binding.spinnerCity.visibility = View.GONE; return }
         suppressSpinner = true
         binding.spinnerCity.visibility = View.VISIBLE
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, cities.map { it.nameAr })
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, cities.map { LocaleHelper.localizedName(this, it.nameAr, it.nameEn) })
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerCity.adapter = adapter
         binding.spinnerCity.setSelection(0)

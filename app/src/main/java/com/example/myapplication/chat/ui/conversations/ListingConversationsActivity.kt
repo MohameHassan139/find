@@ -1,5 +1,6 @@
 package com.example.myapplication.chat.ui.conversations
 
+import com.example.myapplication.R
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -93,7 +94,7 @@ class ListingConversationsActivity : AppCompatActivity() {
     private fun showEmpty() {
         binding.progressBar.visibility = View.GONE
         binding.tvEmpty.visibility = View.VISIBLE
-        binding.tvEmpty.text = "لا توجد محادثات لهذا الإعلان"
+        binding.tvEmpty.text = getString(R.string.kt_str_0a896d74)
         binding.rvConversations.visibility = View.GONE
     }
 

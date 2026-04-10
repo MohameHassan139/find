@@ -43,7 +43,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="فايند"
+                android:text="@string/app_name_ar"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 android:textColor="#000000"
@@ -52,7 +52,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="find"
+                android:text="@string/app_name_en"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:textColor="#000000"

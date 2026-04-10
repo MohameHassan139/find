@@ -8,6 +8,7 @@ import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.ApiFilterOption
 import com.example.myapplication.databinding.ItemTopTabBinding
+import com.example.myapplication.utils.LocaleHelper
 
 class ExtraTabAdapter(
     private var items: List<ApiFilterOption>,
@@ -26,7 +27,7 @@ class ExtraTabAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val opt = items[position]
-        val label = opt.nameAr
+        val label = LocaleHelper.localizedName(holder.itemView.context, opt.nameAr, opt.nameEn)
         val isActive = selectedId == position
 
         holder.b.tvLabel.text = label

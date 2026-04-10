@@ -22,6 +22,7 @@ private const val PAGE_SIZE = 20
 data class ApiCategory(
     val id: Int,
     val nameAr: String,
+    val nameEn: String? = null,
     val iconName: String? = null,
     val subCategories: List<ApiSubCategory> = emptyList()
 ) {
@@ -37,6 +38,7 @@ data class ApiCategory(
 data class ApiSubCategory(
     val id: Int,
     val nameAr: String,
+    val nameEn: String? = null,
     val iconName: String? = null,
     val filterOptions: List<ApiFilterOption> = emptyList()
 ) {
@@ -49,10 +51,10 @@ data class ApiSubCategory(
     }
 }
 
-data class ApiFilterOption(val id: Int, val nameAr: String)
+data class ApiFilterOption(val id: Int, val nameAr: String, val nameEn: String? = null)
 
-data class RegionItem(val id: Int, val nameAr: String)
-data class CityItem(val id: Int, val nameAr: String, val regionId: Int)
+data class RegionItem(val id: Int, val nameAr: String, val nameEn: String? = null)
+data class CityItem(val id: Int, val nameAr: String, val nameEn: String? = null, val regionId: Int)
 
 data class ApiListing(
     val id: String,
@@ -219,12 +221,13 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                             val optArr = s.optJSONArray("filter_options") ?: JSONArray()
                             for (k in 0 until optArr.length()) {
                                 val fo = optArr.getJSONObject(k)
-                                opts.add(ApiFilterOption(fo.getInt("id"), fo.optString("name_ar", "")))
+                                opts.add(ApiFilterOption(fo.getInt("id"), fo.optString("name_ar", ""), fo.optString("name_en", "").ifEmpty { null }))
                             }
                             
                             subs.add(ApiSubCategory(
                                 id = s.getInt("id"),
                                 nameAr = s.optString("name_ar", ""),
+                                nameEn = s.optString("name_en", "").ifEmpty { null },
                                 iconName = if (s.isNull("icon")) null else s.optString("icon").ifEmpty { null },
                                 filterOptions = opts
                             ))
@@ -362,6 +365,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             list.add(ApiCategory(
                 id = o.getInt("id"),
                 nameAr = o.optString("name_ar", ""),
+                nameEn = o.optString("name_en", "").ifEmpty { null },
                 iconName = if (o.isNull("icon")) null else o.optString("icon").ifEmpty { null }
             ))
         }
@@ -374,11 +378,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         for (i in 0 until arr.length()) {
             val r = arr.getJSONObject(i)
             val rId = r.getInt("id")
-            regs.add(RegionItem(rId, r.optString("name_ar", "")))
+            regs.add(RegionItem(rId, r.optString("name_ar", ""), r.optString("name_en", "").ifEmpty { null }))
             val cArr = r.optJSONArray("cities") ?: JSONArray()
             for (j in 0 until cArr.length()) {
                 val c = cArr.getJSONObject(j)
-                cities.add(CityItem(c.getInt("id"), c.optString("name_ar", ""), rId))
+                cities.add(CityItem(c.getInt("id"), c.optString("name_ar", ""), c.optString("name_en", "").ifEmpty { null }, rId))
             }
         }
         return regs to cities
