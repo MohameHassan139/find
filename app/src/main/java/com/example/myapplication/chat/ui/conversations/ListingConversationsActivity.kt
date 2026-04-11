@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,7 +23,7 @@ import com.example.myapplication.databinding.ActivityListingConversationsBinding
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
 
-class ListingConversationsActivity : AppCompatActivity() {
+class ListingConversationsActivity : BaseActivity() {
 
     companion object {
         const val EXTRA_LISTING_ID = "listing_id"
@@ -45,6 +46,7 @@ class ListingConversationsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityListingConversationsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyWindowInsets()
 
         api = RetrofitClient.build(this)
 

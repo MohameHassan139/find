@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,7 +23,7 @@ import com.example.myapplication.databinding.ActivityNotificationsBinding
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
 
-class NotificationsActivity : AppCompatActivity() {
+class NotificationsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityNotificationsBinding
     private lateinit var adapter: NotificationsAdapter
@@ -36,6 +37,7 @@ class NotificationsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityNotificationsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyWindowInsets()
 
         val api = RetrofitClient.build(this)
 

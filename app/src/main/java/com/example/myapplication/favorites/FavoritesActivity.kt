@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.ApiListing
@@ -20,7 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
-class FavoritesActivity : AppCompatActivity() {
+class FavoritesActivity : BaseActivity() {
 
     private lateinit var binding: ActivityFavoritesBinding
     private lateinit var adapter: ListingsAdapter
@@ -35,6 +36,7 @@ class FavoritesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityFavoritesBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyWindowInsets()
 
         findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {

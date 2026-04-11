@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
@@ -19,7 +20,7 @@ import com.example.myapplication.databinding.ActivityProfileBinding
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
 
-class ProfileActivity : AppCompatActivity() {
+class ProfileActivity : BaseActivity() {
 
     private lateinit var binding: ActivityProfileBinding
 
@@ -32,6 +33,7 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyWindowInsets()
 
         findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {

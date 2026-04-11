@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -30,7 +31,7 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ListingDetailActivity : AppCompatActivity() {
+class ListingDetailActivity : BaseActivity() {
 
     private lateinit var binding: ActivityListingDetailBinding
     private var isFavorited = false
@@ -50,6 +51,7 @@ class ListingDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityListingDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyWindowInsets()
         findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
             startActivity(Intent(this, MenuActivity::class.java))

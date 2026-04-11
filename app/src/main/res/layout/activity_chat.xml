@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/bg_screen"
+    android:clipChildren="false"
     android:layoutDirection="locale">
 
     <!-- Top Bar -->
@@ -134,12 +135,16 @@
 
     <!-- Message Input Bar -->
     <LinearLayout
+        android:id="@+id/llMessageInputBar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
+        android:minHeight="60dp"
         android:background="@color/surface_primary"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="12dp"
+        android:paddingTop="9dp"
+        android:paddingBottom="9dp"
         android:elevation="8dp">
 
         <!-- Send Button -->

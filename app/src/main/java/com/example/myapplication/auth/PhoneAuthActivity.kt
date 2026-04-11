@@ -8,13 +8,14 @@ import android.os.CountDownTimer
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.MainActivity
 import com.example.myapplication.databinding.ActivityPhoneAuthBinding
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
 
-class PhoneAuthActivity : AppCompatActivity() {
+class PhoneAuthActivity : BaseActivity() {
 
     private lateinit var binding: ActivityPhoneAuthBinding
     private var phoneNumber = ""
@@ -32,6 +33,13 @@ class PhoneAuthActivity : AppCompatActivity() {
 
         binding = ActivityPhoneAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Apply status bar inset to root since this screen has a custom top bar
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val statusBar = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.statusBars())
+            v.setPadding(v.paddingLeft, statusBar.top, v.paddingRight, v.paddingBottom)
+            insets
+        }
 
         showPhoneStep()
 

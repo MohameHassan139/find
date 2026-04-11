@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BaseActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.appcompat.app.AlertDialog
@@ -23,7 +24,7 @@ import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.utils.AuthGuard
 import kotlinx.coroutines.launch
 
-class MenuActivity : AppCompatActivity() {
+class MenuActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMenuBinding
 
@@ -36,6 +37,7 @@ class MenuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyWindowInsets()
 
         // Show user name if logged in
         if (TokenManager.isLoggedIn(this)) {

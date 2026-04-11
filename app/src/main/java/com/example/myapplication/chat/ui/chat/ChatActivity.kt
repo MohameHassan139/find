@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BaseActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
@@ -15,7 +16,7 @@ import com.example.myapplication.chat.utils.Result
 import com.example.myapplication.databinding.ActivityChatBinding
 import com.example.myapplication.utils.LocaleHelper
 
-class ChatActivity : AppCompatActivity() {
+class ChatActivity : BaseActivity() {
 
     companion object {
         const val EXTRA_CONVERSATION = "extra_conversation"
@@ -35,6 +36,16 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyWindowInsets()
+
+        // Apply bottom nav bar inset to the message input bar
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(
+            binding.root.findViewById(R.id.llMessageInputBar)
+        ) { v, insets ->
+            val navBar = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.navigationBars())
+            v.setPadding(v.paddingLeft, v.paddingTop, v.paddingRight, 9 + navBar.bottom)
+            insets
+        }
 
         conversation = intent.getParcelableExtra(EXTRA_CONVERSATION)!!
 

@@ -8,11 +8,12 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BaseActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.databinding.ActivityCategorySelectionBinding
 import com.example.myapplication.utils.LocaleHelper
 
-class CategorySelectionActivity : AppCompatActivity() {
+class CategorySelectionActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCategorySelectionBinding
     private lateinit var vm: MainViewModel
@@ -33,6 +34,7 @@ class CategorySelectionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCategorySelectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyWindowInsets()
 
         vm = ViewModelProvider(this)[MainViewModel::class.java]
 

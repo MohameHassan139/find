@@ -15,6 +15,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.myapplication.auth.TokenManager
@@ -32,7 +33,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
-class AddAdActivity : AppCompatActivity() {
+class AddAdActivity : BaseActivity() {
 
     companion object {
         const val EXTRA_LISTING_ID = "listing_id"
@@ -105,6 +106,10 @@ class AddAdActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAddAdBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyWindowInsets(
+            appBarId = R.id.llAppBar,
+            bottomNavId = R.id.cvBottomNav
+        )
 
         // Wire appbar buttons via findViewById (they live inside <include>)
         findViewById<ImageButton>(R.id.btnMenu).setOnClickListener {

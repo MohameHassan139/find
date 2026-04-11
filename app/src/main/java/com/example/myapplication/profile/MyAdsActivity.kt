@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BaseActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.example.myapplication.MenuActivity
 import androidx.lifecycle.lifecycleScope
@@ -31,7 +32,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MyAdsActivity : AppCompatActivity() {
+class MyAdsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMyAdsBinding
     private var allAds: List<ListingItem> = emptyList()
@@ -53,6 +54,7 @@ class MyAdsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMyAdsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyWindowInsets()
 
         findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {

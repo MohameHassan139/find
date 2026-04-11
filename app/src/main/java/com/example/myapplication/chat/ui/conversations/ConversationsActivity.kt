@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BaseActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.NavScreen
@@ -15,7 +16,7 @@ import com.example.myapplication.chat.utils.Result
 import com.example.myapplication.databinding.ActivityConversationsBinding
 import com.example.myapplication.utils.LocaleHelper
 
-class ConversationsActivity : AppCompatActivity() {
+class ConversationsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityConversationsBinding
     private val viewModel: ConversationsViewModel by viewModels()
@@ -30,6 +31,10 @@ class ConversationsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityConversationsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyWindowInsets(
+            appBarId = R.id.llAppBar,
+            bottomNavId = R.id.cvBottomNav
+        )
 
         setupRecyclerView()
         setupFilterChips()
