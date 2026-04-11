@@ -151,9 +151,15 @@ class PhoneAuthActivity : AppCompatActivity() {
     }
 
     private fun goToMain() {
-        startActivity(Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        })
+        // If we were launched from another activity (e.g. AuthGuard dialog), just finish back to it.
+        // If we were launched as the root (e.g. from logout), go to MainActivity.
+        if (!isTaskRoot) {
+            finish()
+        } else {
+            startActivity(Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
+        }
     }
 
     override fun onDestroy() {

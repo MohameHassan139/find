@@ -30,6 +30,7 @@ import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.utils.AuthGuard
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -452,18 +453,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun toggleFavorite(listingId: String, add: Boolean) {
-        if (!TokenManager.isLoggedIn(this)) {
-            startActivity(Intent(this, com.example.myapplication.auth.PhoneAuthActivity::class.java))
-            return
-        }
-        lifecycleScope.launch {
-            try {
-                val api = RetrofitClient.build(this@MainActivity)
-                withContext(Dispatchers.IO) {
-                    if (add) api.addFavorite(com.example.myapplication.favorites.AddFavoriteRequest(listingId))
-                    else api.removeFavorite(listingId)
-                }
-            } catch (_: Exception) {}
+        AuthGuard.requireLogin(this) {
+            lifecycleScope.launch {
+                try {
+                    val api = RetrofitClient.build(this@MainActivity)
+                    withContext(Dispatchers.IO) {
+                        if (add) api.addFavorite(com.example.myapplication.favorites.AddFavoriteRequest(listingId))
+                        else api.removeFavorite(listingId)
+                    }
+                } catch (_: Exception) {}
+            }
         }
     }
 }

@@ -20,6 +20,7 @@ import com.example.myapplication.profile.MyAdsActivity
 import com.example.myapplication.profile.ProfileActivity
 import com.example.myapplication.databinding.ActivityMenuBinding
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.utils.AuthGuard
 import kotlinx.coroutines.launch
 
 class MenuActivity : AppCompatActivity() {
@@ -54,33 +55,30 @@ class MenuActivity : AppCompatActivity() {
 
         binding.btnLogin.setOnClickListener {
             if (TokenManager.isLoggedIn(this)) {
-                // Logout
+                // Logout — clear token and return to home
                 TokenManager.clear(this)
-                startActivity(Intent(this, PhoneAuthActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                binding.btnLogin.text = getString(R.string.menu_login)
+                startActivity(Intent(this, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 })
+                finish()
             } else {
                 startActivity(Intent(this, PhoneAuthActivity::class.java))
             }
         }
 
         binding.menuMyAccount.setOnClickListener {
-            if (TokenManager.isLoggedIn(this)) startActivity(Intent(this, ProfileActivity::class.java))
-            else startActivity(Intent(this, PhoneAuthActivity::class.java))
+            AuthGuard.requireLogin(this) { startActivity(Intent(this, ProfileActivity::class.java)) }
         }
         binding.menuMyAds.setOnClickListener {
-            if (TokenManager.isLoggedIn(this)) startActivity(Intent(this, MyAdsActivity::class.java))
-            else startActivity(Intent(this, PhoneAuthActivity::class.java))
+            AuthGuard.requireLogin(this) { startActivity(Intent(this, MyAdsActivity::class.java)) }
         }
         binding.menuFavorites.setOnClickListener {
-            if (TokenManager.isLoggedIn(this)) startActivity(Intent(this, FavoritesActivity::class.java))
-            else startActivity(Intent(this, PhoneAuthActivity::class.java))
+            AuthGuard.requireLogin(this) { startActivity(Intent(this, FavoritesActivity::class.java)) }
         }
         binding.menuNotifications.setOnClickListener {
-            if (TokenManager.isLoggedIn(this)) {
+            AuthGuard.requireLogin(this) {
                 startActivity(Intent(this, com.example.myapplication.notifications.NotificationsActivity::class.java))
-            } else {
-                startActivity(Intent(this, PhoneAuthActivity::class.java))
             }
         }
         binding.menuSettings.setOnClickListener {

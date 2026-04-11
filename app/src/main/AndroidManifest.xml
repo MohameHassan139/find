@@ -16,9 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
 
-        <!-- Auth -->
+        <!-- Main -->
         <activity
-            android:name=".auth.PhoneAuthActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,8 +26,8 @@
             </intent-filter>
         </activity>
 
-        <!-- Main -->
-        <activity android:name=".MainActivity" android:exported="false" />
+        <!-- Auth -->
+        <activity android:name=".auth.PhoneAuthActivity" android:exported="false" />
         <activity android:name=".MenuActivity" android:exported="false" />
         <activity android:name=".AddAdActivity" android:exported="false" />
         <activity android:name=".LocationSelectionActivity" android:exported="false" />

@@ -107,6 +107,14 @@
     <string name="added_to_favorites">تمت الإضافة إلى المفضلة</string>
     <string name="removed_from_favorites">تمت الإزالة من المفضلة</string>
 
+    <!-- Auth Guard -->
+    <string name="auth_guard_title">Login Required</string>
+    <string name="auth_guard_message">You need to be logged in to use this feature. Would you like to go to the login screen?</string>
+    <string name="auth_guard_go_login">Login</string>
+    <string name="auth_guard_cancel">Cancel</string>
+    <string name="auth_guard_session_expired_title">Session Expired</string>
+    <string name="auth_guard_session_expired_message">Your session has expired. Please log in again to continue.</string>
+
     <!-- Settings screen -->
     <string name="settings_section_appearance">Appearance</string>
     <string name="settings_section_language">Language</string>

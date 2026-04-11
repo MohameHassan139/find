@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.chat.ui.conversations.ConversationsActivity
+import com.example.myapplication.utils.AuthGuard
 
 enum class NavScreen { HOME, ADD, CHAT, NONE }
 
@@ -30,18 +31,18 @@ object BottomNavHelper {
 
         activity.findViewById<android.view.View>(R.id.navAdd)?.setOnClickListener {
             if (current == NavScreen.ADD) return@setOnClickListener
-            activity.startActivity(Intent(activity, AddAdActivity::class.java))
-            activity.overridePendingTransition(0, 0)
+            AuthGuard.requireLogin(activity) {
+                activity.startActivity(Intent(activity, AddAdActivity::class.java))
+                activity.overridePendingTransition(0, 0)
+            }
         }
 
         activity.findViewById<android.view.View>(R.id.navChat)?.setOnClickListener {
             if (current == NavScreen.CHAT) return@setOnClickListener
-            if (!TokenManager.isLoggedIn(activity)) {
-                activity.startActivity(Intent(activity, PhoneAuthActivity::class.java))
-                return@setOnClickListener
+            AuthGuard.requireLogin(activity) {
+                activity.startActivity(Intent(activity, ConversationsActivity::class.java))
+                activity.overridePendingTransition(0, 0)
             }
-            activity.startActivity(Intent(activity, ConversationsActivity::class.java))
-            activity.overridePendingTransition(0, 0)
         }
     }
 

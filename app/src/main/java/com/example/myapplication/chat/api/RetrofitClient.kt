@@ -2,6 +2,7 @@ package com.example.myapplication.chat.api
 
 import android.content.Context
 import com.example.myapplication.auth.TokenManager
+import com.example.myapplication.utils.AuthGuard
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -14,18 +15,22 @@ object RetrofitClient {
 
     fun build(context: Context): FindApiService {
         val token = TokenManager.getToken(context) ?: ""
+        val appContext = context.applicationContext
 
         val client = OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val originalRequest = chain.request()
-                if (token.isEmpty()) {
-                    chain.proceed(originalRequest)
-                } else {
-                    val authenticatedRequest = originalRequest.newBuilder()
-                        .header("Authorization", "Bearer $token")
-                        .build()
-                    chain.proceed(authenticatedRequest)
+                val request = if (token.isEmpty()) originalRequest
+                else originalRequest.newBuilder()
+                    .header("Authorization", "Bearer $token")
+                    .build()
+                val response = chain.proceed(request)
+                if (response.code == 401) {
+                    android.os.Handler(android.os.Looper.getMainLooper()).post {
+                        AuthGuard.onUnauthorized(appContext)
+                    }
                 }
+                response
             }
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY

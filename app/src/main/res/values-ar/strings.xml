@@ -104,6 +104,14 @@
     <string name="menu_language">اللغة</string>
     <string name="filter">تصفية</string>
 
+    <!-- Auth Guard -->
+    <string name="auth_guard_title">يجب تسجيل الدخول</string>
+    <string name="auth_guard_message">يجب تسجيل الدخول لاستخدام هذه الميزة. هل تريد الانتقال إلى شاشة تسجيل الدخول؟</string>
+    <string name="auth_guard_go_login">تسجيل الدخول</string>
+    <string name="auth_guard_cancel">إلغاء</string>
+    <string name="auth_guard_session_expired_title">انتهت الجلسة</string>
+    <string name="auth_guard_session_expired_message">انتهت صلاحية جلستك. يرجى تسجيل الدخول مجدداً للمتابعة.</string>
+
     <!-- Settings screen -->
     <string name="settings_section_appearance">المظهر</string>
     <string name="settings_section_language">اللغة</string>
