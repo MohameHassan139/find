@@ -17,11 +17,12 @@ class CategorySelectionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCategorySelectionBinding
     private lateinit var vm: MainViewModel
 
-    private enum class State { TYPE, MAIN, SUB }
+    private enum class State { TYPE, MAIN, SUB, FILTER }
     private var currentState = State.TYPE
 
     private var selectedType = ""
     private var selectedMain: ApiCategory? = null
+    private var selectedSub: ApiSubCategory? = null
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.wrap(newBase))
@@ -105,8 +106,7 @@ class CategorySelectionActivity : AppCompatActivity() {
         binding.llListContainer.removeAllViews()
 
         if (cat.subCategories.isEmpty()) {
-            // If subs not loaded yet, return directly with only the main category
-            returnResult(cat, null)
+            returnResult(cat, null, null)
             return
         }
 
@@ -115,7 +115,29 @@ class CategorySelectionActivity : AppCompatActivity() {
             item.findViewById<TextView>(R.id.tvItemName).text =
                 LocaleHelper.localizedName(this, sub.nameAr, sub.nameEn)
             item.setOnClickListener {
-                returnResult(cat, sub)
+                selectedSub = sub
+                if (sub.filterOptions.isNotEmpty()) {
+                    showFilterOptions(cat, sub)
+                } else {
+                    returnResult(cat, sub, null)
+                }
+            }
+            binding.llListContainer.addView(item)
+        }
+    }
+
+    // ── Step 4: Filter options (e.g. car brands) ─────────────────────────────
+
+    private fun showFilterOptions(cat: ApiCategory, sub: ApiSubCategory) {
+        currentState = State.FILTER
+        binding.llListContainer.removeAllViews()
+
+        for (opt in sub.filterOptions) {
+            val item = layoutInflater.inflate(R.layout.item_category, binding.llListContainer, false)
+            item.findViewById<TextView>(R.id.tvItemName).text =
+                LocaleHelper.localizedName(this, opt.nameAr, opt.nameEn)
+            item.setOnClickListener {
+                returnResult(cat, sub, opt)
             }
             binding.llListContainer.addView(item)
         }
@@ -123,27 +145,30 @@ class CategorySelectionActivity : AppCompatActivity() {
 
     // ── Return result ────────────────────────────────────────────────────────
 
-    private fun returnResult(cat: ApiCategory, sub: ApiSubCategory?) {
+    private fun returnResult(cat: ApiCategory, sub: ApiSubCategory?, filter: ApiFilterOption?) {
         val catLabel = LocaleHelper.localizedName(this, cat.nameAr, cat.nameEn)
-        val subLabel = if (sub != null) LocaleHelper.localizedName(this, sub.nameAr, sub.nameEn) else null
+        val subLabel = sub?.let { LocaleHelper.localizedName(this, it.nameAr, it.nameEn) }
+        val filterLabel = filter?.let { LocaleHelper.localizedName(this, it.nameAr, it.nameEn) }
         val typeLabel = if (selectedType == "offer")
             LocaleHelper.localizedName(this, "عرض", "Offer")
         else
             LocaleHelper.localizedName(this, "طلب", "Request")
 
-        val displayText = listOfNotNull(typeLabel, catLabel, subLabel).joinToString(" - ")
+        val displayText = listOfNotNull(typeLabel, catLabel, subLabel, filterLabel).joinToString(" - ")
 
         val resultIntent = Intent()
         resultIntent.putExtra("selected_category", displayText)
         resultIntent.putExtra("selected_type", selectedType)
         resultIntent.putExtra("selected_category_id", cat.id)
         resultIntent.putExtra("selected_sub_category_id", sub?.id ?: -1)
+        resultIntent.putExtra("selected_filter_option_id", filter?.id ?: -1)
         setResult(Activity.RESULT_OK, resultIntent)
         finish()
     }
 
     override fun onBackPressed() {
         when (currentState) {
+            State.FILTER -> selectedMain?.let { showSubCategories(it) }
             State.SUB -> showMainCategories(vm.categories.value ?: emptyList())
             State.MAIN -> showTypes()
             State.TYPE -> super.onBackPressed()

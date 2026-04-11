@@ -55,6 +55,7 @@ class AddAdActivity : AppCompatActivity() {
     private var adType = "offer"
     private var selectedCategoryId: Int = 1
     private var selectedSubCategoryId: Int = -1
+    private var selectedFilterOptionId: Int = -1
     private var selectedRegionId: Int = 1
 
     private val httpClient = OkHttpClient.Builder()
@@ -90,6 +91,7 @@ class AddAdActivity : AppCompatActivity() {
             adType = data?.getStringExtra("selected_type") ?: "offer"
             selectedCategoryId = data?.getIntExtra("selected_category_id", 1) ?: 1
             selectedSubCategoryId = data?.getIntExtra("selected_sub_category_id", -1) ?: -1
+            selectedFilterOptionId = data?.getIntExtra("selected_filter_option_id", -1) ?: -1
             binding.tvCategoryText.text = selectedCategory.ifEmpty { getString(R.string.category_label) }
         }
     }
@@ -279,7 +281,11 @@ class AddAdActivity : AppCompatActivity() {
                 put("title", title); put("description", desc)
                 put("listing_type", adType); put("city", selectedLocation)
                 put("price", price.toDoubleOrNull() ?: 0.0)
-                put("category_id", 1); put("region_id", 1); put("images", JSONArray())
+                put("category_id", selectedCategoryId)
+                put("region_id", selectedRegionId)
+                if (selectedSubCategoryId > 0) put("sub_category_id", selectedSubCategoryId)
+                if (selectedFilterOptionId > 0) put("filter_option_id", selectedFilterOptionId)
+                put("images", JSONArray())
             }
             val resp = httpClient.newCall(Request.Builder()
                 .url("$apiBase/listings")
