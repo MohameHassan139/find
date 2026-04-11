@@ -64,6 +64,10 @@
     <string name="str_____">ظاهر</string>
     <string name="save_changes">حفظ التغييرات</string>
     <string name="logout">تسجيل الخروج</string>
+    <string name="logout_confirm_title">تسجيل الخروج</string>
+    <string name="logout_confirm_message">هل أنت متأكد أنك تريد تسجيل الخروج؟</string>
+    <string name="logout_confirm_yes">تسجيل الخروج</string>
+    <string name="logout_confirm_no">إلغاء</string>
     <string name="search_hint_text">اكتب كلمة للبحث في الإعلانات</string>
     <string name="no_results">لا توجد نتائج</string>
     <string name="last_message_placeholder">آخر رسالة...</string>

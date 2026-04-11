@@ -55,13 +55,19 @@ class MenuActivity : AppCompatActivity() {
 
         binding.btnLogin.setOnClickListener {
             if (TokenManager.isLoggedIn(this)) {
-                // Logout — clear token and return to home
-                TokenManager.clear(this)
-                binding.btnLogin.text = getString(R.string.menu_login)
-                startActivity(Intent(this, MainActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                })
-                finish()
+                AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.logout_confirm_title))
+                    .setMessage(getString(R.string.logout_confirm_message))
+                    .setPositiveButton(getString(R.string.logout_confirm_yes)) { _, _ ->
+                        TokenManager.clear(this)
+                        binding.btnLogin.text = getString(R.string.menu_login)
+                        startActivity(Intent(this, MainActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                        })
+                        finish()
+                    }
+                    .setNegativeButton(getString(R.string.logout_confirm_no), null)
+                    .show()
             } else {
                 startActivity(Intent(this, PhoneAuthActivity::class.java))
             }

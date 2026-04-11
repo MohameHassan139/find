@@ -210,11 +210,11 @@ class MyAdsAdapter(
         val priceVal = item.price
         holder.tvPrice.text = if (priceVal != null) {
             val formatted = if (priceVal % 1 == 0.0) priceVal.toLong().toString() else priceVal.toString()
-            "$formatted ر.س"
+            formatted
         } else "—"
         holder.tvSellerName.text = item.seller?.name ?: ""
-        holder.tvLocation.text = "📍 ${item.region?.nameAr ?: item.city ?: ""}"
-        holder.tvTime.text = "🕐 ${formatTime(item.createdAt)}"
+        holder.tvLocation.text = item.region?.nameAr ?: item.city ?: ""
+        holder.tvTime.text = formatTime(item.createdAt)
 
         // Image navigation
         holder.imageIndex = 0

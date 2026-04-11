@@ -111,7 +111,7 @@ class ListingDetailActivity : AppCompatActivity() {
 
         binding.tvPrice.text = l.price?.let {
             val fmt = if (it % 1 == 0.0) it.toLong().toString() else it.toString()
-            "$fmt ر.س"
+            fmt
         } ?: "—"
 
         val isOffer = l.listingType == "offer"
@@ -121,14 +121,12 @@ class ListingDetailActivity : AppCompatActivity() {
         )
 
         val loc = listOfNotNull(l.regionNameAr, l.city).joinToString(" - ")
-        binding.tvLocation.text = buildString {
-            if (loc.isNotEmpty()) append("📍 $loc")
-            val time = formatTime(l.createdAt)
-            if (time.isNotEmpty()) {
-                if (isNotEmpty()) append("  ")
-                append("🕐 $time")
-            }
-        }
+        binding.tvLocation.text = loc.ifEmpty { "—" }
+        binding.tvLocation.visibility = if (loc.isNotEmpty()) View.VISIBLE else View.GONE
+
+        val time = formatTime(l.createdAt)
+        binding.tvTime.text = time.ifEmpty { "—" }
+        binding.tvTime.visibility = if (time.isNotEmpty()) View.VISIBLE else View.GONE
 
         binding.tvSellerName.text = l.sellerName ?: ""
         if (!l.sellerAvatar.isNullOrEmpty()) {

@@ -201,6 +201,13 @@
                 android:clickable="true"
                 android:focusable="true">
 
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_location"
+                    android:layout_marginEnd="6dp"
+                    android:contentDescription="location" />
+
                 <TextView
                     android:id="@+id/tvLocationText"
                     android:layout_width="wrap_content"
@@ -273,6 +280,13 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingHorizontal="12dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_riyal"
+                    android:layout_marginEnd="6dp"
+                    android:contentDescription="riyal" />
 
                 <TextView
                     android:layout_width="wrap_content"

@@ -147,11 +147,12 @@ class NotificationsAdapter : ListAdapter<AppNotification, NotificationsAdapter.V
             tvBody.text = n.bodyAr ?: ""
             tvTime.text = DateUtils.formatConversationTime(n.createdAt)
             viewUnread.visibility = if (!n.isRead) View.VISIBLE else View.INVISIBLE
+            val ctx = itemView.context
             itemView.setBackgroundColor(
                 if (!n.isRead)
-                    android.graphics.Color.parseColor("#FFF9E6")
+                    ctx.getColor(R.color.notif_unread_bg)
                 else
-                    android.graphics.Color.WHITE
+                    ctx.getColor(R.color.notif_read_bg)
             )
         }
     }

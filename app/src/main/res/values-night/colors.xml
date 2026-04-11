@@ -29,6 +29,8 @@
     <!-- Surface colors (used in place of hardcoded whites) -->
     <color name="surface_primary">#FF1E1E1E</color>
     <color name="surface_secondary">#FF252525</color>
+    <color name="notif_unread_bg">#FF2A2000</color>
+    <color name="notif_read_bg">#FF1E1E1E</color>
     <color name="surface_tabs">#FF1A1500</color>
     <color name="surface_field">#FF252525</color>
     <color name="surface_menu_item">#FF252525</color>

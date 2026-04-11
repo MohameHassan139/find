@@ -32,6 +32,10 @@
     <color name="send_button_bg">#C8A96E</color>
     <color name="input_bg">#F5F5F5</color>
 
+    <!-- Surface colors (defined in colors_surface.xml) -->
+    <color name="notif_unread_bg">#FFF9E6</color>
+    <color name="notif_read_bg">#FFFFFFFF</color>
+
     <!-- Icon tint — adapts automatically in dark mode via values-night override -->
     <color name="icon_tint">#FF1A1A1A</color>
     <color name="icon_tint_muted">#FF757575</color>

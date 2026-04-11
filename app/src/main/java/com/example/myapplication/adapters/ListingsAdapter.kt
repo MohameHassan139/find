@@ -54,14 +54,14 @@ class ListingsAdapter(
 
         b.tvPrice.text = item.price?.let {
             val fmt = if (it % 1 == 0.0) it.toLong().toString() else it.toString()
-            "$fmt ر.س"
+            fmt
         } ?: "—"
         // IBM Plex Mono style via system monospace
         b.tvPrice.typeface = android.graphics.Typeface.MONOSPACE
 
         b.tvSeller.text = item.sellerName ?: ""
-        b.tvLocation.text = "📍 ${item.regionNameAr ?: item.city ?: ""}"
-        b.tvTime.text = "🕐 ${formatTime(item.createdAt, holder.itemView.context)}"
+        b.tvLocation.text = item.regionNameAr ?: item.city ?: ""
+        b.tvTime.text = formatTime(item.createdAt, holder.itemView.context)
 
         // Type badge color
         val ctx = holder.itemView.context
