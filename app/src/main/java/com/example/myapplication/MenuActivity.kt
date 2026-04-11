@@ -84,7 +84,7 @@ class MenuActivity : AppCompatActivity() {
             }
         }
         binding.menuSettings.setOnClickListener {
-            Toast.makeText(this, getString(R.string.menu_settings), Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
         binding.menuLanguage.setOnClickListener {
             val languages = arrayOf("English", "العربية")

@@ -31,4 +31,8 @@
     <color name="search_bg">#F0F0F0</color>
     <color name="send_button_bg">#C8A96E</color>
     <color name="input_bg">#F5F5F5</color>
+
+    <!-- Icon tint — adapts automatically in dark mode via values-night override -->
+    <color name="icon_tint">#FF1A1A1A</color>
+    <color name="icon_tint_muted">#FF757575</color>
 </resources>

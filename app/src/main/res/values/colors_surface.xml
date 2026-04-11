@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Light mode surface/semantic colors (dark mode overrides in values-night/colors.xml) -->
+<resources>
+    <color name="surface_primary">#FFFFFFFF</color>
+    <color name="surface_secondary">#FFF8F8F8</color>
+    <color name="surface_tabs">#FFFFF9E6</color>
+    <color name="surface_field">#FFFFFFFF</color>
+    <color name="surface_menu_item">#FFFFFFFF</color>
+    <color name="stroke_field">#FFDCDCDC</color>
+    <color name="stroke_menu_item">#FFE0E0E0</color>
+    <color name="nav_add_button">#FF000000</color>
+    <color name="nav_item_selected_bg">#FFF5F5F5</color>
+    <color name="image_placeholder_bg">#FFC4C4C4</color>
+    <color name="image_add_btn_bg">#FFE0E0E0</color>
+    <color name="menu_icon_yellow_bg">#FFFFF3CD</color>
+    <color name="add_ad_header_bg">#FFFFF1D0</color>
+    <color name="category_banner_bg">#FFFFF3D2</color>
+    <color name="plus_circle_stroke">#FF000000</color>
+    <color name="plus_circle_fill">#FFFFFFFF</color>
+    <color name="menu_circle_stroke">#FFBDBDBD</color>
+    <color name="bottom_nav_bg">#80FFFFFF</color>
+    <color name="shadow_divider">#FFE0E0E0</color>
+    <color name="my_ads_icon_bg">#FFFFF9E6</color>
+    <color name="favorites_icon_bg">#FFFFF0F0</color>
+</resources>

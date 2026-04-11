@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".App"
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -38,6 +39,9 @@
         <!-- Profile -->
         <activity android:name=".profile.ProfileActivity" android:exported="false" />
         <activity android:name=".profile.MyAdsActivity" android:exported="false" />
+
+        <!-- Settings -->
+        <activity android:name=".SettingsActivity" android:exported="false" />
 
         <!-- Favorites -->
         <activity android:name=".favorites.FavoritesActivity" android:exported="false" />

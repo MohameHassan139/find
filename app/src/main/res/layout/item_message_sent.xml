@@ -25,7 +25,7 @@
             android:paddingTop="10dp"
             android:paddingBottom="8dp"
             android:textSize="14sp"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:maxWidth="280dp"
             android:layoutDirection="locale" />
 
@@ -48,7 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="10sp"
-                android:textColor="#CCFFFFFF" />
+                android:textColor="@color/text_tertiary" />
         </LinearLayout>
     </LinearLayout>
 

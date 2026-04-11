@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EDEDED">
+    android:background="@color/bg_screen">
 
     <!-- ── Top Bar ── -->
     <include
@@ -17,7 +17,7 @@
         android:id="@+id/vTopBarShadow"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#E0E0E0"
+        android:background="@color/shadow_divider"
         app:layout_constraintTop_toBottomOf="@id/llAppBar"/>
 
     <!-- ── Scrollable content ── -->
@@ -44,7 +44,7 @@
                 android:background="@drawable/bg_add_ad_header"
                 android:gravity="center"
                 android:text="@string/add_ad_title"
-                android:textColor="#000000"
+                android:textColor="@color/text_primary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -61,7 +61,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/images_label"
-                    android:textColor="#000000"
+                    android:textColor="@color/text_primary"
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
@@ -96,14 +96,14 @@
                                 android:src="@drawable/ic_add"
                                 android:background="@drawable/bg_menu_item"
                                 android:padding="4dp"
-                                app:tint="#000000" />
+                                app:tint="@color/text_primary" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:text="@string/add_image"
-                                android:textColor="#000000"
+                                android:textColor="@color/text_primary"
                                 android:textSize="10sp" />
                         </LinearLayout>
 
@@ -125,7 +125,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/ad_title_label"
-                    android:textColor="#000000"
+                    android:textColor="@color/text_primary"
                     android:textSize="14sp" />
 
                 <TextView
@@ -146,7 +146,7 @@
                     android:gravity="center_vertical|start"
                     android:hint="@string/str___________________"
                     android:inputType="text"
-                    android:textColor="#000000"
+                    android:textColor="@color/text_primary"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -168,7 +168,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/ad_text_label"
-                        android:textColor="#000000"
+                        android:textColor="@color/text_primary"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -176,7 +176,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
-                    android:background="#DCDCDC" />
+                    android:background="@color/stroke_field" />
 
                 <EditText
                     android:id="@+id/etAdDescription"
@@ -206,7 +206,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/location_label"
-                    android:textColor="#000000"
+                    android:textColor="@color/text_primary"
                     android:textSize="14sp" />
 
                 <TextView
@@ -223,7 +223,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:src="@drawable/ic_chevron_left"
-                    app:tint="#000000" />
+                    app:tint="@color/text_primary" />
             </LinearLayout>
 
             <!-- التصنيف Box -->
@@ -244,7 +244,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/category_label"
-                    android:textColor="#000000"
+                    android:textColor="@color/text_primary"
                     android:textSize="14sp" />
 
                 <TextView
@@ -261,7 +261,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:src="@drawable/ic_chevron_left"
-                    app:tint="#000000" />
+                    app:tint="@color/text_primary" />
             </LinearLayout>
 
             <!-- السعر Box -->
@@ -278,7 +278,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/price_label"
-                    android:textColor="#000000"
+                    android:textColor="@color/text_primary"
                     android:textSize="14sp" />
 
                 <TextView
@@ -299,7 +299,7 @@
                     android:gravity="center_vertical|start"
                     android:hint="@string/price"
                     android:inputType="numberDecimal"
-                    android:textColor="#000000"
+                    android:textColor="@color/text_primary"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -312,7 +312,7 @@
                 android:background="@drawable/bg_field_box"
                 android:gravity="center"
                 android:text="@string/publish_ad"
-                android:textColor="#2196F3"
+                android:textColor="@color/find_active_blue"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 

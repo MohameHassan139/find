@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark mode overrides -->
+    <color name="black">#FFFFFFFF</color>
+    <color name="white">#FF1E1E1E</color>
+
+    <!-- Backgrounds -->
+    <color name="find_gray_bg">#FF121212</color>
+    <color name="find_gray_text">#FFAAAAAA</color>
+    <color name="find_search_bg">#FF2A2A2A</color>
+    <color name="find_accent_yellow">#FF2A2400</color>
+
+    <!-- Chat / UI colors -->
+    <color name="bg_screen">#FF121212</color>
+    <color name="divider">#FF2E2E2E</color>
+    <color name="text_primary">#FFF0F0F0</color>
+    <color name="text_secondary">#FFAAAAAA</color>
+    <color name="text_tertiary">#FF777777</color>
+    <color name="bubble_received">#FF2A2A2A</color>
+    <color name="shimmer_base">#FF2E2E2E</color>
+    <color name="shimmer_highlight">#FF3A3A3A</color>
+    <color name="chip_selected_bg">#FF3A2800</color>
+    <color name="chip_selected_border">#FFC8A96E</color>
+    <color name="chip_unselected_bg">#FF2A2A2A</color>
+    <color name="chip_unselected_border">#FF444444</color>
+    <color name="search_bg">#FF2A2A2A</color>
+    <color name="input_bg">#FF2A2A2A</color>
+
+    <!-- Surface colors (used in place of hardcoded whites) -->
+    <color name="surface_primary">#FF1E1E1E</color>
+    <color name="surface_secondary">#FF252525</color>
+    <color name="surface_tabs">#FF1A1500</color>
+    <color name="surface_field">#FF252525</color>
+    <color name="surface_menu_item">#FF252525</color>
+    <color name="stroke_field">#FF3A3A3A</color>
+    <color name="stroke_menu_item">#FF333333</color>
+    <color name="nav_add_button">#FFC8A96E</color>
+    <color name="nav_item_selected_bg">#FF2A2A2A</color>
+    <color name="image_placeholder_bg">#FF3A3A3A</color>
+    <color name="image_add_btn_bg">#FF333333</color>
+    <color name="menu_icon_yellow_bg">#FF2A2000</color>
+    <color name="add_ad_header_bg">#FF2A2000</color>
+    <color name="category_banner_bg">#FF2A2000</color>
+    <color name="plus_circle_stroke">#FFC8A96E</color>
+    <color name="plus_circle_fill">#FF1E1E1E</color>
+    <color name="menu_circle_stroke">#FF555555</color>
+    <color name="bottom_nav_bg">#CC1E1E1E</color>
+    <color name="shadow_divider">#FF2A2A2A</color>
+    <color name="my_ads_icon_bg">#FF2A2000</color>
+    <color name="favorites_icon_bg">#FF2A0000</color>
+
+    <!-- Icon tint dark overrides -->
+    <color name="icon_tint">#FFF0F0F0</color>
+    <color name="icon_tint_muted">#FFAAAAAA</color>
+</resources>

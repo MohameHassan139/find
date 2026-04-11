@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_screen"
+    android:layoutDirection="locale">
+
+    <!-- Top Bar -->
+    <include layout="@layout/layout_appbar_back" />
+
+    <!-- Page title -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@color/surface_primary"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:layout_marginTop="1dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/menu_settings"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:text="⚙️"
+            android:textSize="20sp"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:background="@color/divider" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="32dp">
+
+            <!-- ── Section: Appearance ── -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_section_appearance"
+                android:textSize="12sp"
+                android:textColor="@color/find_primary"
+                android:textStyle="bold"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="8dp" />
+
+            <!-- Theme Mode Row -->
+            <LinearLayout
+                android:id="@+id/rowTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_menu_item"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="4dp"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_theme_mode"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:id="@+id/tvCurrentTheme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary" />
+
+                <!-- Theme chips -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:id="@+id/chipLight"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="40dp"
+                        android:text="@string/settings_theme_light"
+                        android:gravity="center"
+                        android:textSize="13sp"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/bg_chip_unselected"
+                        android:textColor="@color/text_secondary" />
+
+                    <TextView
+                        android:id="@+id/chipDark"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="40dp"
+                        android:text="@string/settings_theme_dark"
+                        android:gravity="center"
+                        android:textSize="13sp"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/bg_chip_unselected"
+                        android:textColor="@color/text_secondary" />
+
+                    <TextView
+                        android:id="@+id/chipSystem"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="40dp"
+                        android:text="@string/settings_theme_system"
+                        android:gravity="center"
+                        android:textSize="13sp"
+                        android:background="@drawable/bg_chip_unselected"
+                        android:textColor="@color/text_secondary" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ── Section: Language ── -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_section_language"
+                android:textSize="12sp"
+                android:textColor="@color/find_primary"
+                android:textStyle="bold"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="8dp" />
+
+            <!-- Language Row -->
+            <LinearLayout
+                android:id="@+id/rowLanguage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_menu_item"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="4dp"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/menu_language"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:id="@+id/tvCurrentLang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary" />
+
+                <!-- Language chips -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:id="@+id/chipArabic"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="40dp"
+                        android:text="@string/settings_lang_arabic"
+                        android:gravity="center"
+                        android:textSize="13sp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_chip_unselected"
+                        android:textColor="@color/text_secondary" />
+
+                    <TextView
+                        android:id="@+id/chipEnglish"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="40dp"
+                        android:text="@string/settings_lang_english"
+                        android:gravity="center"
+                        android:textSize="13sp"
+                        android:background="@drawable/bg_chip_unselected"
+                        android:textColor="@color/text_secondary" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

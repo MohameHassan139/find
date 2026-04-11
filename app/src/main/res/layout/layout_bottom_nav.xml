@@ -7,7 +7,7 @@
     android:layout_height="60dp"
     app:cardCornerRadius="30dp"
     app:cardElevation="4dp"
-    app:cardBackgroundColor="#80FFFFFF">
+    app:cardBackgroundColor="@color/bottom_nav_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                 android:layout_marginTop="2dp"
                 android:text="@string/nav_home"
                 android:textSize="9sp"
-                android:textColor="#AAAAAA" />
+                android:textColor="@color/text_secondary" />
         </LinearLayout>
 
         <!-- أضف إعلان -->
@@ -70,7 +70,7 @@
                 android:layout_marginTop="2dp"
                 android:text="@string/nav_add_ad"
                 android:textSize="9sp"
-                android:textColor="#AAAAAA" />
+                android:textColor="@color/text_secondary" />
         </LinearLayout>
 
         <!-- المحادثات -->
@@ -98,7 +98,7 @@
                 android:layout_marginTop="2dp"
                 android:text="@string/nav_chats"
                 android:textSize="9sp"
-                android:textColor="#AAAAAA" />
+                android:textColor="@color/text_secondary" />
         </LinearLayout>
 
     </LinearLayout>

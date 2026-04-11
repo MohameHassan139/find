@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/white"
+        android:background="@color/surface_primary"
         android:elevation="4dp"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -60,7 +60,7 @@
             android:id="@+id/rvTopTabs"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="#FFF9E6"
+            android:background="@color/surface_tabs"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
@@ -69,7 +69,7 @@
             android:id="@+id/rvSubTabs"
             android:layout_width="match_parent"
             android:layout_height="44dp"
-            android:background="#FFF9E6"
+            android:background="@color/surface_tabs"
             android:visibility="gone"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -79,7 +79,7 @@
             android:id="@+id/rvExtraTabs"
             android:layout_width="match_parent"
             android:layout_height="44dp"
-            android:background="#FFF9E6"
+            android:background="@color/surface_tabs"
             android:visibility="gone"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -93,7 +93,7 @@
             android:gravity="center_vertical"
             android:paddingHorizontal="10dp"
             android:paddingVertical="8dp"
-            android:background="#FFF9E6"
+            android:background="@color/surface_tabs"
             android:visibility="gone">
 
             <TextView
@@ -138,7 +138,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="32dp"
-                android:background="@color/white" />
+                android:background="@color/surface_primary" />
 
             <Spinner
                 android:id="@+id/spinnerCity"

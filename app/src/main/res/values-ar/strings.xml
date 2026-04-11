@@ -103,4 +103,14 @@
     <string name="kt_str_c5572cc3">فشل الحفظ</string>
     <string name="menu_language">اللغة</string>
     <string name="filter">تصفية</string>
+
+    <!-- Settings screen -->
+    <string name="settings_section_appearance">المظهر</string>
+    <string name="settings_section_language">اللغة</string>
+    <string name="settings_theme_mode">وضع السمة</string>
+    <string name="settings_theme_light">☀️ فاتح</string>
+    <string name="settings_theme_dark">🌙 داكن</string>
+    <string name="settings_theme_system">⚙️ تلقائي</string>
+    <string name="settings_lang_arabic">🇸🇦 العربية</string>
+    <string name="settings_lang_english">🇬🇧 English</string>
 </resources>

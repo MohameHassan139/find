@@ -79,7 +79,7 @@
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:fontFamily="monospace"
-                    android:textColor="#C8A96E" />
+                    android:textColor="@color/find_primary" />
             </LinearLayout>
 
             <View

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EDEDED">
+    android:background="@color/bg_screen">
 
     <!-- ── Top Bar ── -->
     <include
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View android:id="@+id/vTopBarShadow" android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" app:layout_constraintTop_toBottomOf="@id/llAppBar"/>
+    <View android:id="@+id/vTopBarShadow" android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/shadow_divider" app:layout_constraintTop_toBottomOf="@id/llAppBar"/>
 
     <!-- ── Fixed Header Banner (أضف إعلان) ── -->
     <LinearLayout
@@ -22,7 +22,7 @@
         android:layout_height="48dp"
         android:layout_marginTop="12dp"
         android:layout_marginHorizontal="16dp"
-        android:background="#FFF3D2"
+        android:background="@color/category_banner_bg"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/vTopBarShadow">
 
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nav_add_ad"
-            android:textColor="#000000"
+            android:textColor="@color/text_primary"
             android:textSize="14sp"
             android:textStyle="bold" />
     </LinearLayout>

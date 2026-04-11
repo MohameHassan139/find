@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.PorterDuff
 import android.widget.ImageView
 import android.widget.TextView
@@ -13,9 +12,6 @@ import com.example.myapplication.chat.ui.conversations.ConversationsActivity
 enum class NavScreen { HOME, ADD, CHAT, NONE }
 
 object BottomNavHelper {
-
-    private val COLOR_SELECTED   = Color.parseColor("#111111")
-    private val COLOR_UNSELECTED = Color.parseColor("#AAAAAA")
 
     fun setup(activity: AppCompatActivity, current: NavScreen) {
         applyItem(activity, R.id.ivNavHome, R.id.tvNavHome, current == NavScreen.HOME)
@@ -50,7 +46,10 @@ object BottomNavHelper {
     }
 
     private fun applyItem(activity: AppCompatActivity, ivId: Int, tvId: Int, selected: Boolean) {
-        val color = if (selected) COLOR_SELECTED else COLOR_UNSELECTED
+        // Resolve colors from theme so they adapt to light/dark mode automatically
+        val colorSelected   = activity.getColor(R.color.text_primary)
+        val colorUnselected = activity.getColor(R.color.text_secondary)
+        val color = if (selected) colorSelected else colorUnselected
         activity.findViewById<ImageView>(ivId)?.setColorFilter(color, PorterDuff.Mode.SRC_IN)
         activity.findViewById<TextView>(tvId)?.setTextColor(color)
     }

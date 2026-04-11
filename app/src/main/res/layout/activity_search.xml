@@ -82,7 +82,7 @@
             android:gravity="center_vertical"
             android:paddingHorizontal="10dp"
             android:paddingVertical="8dp"
-            android:background="#FFF9E6">
+            android:background="@color/surface_tabs">
 
             <TextView
                 android:id="@+id/chipAll"

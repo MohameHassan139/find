@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F2F2F2"
+    android:background="@color/bg_screen"
     android:layoutDirection="locale">
 
     <include layout="@layout/layout_appbar_back" />
@@ -12,7 +12,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:background="@color/white"
+        android:background="@color/surface_primary"
         android:gravity="center_vertical"
         android:paddingHorizontal="16dp"
         android:orientation="horizontal"
@@ -33,7 +33,7 @@
             android:text="❤️"
             android:textSize="20sp"
             android:gravity="center"
-            android:background="#FFF0F0" />
+            android:background="@color/favorites_icon_bg" />
     </LinearLayout>
 
     <View android:layout_width="match_parent" android:layout_height="1dp"

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
+    android:background="@color/surface_primary"
     android:layoutDirection="locale">
 
     <!-- Top bar -->
@@ -70,7 +70,7 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:fontFamily="monospace"
-                    android:textColor="#C8A96E" />
+                    android:textColor="@color/find_primary" />
             </LinearLayout>
 
             <View android:layout_width="match_parent" android:layout_height="1dp"
@@ -81,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:orientation="horizontal"
-                android:background="@color/white">
+                android:background="@color/surface_primary">
 
                 <LinearLayout
                     android:layout_width="0dp"

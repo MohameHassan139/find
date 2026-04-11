@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F2F2F2"
+    android:background="@color/bg_screen"
     android:layoutDirection="locale">
 
     <!-- Top Bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/white"
+        android:background="@color/surface_primary"
         android:gravity="center_vertical"
         android:paddingHorizontal="16dp"
         android:orientation="horizontal">
@@ -45,7 +45,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="72dp"
-        android:background="#FFF9E6"
+        android:background="@color/surface_tabs"
         android:gravity="center"
         android:layout_marginTop="16dp"
         android:layout_marginHorizontal="16dp">
@@ -89,7 +89,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/white"
+                android:background="@color/surface_primary"
                 android:gravity="end|center_vertical"
                 android:hint="@string/str_5xxxxxxxx"
                 android:textSize="16sp"
@@ -105,7 +105,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:gravity="center"
-                android:background="@color/white"
+                android:background="@color/surface_primary"
                 android:inputType="phone"
                 android:maxLength="5"
                 android:layout_marginStart="4dp" />
@@ -115,7 +115,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="@color/white"
+            android:background="@color/surface_primary"
             android:gravity="center"
             android:layout_marginTop="12dp">
 
@@ -162,7 +162,7 @@
             android:id="@+id/etOtp"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@color/white"
+            android:background="@color/surface_primary"
             android:gravity="center"
             android:hint="• • • • • •"
             android:textSize="22sp"
@@ -186,7 +186,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="@color/white"
+            android:background="@color/surface_primary"
             android:gravity="center"
             android:layout_marginTop="12dp">
 
@@ -211,7 +211,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="@color/white"
+            android:background="@color/surface_primary"
             android:gravity="center"
             android:layout_marginTop="8dp">
 

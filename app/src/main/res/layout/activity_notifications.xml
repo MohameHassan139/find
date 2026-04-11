@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F2F2F2"
+    android:background="@color/bg_screen"
     android:layoutDirection="locale">
 
     <!-- Top Bar -->
@@ -16,7 +16,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingHorizontal="16dp"
-        android:background="@color/white">
+        android:background="@color/surface_primary">
 
         <TextView
             android:id="@+id/tvUnreadCount"
