@@ -138,6 +138,20 @@
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 android:background="@drawable/bg_type_badge" />
+
+            <!-- Favorite heart button -->
+            <ImageView
+                android:id="@+id/ivFavorite"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="6dp"
+                android:padding="4dp"
+                android:src="@drawable/ic_favorites"
+                android:background="@drawable/ripple_circle"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="Favorite" />
         </FrameLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

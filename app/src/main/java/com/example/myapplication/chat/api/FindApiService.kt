@@ -50,4 +50,18 @@ interface FindApiService {
 
     @GET("search-filters")
     suspend fun getSearchFilters(): Response<okhttp3.ResponseBody>
+
+    // ── Favorites ─────────────────────────────────────────────────────────────
+
+    @GET("favorites")
+    suspend fun getFavorites(@Query("page") page: Int = 1): Response<okhttp3.ResponseBody>
+
+    @POST("favorites")
+    suspend fun addFavorite(@Body body: com.example.myapplication.favorites.AddFavoriteRequest): Response<okhttp3.ResponseBody>
+
+    @DELETE("favorites/{listing_id}")
+    suspend fun removeFavorite(@Path("listing_id") listingId: String): Response<okhttp3.ResponseBody>
+
+    @GET("listings/{id}/is-favorited")
+    suspend fun isFavorited(@Path("id") listingId: String): Response<okhttp3.ResponseBody>
 }

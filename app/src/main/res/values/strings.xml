@@ -103,4 +103,7 @@
     <string name="kt_str_c5572cc3">فشل الحفظ</string>
     <string name="menu_language">Language</string>
     <string name="filter">Filter</string>
+    <string name="favorites_empty">لا توجد مفضلات بعد</string>
+    <string name="added_to_favorites">تمت الإضافة إلى المفضلة</string>
+    <string name="removed_from_favorites">تمت الإزالة من المفضلة</string>
 </resources>

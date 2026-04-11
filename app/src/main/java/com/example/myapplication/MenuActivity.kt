@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.chat.api.RetrofitClient
+import com.example.myapplication.favorites.FavoritesActivity
 import com.example.myapplication.profile.MyAdsActivity
 import com.example.myapplication.profile.ProfileActivity
 import com.example.myapplication.databinding.ActivityMenuBinding
@@ -72,7 +73,8 @@ class MenuActivity : AppCompatActivity() {
             else startActivity(Intent(this, PhoneAuthActivity::class.java))
         }
         binding.menuFavorites.setOnClickListener {
-            Toast.makeText(this, getString(R.string.menu_favorites), Toast.LENGTH_SHORT).show()
+            if (TokenManager.isLoggedIn(this)) startActivity(Intent(this, FavoritesActivity::class.java))
+            else startActivity(Intent(this, PhoneAuthActivity::class.java))
         }
         binding.menuNotifications.setOnClickListener {
             if (TokenManager.isLoggedIn(this)) {

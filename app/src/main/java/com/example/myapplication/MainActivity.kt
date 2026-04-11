@@ -27,6 +27,7 @@ import com.example.myapplication.adapters.SubTabAdapter
 import com.example.myapplication.adapters.ExtraTabAdapter
 import com.example.myapplication.auth.AuthRetrofitClient
 import com.example.myapplication.auth.TokenManager
+import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.Dispatchers
@@ -142,11 +143,17 @@ class MainActivity : AppCompatActivity() {
         binding.rvSubCategoryGrid.layoutManager = GridLayoutManager(this, 3)
         binding.rvSubCategoryGrid.adapter = subCategoryAdapter
 
-        listingsAdapter = ListingsAdapter(emptyList()) { listing ->
-            val intent = Intent(this, ListingDetailActivity::class.java)
-            intent.putExtra(ListingDetailActivity.EXTRA_LISTING_ID, listing.id)
-            startActivity(intent)
-        }
+        listingsAdapter = ListingsAdapter(
+            items = emptyList(),
+            onClick = { listing ->
+                val intent = Intent(this, ListingDetailActivity::class.java)
+                intent.putExtra(ListingDetailActivity.EXTRA_LISTING_ID, listing.id)
+                startActivity(intent)
+            },
+            onFavoriteClick = { listing, isFav ->
+                toggleFavorite(listing.id, isFav)
+            }
+        )
         binding.rvListings.layoutManager = LinearLayoutManager(this)
         binding.rvListings.adapter = listingsAdapter
         binding.rvListings.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -419,5 +426,44 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         BottomNavHelper.setup(this, NavScreen.HOME)
+        loadFavoriteIds()
+    }
+
+    private fun loadFavoriteIds() {
+        if (!TokenManager.isLoggedIn(this)) return
+        lifecycleScope.launch {
+            try {
+                val api = RetrofitClient.build(this@MainActivity)
+                val response = withContext(Dispatchers.IO) { api.getFavorites() }
+                if (response.isSuccessful) {
+                    val body = response.body()?.string() ?: return@launch
+                    val ids = mutableSetOf<String>()
+                    val root = org.json.JSONObject(body)
+                    val arr = root.optJSONArray("data") ?: return@launch
+                    for (i in 0 until arr.length()) {
+                        // data[] items ARE the listing directly per API spec
+                        val id = arr.getJSONObject(i).optString("id")
+                        if (id.isNotEmpty()) ids.add(id)
+                    }
+                    listingsAdapter.setFavoriteIds(ids)
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
+    private fun toggleFavorite(listingId: String, add: Boolean) {
+        if (!TokenManager.isLoggedIn(this)) {
+            startActivity(Intent(this, com.example.myapplication.auth.PhoneAuthActivity::class.java))
+            return
+        }
+        lifecycleScope.launch {
+            try {
+                val api = RetrofitClient.build(this@MainActivity)
+                withContext(Dispatchers.IO) {
+                    if (add) api.addFavorite(com.example.myapplication.favorites.AddFavoriteRequest(listingId))
+                    else api.removeFavorite(listingId)
+                }
+            } catch (_: Exception) {}
+        }
     }
 }

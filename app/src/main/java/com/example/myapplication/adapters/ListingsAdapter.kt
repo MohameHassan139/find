@@ -17,10 +17,12 @@ import java.util.*
 
 class ListingsAdapter(
     private var items: List<ApiListing>,
-    private val onClick: (ApiListing) -> Unit = {}
+    private val onClick: (ApiListing) -> Unit = {},
+    private val onFavoriteClick: ((ApiListing, Boolean) -> Unit)? = null
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var showFooterLoader = false
+    private val favoriteIds = mutableSetOf<String>()
 
     companion object {
         private const val TYPE_ITEM = 0
@@ -99,6 +101,21 @@ class ListingsAdapter(
         }
 
         b.root.setOnClickListener { onClick(item) }
+        
+        // Favorite icon
+        val isFav = favoriteIds.contains(item.id)
+        b.ivFavorite.setImageResource(
+            if (isFav) R.drawable.ic_favorite_filled else R.drawable.ic_favorites
+        )
+        b.ivFavorite.setColorFilter(
+            if (isFav) Color.parseColor("#E53935") else Color.parseColor("#FFFFFF")
+        )
+        b.ivFavorite.setOnClickListener {
+            val nowFav = !favoriteIds.contains(item.id)
+            if (nowFav) favoriteIds.add(item.id) else favoriteIds.remove(item.id)
+            notifyItemChanged(holder.adapterPosition)
+            onFavoriteClick?.invoke(item, nowFav)
+        }
     }
 
     override fun getItemCount() = items.size + if (showFooterLoader) 1 else 0
@@ -107,6 +124,14 @@ class ListingsAdapter(
         items = newItems
         notifyDataSetChanged()
     }
+
+    fun setFavoriteIds(ids: Set<String>) {
+        favoriteIds.clear()
+        favoriteIds.addAll(ids)
+        notifyDataSetChanged()
+    }
+
+    fun getCurrentItems(): List<ApiListing> = items
 
     fun setFooterLoading(loading: Boolean) {
         if (showFooterLoader == loading) return

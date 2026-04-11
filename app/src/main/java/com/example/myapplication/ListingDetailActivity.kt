@@ -17,7 +17,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.auth.TokenManager
+import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityListingDetailBinding
+import com.example.myapplication.favorites.AddFavoriteRequest
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,6 +33,8 @@ import java.util.*
 class ListingDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityListingDetailBinding
+    private var isFavorited = false
+    private var currentListingId = ""
 
     companion object {
         const val EXTRA_LISTING_ID = "listing_id"
@@ -51,7 +55,20 @@ class ListingDetailActivity : AppCompatActivity() {
             startActivity(Intent(this, MenuActivity::class.java))
         }
         val listingId = intent.getStringExtra(EXTRA_LISTING_ID) ?: run { finish(); return }
+        currentListingId = listingId
         loadListing(listingId)
+        if (TokenManager.isLoggedIn(this)) checkIsFavorited(listingId)
+
+        binding.ivFavoriteDetail.setOnClickListener {
+            if (!TokenManager.isLoggedIn(this)) {
+                startActivity(Intent(this, PhoneAuthActivity::class.java))
+                return@setOnClickListener
+            }
+            val newState = !isFavorited
+            isFavorited = newState
+            updateFavoriteIcon()
+            syncFavorite(currentListingId, newState)
+        }
     }
 
     // ── Load listing ──────────────────────────────────────────────────────────
@@ -244,6 +261,44 @@ class ListingDetailActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    // ── Favorites ─────────────────────────────────────────────────────────────
+
+    private fun checkIsFavorited(listingId: String) {
+        lifecycleScope.launch {
+            try {
+                val api = RetrofitClient.build(this@ListingDetailActivity)
+                val response = withContext(Dispatchers.IO) { api.isFavorited(listingId) }
+                if (response.isSuccessful) {
+                    val body = response.body()?.string() ?: return@launch
+                    isFavorited = org.json.JSONObject(body).optBoolean("is_favorited", false)
+                    updateFavoriteIcon()
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
+    private fun syncFavorite(listingId: String, add: Boolean) {
+        lifecycleScope.launch {
+            try {
+                val api = RetrofitClient.build(this@ListingDetailActivity)
+                withContext(Dispatchers.IO) {
+                    if (add) api.addFavorite(AddFavoriteRequest(listingId))
+                    else api.removeFavorite(listingId)
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
+    private fun updateFavoriteIcon() {
+        binding.ivFavoriteDetail.setImageResource(
+            if (isFavorited) R.drawable.ic_favorite_filled else R.drawable.ic_favorites
+        )
+        binding.ivFavoriteDetail.setColorFilter(
+            if (isFavorited) android.graphics.Color.parseColor("#E53935")
+            else android.graphics.Color.parseColor("#333333")
+        )
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

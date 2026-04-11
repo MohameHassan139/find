@@ -83,11 +83,14 @@ class SearchActivity : AppCompatActivity() {
     // ── RecyclerView ──────────────────────────────────────────────────────────
 
     private fun setupRecycler() {
-        resultsAdapter = ListingsAdapter(emptyList()) { listing ->
-            val intent = Intent(this, ListingDetailActivity::class.java)
-            intent.putExtra(ListingDetailActivity.EXTRA_LISTING_ID, listing.id)
-            startActivity(intent)
-        }
+        resultsAdapter = ListingsAdapter(
+            items = emptyList(),
+            onClick = { listing ->
+                val intent = Intent(this, ListingDetailActivity::class.java)
+                intent.putExtra(ListingDetailActivity.EXTRA_LISTING_ID, listing.id)
+                startActivity(intent)
+            }
+        )
         val llm = LinearLayoutManager(this)
         binding.rvResults.layoutManager = llm
         binding.rvResults.adapter = resultsAdapter

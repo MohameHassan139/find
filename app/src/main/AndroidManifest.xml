@@ -39,6 +39,9 @@
         <activity android:name=".profile.ProfileActivity" android:exported="false" />
         <activity android:name=".profile.MyAdsActivity" android:exported="false" />
 
+        <!-- Favorites -->
+        <activity android:name=".favorites.FavoritesActivity" android:exported="false" />
+
         <!-- Notifications -->
         <activity android:name=".notifications.NotificationsActivity" android:exported="false" />
 
