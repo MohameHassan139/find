@@ -38,15 +38,6 @@ class ChatActivity : BaseActivity() {
         setContentView(binding.root)
         applyWindowInsets()
 
-        // Apply bottom nav bar inset to the message input bar
-        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(
-            binding.root.findViewById(R.id.llMessageInputBar)
-        ) { v, insets ->
-            val navBar = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.navigationBars())
-            v.setPadding(v.paddingLeft, v.paddingTop, v.paddingRight, 9 + navBar.bottom)
-            insets
-        }
-
         conversation = intent.getParcelableExtra(EXTRA_CONVERSATION)!!
 
         setupToolbar()
