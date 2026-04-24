@@ -3,12 +3,17 @@ package com.example.myapplication
 import android.content.Context
 import android.os.Bundle
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.myapplication.SharedCategoriesViewModel
+import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 
 class SettingsActivity : BaseActivity() {
+
+    private val sharedVm: SharedCategoriesViewModel by viewModels()
 
     companion object {
         private const val PREFS_THEME = "theme_prefs"
@@ -45,6 +50,8 @@ class SettingsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         applyWindowInsets()
+
+        HomeHeaderHelper.attach(this, findViewById(android.R.id.content), sharedVm.categories)
 
         setupAppBar()
         setupThemeChips()

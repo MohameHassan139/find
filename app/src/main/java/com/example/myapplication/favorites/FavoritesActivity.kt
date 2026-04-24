@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,9 +12,11 @@ import com.example.myapplication.ApiListing
 import com.example.myapplication.ListingDetailActivity
 import com.example.myapplication.MenuActivity
 import com.example.myapplication.R
+import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.adapters.ListingsAdapter
 import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityFavoritesBinding
+import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,6 +28,7 @@ class FavoritesActivity : BaseActivity() {
     private lateinit var binding: ActivityFavoritesBinding
     private lateinit var adapter: ListingsAdapter
     private val favoriteIds = mutableSetOf<String>()
+    private val sharedVm: SharedCategoriesViewModel by viewModels()
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.wrap(newBase))
@@ -37,6 +40,8 @@ class FavoritesActivity : BaseActivity() {
         binding = ActivityFavoritesBinding.inflate(layoutInflater)
         setContentView(binding.root)
         applyWindowInsets()
+
+        HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
 
         findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {

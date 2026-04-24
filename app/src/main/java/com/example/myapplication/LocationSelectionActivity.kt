@@ -5,10 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.databinding.ActivityLocationSelectionBinding
+import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 
 class LocationSelectionActivity : BaseActivity() {
@@ -30,6 +32,8 @@ class LocationSelectionActivity : BaseActivity() {
         applyWindowInsets()
 
         vm = ViewModelProvider(this)[MainViewModel::class.java]
+
+        HomeHeaderHelper.attach(this, binding.root, vm.categories)
 
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
             startActivity(Intent(this, MenuActivity::class.java))

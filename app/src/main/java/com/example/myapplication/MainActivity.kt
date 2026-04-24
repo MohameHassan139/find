@@ -73,18 +73,38 @@ class MainActivity : BaseActivity() {
         setupNavigation()
         setupSearch()
         refreshUserProfile()
+        handleIncomingCategoryIntent(intent)
     }
 
     private fun setupSearch() {
         binding.etSearch.isFocusable = false
         binding.etSearch.isFocusableInTouchMode = false
-        
+
         val searchIntent = Intent(this, SearchActivity::class.java)
         binding.llSearchContainer.setOnClickListener {
             startActivity(searchIntent)
         }
         binding.etSearch.setOnClickListener {
             startActivity(searchIntent)
+        }
+    }
+
+    /** Handle incoming category selection from HomeHeaderHelper on other screens */
+    private fun handleIncomingCategoryIntent(intent: Intent) {
+        val catIdx = intent.getIntExtra(EXTRA_CATEGORY_IDX, -1)
+        if (catIdx < 0) return
+        val cats = vm.categories.value ?: return
+        if (catIdx == 0) {
+            vm.selectTopCategory(0)
+            topTabAdapter.update(cats, 0)
+            categoryAdapter.updateData(cats)
+            binding.rvSubTabs.visibility   = View.GONE
+            binding.rvExtraTabs.visibility = View.GONE
+            binding.llFilterBar.visibility  = View.GONE
+            applyBodyState(BodyState.CATEGORIES)
+        } else {
+            val cat = cats.getOrNull(catIdx - 1) ?: return
+            openCategory(cat)
         }
     }
 
@@ -405,6 +425,10 @@ class MainActivity : BaseActivity() {
     private var pendingCategoryId: Int? = null
     private var isShowingSubGrid = false
 
+    companion object {
+        const val EXTRA_CATEGORY_IDX = "extra_category_idx"
+    }
+
     private fun animateShimmer(view: View) {
         android.animation.ObjectAnimator.ofFloat(view, "alpha", 0.4f, 1f, 0.4f).apply {
             duration = 1200
@@ -426,6 +450,12 @@ class MainActivity : BaseActivity() {
         super.onResume()
         BottomNavHelper.setup(this, NavScreen.HOME)
         loadFavoriteIds()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIncomingCategoryIntent(intent)
     }
 
     private fun loadFavoriteIds() {

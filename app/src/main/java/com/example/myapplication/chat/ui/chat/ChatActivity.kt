@@ -11,9 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.MenuActivity
+import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.chat.model.Conversation
 import com.example.myapplication.chat.utils.Result
 import com.example.myapplication.databinding.ActivityChatBinding
+import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 
 class ChatActivity : BaseActivity() {
@@ -24,6 +26,7 @@ class ChatActivity : BaseActivity() {
 
     private lateinit var binding: ActivityChatBinding
     private val viewModel: ChatViewModel by viewModels()
+    private val sharedVm: SharedCategoriesViewModel by viewModels()
     private lateinit var adapter: MessagesAdapter
     private lateinit var conversation: Conversation
 
@@ -44,6 +47,7 @@ class ChatActivity : BaseActivity() {
         setupRecyclerView()
         setupSendButton()
         setupObservers()
+        HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
 
         viewModel.init(conversation.id)
     }

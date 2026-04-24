@@ -19,6 +19,9 @@
 
         <include layout="@layout/layout_appbar" />
 
+        <!-- Reusable home header: search + category tabs -->
+        <include layout="@layout/layout_home_header" />
+
         <!-- Section Title -->
         <TextView
             android:layout_width="wrap_content"

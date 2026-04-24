@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
@@ -16,10 +16,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.MenuActivity
+import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.chat.model.AppNotification
 import com.example.myapplication.chat.utils.DateUtils
 import com.example.myapplication.databinding.ActivityNotificationsBinding
+import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
 
@@ -27,6 +29,7 @@ class NotificationsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityNotificationsBinding
     private lateinit var adapter: NotificationsAdapter
+    private val sharedVm: SharedCategoriesViewModel by viewModels()
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.wrap(newBase))
@@ -38,6 +41,8 @@ class NotificationsActivity : BaseActivity() {
         binding = ActivityNotificationsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         applyWindowInsets()
+
+        HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
 
         val api = RetrofitClient.build(this)
 

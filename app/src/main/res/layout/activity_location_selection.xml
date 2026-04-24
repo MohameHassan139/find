@@ -15,6 +15,14 @@
 
     <View android:id="@+id/vTopBarShadow" android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/shadow_divider" app:layout_constraintTop_toBottomOf="@id/llAppBar"/>
 
+    <!-- Reusable home header: search + category tabs -->
+    <include
+        android:id="@+id/llHomeHeader"
+        layout="@layout/layout_home_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/vTopBarShadow" />
+
     <!-- ── List Content ── -->
     <ScrollView
         android:layout_width="match_parent"
@@ -22,7 +30,7 @@
         android:fillViewport="true"
         android:paddingBottom="90dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/vTopBarShadow"
+        app:layout_constraintTop_toBottomOf="@id/llHomeHeader"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout

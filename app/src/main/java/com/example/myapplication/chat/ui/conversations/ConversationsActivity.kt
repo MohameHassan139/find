@@ -11,15 +11,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.NavScreen
 import com.example.myapplication.R
+import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.chat.ui.chat.ChatActivity
 import com.example.myapplication.chat.utils.Result
 import com.example.myapplication.databinding.ActivityConversationsBinding
+import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 
 class ConversationsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityConversationsBinding
     private val viewModel: ConversationsViewModel by viewModels()
+    private val sharedVm: SharedCategoriesViewModel by viewModels()
     private lateinit var adapter: ConversationsAdapter
 
     override fun attachBaseContext(newBase: Context) {
@@ -41,6 +44,7 @@ class ConversationsActivity : BaseActivity() {
         setupObservers()
         setupSwipeRefresh()
         BottomNavHelper.setup(this, NavScreen.CHAT)
+        HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
 
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
             startActivity(Intent(this, com.example.myapplication.MenuActivity::class.java))

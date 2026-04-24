@@ -9,6 +9,9 @@
     <!-- Top Bar -->
     <include layout="@layout/layout_appbar_back" />
 
+    <!-- Reusable home header: search + category tabs -->
+    <include layout="@layout/layout_home_header" />
+
     <!-- Section header -->
     <LinearLayout
         android:layout_width="match_parent"

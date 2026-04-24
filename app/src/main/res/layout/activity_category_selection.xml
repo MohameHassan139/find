@@ -15,6 +15,14 @@
 
     <View android:id="@+id/vTopBarShadow" android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/shadow_divider" app:layout_constraintTop_toBottomOf="@id/llAppBar"/>
 
+    <!-- Reusable home header: search + category tabs -->
+    <include
+        android:id="@+id/llHomeHeader"
+        layout="@layout/layout_home_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/vTopBarShadow" />
+
     <!-- ── Fixed Header Banner (أضف إعلان) ── -->
     <LinearLayout
         android:id="@+id/llHeaderBanner"
@@ -24,7 +32,7 @@
         android:layout_marginHorizontal="16dp"
         android:background="@color/category_banner_bg"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/vTopBarShadow">
+        app:layout_constraintTop_toBottomOf="@id/llHomeHeader">
 
         <TextView
             android:layout_width="wrap_content"

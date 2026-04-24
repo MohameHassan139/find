@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
@@ -12,17 +13,20 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.MenuActivity
+import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.auth.AuthRetrofitClient
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.auth.UpdateProfileRequest
 import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.databinding.ActivityProfileBinding
+import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
 
 class ProfileActivity : BaseActivity() {
 
     private lateinit var binding: ActivityProfileBinding
+    private val sharedVm: SharedCategoriesViewModel by viewModels()
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.wrap(newBase))
@@ -34,6 +38,8 @@ class ProfileActivity : BaseActivity() {
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
         applyWindowInsets()
+
+        HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
 
         findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {

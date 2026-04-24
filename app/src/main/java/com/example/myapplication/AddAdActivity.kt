@@ -14,12 +14,15 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.databinding.ActivityAddAdBinding
+import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,6 +49,7 @@ class AddAdActivity : BaseActivity() {
     }
 
     private lateinit var binding: ActivityAddAdBinding
+    private val sharedVm: SharedCategoriesViewModel by viewModels()
     private val apiBase = "http://144.126.211.123/api"
 
     private var editingId: String? = null
@@ -117,6 +121,7 @@ class AddAdActivity : BaseActivity() {
         }
 
         BottomNavHelper.setup(this, NavScreen.ADD)
+        HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
 
         editingId = intent.getStringExtra(EXTRA_LISTING_ID)
         if (editingId != null) {

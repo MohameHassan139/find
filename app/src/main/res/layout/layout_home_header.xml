@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Reusable search bar + category tabs header.
+     Include this in any screen that needs home-style navigation. -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/llHomeHeader"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/surface_primary"
+    android:elevation="4dp">
+
+    <!-- Search bar (tap → SearchActivity) -->
+    <LinearLayout
+        android:id="@+id/llHomeSearchContainer"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_search_bar"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/ic_search"
+            android:alpha="0.5"
+            android:importantForAccessibility="no" />
+
+        <TextView
+            android:id="@+id/tvHomeSearchHint"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="start|center_vertical"
+            android:paddingHorizontal="8dp"
+            android:textSize="14sp"
+            android:text="@string/search_anything"
+            android:textColor="@color/find_gray_text" />
+    </LinearLayout>
+
+    <!-- Category tabs -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvHomeTopTabs"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/surface_tabs"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        xmlns:app="http://schemas.android.com/apk/res-auto" />
+
+    <!-- Shimmer placeholder while categories load -->
+    <LinearLayout
+        android:id="@+id/llHomeTabShimmer"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:background="@color/surface_tabs">
+
+        <View android:layout_width="80dp" android:layout_height="32dp"
+            android:layout_marginEnd="8dp" android:background="@drawable/bg_category_shimmer" />
+        <View android:layout_width="100dp" android:layout_height="32dp"
+            android:layout_marginEnd="8dp" android:background="@drawable/bg_category_shimmer" />
+        <View android:layout_width="120dp" android:layout_height="32dp"
+            android:layout_marginEnd="8dp" android:background="@drawable/bg_category_shimmer" />
+        <View android:layout_width="70dp" android:layout_height="32dp"
+            android:background="@drawable/bg_category_shimmer" />
+    </LinearLayout>
+
+</LinearLayout>

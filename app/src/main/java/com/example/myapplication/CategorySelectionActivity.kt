@@ -7,10 +7,12 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.databinding.ActivityCategorySelectionBinding
+import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 
 class CategorySelectionActivity : BaseActivity() {
@@ -37,6 +39,8 @@ class CategorySelectionActivity : BaseActivity() {
         applyWindowInsets()
 
         vm = ViewModelProvider(this)[MainViewModel::class.java]
+
+        HomeHeaderHelper.attach(this, binding.root, vm.categories)
 
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
             startActivity(Intent(this, MenuActivity::class.java))
