@@ -2,12 +2,10 @@ package com.example.myapplication
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -48,9 +46,9 @@ class MainActivity : BaseActivity() {
 
     private var suppressSpinner = false
     private var lastRegionList: List<RegionItem> = emptyList()
+    private var regionItems: List<RegionItem> = emptyList()
 
     private val gray = "#888888".toColorInt()
-
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.wrap(newBase))
     }
@@ -98,9 +96,10 @@ class MainActivity : BaseActivity() {
             vm.selectTopCategory(0)
             topTabAdapter.update(cats, 0)
             categoryAdapter.updateData(cats)
-            binding.rvSubTabs.visibility   = View.GONE
-            binding.rvExtraTabs.visibility = View.GONE
+            binding.rvSubTabs.visibility    = View.GONE
+            binding.rvExtraTabs.visibility  = View.GONE
             binding.llFilterBar.visibility  = View.GONE
+            binding.llRegionRow.visibility  = View.GONE
             applyBodyState(BodyState.CATEGORIES)
         } else {
             val cat = cats.getOrNull(catIdx - 1) ?: return
@@ -187,9 +186,10 @@ class MainActivity : BaseActivity() {
             if (idx == 0) {
                 vm.selectTopCategory(0)
                 categoryAdapter.updateData(cats)
-                binding.rvSubTabs.visibility   = View.GONE
-                binding.rvExtraTabs.visibility = View.GONE
+                binding.rvSubTabs.visibility    = View.GONE
+                binding.rvExtraTabs.visibility  = View.GONE
                 binding.llFilterBar.visibility  = View.GONE
+                binding.llRegionRow.visibility  = View.GONE
                 applyBodyState(BodyState.CATEGORIES)
             } else {
                 openCategory(cat!!)
@@ -219,15 +219,41 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setupTypeChips() {
-        binding.chipAll.setOnClickListener { vm.selectType(null); updateChipStyles(null) }
-        binding.chipOffer.setOnClickListener { vm.selectType("offer"); updateChipStyles("offer") }
-        binding.chipRequest.setOnClickListener { vm.selectType("request"); updateChipStyles("request") }
+        binding.chipAll.setOnClickListener {
+            vm.selectType(null)
+            updateChipStyles(null)
+            resetCityFilter()
+            showRegionRow()
+        }
+        binding.chipOffer.setOnClickListener {
+            vm.selectType("offer")
+            updateChipStyles("offer")
+            resetCityFilter()
+            showRegionRow()
+        }
+        binding.chipRequest.setOnClickListener {
+            vm.selectType("request")
+            updateChipStyles("request")
+            resetCityFilter()
+            showRegionRow()
+        }
+    }
+
+    private fun resetCityFilter() {
+        // Reset city selection and hide city pill
+        binding.spinnerCity.visibility = View.GONE
+        vm.selectCity(null)
+        resetCityPill()
+    }
+
+    private fun showRegionRow() {
+        binding.llRegionRow.visibility = View.VISIBLE
     }
 
     private fun updateChipStyles(active: String?) {
         fun style(tv: TextView, isActive: Boolean) {
             tv.setBackgroundResource(if (isActive) R.drawable.bg_chip_selected else R.drawable.bg_chip_unselected)
-            tv.setTextColor(if (isActive) Color.BLACK else gray)
+            tv.setTextColor(if (isActive) getColor(R.color.white) else getColor(R.color.find_gray_text))
             tv.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
         }
         style(binding.chipAll, active == null)
@@ -331,9 +357,10 @@ class MainActivity : BaseActivity() {
             val cats = vm.categories.value ?: emptyList()
             topTabAdapter.update(cats, 0)
             categoryAdapter.updateData(cats)
-            binding.rvSubTabs.visibility   = View.GONE
-            binding.rvExtraTabs.visibility = View.GONE
+            binding.rvSubTabs.visibility    = View.GONE
+            binding.rvExtraTabs.visibility  = View.GONE
             binding.llFilterBar.visibility  = View.GONE
+            binding.llRegionRow.visibility  = View.GONE
             applyBodyState(BodyState.CATEGORIES)
         }
     }
@@ -352,6 +379,10 @@ class MainActivity : BaseActivity() {
 
     private fun showListingsMode() {
         isShowingSubGrid = false
+        // Show chips row, hide region row until a chip is tapped
+        binding.llFilterBar.visibility = View.VISIBLE
+        binding.llRegionRow.visibility = View.GONE
+        updateChipStyles(vm.catType)
         applyBodyState(BodyState.LOADING)
         vm.fetchListings()
     }
@@ -359,17 +390,20 @@ class MainActivity : BaseActivity() {
     private fun buildSubTabs(cat: ApiCategory) {
         val subs = cat.subCategories
         if (subs.isEmpty()) {
-            binding.rvSubTabs.visibility = View.GONE
+            binding.rvSubTabs.visibility   = View.GONE
             binding.rvExtraTabs.visibility = View.GONE
-            binding.llFilterBar.visibility = View.VISIBLE
+            // No sub-list → show chips immediately
+            binding.llFilterBar.visibility  = View.VISIBLE
+            binding.llRegionRow.visibility  = View.GONE
             return
         }
-        binding.rvSubTabs.visibility = View.VISIBLE
+        binding.rvSubTabs.visibility   = View.VISIBLE
+        binding.llFilterBar.visibility  = View.GONE   // hide chips while sub-grid is showing
+        binding.llRegionRow.visibility  = View.GONE
         subTabAdapter.update(subs, vm.catSubIdx)
-        
+
         val selectedSub = vm.catSubIdx?.let { subs.getOrNull(it) }
         buildExtraTabs(selectedSub)
-        binding.llFilterBar.visibility = View.VISIBLE
     }
 
     private fun buildExtraTabs(sub: ApiSubCategory?) {
@@ -383,43 +417,78 @@ class MainActivity : BaseActivity() {
     }
 
     private fun buildRegionSpinner(regions: List<RegionItem>) {
-        if (regions == lastRegionList && binding.spinnerRegion.adapter != null) return
+        if (regions == lastRegionList) return
         lastRegionList = regions
-        suppressSpinner = true
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, regions.map { LocaleHelper.localizedName(this, it.nameAr, it.nameEn) })
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerRegion.adapter = adapter
-        binding.spinnerRegion.setSelection(0)
-        suppressSpinner = false
-        binding.spinnerRegion.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
-                if (suppressSpinner) return
-                val regionId = regions[pos].id
-                vm.selectRegion(regionId)
-                buildCitySpinner(regionId)
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
+        regionItems = regions
+        resetRegionPill()
+        vm.selectRegion(null)
         binding.spinnerCity.visibility = View.GONE
+
+        binding.spinnerRegion.setOnClickListener {
+            val popup = android.widget.PopupMenu(this, binding.spinnerRegion)
+            regions.forEachIndexed { i, r ->
+                popup.menu.add(0, i, i, LocaleHelper.localizedName(this, r.nameAr, r.nameEn))
+            }
+            popup.setOnMenuItemClickListener { item ->
+                val region = regions[item.itemId]
+                setRegionPillActive(LocaleHelper.localizedName(this, region.nameAr, region.nameEn))
+                vm.selectRegion(region.id)
+                buildCityDropdown(region.id)
+                true
+            }
+            popup.show()
+        }
     }
 
-    private fun buildCitySpinner(regionId: Int?) {
+    private fun buildCityDropdown(regionId: Int?) {
         val cities = vm.citiesForRegion(regionId)
-        if (regionId == null || cities.isEmpty()) { binding.spinnerCity.visibility = View.GONE; return }
-        suppressSpinner = true
-        binding.spinnerCity.visibility = View.VISIBLE
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, cities.map { LocaleHelper.localizedName(this, it.nameAr, it.nameEn) })
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerCity.adapter = adapter
-        binding.spinnerCity.setSelection(0)
-        suppressSpinner = false
-        binding.spinnerCity.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
-                if (suppressSpinner) return
-                vm.selectCity(cities[pos].id)
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+        if (regionId == null || cities.isEmpty()) {
+            binding.spinnerCity.visibility = View.GONE
+            return
         }
+        binding.spinnerCity.visibility = View.VISIBLE
+        resetCityPill()
+        vm.selectCity(null)
+
+        binding.spinnerCity.setOnClickListener {
+            val popup = android.widget.PopupMenu(this, binding.spinnerCity)
+            cities.forEachIndexed { i, c ->
+                popup.menu.add(0, i, i, LocaleHelper.localizedName(this, c.nameAr, c.nameEn))
+            }
+            popup.setOnMenuItemClickListener { item ->
+                val city = cities[item.itemId]
+                setCityPillActive(LocaleHelper.localizedName(this, city.nameAr, city.nameEn))
+                vm.selectCity(city.id)
+                true
+            }
+            popup.show()
+        }
+    }
+
+    // ── Pill highlight helpers ────────────────────────────────────────────────
+
+    private fun resetRegionPill() {
+        binding.tvRegionLabel.text = getString(R.string.all_regions)
+        binding.tvRegionLabel.setTextColor(getColor(R.color.find_gray_text))
+        binding.spinnerRegion.setBackgroundResource(R.drawable.bg_chip_unselected)
+    }
+
+    private fun setRegionPillActive(label: String) {
+        binding.tvRegionLabel.text = label
+        binding.tvRegionLabel.setTextColor(getColor(R.color.white))
+        binding.spinnerRegion.setBackgroundResource(R.drawable.bg_chip_selected)
+    }
+
+    private fun resetCityPill() {
+        binding.tvCityLabel.text = getString(R.string.all_cities)
+        binding.tvCityLabel.setTextColor(getColor(R.color.find_gray_text))
+        binding.spinnerCity.setBackgroundResource(R.drawable.bg_chip_unselected)
+    }
+
+    private fun setCityPillActive(label: String) {
+        binding.tvCityLabel.text = label
+        binding.tvCityLabel.setTextColor(getColor(R.color.white))
+        binding.spinnerCity.setBackgroundResource(R.drawable.bg_chip_selected)
     }
 
     private var pendingCategoryId: Int? = null

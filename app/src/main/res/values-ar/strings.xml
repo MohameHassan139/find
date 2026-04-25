@@ -47,6 +47,8 @@
     <string name="search_anything">ابحث عن أي شيء</string>
     <string name="filter_offer">عرض</string>
     <string name="filter_request">طلب</string>
+    <string name="all_regions">كل المناطق</string>
+    <string name="all_cities">كل المدن</string>
     <string name="category_title">جرّب تغيير الفئة أو المنطقة</string>
     <string name="str____________________">إعادة تعيين الفلاتر</string>
     <string name="my_ads_title">إعلاناتي</string>

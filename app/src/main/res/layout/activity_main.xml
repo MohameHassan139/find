@@ -84,15 +84,16 @@
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-        <!-- Filter bar -->
+        <!-- Filter bar: chips row (الكل / عرض / طلب) — shown only at listings level -->
         <LinearLayout
             android:id="@+id/llFilterBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
+            android:gravity="start|center_vertical"
             android:paddingHorizontal="10dp"
-            android:paddingVertical="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             android:background="@color/surface_tabs"
             android:visibility="gone">
 
@@ -105,7 +106,7 @@
                 android:paddingHorizontal="14dp"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:background="@drawable/bg_chip_selected"
                 android:layout_marginEnd="6dp" />
 
@@ -130,24 +131,80 @@
                 android:paddingHorizontal="14dp"
                 android:textSize="13sp"
                 android:textColor="@color/find_gray_text"
-                android:background="@drawable/bg_chip_unselected"
-                android:layout_marginEnd="10dp" />
+                android:background="@drawable/bg_chip_unselected" />
 
-            <Spinner
+        </LinearLayout>
+
+        <!-- Region row — shown after chips row is visible -->
+        <LinearLayout
+            android:id="@+id/llRegionRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start|center_vertical"
+            android:paddingHorizontal="10dp"
+            android:paddingBottom="8dp"
+            android:background="@color/surface_tabs"
+            android:visibility="gone">
+
+            <LinearLayout
                 android:id="@+id/spinnerRegion"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="32dp"
-                android:background="@color/surface_primary" />
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_chip_unselected"
+                android:paddingHorizontal="14dp"
+                android:clickable="true"
+                android:focusable="true">
 
-            <Spinner
+                <TextView
+                    android:id="@+id/tvRegionLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/all_regions"
+                    android:textSize="13sp"
+                    android:textColor="@color/find_gray_text"
+                    android:layout_marginEnd="6dp" />
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_chevron_left"
+                    app:tint="@color/find_gray_text" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/spinnerCity"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="32dp"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_chip_unselected"
+                android:paddingHorizontal="14dp"
                 android:layout_marginStart="6dp"
-                android:background="@color/white"
-                android:visibility="gone" />
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvCityLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/all_cities"
+                    android:textSize="13sp"
+                    android:textColor="@color/find_gray_text"
+                    android:layout_marginEnd="6dp" />
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_chevron_left"
+                    app:tint="@color/find_gray_text" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <!-- Boot shimmer -->
