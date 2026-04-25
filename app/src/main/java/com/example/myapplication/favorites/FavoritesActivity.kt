@@ -29,6 +29,8 @@ class FavoritesActivity : BaseActivity() {
     private lateinit var adapter: ListingsAdapter
     private val favoriteIds = mutableSetOf<String>()
     private val sharedVm: SharedCategoriesViewModel by viewModels()
+    private var allFavorites: List<ApiListing> = emptyList()
+    private var currentFilter = "offer"
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.wrap(newBase))
@@ -64,12 +66,64 @@ class FavoritesActivity : BaseActivity() {
         binding.rvFavorites.layoutManager = LinearLayoutManager(this)
         binding.rvFavorites.adapter = adapter
 
+        binding.btnFilterOffer.setOnClickListener { setFilter("offer") }
+        binding.btnFilterRequest.setOnClickListener { setFilter("request") }
+
         loadFavorites()
+    }
+
+    private fun setFilter(type: String) {
+        currentFilter = type
+        if (type == "offer") {
+            binding.btnFilterOffer.apply {
+                strokeWidth = 9
+                strokeColor = android.content.res.ColorStateList.valueOf(
+                    androidx.core.content.ContextCompat.getColor(context, R.color.find_active_blue)
+                )
+                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
+            }
+            binding.btnFilterRequest.apply {
+                strokeWidth = 3
+                strokeColor = android.content.res.ColorStateList.valueOf(
+                    androidx.core.content.ContextCompat.getColor(context, R.color.text_primary)
+                )
+                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_secondary))
+            }
+        } else {
+            binding.btnFilterRequest.apply {
+                strokeWidth = 9
+                strokeColor = android.content.res.ColorStateList.valueOf(
+                    androidx.core.content.ContextCompat.getColor(context, R.color.find_active_blue)
+                )
+                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
+            }
+            binding.btnFilterOffer.apply {
+                strokeWidth = 3
+                strokeColor = android.content.res.ColorStateList.valueOf(
+                    androidx.core.content.ContextCompat.getColor(context, R.color.text_primary)
+                )
+                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_secondary))
+            }
+        }
+        applyFilter()
+    }
+
+    private fun applyFilter() {
+        val filtered = allFavorites.filter { it.listingType == currentFilter }
+        if (filtered.isEmpty()) {
+            binding.rvFavorites.visibility = View.GONE
+            binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
+        } else {
+            binding.root.findViewById<View>(R.id.emptyView).visibility = View.GONE
+            binding.rvFavorites.visibility = View.VISIBLE
+            adapter.updateData(filtered)
+            adapter.setFavoriteIds(favoriteIds)
+        }
     }
 
     private fun loadFavorites() {
         binding.progressBar.visibility = View.VISIBLE
-        binding.tvEmpty.visibility = View.GONE
+        binding.root.findViewById<View>(R.id.emptyView).visibility = View.GONE
         binding.rvFavorites.visibility = View.GONE
 
         lifecycleScope.launch {
@@ -81,16 +135,14 @@ class FavoritesActivity : BaseActivity() {
 
                 if (response.isSuccessful) {
                     val body = response.body()?.string() ?: ""
-                    val listings = parseFavorites(body)
+                    allFavorites = parseFavorites(body)
                     favoriteIds.clear()
-                    listings.forEach { favoriteIds.add(it.id) }
+                    allFavorites.forEach { favoriteIds.add(it.id) }
 
-                    if (listings.isEmpty()) {
-                        binding.tvEmpty.visibility = View.VISIBLE
+                    if (allFavorites.isEmpty()) {
+                        binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
                     } else {
-                        binding.rvFavorites.visibility = View.VISIBLE
-                        adapter.updateData(listings)
-                        adapter.setFavoriteIds(favoriteIds)
+                        applyFilter()
                     }
                 } else {
                     showError()
@@ -113,12 +165,11 @@ class FavoritesActivity : BaseActivity() {
                 // On successful remove, pull item out of the list
                 if (!add && (response.isSuccessful || response.code() == 404)) {
                     favoriteIds.remove(listingId)
-                    val updated = adapter.getCurrentItems().filter { it.id != listingId }
-                    adapter.updateData(updated)
-                    adapter.setFavoriteIds(favoriteIds)
-                    if (updated.isEmpty()) {
+                    allFavorites = allFavorites.filter { it.id != listingId }
+                    applyFilter()
+                    if (allFavorites.isEmpty()) {
                         binding.rvFavorites.visibility = View.GONE
-                        binding.tvEmpty.visibility = View.VISIBLE
+                        binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
                     }
                 }
             } catch (_: Exception) {}
@@ -126,7 +177,7 @@ class FavoritesActivity : BaseActivity() {
     }
 
     private fun showError() {
-        binding.tvEmpty.visibility = View.VISIBLE
+        binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
         binding.tvEmpty.text = getString(R.string.kt_str_338558d2)
     }
 

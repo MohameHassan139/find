@@ -74,22 +74,36 @@ class MyAdsActivity : BaseActivity() {
 
     private fun setFilter(type: String) {
         currentFilter = type
-        val isPrimary = "#C8A96E"
-        val isGray = "#EEEEEE"
         if (type == "offer") {
-            binding.btnFilterOffer.backgroundTintList =
-                android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor(isPrimary))
-            binding.btnFilterOffer.setTextColor(android.graphics.Color.WHITE)
-            binding.btnFilterRequest.backgroundTintList =
-                android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor(isGray))
-            binding.btnFilterRequest.setTextColor(android.graphics.Color.parseColor("#888888"))
+            binding.btnFilterOffer.apply {
+                strokeWidth = 9
+                strokeColor = android.content.res.ColorStateList.valueOf(
+                    androidx.core.content.ContextCompat.getColor(context, R.color.find_active_blue)
+                )
+                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
+            }
+            binding.btnFilterRequest.apply {
+                strokeWidth = 3
+                strokeColor = android.content.res.ColorStateList.valueOf(
+                    androidx.core.content.ContextCompat.getColor(context, R.color.text_primary)
+                )
+                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_secondary))
+            }
         } else {
-            binding.btnFilterRequest.backgroundTintList =
-                android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor(isPrimary))
-            binding.btnFilterRequest.setTextColor(android.graphics.Color.WHITE)
-            binding.btnFilterOffer.backgroundTintList =
-                android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor(isGray))
-            binding.btnFilterOffer.setTextColor(android.graphics.Color.parseColor("#888888"))
+            binding.btnFilterRequest.apply {
+                strokeWidth = 9
+                strokeColor = android.content.res.ColorStateList.valueOf(
+                    androidx.core.content.ContextCompat.getColor(context, R.color.find_active_blue)
+                )
+                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
+            }
+            binding.btnFilterOffer.apply {
+                strokeWidth = 3
+                strokeColor = android.content.res.ColorStateList.valueOf(
+                    androidx.core.content.ContextCompat.getColor(context, R.color.text_primary)
+                )
+                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_secondary))
+            }
         }
         applyFilter()
     }
@@ -99,7 +113,7 @@ class MyAdsActivity : BaseActivity() {
         if (filtered.isEmpty()) {
             showEmpty("لا توجد إعلانات")
         } else {
-            binding.tvEmpty.visibility = View.GONE
+            binding.root.findViewById<View>(R.id.emptyView).visibility = View.GONE
             binding.rvAds.visibility = View.VISIBLE
             binding.rvAds.adapter = MyAdsAdapter(filtered.toMutableList(),
                 onDelete = { item -> confirmDelete(item) },
@@ -168,14 +182,14 @@ class MyAdsActivity : BaseActivity() {
 
     private fun showLoading() {
         binding.progressBar.visibility = View.VISIBLE
-        binding.tvEmpty.visibility = View.GONE
+        binding.root.findViewById<View>(R.id.emptyView).visibility = View.GONE
         binding.rvAds.visibility = View.GONE
     }
 
     private fun showEmpty(msg: String) {
         binding.progressBar.visibility = View.GONE
         binding.rvAds.visibility = View.GONE
-        binding.tvEmpty.visibility = View.VISIBLE
+        binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
         binding.tvEmpty.text = msg
     }
 }
@@ -196,13 +210,11 @@ class MyAdsAdapter(
         val tvTime: TextView = view.findViewById(R.id.tvTime)
         val tvLocation: TextView = view.findViewById(R.id.tvLocation)
         val btnEdit: View = view.findViewById(R.id.btnEdit)
-        val btnMessages: View = view.findViewById(R.id.btnMessages)
         val btnDelete: View = view.findViewById(R.id.btnDelete)
         val switchActive: SwitchCompat = view.findViewById(R.id.switchActive)
         val tvActiveLabel: TextView = view.findViewById(R.id.tvActiveLabel)
         val btnPrev: TextView = view.findViewById(R.id.btnPrev)
         val btnNext: TextView = view.findViewById(R.id.btnNext)
-        val tvCounter: TextView = view.findViewById(R.id.tvImageCounter)
         var imageIndex = 0
     }
 
@@ -231,17 +243,12 @@ class MyAdsAdapter(
                 holder.ivImage.setImageResource(R.drawable.ic_photo_placeholder)
                 holder.btnPrev.visibility = View.GONE
                 holder.btnNext.visibility = View.GONE
-                holder.tvCounter.visibility = View.GONE
             } else {
                 Glide.with(holder.ivImage.context).load(images[holder.imageIndex])
                     .placeholder(R.drawable.ic_photo_placeholder).centerCrop().into(holder.ivImage)
                 val showArrows = images.size > 1
                 holder.btnPrev.visibility = if (showArrows) View.VISIBLE else View.GONE
                 holder.btnNext.visibility = if (showArrows) View.VISIBLE else View.GONE
-                if (showArrows) {
-                    holder.tvCounter.visibility = View.VISIBLE
-                    holder.tvCounter.text = "${holder.imageIndex + 1}/${images.size}"
-                }
             }
         }
         loadImage()
@@ -267,25 +274,49 @@ class MyAdsAdapter(
                 .circleCrop().into(holder.ivSellerAvatar)
         }
 
-        // Toggle — use status field ("active"/"inactive") since API returns status not is_active
+        // Toggle — use status field ("active"/"hidden") since API returns status not is_active
         val isCurrentlyActive = item.isActive || item.status == "active"
         holder.switchActive.setOnCheckedChangeListener(null)
         holder.switchActive.isChecked = isCurrentlyActive
-        holder.tvActiveLabel.text = if (isCurrentlyActive) "ظاهر" else "مخفي"
+        
+        // Update label and colors
+        val context = holder.itemView.context
+        if (isCurrentlyActive) {
+            holder.tvActiveLabel.text = context.getString(R.string.ad_visible)
+            holder.tvActiveLabel.setTextColor(android.graphics.Color.parseColor("#34C759"))
+            holder.switchActive.trackTintList = android.content.res.ColorStateList.valueOf(
+                android.graphics.Color.parseColor("#34C759")
+            )
+        } else {
+            holder.tvActiveLabel.text = context.getString(R.string.ad_hidden)
+            holder.tvActiveLabel.setTextColor(
+                androidx.core.content.ContextCompat.getColor(context, R.color.text_secondary)
+            )
+            holder.switchActive.trackTintList = android.content.res.ColorStateList.valueOf(
+                android.graphics.Color.parseColor("#E0E0E0")
+            )
+        }
+        
         holder.switchActive.setOnCheckedChangeListener { _, checked ->
-            holder.tvActiveLabel.text = if (checked) "ظاهر" else "مخفي"
+            if (checked) {
+                holder.tvActiveLabel.text = context.getString(R.string.ad_visible)
+                holder.tvActiveLabel.setTextColor(android.graphics.Color.parseColor("#34C759"))
+                holder.switchActive.trackTintList = android.content.res.ColorStateList.valueOf(
+                    android.graphics.Color.parseColor("#34C759")
+                )
+            } else {
+                holder.tvActiveLabel.text = context.getString(R.string.ad_hidden)
+                holder.tvActiveLabel.setTextColor(
+                    androidx.core.content.ContextCompat.getColor(context, R.color.text_secondary)
+                )
+                holder.switchActive.trackTintList = android.content.res.ColorStateList.valueOf(
+                    android.graphics.Color.parseColor("#E0E0E0")
+                )
+            }
             onToggle(item, checked)
         }
 
         holder.btnDelete.setOnClickListener { onDelete(item) }
-        holder.btnMessages.setOnClickListener {
-            val intent = Intent(holder.itemView.context,
-                com.example.myapplication.chat.ui.conversations.ListingConversationsActivity::class.java).apply {
-                putExtra(com.example.myapplication.chat.ui.conversations.ListingConversationsActivity.EXTRA_LISTING_ID, item.id)
-                putExtra(com.example.myapplication.chat.ui.conversations.ListingConversationsActivity.EXTRA_LISTING_TITLE, item.title ?: "رسائل الإعلان")
-            }
-            holder.itemView.context.startActivity(intent)
-        }
         holder.btnEdit.setOnClickListener {
             val intent = Intent(holder.itemView.context, AddAdActivity::class.java).apply {
                 putExtra(AddAdActivity.EXTRA_LISTING_ID, item.id)

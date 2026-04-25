@@ -42,6 +42,8 @@
 
         <!-- Settings -->
         <activity android:name=".SettingsActivity" android:exported="false" />
+        <activity android:name=".LanguageActivity" android:exported="false" />
+        <activity android:name=".CommunicationChannelsActivity" android:exported="false" />
 
         <!-- Favorites -->
         <activity android:name=".favorites.FavoritesActivity" android:exported="false" />

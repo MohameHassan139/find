@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/bg_screen"
+    android:background="#F4F4F4"
     android:layoutDirection="locale">
 
     <!-- Top Bar -->
@@ -12,95 +13,160 @@
     <!-- Reusable home header: search + category tabs -->
     <include layout="@layout/layout_home_header" />
 
-    <!-- Section header -->
-    <LinearLayout
+    <!-- Main card container -->
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:background="@color/surface_primary"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:orientation="horizontal"
-        android:layout_marginTop="1dp">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="3dp"
+        app:cardBackgroundColor="@color/surface_primary">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/my_ads_title"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:text="📢"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:background="@color/my_ads_icon_bg" />
-    </LinearLayout>
+            <!-- Section header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="4dp"
+                android:orientation="horizontal">
 
-    <!-- Filter tabs: عرض / طلب -->
-    <LinearLayout
+                <TextView
+                    android:layout_width="42dp"
+                    android:layout_height="48dp"
+                    android:text="📢"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:background="@color/my_ads_icon_bg"
+                    android:layout_marginEnd="5dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/my_ads_title"
+                    android:textSize="18sp"
+                    android:textColor="@color/text_primary" />
+            </LinearLayout>
+
+            <!-- Filter tabs: عرض / طلب -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="12dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnFilterOffer"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:text="@string/filter_offer"
+                    android:textSize="15sp"
+                    android:textColor="@color/text_primary"
+                    app:strokeColor="@color/find_active_blue"
+                    app:strokeWidth="3dp"
+                    app:cornerRadius="24dp"
+                    app:backgroundTint="#F4F4F4"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnFilterRequest"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:text="@string/filter_request"
+                    android:textSize="15sp"
+                    android:textColor="@color/text_secondary"
+                    app:strokeColor="@color/text_primary"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="24dp"
+                    app:backgroundTint="#F4F4F4"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+            </LinearLayout>
+
+            <View 
+                android:layout_width="350dp"
+                android:layout_height="1dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:background="@color/divider" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <!-- Loading -->
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+
+                <!-- Empty -->
+                <LinearLayout
+                    android:id="@+id/emptyView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tvEmpty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="50dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/text_secondary" />
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_nav_add"
+                        android:contentDescription="add ad" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/add_ad"
+                        android:textSize="14sp"
+                        android:textColor="@color/find_active_blue" />
+                </LinearLayout>
+
+                <!-- List -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAds"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="110dp"
+                    android:paddingHorizontal="16dp"
+                    android:clipToPadding="false"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Bottom spacer -->
+    <View
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/surface_primary"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnFilterOffer"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:text="@string/filter_offer"
-            android:textSize="13sp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/find_primary"
-            android:textColor="@color/white"
-            style="@style/Widget.MaterialComponents.Button" />
-
-        <Button
-            android:id="@+id/btnFilterRequest"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:text="@string/filter_request"
-            android:textSize="13sp"
-            android:backgroundTint="@color/chip_unselected_bg"
-            android:textColor="@color/text_secondary"
-            style="@style/Widget.MaterialComponents.Button" />
-    </LinearLayout>
-
-    <View android:layout_width="match_parent" android:layout_height="1dp"
-        android:background="@color/divider" />
-
-    <!-- Loading -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="48dp"
-        android:visibility="gone" />
-
-    <!-- Empty -->
-    <TextView
-        android:id="@+id/tvEmpty"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="48dp"
-        android:textSize="16sp"
-        android:textColor="@color/text_secondary"
-        android:visibility="gone" />
-
-    <!-- List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvAds"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="12dp"
-        android:clipToPadding="false"
-        android:visibility="gone" />
+        android:layout_height="50dp"
+        android:background="@color/surface_primary" />
 
 </LinearLayout>

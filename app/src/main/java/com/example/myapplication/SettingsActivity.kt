@@ -1,13 +1,16 @@
 package com.example.myapplication
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SwitchCompat
 import com.example.myapplication.SharedCategoriesViewModel
+import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 
@@ -54,6 +57,9 @@ class SettingsActivity : BaseActivity() {
         HomeHeaderHelper.attach(this, findViewById(android.R.id.content), sharedVm.categories)
 
         setupAppBar()
+        setupNavigation()
+        setupNightMode()
+        setupDeleteAccount()
         setupThemeChips()
         setupLanguageChips()
     }
@@ -61,6 +67,47 @@ class SettingsActivity : BaseActivity() {
     private fun setupAppBar() {
         findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener { finish() }
+    }
+
+    private fun setupNavigation() {
+        findViewById<android.view.View>(R.id.rowLanguage).setOnClickListener {
+            startActivity(Intent(this, LanguageActivity::class.java))
+        }
+
+        findViewById<android.view.View>(R.id.rowChannels).setOnClickListener {
+            startActivity(Intent(this, CommunicationChannelsActivity::class.java))
+        }
+    }
+
+    private fun setupNightMode() {
+        val switchNightMode = findViewById<SwitchCompat>(R.id.switchNightMode)
+        val currentTheme = getSavedTheme(this)
+        
+        switchNightMode.isChecked = currentTheme == THEME_DARK
+        
+        switchNightMode.setOnCheckedChangeListener { _, isChecked ->
+            val theme = if (isChecked) THEME_DARK else THEME_LIGHT
+            saveTheme(this, theme)
+            applyTheme(this)
+        }
+    }
+
+    private fun setupDeleteAccount() {
+        findViewById<TextView>(R.id.btnDeleteAccount).setOnClickListener {
+            androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle(getString(R.string.settings_delete_account_title))
+                .setMessage(getString(R.string.settings_delete_account_message))
+                .setPositiveButton(getString(R.string.settings_delete_account_confirm)) { _, _ ->
+                    // TODO: Implement account deletion API call
+                    TokenManager.clear(this)
+                    startActivity(Intent(this, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                    })
+                    finish()
+                }
+                .setNegativeButton(getString(R.string.settings_delete_account_cancel), null)
+                .show()
+        }
     }
 
     // ── Theme ────────────────────────────────────────────────────────────────

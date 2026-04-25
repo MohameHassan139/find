@@ -92,17 +92,6 @@ class MenuActivity : BaseActivity() {
         binding.menuSettings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
-        binding.menuLanguage.setOnClickListener {
-            val languages = arrayOf("English", "العربية")
-            AlertDialog.Builder(this)
-                .setTitle(getString(R.string.menu_language))
-                .setItems(languages) { _, which ->
-                    val locale = if (which == 0) "en" else "ar"
-                    // Save to local database and apply — triggers activity recreation
-                    LocaleHelper.setLanguage(this, locale)
-                }
-                .show()
-        }
         binding.menuShareApp.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
