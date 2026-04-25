@@ -4,15 +4,19 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.SharedCategoriesViewModel
+import com.example.myapplication.auth.AuthRetrofitClient
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
+import kotlinx.coroutines.launch
 
 class SettingsActivity : BaseActivity() {
 
@@ -98,15 +102,48 @@ class SettingsActivity : BaseActivity() {
                 .setTitle(getString(R.string.settings_delete_account_title))
                 .setMessage(getString(R.string.settings_delete_account_message))
                 .setPositiveButton(getString(R.string.settings_delete_account_confirm)) { _, _ ->
-                    // TODO: Implement account deletion API call
-                    TokenManager.clear(this)
-                    startActivity(Intent(this, MainActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-                    })
-                    finish()
+                    deleteAccountFromServer()
                 }
                 .setNegativeButton(getString(R.string.settings_delete_account_cancel), null)
                 .show()
+        }
+    }
+
+    private fun deleteAccountFromServer() {
+        val token = TokenManager.getToken(this)
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, "Not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        lifecycleScope.launch {
+            try {
+                val response = AuthRetrofitClient.authService
+                    .deleteAccount("Bearer $token")
+                
+                if (response.isSuccessful) {
+                    val message = response.body()?.message ?: "Account deleted successfully"
+                    Toast.makeText(this@SettingsActivity, message, Toast.LENGTH_SHORT).show()
+                    
+                    TokenManager.clear(this@SettingsActivity)
+                    startActivity(Intent(this@SettingsActivity, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                    })
+                    finish()
+                } else {
+                    Toast.makeText(
+                        this@SettingsActivity,
+                        "Failed to delete account: ${response.message()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(
+                    this@SettingsActivity,
+                    "Error: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 

@@ -42,6 +42,9 @@ interface AuthApiService {
         @Path("id") id: String,
         @Body body: ToggleActiveRequest
     ): Response<SingleListingResponse>
+
+    @POST("auth/delete-account")
+    suspend fun deleteAccount(@Header("Authorization") token: String): Response<DeleteAccountResponse>
 }
 
 data class OtpRequest(val phone: String)
@@ -107,3 +110,5 @@ data class ListingItem(
 
 data class SellerInfo(val id: Int = 0, val name: String?, val avatar: String?)
 data class RegionInfo(val id: Int = 0, @SerializedName("name_ar") val nameAr: String?)
+
+data class DeleteAccountResponse(val message: String?)
