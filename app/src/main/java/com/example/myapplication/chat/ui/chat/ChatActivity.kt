@@ -17,6 +17,8 @@ import com.example.myapplication.chat.utils.Result
 import com.example.myapplication.databinding.ActivityChatBinding
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 
 class ChatActivity : BaseActivity() {
 
@@ -47,9 +49,48 @@ class ChatActivity : BaseActivity() {
         setupRecyclerView()
         setupSendButton()
         setupObservers()
+        setupKeyboardHandling()
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
 
         viewModel.init(conversation.id)
+    }
+
+    private fun setupKeyboardHandling() {
+        // Store original padding
+        val originalPaddingBottom = binding.llMessageInputBar.paddingBottom
+        
+        // Handle keyboard insets to move input bar above keyboard
+        ViewCompat.setOnApplyWindowInsetsListener(binding.llMessageInputBar) { view, insets ->
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val navBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            
+            // Add 8dp spacing between keyboard and input bar
+            val spacingDp = 8
+            val spacingPx = (spacingDp * resources.displayMetrics.density).toInt()
+            
+            // Apply bottom padding to push input bar above keyboard with spacing
+            val bottomPadding = if (imeInsets.bottom > 0) {
+                imeInsets.bottom + spacingPx
+            } else {
+                navBarInsets.bottom + originalPaddingBottom
+            }
+            
+            view.setPadding(
+                view.paddingLeft,
+                view.paddingTop,
+                view.paddingRight,
+                bottomPadding
+            )
+            
+            // Scroll to bottom when keyboard appears
+            if (imeInsets.bottom > 0 && adapter.itemCount > 0) {
+                binding.rvMessages.post {
+                    binding.rvMessages.smoothScrollToPosition(adapter.itemCount - 1)
+                }
+            }
+            
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     private fun setupToolbar() {
@@ -85,6 +126,20 @@ class ChatActivity : BaseActivity() {
             if (text.isNotEmpty()) {
                 viewModel.sendMessage(text)
                 binding.etMessage.setText("")
+            }
+        }
+        
+        // Handle keyboard send action
+        binding.etMessage.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEND) {
+                val text = binding.etMessage.text.toString().trim()
+                if (text.isNotEmpty()) {
+                    viewModel.sendMessage(text)
+                    binding.etMessage.setText("")
+                }
+                true
+            } else {
+                false
             }
         }
     }

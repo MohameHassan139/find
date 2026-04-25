@@ -35,7 +35,12 @@ class SubTabAdapter(
         holder.b.tvLabel.text = label
         holder.b.tvLabel.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
         holder.b.tvLabel.textSize = 14f
-        holder.b.tvLabel.setTextColor(if (isActive) Color.BLACK else gray)
+        val textColor = if (isActive) {
+            holder.itemView.context.getColor(R.color.text_primary)
+        } else {
+            gray
+        }
+        holder.b.tvLabel.setTextColor(textColor)
         holder.b.underline.setBackgroundColor(if (isActive) gold else Color.TRANSPARENT)
 
         holder.b.root.setOnClickListener {
