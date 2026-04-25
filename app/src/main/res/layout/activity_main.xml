@@ -293,7 +293,7 @@
                 <include layout="@layout/item_listing_shimmer" />
             </LinearLayout>
 
-            <!-- Empty state with Reset button -->
+            <!-- Empty state with Add Ad button -->
             <LinearLayout
                 android:id="@+id/llEmptyState"
                 android:layout_width="match_parent"
@@ -305,39 +305,41 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="😕"
-                    android:textSize="52sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="@string/str________________"
-                    android:textSize="16sp"
+                    android:text="@string/empty_no_ads"
+                    android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_primary"
                     android:gravity="center" />
 
-                <TextView
+                <LinearLayout
+                    android:id="@+id/btnAddAdEmpty"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="@string/category_title"
-                    android:textSize="13sp"
-                    android:textColor="@color/find_gray_text"
-                    android:gravity="center" />
+                    android:layout_marginTop="24dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="12dp">
 
-                <Button
-                    android:id="@+id/btnResetFilters"
-                    android:layout_width="wrap_content"
-                    android:layout_height="44dp"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/str____________________"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:backgroundTint="@color/find_primary"
-                    android:paddingHorizontal="24dp"
-                    style="@style/Widget.MaterialComponents.Button" />
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:src="@drawable/add"
+                        android:scaleType="fitCenter"
+                        app:tint="@color/text_primary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/empty_add_ad"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary"
+                        android:gravity="center" />
+                </LinearLayout>
+
             </LinearLayout>
 
         </FrameLayout>

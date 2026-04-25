@@ -51,6 +51,8 @@
     <string name="all_cities">All Cities</string>
     <string name="category_title">جرّب تغيير Category أو المنطقة</string>
     <string name="str____________________">إعادة تعيين الفلاتر</string>
+    <string name="empty_no_ads">No ads</string>
+    <string name="empty_add_ad">Add Ad</string>
     <string name="my_ads_title">My Ads</string>
     <string name="app_name_ar">Find</string>
     <string name="login_create_account">Login / Create Account</string>

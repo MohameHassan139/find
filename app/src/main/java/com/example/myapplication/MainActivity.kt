@@ -351,17 +351,10 @@ class MainActivity : BaseActivity() {
             }
         }
 
-        binding.btnResetFilters.setOnClickListener {
-            vm.selectTopCategory(0)
-            updateChipStyles(null)
-            val cats = vm.categories.value ?: emptyList()
-            topTabAdapter.update(cats, 0)
-            categoryAdapter.updateData(cats)
-            binding.rvSubTabs.visibility    = View.GONE
-            binding.rvExtraTabs.visibility  = View.GONE
-            binding.llFilterBar.visibility  = View.GONE
-            binding.llRegionRow.visibility  = View.GONE
-            applyBodyState(BodyState.CATEGORIES)
+        binding.btnAddAdEmpty.setOnClickListener {
+            AuthGuard.requireLogin(this) {
+                startActivity(Intent(this, AddAdActivity::class.java))
+            }
         }
     }
 
