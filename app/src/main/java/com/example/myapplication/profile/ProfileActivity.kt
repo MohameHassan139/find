@@ -2,9 +2,12 @@ package com.example.myapplication.profile
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +31,17 @@ class ProfileActivity : BaseActivity() {
     private lateinit var binding: ActivityProfileBinding
     private val sharedVm: SharedCategoriesViewModel by viewModels()
 
+    // Modern Activity Result API for image picker
+    private val imagePickerLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            result.data?.data?.let { uri ->
+                handleImageSelected(uri)
+            }
+        }
+    }
+
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.wrap(newBase))
     }
@@ -45,13 +59,55 @@ class ProfileActivity : BaseActivity() {
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
             startActivity(Intent(this, MenuActivity::class.java))
         }
+        
+        binding.profileContainer.setOnClickListener { openGallery() }
+        binding.btnVerifyNafath.setOnClickListener { handleNafathVerification() }
+        binding.btnUploadLicense.setOnClickListener { handleFalLicenseUpload() }
         binding.btnSave.setOnClickListener { saveProfile() }
         binding.btnSignOut.setOnClickListener { confirmSignOut() }
-        binding.btnMyAds.setOnClickListener {
-            startActivity(Intent(this, MyAdsActivity::class.java))
-        }
 
         loadProfile()
+    }
+
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        imagePickerLauncher.launch(intent)
+    }
+
+    private fun handleImageSelected(uri: Uri) {
+        // Load the selected image into the ImageView
+        Glide.with(this)
+            .load(uri)
+            .placeholder(R.drawable.ic_profile_placeholder)
+            .circleCrop()
+            .into(binding.ivAvatar)
+        
+        // TODO: Upload image to server
+        Toast.makeText(this, "Image selected. Upload to server pending.", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun handleNafathVerification() {
+        // TODO: Integrate with National Single Sign-On (Nafath/IAM) SDK or WebView
+        Toast.makeText(this, "Redirecting to Nafath...", Toast.LENGTH_SHORT).show()
+        
+        // Placeholder for Nafath integration
+        // You would typically:
+        // 1. Launch Nafath SDK or WebView
+        // 2. Handle the callback with verification token
+        // 3. Send token to your backend for verification
+        // 4. Update user verification status
+    }
+
+    private fun handleFalLicenseUpload() {
+        // TODO: Implement FAL license upload functionality
+        Toast.makeText(this, "Opening FAL license upload...", Toast.LENGTH_SHORT).show()
+        
+        // Placeholder for FAL license upload
+        // You would typically:
+        // 1. Open file picker or camera to capture license
+        // 2. Upload to your backend
+        // 3. Verify license with FAL system
+        // 4. Update user verification status
     }
 
     private fun loadProfile() {
@@ -65,7 +121,7 @@ class ProfileActivity : BaseActivity() {
 
         if (avatar.isNotEmpty()) {
             Glide.with(this).load(avatar)
-                .placeholder(R.drawable.ic_avatar_placeholder)
+                .placeholder(R.drawable.ic_profile_placeholder)
                 .circleCrop()
                 .into(binding.ivAvatar)
         }
@@ -80,7 +136,7 @@ class ProfileActivity : BaseActivity() {
                     binding.tvPhone.text = user.phone ?: ""
                     if (!user.avatar.isNullOrEmpty()) {
                         Glide.with(this@ProfileActivity).load(user.avatar)
-                            .placeholder(R.drawable.ic_avatar_placeholder)
+                            .placeholder(R.drawable.ic_profile_placeholder)
                             .circleCrop()
                             .into(binding.ivAvatar)
                         TokenManager.save(this@ProfileActivity, token,

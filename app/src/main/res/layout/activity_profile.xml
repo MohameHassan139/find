@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -16,126 +17,233 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="32dp">
+            android:padding="16dp"
+            android:layoutDirection="locale">
 
-            <!-- Avatar -->
-            <ImageView
-                android:id="@+id/ivAvatar"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="16dp"
-                android:src="@drawable/ic_avatar_placeholder"
-                android:scaleType="centerCrop" />
-
-            <!-- Fields card -->
-            <LinearLayout
+            <!-- Nafath Verification Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardNafath"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@color/surface_primary"
-                android:layout_marginHorizontal="16dp"
-                android:paddingHorizontal="16dp">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#B2DFDB"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <!-- Name row -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:padding="16dp"
+                    android:layoutDirection="locale">
+
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_nafath"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Nafath" />
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/profile_name"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_secondary"
-                        android:layout_marginEnd="12dp" />
-
-                    <EditText
-                        android:id="@+id/etName"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@null"
-                        android:gravity="end|center_vertical"
-                        android:textSize="15sp"
-                        android:textColor="@color/text_primary"
-                        android:hint="@string/str_____" />
-                </LinearLayout>
-
-                <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:background="@color/divider" />
-
-                <!-- Phone row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/profile_phone"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_secondary"
-                        android:layout_marginEnd="12dp" />
-
-                    <TextView
-                        android:id="@+id/tvPhone"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="end"
-                        android:textSize="15sp"
-                        android:textColor="@color/text_secondary" />
-                </LinearLayout>
-            </LinearLayout>
+                        android:text="@string/profile_verify_nafath"
+                        android:textColor="#004D40"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp"
+                        android:textSize="14sp"
+                        android:gravity="center" />
 
-            <!-- Save button -->
+                    <Button
+                        android:id="@+id/btnVerifyNafath"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/profile_verify_nafath_btn"
+                        android:backgroundTint="#00897B"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        android:paddingHorizontal="20dp"
+                        style="@style/Widget.MaterialComponents.Button" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- FAL License Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardFal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#B0BEC5"
+                app:layout_constraintTop_toBottomOf="@id/cardNafath">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp"
+                    android:layoutDirection="locale">
+
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_fal"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="FAL" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/profile_verify_fal"
+                        android:textColor="#263238"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp"
+                        android:textSize="14sp"
+                        android:gravity="center" />
+
+                    <Button
+                        android:id="@+id/btnUploadLicense"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/profile_verify_fal_btn"
+                        android:backgroundTint="#263238"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        android:paddingHorizontal="20dp"
+                        style="@style/Widget.MaterialComponents.Button" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Profile Image Container -->
+            <FrameLayout
+                android:id="@+id/profileContainer"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/bg_menu_circle"
+                android:backgroundTint="#FFF9C4"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toBottomOf="@id/cardFal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:id="@+id/ivAvatar"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_user_placeholder"
+                    android:scaleType="centerCrop" />
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="bottom|start"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/ic_edit_pen"
+                    android:background="@drawable/bg_menu_circle"
+                    android:backgroundTint="#4CAF50"
+                    android:padding="6dp"
+                    android:contentDescription="Edit" />
+            </FrameLayout>
+
+            <!-- Name Label -->
+            <TextView
+                android:id="@+id/labelName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/profile_name"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:drawableStart="@drawable/ic_name"
+                android:drawablePadding="8dp"
+                app:layout_constraintTop_toBottomOf="@id/profileContainer"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- Name Input Field -->
+            <EditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_rounded_input"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:gravity="start|center_vertical"
+                android:textSize="15sp"
+                android:textColor="@color/text_primary"
+                android:hint="@string/str_____"
+                android:layoutDirection="locale"
+                android:textDirection="locale"
+                app:layout_constraintTop_toBottomOf="@id/labelName" />
+
+            <!-- Phone Label -->
+            <TextView
+                android:id="@+id/labelPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/profile_phone"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:drawableStart="@drawable/ic_phone"
+                android:drawablePadding="8dp"
+                app:layout_constraintTop_toBottomOf="@id/etName"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- Phone Display Field -->
+            <TextView
+                android:id="@+id/tvPhone"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_rounded_input"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:gravity="start|center_vertical"
+                android:textSize="15sp"
+                android:textColor="@color/text_secondary"
+                android:layoutDirection="locale"
+                android:textDirection="locale"
+                app:layout_constraintTop_toBottomOf="@id/labelPhone" />
+
+            <!-- Save Button -->
             <Button
                 android:id="@+id/btnSave"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 android:text="@string/save_changes"
                 android:textSize="16sp"
                 android:backgroundTint="@color/find_primary"
-                style="@style/Widget.MaterialComponents.Button" />
+                style="@style/Widget.MaterialComponents.Button"
+                app:layout_constraintTop_toBottomOf="@id/tvPhone" />
 
-            <!-- My Ads button -->
-            <Button
-                android:id="@+id/btnMyAds"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/my_ads_title"
-                android:textSize="16sp"
-                android:backgroundTint="@color/find_gray_bg"
-                android:textColor="@color/text_primary"
-                style="@style/Widget.MaterialComponents.Button" />
-
-            <!-- Sign out button -->
+            <!-- Sign Out Button -->
             <Button
                 android:id="@+id/btnSignOut"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
-                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="32dp"
                 android:text="@string/logout"
                 android:textSize="15sp"
                 android:backgroundTint="#1AFF3B30"
                 android:textColor="#FF3B30"
-                style="@style/Widget.MaterialComponents.Button" />
+                style="@style/Widget.MaterialComponents.Button"
+                app:layout_constraintTop_toBottomOf="@id/btnSave"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </LinearLayout>

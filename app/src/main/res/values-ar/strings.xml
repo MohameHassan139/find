@@ -139,4 +139,10 @@
     <string name="settings_delete_account_message">هل أنت متأكد من حذف حسابك؟ هذا الإجراء لا يمكن التراجع عنه.</string>
     <string name="settings_delete_account_confirm">حذف</string>
     <string name="settings_delete_account_cancel">إلغاء</string>
+
+    <!-- Profile verification -->
+    <string name="profile_verify_nafath">وثق حسابك عبر النفاذ الوطني</string>
+    <string name="profile_verify_nafath_btn">توثيق الحساب</string>
+    <string name="profile_verify_fal">وثق رخصة فال للوساطة والتسويق العقاري</string>
+    <string name="profile_verify_fal_btn">رفع الرخصة</string>
 </resources>

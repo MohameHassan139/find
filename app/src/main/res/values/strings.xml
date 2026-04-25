@@ -142,4 +142,10 @@
     <string name="settings_delete_account_message">Are you sure you want to delete your account? This action cannot be undone.</string>
     <string name="settings_delete_account_confirm">Delete</string>
     <string name="settings_delete_account_cancel">Cancel</string>
+
+    <!-- Profile verification -->
+    <string name="profile_verify_nafath">Verify your account via National Access</string>
+    <string name="profile_verify_nafath_btn">Verify Account</string>
+    <string name="profile_verify_fal">Verify FAL license for brokerage and real estate marketing</string>
+    <string name="profile_verify_fal_btn">Upload License</string>
 </resources>

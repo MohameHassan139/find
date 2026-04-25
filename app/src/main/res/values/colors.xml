@@ -39,4 +39,19 @@
     <!-- Icon tint — adapts automatically in dark mode via values-night override -->
     <color name="icon_tint">#FF1A1A1A</color>
     <color name="icon_tint_muted">#FF757575</color>
+
+    <!-- Profile colors -->
+    <color name="find_primary_teal">#4CAF50</color>
+    <color name="find_secondary_blue">#D1E1F0</color>
+    <color name="find_dark_blue">#003366</color>
+    <color name="find_light_teal">#E0F2F1</color>
+    <color name="find_yellow_bg">#FFF9C4</color>
+    
+    <!-- Nafath colors (from image) -->
+    <color name="nafath_bg">#B8E0D8</color>
+    <color name="nafath_button">#2D9B8E</color>
+    
+    <!-- FAL colors (from image) -->
+    <color name="fal_bg">#A8B8C8</color>
+    <color name="fal_button">#003D5C</color>
 </resources>
