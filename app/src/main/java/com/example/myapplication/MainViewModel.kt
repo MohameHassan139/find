@@ -396,7 +396,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             val imgs = mutableListOf<String>()
             for (j in 0 until imgArr.length()) imgs.add(imgArr.optString(j))
             
-            val seller = o.optJSONObject("user")
+            val seller = o.optJSONObject("seller")
             val reg = o.optJSONObject("region")
             
             list.add(ApiListing(

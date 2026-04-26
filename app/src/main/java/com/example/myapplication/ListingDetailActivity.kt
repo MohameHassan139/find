@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
@@ -21,6 +22,7 @@ import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityListingDetailBinding
 import com.example.myapplication.favorites.AddFavoriteRequest
+import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,6 +38,7 @@ class ListingDetailActivity : BaseActivity() {
     private lateinit var binding: ActivityListingDetailBinding
     private var isFavorited = false
     private var currentListingId = ""
+    private val sharedVm: SharedCategoriesViewModel by viewModels()
 
     companion object {
         const val EXTRA_LISTING_ID = "listing_id"
@@ -51,7 +54,16 @@ class ListingDetailActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityListingDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        applyWindowInsets()
+        applyWindowInsets(appBarId = R.id.llAppBar)
+
+        // Search bar click
+        binding.llHomeSearchContainer.setOnClickListener {
+            startActivity(Intent(this, SearchActivity::class.java))
+        }
+
+        // HomeHeaderHelper wires category tabs (rvHomeTopTabs) and search container
+        HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
+
         findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
             startActivity(Intent(this, MenuActivity::class.java))
@@ -116,12 +128,6 @@ class ListingDetailActivity : BaseActivity() {
             fmt
         } ?: "—"
 
-        val isOffer = l.listingType == "offer"
-        binding.tvTypeBadge.text = if (isOffer) "عرض" else "طلب"
-        binding.tvTypeBadge.setBackgroundColor(
-            if (isOffer) Color.parseColor("#34C759") else Color.parseColor("#FF9500")
-        )
-
         val loc = listOfNotNull(l.regionNameAr, l.city).joinToString(" - ")
         binding.tvLocation.text = loc.ifEmpty { "—" }
         binding.tvLocation.visibility = if (loc.isNotEmpty()) View.VISIBLE else View.GONE
@@ -143,21 +149,30 @@ class ListingDetailActivity : BaseActivity() {
         binding.tvDescription.visibility = if (l.description.isNullOrEmpty()) View.GONE else View.VISIBLE
 
         val phone = l.sellerPhone
+        // Call button — grey out if no phone or call disabled
+        val callAvailable = !phone.isNullOrEmpty() && l.callEnabled
+        setContactButtonState(binding.ivCall, binding.tvCall, callAvailable)
         binding.btnCall.setOnClickListener {
-            if (!phone.isNullOrEmpty()) {
+            if (callAvailable) {
                 startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")))
             } else {
                 Toast.makeText(this, getString(R.string.kt_str_5abe0148), Toast.LENGTH_SHORT).show()
             }
         }
+
+        // WhatsApp button — grey out if not enabled
+        val waAvailable = !phone.isNullOrEmpty() && l.whatsappEnabled
+        setContactButtonState(binding.ivWhatsapp, binding.tvWhatsapp, waAvailable)
         binding.btnWhatsapp.setOnClickListener {
-            if (!phone.isNullOrEmpty() && l.whatsappEnabled) {
-                val num = phone.replace(Regex("[^\\d+]"), "")
+            if (waAvailable) {
+                val num = phone!!.replace(Regex("[^\\d+]"), "")
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/$num")))
             } else {
                 Toast.makeText(this, getString(R.string.kt_str_d0f8a62d), Toast.LENGTH_SHORT).show()
             }
         }
+
+        // Chat always available
         binding.btnChat.setOnClickListener {
             startConversation(l.id, l.sellerId?.toString() ?: "")
         }
@@ -182,6 +197,18 @@ class ListingDetailActivity : BaseActivity() {
                 .into(iv)
             binding.llImages.addView(iv)
         }
+    }
+
+    // ── Contact button state ──────────────────────────────────────────────────
+
+    private fun setContactButtonState(icon: android.widget.ImageView, label: android.widget.TextView, available: Boolean) {
+        val color = if (available)
+            android.graphics.Color.parseColor("#333333")
+        else
+            android.graphics.Color.parseColor("#AAAAAA")
+        icon.setColorFilter(color)
+        label.setTextColor(color)
+        icon.alpha = if (available) 1f else 0.5f
     }
 
     // ── Start conversation ────────────────────────────────────────────────────
@@ -223,7 +250,7 @@ class ListingDetailActivity : BaseActivity() {
                 val convObj = root.optJSONObject("data")
 
                 if (code !in 200..299 || convObj == null) {
-                    val msg = root.optString("message").ifEmpty { "تعذر فتح المحادثة" }
+                    val msg = root.optString("message").ifEmpty { getString(R.string.error_open_conversation) }
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@ListingDetailActivity, msg, Toast.LENGTH_SHORT).show()
                     }
@@ -336,10 +363,10 @@ class ListingDetailActivity : BaseActivity() {
             val date = sdf.parse(dateStr.take(19)) ?: return ""
             val diff = (System.currentTimeMillis() - date.time) / 1000
             when {
-                diff < 60 -> "الآن"
-                diff < 3600 -> "${diff / 60} دقيقة"
-                diff < 86400 -> "${diff / 3600} ساعة"
-                diff < 2592000 -> "${diff / 86400} يوم"
+                diff < 60    -> getString(R.string.time_now)
+                diff < 3600  -> getString(R.string.time_minutes, diff / 60)
+                diff < 86400 -> getString(R.string.time_hours, diff / 3600)
+                diff < 2592000 -> getString(R.string.time_days, diff / 86400)
                 else -> SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
             }
         } catch (_: Exception) { "" }

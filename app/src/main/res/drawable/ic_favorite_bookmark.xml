@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="30dp"
+    android:height="40dp"
+    android:viewportWidth="30"
+    android:viewportHeight="40">
+    
+    <!-- Background rectangle with rounded corners and semi-transparent white -->
+    <path
+        android:fillColor="#40FFFFFF"
+        android:pathData="M0,5 C0,2.239 2.239,0 5,0 L25,0 C27.761,0 30,2.239 30,5 L30,35 C30,37.761 27.761,40 25,40 L5,40 C2.239,40 0,37.761 0,35 L0,5 Z"/>
+    
+    <!-- Border stroke -->
+    <path
+        android:strokeColor="#B3000000"
+        android:strokeWidth="0.3"
+        android:fillColor="#00000000"
+        android:pathData="M5,0.15 C2.322,0.15 0.15,2.322 0.15,5 L0.15,35 C0.15,37.678 2.322,39.85 5,39.85 L25,39.85 C27.678,39.85 29.85,37.678 29.85,35 L29.85,5 C29.85,2.322 27.678,0.15 25,0.15 L5,0.15 Z"/>
+    
+    <!-- White circle background for heart -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M15.08,6.875 C19.515,6.875 23.11,10.691 23.11,15.398 C23.11,20.105 19.515,23.921 15.08,23.921 C10.646,23.921 7.051,20.105 7.051,15.398 C7.051,10.691 10.646,6.875 15.08,6.875 Z"/>
+    
+    <!-- Black bookmark shape -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M7.667,5 C5.642,5 4,6.738 4,8.883 L4,34.028 C4,34.565 4.41,35 4.916,35 C5.07,35 5.222,34.959 5.357,34.881 L15,29.309 L24.643,34.881 C25.087,35.138 25.644,34.965 25.888,34.495 C25.962,34.352 26,34.192 26,34.028 L26,8.883 C26,6.738 24.358,5 22.333,5 L7.667,5 Z M15,11.884 C18.679,7.881 27.876,14.89 15,23.899 C2.124,14.89 11.321,7.884 15,11.89 L15,11.884 Z"/>
+</vector>

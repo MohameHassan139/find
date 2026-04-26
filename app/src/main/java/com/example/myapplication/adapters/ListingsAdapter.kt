@@ -29,7 +29,10 @@ class ListingsAdapter(
         private const val TYPE_FOOTER = 1
     }
 
-    inner class ItemVH(val b: ItemListingCardBinding) : RecyclerView.ViewHolder(b.root)
+    inner class ItemVH(val b: ItemListingCardBinding) : RecyclerView.ViewHolder(b.root) {
+        var currentImageIndex = 0
+        var imageUrls: List<String> = emptyList()
+    }
     inner class FooterVH(view: View) : RecyclerView.ViewHolder(view)
 
     override fun getItemViewType(position: Int) =
@@ -56,10 +59,8 @@ class ListingsAdapter(
             val fmt = if (it % 1 == 0.0) it.toLong().toString() else it.toString()
             fmt
         } ?: "—"
-        // IBM Plex Mono style via system monospace
         b.tvPrice.typeface = android.graphics.Typeface.MONOSPACE
 
-        b.tvSeller.text = item.sellerName ?: ""
         b.tvLocation.text = item.regionNameAr ?: item.city ?: ""
         b.tvTime.text = formatTime(item.createdAt, holder.itemView.context)
 
@@ -71,23 +72,11 @@ class ListingsAdapter(
             if (isOffer) Color.parseColor("#34C759") else Color.parseColor("#FF9500")
         )
 
-        // Image — cached + crossfade
-        val imageUrl = item.images.firstOrNull()
-        if (!imageUrl.isNullOrEmpty()) {
-            Glide.with(b.ivImage.context)
-                .load(imageUrl)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.ic_photo_placeholder)
-                .error(R.drawable.ic_photo_placeholder)
-                .transition(com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade(300))
-                .centerCrop()
-                .into(b.ivImage)
-        } else {
-            b.ivImage.setImageResource(R.drawable.ic_photo_placeholder)
-        }
-
-        // Avatar — cached + crossfade
+        // Seller name + avatar (right info panel)
+        val sellerName = item.sellerName ?: ""
         val avatar = item.sellerAvatar
+        b.tvSeller.text = sellerName
+
         if (!avatar.isNullOrEmpty()) {
             Glide.with(b.ivAvatar.context)
                 .load(avatar)
@@ -100,21 +89,70 @@ class ListingsAdapter(
             b.ivAvatar.setImageResource(R.drawable.ic_avatar_placeholder)
         }
 
+        // Image gallery setup
+        holder.imageUrls = item.images
+        holder.currentImageIndex = 0
+        
+        // Show/hide navigation arrows
+        if (item.images.size > 1) {
+            b.ivPrevImage.visibility = View.VISIBLE
+            b.ivNextImage.visibility = View.VISIBLE
+        } else {
+            b.ivPrevImage.visibility = View.GONE
+            b.ivNextImage.visibility = View.GONE
+        }
+
+        // Load first image
+        loadImage(b, holder.imageUrls, holder.currentImageIndex)
+
+        // Previous image button
+        b.ivPrevImage.setOnClickListener {
+            if (holder.imageUrls.isNotEmpty()) {
+                holder.currentImageIndex = if (holder.currentImageIndex > 0) {
+                    holder.currentImageIndex - 1
+                } else {
+                    holder.imageUrls.size - 1
+                }
+                loadImage(b, holder.imageUrls, holder.currentImageIndex)
+            }
+        }
+
+        // Next image button
+        b.ivNextImage.setOnClickListener {
+            if (holder.imageUrls.isNotEmpty()) {
+                holder.currentImageIndex = (holder.currentImageIndex + 1) % holder.imageUrls.size
+                loadImage(b, holder.imageUrls, holder.currentImageIndex)
+            }
+        }
+
         b.root.setOnClickListener { onClick(item) }
         
-        // Favorite icon
+        // Favorite icon with red color when favorited
         val isFav = favoriteIds.contains(item.id)
         b.ivFavorite.setImageResource(
-            if (isFav) R.drawable.ic_favorite_filled else R.drawable.ic_favorites
-        )
-        b.ivFavorite.setColorFilter(
-            if (isFav) Color.parseColor("#E53935") else Color.parseColor("#FFFFFF")
+            if (isFav) R.drawable.ic_favorite_bookmark_filled else R.drawable.ic_favorite_bookmark
         )
         b.ivFavorite.setOnClickListener {
             val nowFav = !favoriteIds.contains(item.id)
             if (nowFav) favoriteIds.add(item.id) else favoriteIds.remove(item.id)
             notifyItemChanged(holder.adapterPosition)
             onFavoriteClick?.invoke(item, nowFav)
+        }
+    }
+
+    private fun loadImage(binding: ItemListingCardBinding, images: List<String>, index: Int) {
+        val imageUrl = images.getOrNull(index)
+        if (!imageUrl.isNullOrEmpty()) {
+            Glide.with(binding.ivImage.context)
+                .load(imageUrl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_photo_placeholder)
+                .error(R.drawable.ic_photo_placeholder)
+                .transition(com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade(300))
+                .centerCrop()
+                .into(binding.ivImage)
+        } else {
+            binding.ivImage.setImageResource(R.drawable.ic_photo_placeholder)
         }
     }
 

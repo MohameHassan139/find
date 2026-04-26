@@ -56,7 +56,7 @@
     <string name="my_ads_title">My Ads</string>
     <string name="app_name_ar">Find</string>
     <string name="login_create_account">Login / Create Account</string>
-    <string name="profile_phone">📞  Phone</string>
+    <string name="profile_phone"> Phone</string>
     <string name="str_5xxxxxxxx">5XXXXXXXX</string>
     <string name="str_966">+966</string>
     <string name="send_otp">Send Verification Code</string>
@@ -64,7 +64,7 @@
     <string name="resend_after_60s">Resend after 60s</string>
     <string name="verify">Verify</string>
     <string name="change_number">Change number</string>
-    <string name="profile_name">👤  Name</string>
+    <string name="profile_name"> Name</string>
     <string name="str_____">ظاهر</string>
     <string name="save_changes">Save changes</string>
     <string name="logout">Logout</string>
@@ -144,6 +144,21 @@
     <string name="settings_delete_account_message">Are you sure you want to delete your account? This action cannot be undone.</string>
     <string name="settings_delete_account_confirm">Delete</string>
     <string name="settings_delete_account_cancel">Cancel</string>
+
+    <!-- Listing Detail screen -->
+    <string name="btn_call">إتصال</string>
+    <string name="btn_whatsapp">واتساب</string>
+    <string name="btn_chat">محادثة</string>
+    <string name="cd_back">رجوع</string>
+    <string name="cd_menu">القائمة</string>
+    <string name="cd_call">إتصال</string>
+    <string name="cd_whatsapp">واتساب</string>
+    <string name="cd_chat">محادثة</string>
+    <string name="time_now">الآن</string>
+    <string name="time_minutes">%d دقيقة</string>
+    <string name="time_hours">%d ساعة</string>
+    <string name="time_days">%d يوم</string>
+    <string name="error_open_conversation">تعذر فتح المحادثة</string>
 
     <!-- Profile verification -->
     <string name="profile_verify_nafath">Verify your account via National Access</string>

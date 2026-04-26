@@ -30,7 +30,7 @@ class FavoritesActivity : BaseActivity() {
     private val favoriteIds = mutableSetOf<String>()
     private val sharedVm: SharedCategoriesViewModel by viewModels()
     private var allFavorites: List<ApiListing> = emptyList()
-    private var currentFilter = "offer"
+    private var currentFilter: String? = null // null = show all
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.wrap(newBase))
@@ -66,50 +66,44 @@ class FavoritesActivity : BaseActivity() {
         binding.rvFavorites.layoutManager = LinearLayoutManager(this)
         binding.rvFavorites.adapter = adapter
 
-        binding.btnFilterOffer.setOnClickListener { setFilter("offer") }
-        binding.btnFilterRequest.setOnClickListener { setFilter("request") }
+        binding.btnFilterOffer.setOnClickListener {
+            currentFilter = if (currentFilter == "offer") null else "offer"
+            updateFilterButtons()
+            applyFilter()
+        }
+        binding.btnFilterRequest.setOnClickListener {
+            currentFilter = if (currentFilter == "request") null else "request"
+            updateFilterButtons()
+            applyFilter()
+        }
+
+        updateFilterButtons()
 
         loadFavorites()
     }
 
-    private fun setFilter(type: String) {
-        currentFilter = type
-        if (type == "offer") {
-            binding.btnFilterOffer.apply {
-                strokeWidth = 9
-                strokeColor = android.content.res.ColorStateList.valueOf(
-                    androidx.core.content.ContextCompat.getColor(context, R.color.find_active_blue)
-                )
-                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
-            }
-            binding.btnFilterRequest.apply {
-                strokeWidth = 3
-                strokeColor = android.content.res.ColorStateList.valueOf(
-                    androidx.core.content.ContextCompat.getColor(context, R.color.text_primary)
-                )
-                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_secondary))
-            }
-        } else {
-            binding.btnFilterRequest.apply {
-                strokeWidth = 9
-                strokeColor = android.content.res.ColorStateList.valueOf(
-                    androidx.core.content.ContextCompat.getColor(context, R.color.find_active_blue)
-                )
-                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
-            }
-            binding.btnFilterOffer.apply {
-                strokeWidth = 3
-                strokeColor = android.content.res.ColorStateList.valueOf(
-                    androidx.core.content.ContextCompat.getColor(context, R.color.text_primary)
-                )
-                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_secondary))
-            }
+    private fun updateFilterButtons() {
+        val activeColor = androidx.core.content.ContextCompat.getColor(this, R.color.find_active_blue)
+        val inactiveColor = androidx.core.content.ContextCompat.getColor(this, R.color.text_secondary)
+        val primaryColor = androidx.core.content.ContextCompat.getColor(this, R.color.text_primary)
+
+        binding.btnFilterOffer.apply {
+            val active = currentFilter == "offer"
+            strokeWidth = if (active) 9 else 3
+            strokeColor = android.content.res.ColorStateList.valueOf(if (active) activeColor else inactiveColor)
+            setTextColor(if (active) primaryColor else inactiveColor)
         }
-        applyFilter()
+        binding.btnFilterRequest.apply {
+            val active = currentFilter == "request"
+            strokeWidth = if (active) 9 else 3
+            strokeColor = android.content.res.ColorStateList.valueOf(if (active) activeColor else inactiveColor)
+            setTextColor(if (active) primaryColor else inactiveColor)
+        }
     }
 
     private fun applyFilter() {
-        val filtered = allFavorites.filter { it.listingType == currentFilter }
+        val filtered = if (currentFilter == null) allFavorites
+                       else allFavorites.filter { it.listingType == currentFilter }
         if (filtered.isEmpty()) {
             binding.rvFavorites.visibility = View.GONE
             binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
@@ -203,9 +197,9 @@ class FavoritesActivity : BaseActivity() {
                         listingType = obj.optString("listing_type").takeIf { it.isNotEmpty() },
                         createdAt = obj.optString("created_at").takeIf { it.isNotEmpty() },
                         images = images,
-                        sellerName = seller?.optString("name"),
-                        sellerAvatar = seller?.optString("avatar"),
-                        regionNameAr = region?.optString("name_ar"),
+                        sellerName = seller?.let { if (it.isNull("name")) null else it.optString("name").ifEmpty { null } },
+                        sellerAvatar = seller?.let { if (it.isNull("avatar")) null else it.optString("avatar").ifEmpty { null } },
+                        regionNameAr = region?.optString("name_ar")?.ifEmpty { null },
                         city = obj.optString("city").takeIf { it.isNotEmpty() }
                     )
                 )

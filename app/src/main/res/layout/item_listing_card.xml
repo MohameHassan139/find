@@ -20,7 +20,7 @@
         android:layoutDirection="locale"
         android:minHeight="130dp">
 
-        <!-- Info side (right in RTL) -->
+        <!-- Info side -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -28,6 +28,7 @@
             android:orientation="vertical"
             android:padding="10dp">
 
+            <!-- Title -->
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
@@ -38,7 +39,8 @@
                 android:textColor="@color/text_primary"
                 android:maxLines="3"
                 android:ellipsize="end"
-                android:gravity="end" />
+                android:gravity="start"
+                android:textAlignment="viewStart" />
 
             <View
                 android:layout_width="match_parent"
@@ -46,7 +48,7 @@
                 android:background="@color/divider"
                 android:layout_marginVertical="6dp" />
 
-            <!-- Seller + price row -->
+            <!-- Row 2: seller avatar + name -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,21 +57,23 @@
 
                 <ImageView
                     android:id="@+id/ivAvatar"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
                     android:src="@drawable/ic_avatar_placeholder"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/bg_avatar_circle" />
 
                 <TextView
                     android:id="@+id/tvSeller"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginStart="6dp"
                     android:textSize="11sp"
                     android:textColor="@color/text_secondary"
                     android:maxLines="1"
                     android:ellipsize="end"
-                    android:layout_marginStart="4dp" />
+                    android:textAlignment="viewStart" />
 
                 <!-- Riyal icon + price -->
                 <ImageView
@@ -83,10 +87,11 @@
                     android:id="@+id/tvPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     android:textStyle="bold"
                     android:fontFamily="monospace"
                     android:textColor="@color/find_primary" />
+
             </LinearLayout>
 
             <View
@@ -95,14 +100,13 @@
                 android:background="@color/divider"
                 android:layout_marginVertical="6dp" />
 
-            <!-- Time + location -->
+            <!-- Row 3: time + location -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <!-- Time icon + text -->
                 <ImageView
                     android:layout_width="11dp"
                     android:layout_height="11dp"
@@ -116,9 +120,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textSize="11sp"
-                    android:textColor="@color/text_secondary" />
+                    android:textColor="@color/text_secondary"
+                    android:textAlignment="viewStart" />
 
-                <!-- Location icon + text -->
                 <ImageView
                     android:layout_width="11dp"
                     android:layout_height="11dp"
@@ -134,11 +138,13 @@
                     android:textSize="11sp"
                     android:textColor="@color/text_secondary"
                     android:maxLines="1"
-                    android:ellipsize="end" />
+                    android:ellipsize="end"
+                    android:textAlignment="viewStart" />
+
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Square image (left in RTL) -->
+        <!-- Image side -->
         <FrameLayout
             android:layout_width="130dp"
             android:layout_height="130dp">
@@ -150,13 +156,43 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_photo_placeholder" />
 
-            <!-- Type badge: green=offer, orange=request -->
+            <!-- Left arrow -->
+            <ImageView
+                android:id="@+id/ivPrevImage"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center_vertical|start"
+                android:layout_marginStart="4dp"
+                android:padding="5dp"
+                android:src="@drawable/ic_chevron_left"
+                android:background="@drawable/bg_semi_transparent_circle"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone"
+                android:contentDescription="Previous image" />
+
+            <!-- Right arrow -->
+            <ImageView
+                android:id="@+id/ivNextImage"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginEnd="4dp"
+                android:padding="5dp"
+                android:src="@drawable/ic_chevron_right"
+                android:background="@drawable/bg_semi_transparent_circle"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone"
+                android:contentDescription="Next image" />
+
+            <!-- Type badge bottom-start -->
             <TextView
                 android:id="@+id/tvType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|start"
-                android:layout_margin="8dp"
+                android:layout_margin="6dp"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="3dp"
                 android:textSize="10sp"
@@ -164,19 +200,18 @@
                 android:textColor="@color/white"
                 android:background="@drawable/bg_type_badge" />
 
-            <!-- Favorite heart button -->
+            <!-- Favorite bookmark top-start -->
             <ImageView
                 android:id="@+id/ivFavorite"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="top|end"
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:layout_gravity="top|start"
                 android:layout_margin="6dp"
-                android:padding="4dp"
-                android:src="@drawable/ic_favorites"
-                android:background="@drawable/ripple_circle"
+                android:src="@drawable/ic_favorite_bookmark"
                 android:clickable="true"
                 android:focusable="true"
                 android:contentDescription="Favorite" />
+
         </FrameLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

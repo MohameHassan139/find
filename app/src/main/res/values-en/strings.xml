@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Listing Detail screen -->
+    <string name="btn_call">Call</string>
+    <string name="btn_whatsapp">WhatsApp</string>
+    <string name="btn_chat">Chat</string>
+    <string name="cd_back">Back</string>
+    <string name="cd_menu">Menu</string>
+    <string name="cd_call">Call</string>
+    <string name="cd_whatsapp">WhatsApp</string>
+    <string name="cd_chat">Chat</string>
+    <string name="time_now">Now</string>
+    <string name="time_minutes">%d min</string>
+    <string name="time_hours">%d hr</string>
+    <string name="time_days">%d days</string>
+    <string name="error_open_conversation">Could not open conversation</string>
+
+    <!-- Overrides for EN -->
+    <string name="search_anything">Search for anything…</string>
+    <string name="kt_str_21a15161">Could not load listing</string>
+    <string name="kt_str_338558d2">Connection failed</string>
+    <string name="kt_str_5abe0148">Phone number not available</string>
+    <string name="kt_str_d0f8a62d">WhatsApp not available</string>
+    <string name="favorites_empty">No favorites yet</string>
+    <string name="added_to_favorites">Added to favorites</string>
+    <string name="removed_from_favorites">Removed from favorites</string>
+</resources>
