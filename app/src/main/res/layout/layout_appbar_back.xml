@@ -3,79 +3,92 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/llAppBar"
     android:layout_width="match_parent"
-    android:layout_height="64dp"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="10dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:background="@color/surface_primary"
     android:elevation="4dp">
 
-    <!-- Back button — leftmost -->
-    <ImageButton
-        android:id="@+id/btnBack"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:background="@drawable/bg_menu_circle"
-        android:padding="10dp"
-        android:src="@drawable/ic_back"
-        android:contentDescription="رجوع" />
-
-    <!-- Menu button — next to back -->
-    <ImageButton
-        android:id="@+id/btnMenu"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/bg_menu_circle"
-        android:padding="10dp"
-        android:src="@drawable/ic_menu_black"
-        android:contentDescription="القائمة" />
-
-    <!-- Spacer -->
+    <!-- Status bar spacer -->
     <View
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_weight="1" />
+        android:id="@+id/statusBarSpacer"
+        android:layout_width="match_parent"
+        android:layout_height="28dp" />
 
-    <!-- Logo — right edge -->
+    <!-- Actual bar content -->
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="10dp">
 
+        <!-- Back button — leftmost -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/bg_menu_circle"
+            android:padding="10dp"
+            android:src="@drawable/ic_back"
+            android:contentDescription="رجوع" />
+
+        <!-- Menu button — next to back -->
+        <ImageButton
+            android:id="@+id/btnMenu"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_menu_circle"
+            android:padding="10dp"
+            android:src="@drawable/ic_menu_black"
+            android:contentDescription="القائمة" />
+
+        <!-- Spacer -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- Logo — right edge -->
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginEnd="8dp">
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name_ar"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:lineSpacingExtra="-2dp" />
+                android:orientation="vertical"
+                android:layout_marginEnd="8dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/app_name_en"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:lineSpacingExtra="-2dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name_ar"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:lineSpacingExtra="-2dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name_en"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:lineSpacingExtra="-2dp" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:src="@drawable/ic_app_logo"
+                android:contentDescription="Find"
+                android:padding="2dp" />
         </LinearLayout>
-
-        <ImageView
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:src="@drawable/ic_app_logo"
-            android:contentDescription="Find"
-            android:padding="2dp" />
     </LinearLayout>
 
 </LinearLayout>
