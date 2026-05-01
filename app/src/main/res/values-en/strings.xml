@@ -16,6 +16,7 @@
     <string name="error_open_conversation">Could not open conversation</string>
 
     <!-- Overrides for EN -->
+    <string name="search_hint">Search..</string>
     <string name="search_anything">Search for anything…</string>
     <string name="kt_str_21a15161">Could not load listing</string>
     <string name="kt_str_338558d2">Connection failed</string>

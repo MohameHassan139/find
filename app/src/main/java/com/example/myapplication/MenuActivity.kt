@@ -22,11 +22,15 @@ import com.example.myapplication.profile.ProfileActivity
 import com.example.myapplication.databinding.ActivityMenuBinding
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.utils.AuthGuard
+import com.example.myapplication.utils.HomeHeaderHelper
+import com.example.myapplication.SharedCategoriesViewModel
+import androidx.activity.viewModels
 import kotlinx.coroutines.launch
 
 class MenuActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMenuBinding
+    private val sharedVm: SharedCategoriesViewModel by viewModels()
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.wrap(newBase))
@@ -38,6 +42,9 @@ class MenuActivity : BaseActivity() {
         binding = ActivityMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
         applyWindowInsets()
+
+        HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
+        BottomNavHelper.setup(this, NavScreen.NONE)
 
         // Show user name if logged in
         if (TokenManager.isLoggedIn(this)) {

@@ -21,10 +21,12 @@
         android:background="@drawable/bg_search_bar"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:layoutDirection="locale"
         android:paddingHorizontal="12dp"
         android:clickable="true"
         android:focusable="true">
 
+        <!-- Icon on the START side (left in LTR, right in RTL) -->
         <ImageView
             android:layout_width="18dp"
             android:layout_height="18dp"
@@ -40,7 +42,7 @@
             android:gravity="start|center_vertical"
             android:paddingHorizontal="8dp"
             android:textSize="14sp"
-            android:text="@string/search_anything"
+            android:text="@string/search_hint"
             android:textColor="@color/find_gray_text" />
     </LinearLayout>
 

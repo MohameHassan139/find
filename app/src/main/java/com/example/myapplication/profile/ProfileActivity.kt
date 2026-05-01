@@ -24,6 +24,8 @@ import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.databinding.ActivityProfileBinding
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.BottomNavHelper
+import com.example.myapplication.NavScreen
 import kotlinx.coroutines.launch
 
 class ProfileActivity : BaseActivity() {
@@ -54,6 +56,7 @@ class ProfileActivity : BaseActivity() {
         applyWindowInsets()
 
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
+        BottomNavHelper.setup(this, NavScreen.NONE)
 
         findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {

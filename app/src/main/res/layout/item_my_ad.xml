@@ -16,63 +16,21 @@
         android:orientation="vertical"
         android:layoutDirection="locale">
 
-        <!-- Top: image + info -->
+        <!-- Top: image + info — image on RIGHT in LTR, LEFT in RTL -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:orientation="horizontal"
-            android:layoutDirection="ltr">
+            android:layoutDirection="locale">
 
-            <!-- Image side (LEFT) -->
-            <FrameLayout
-                android:layout_width="147dp"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:id="@+id/ivImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_photo_placeholder" />
-
-                <!-- Prev arrow (‹) on the left side of image -->
-                <TextView
-                    android:id="@+id/btnPrev"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center_vertical|start"
-                    android:layout_marginStart="8dp"
-                    android:background="#88000000"
-                    android:gravity="center"
-                    android:text="‹"
-                    android:textColor="@color/white"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-
-                <!-- Next arrow (›) on the right side of image -->
-                <TextView
-                    android:id="@+id/btnNext"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center_vertical|end"
-                    android:layout_marginEnd="8dp"
-                    android:background="#88000000"
-                    android:gravity="center"
-                    android:text="›"
-                    android:textColor="@color/white"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-            </FrameLayout>
-
-            <!-- Info side (RIGHT in RTL, LEFT in LTR) -->
+            <!-- Info side — shown first in XML = LEFT in LTR, RIGHT in RTL -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:paddingHorizontal="12dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="8dp"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:layoutDirection="locale">
@@ -87,7 +45,7 @@
                     android:textColor="@color/text_primary"
                     android:maxLines="2"
                     android:ellipsize="end"
-                    android:gravity="end"
+                    android:gravity="start"
                     android:layout_marginBottom="8dp" />
 
                 <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
@@ -101,7 +59,7 @@
                     android:layout_marginBottom="4dp"
                     android:layoutDirection="locale">
 
-                    <!-- Seller avatar and name (LEFT in RTL, RIGHT in LTR) -->
+                    <!-- Seller avatar and name -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -128,13 +86,20 @@
                             android:layout_marginStart="4dp" />
                     </LinearLayout>
 
-                    <!-- Price (RIGHT in RTL, LEFT in LTR) -->
+                    <!-- Price — icon LEFT of number, locale-aware -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layoutDirection="locale">
+                        android:layoutDirection="ltr">
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_riyal"
+                            android:contentDescription="@string/price"
+                            android:layout_marginEnd="4dp" />
 
                         <TextView
                             android:id="@+id/tvPrice"
@@ -142,14 +107,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            android:textColor="@color/text_primary"
-                            android:layout_marginEnd="4dp" />
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="18dp"
-                            android:src="@drawable/ic_riyal"
-                            android:contentDescription="@string/price" />
+                            android:textColor="@color/text_primary" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -161,7 +119,7 @@
                     android:gravity="center_vertical"
                     android:layoutDirection="locale">
 
-                    <!-- Time (LEFT in RTL, RIGHT in LTR) -->
+                    <!-- Time -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -185,7 +143,7 @@
                             android:layout_marginStart="3dp" />
                     </LinearLayout>
 
-                    <!-- Location (RIGHT in RTL, LEFT in LTR) -->
+                    <!-- Location -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -211,6 +169,47 @@
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+
+            <!-- Image side — shown last in XML = RIGHT in LTR, LEFT in RTL -->
+            <FrameLayout
+                android:layout_width="130dp"
+                android:layout_height="match_parent"
+                android:clipToOutline="true"
+                android:background="@drawable/bg_card_image_clip">
+
+                <ImageView
+                    android:id="@+id/ivImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_photo_placeholder" />
+
+                <!-- Prev arrow — no background, thin chevron, auto-mirrors in RTL -->
+                <ImageView
+                    android:id="@+id/btnPrev"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="4dp"
+                    android:src="@drawable/ic_chevron_prev"
+                    android:scaleType="fitCenter"
+                    android:autoMirrored="true"
+                    android:contentDescription="previous"
+                    android:visibility="gone" />
+
+                <!-- Next arrow — no background, thin chevron, auto-mirrors in RTL -->
+                <ImageView
+                    android:id="@+id/btnNext"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginEnd="4dp"
+                    android:src="@drawable/ic_chevron_next"
+                    android:scaleType="fitCenter"
+                    android:autoMirrored="true"
+                    android:contentDescription="next"
+                    android:visibility="gone" />
+            </FrameLayout>
         </LinearLayout>
 
         <View 
@@ -218,7 +217,7 @@
             android:layout_height="1dp"
             android:background="@color/divider" />
 
-        <!-- Bottom actions -->
+        <!-- Bottom actions: buttons LEFT, divider, toggle RIGHT (locale-aware) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -226,46 +225,9 @@
             android:gravity="center_vertical"
             android:paddingVertical="12dp"
             android:paddingHorizontal="16dp"
-            android:layoutDirection="locale">
+            android:layoutDirection="ltr">
 
-            <!-- Toggle visibility (RIGHT in RTL, LEFT in LTR) -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:layoutDirection="locale">
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchActive"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:thumbTint="@android:color/white"
-                    app:trackTint="#34C759" />
-
-                <TextView
-                    android:id="@+id/tvActiveLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="#34C759"
-                    android:layout_marginStart="8dp"
-                    android:text="@string/ad_visible" />
-            </LinearLayout>
-
-            <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
-
-            <!-- Vertical divider -->
-            <View 
-                android:layout_width="1dp" 
-                android:layout_height="60dp"
-                android:background="#E0E0E0"
-                android:layout_marginHorizontal="16dp" />
-
-            <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
-
-            <!-- Edit and Delete buttons (LEFT in RTL, RIGHT in LTR) -->
+            <!-- Edit and Delete buttons — LEFT in LTR, RIGHT in RTL -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -274,30 +236,70 @@
 
                 <Button
                     android:id="@+id/btnEdit"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="36dp"
+                    android:minWidth="100dp"
                     android:minHeight="0dp"
+                    android:paddingHorizontal="12dp"
                     android:text="@string/btn_edit"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:textColor="@android:color/black"
-                    android:backgroundTint="#F5E6D3"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="@color/find_active_blue"
                     app:cornerRadius="8dp"
                     style="@style/Widget.MaterialComponents.Button" />
 
                 <Button
                     android:id="@+id/btnDelete"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="36dp"
+                    android:minWidth="100dp"
                     android:minHeight="0dp"
+                    android:paddingHorizontal="12dp"
                     android:layout_marginTop="6dp"
                     android:text="@string/btn_delete"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/white"
-                    android:backgroundTint="#FF3B30"
+                    android:backgroundTint="@color/error_red"
                     app:cornerRadius="8dp"
                     style="@style/Widget.MaterialComponents.Button" />
+            </LinearLayout>
+
+            <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+
+            <!-- Vertical divider -->
+            <View
+                android:layout_width="1dp"
+                android:layout_height="60dp"
+                android:background="@color/divider"
+                android:layout_marginHorizontal="16dp" />
+
+            <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+
+            <!-- Toggle visibility — RIGHT in LTR, LEFT in RTL -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchActive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:thumbTint="@android:color/white"
+                    app:trackTint="#E0E0E0" />
+
+                <TextView
+                    android:id="@+id/tvActiveLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginStart="6dp"
+                    android:text="@string/ad_hidden" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

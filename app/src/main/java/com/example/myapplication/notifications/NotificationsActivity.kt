@@ -23,6 +23,8 @@ import com.example.myapplication.chat.utils.DateUtils
 import com.example.myapplication.databinding.ActivityNotificationsBinding
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.BottomNavHelper
+import com.example.myapplication.NavScreen
 import kotlinx.coroutines.launch
 
 class NotificationsActivity : BaseActivity() {
@@ -43,6 +45,7 @@ class NotificationsActivity : BaseActivity() {
         applyWindowInsets()
 
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
+        BottomNavHelper.setup(this, NavScreen.NONE)
 
         val api = RetrofitClient.build(this)
 

@@ -1,29 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#F4F4F4"
+    android:background="@color/bg_screen"
     android:layoutDirection="locale">
 
     <!-- Top Bar -->
-    <include layout="@layout/layout_appbar_back" />
+    <include
+        android:id="@+id/appBarBack"
+        layout="@layout/layout_appbar_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Reusable home header: search + category tabs -->
-    <include layout="@layout/layout_home_header" />
+    <include
+        android:id="@+id/homeHeader"
+        layout="@layout/layout_home_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/appBarBack" />
 
-    <!-- Main card container -->
+    <!-- Main card container — fills remaining space, nav floats above it -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/cvMainCard"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_marginHorizontal="5dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="4dp"
         app:cardCornerRadius="10dp"
         app:cardElevation="3dp"
-        app:cardBackgroundColor="@color/surface_primary">
+        app:cardBackgroundColor="@color/surface_primary"
+        app:layout_constraintTop_toBottomOf="@id/homeHeader"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,7 +50,17 @@
                 android:paddingHorizontal="16dp"
                 android:paddingTop="16dp"
                 android:paddingBottom="4dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layoutDirection="locale">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/my_ads_title"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary" />
 
                 <TextView
                     android:layout_width="42dp"
@@ -47,15 +69,7 @@
                     android:textSize="24sp"
                     android:gravity="center"
                     android:background="@color/my_ads_icon_bg"
-                    android:layout_marginEnd="5dp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/my_ads_title"
-                    android:textSize="18sp"
-                    android:textColor="@color/text_primary" />
+                    android:layout_marginStart="8dp" />
             </LinearLayout>
 
             <!-- Filter tabs: عرض / طلب -->
@@ -63,7 +77,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="16dp"
-                android:paddingTop="12dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="4dp"
                 android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
@@ -77,8 +92,8 @@
                     android:textColor="@color/text_primary"
                     app:strokeColor="@color/find_active_blue"
                     app:strokeWidth="3dp"
-                    app:cornerRadius="24dp"
-                    app:backgroundTint="#F4F4F4"
+                    app:cornerRadius="30dp"
+                    app:backgroundTint="@color/surface_primary"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
                 <com.google.android.material.button.MaterialButton
@@ -90,14 +105,14 @@
                     android:text="@string/filter_request"
                     android:textSize="15sp"
                     android:textColor="@color/text_secondary"
-                    app:strokeColor="@color/text_primary"
-                    app:strokeWidth="1dp"
-                    app:cornerRadius="24dp"
-                    app:backgroundTint="#F4F4F4"
+                    app:strokeColor="@color/tab_inactive_border"
+                    app:strokeWidth="2dp"
+                    app:cornerRadius="30dp"
+                    app:backgroundTint="@color/surface_primary"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
             </LinearLayout>
 
-            <View 
+            <View
                 android:layout_width="350dp"
                 android:layout_height="1dp"
                 android:layout_gravity="center_horizontal"
@@ -163,10 +178,16 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Bottom spacer -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/surface_primary" />
+    <!-- Bottom Nav — floats above content with opacity -->
+    <include
+        android:id="@+id/cvBottomNav"
+        layout="@layout/layout_bottom_nav"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

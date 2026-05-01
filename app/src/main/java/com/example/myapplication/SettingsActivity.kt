@@ -16,6 +16,8 @@ import com.example.myapplication.auth.AuthRetrofitClient
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.BottomNavHelper
+import com.example.myapplication.NavScreen
 import kotlinx.coroutines.launch
 
 class SettingsActivity : BaseActivity() {
@@ -59,6 +61,7 @@ class SettingsActivity : BaseActivity() {
         applyWindowInsets()
 
         HomeHeaderHelper.attach(this, findViewById(android.R.id.content), sharedVm.categories)
+        BottomNavHelper.setup(this, NavScreen.NONE)
 
         setupAppBar()
         setupNavigation()

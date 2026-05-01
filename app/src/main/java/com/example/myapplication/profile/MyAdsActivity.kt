@@ -31,6 +31,8 @@ import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.databinding.ActivityMyAdsBinding
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.BottomNavHelper
+import com.example.myapplication.NavScreen
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -61,6 +63,7 @@ class MyAdsActivity : BaseActivity() {
         applyWindowInsets()
 
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
+        BottomNavHelper.setup(this, NavScreen.NONE)
 
         findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
@@ -74,35 +77,37 @@ class MyAdsActivity : BaseActivity() {
 
     private fun setFilter(type: String) {
         currentFilter = type
+        val activeBlue = androidx.core.content.ContextCompat.getColor(this, R.color.find_active_blue)
+        val strokeGrey = androidx.core.content.ContextCompat.getColor(this, R.color.tab_inactive_border)
+        val textPrimary = androidx.core.content.ContextCompat.getColor(this, R.color.text_primary)
+        val textSecondary = androidx.core.content.ContextCompat.getColor(this, R.color.text_secondary)
+        val surfacePrimary = androidx.core.content.ContextCompat.getColor(this, R.color.surface_primary)
+
         if (type == "offer") {
             binding.btnFilterOffer.apply {
                 strokeWidth = 9
-                strokeColor = android.content.res.ColorStateList.valueOf(
-                    androidx.core.content.ContextCompat.getColor(context, R.color.find_active_blue)
-                )
-                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
+                strokeColor = android.content.res.ColorStateList.valueOf(activeBlue)
+                setTextColor(textPrimary)
+                backgroundTintList = android.content.res.ColorStateList.valueOf(surfacePrimary)
             }
             binding.btnFilterRequest.apply {
                 strokeWidth = 3
-                strokeColor = android.content.res.ColorStateList.valueOf(
-                    androidx.core.content.ContextCompat.getColor(context, R.color.text_primary)
-                )
-                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_secondary))
+                strokeColor = android.content.res.ColorStateList.valueOf(strokeGrey)
+                setTextColor(textSecondary)
+                backgroundTintList = android.content.res.ColorStateList.valueOf(surfacePrimary)
             }
         } else {
             binding.btnFilterRequest.apply {
                 strokeWidth = 9
-                strokeColor = android.content.res.ColorStateList.valueOf(
-                    androidx.core.content.ContextCompat.getColor(context, R.color.find_active_blue)
-                )
-                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
+                strokeColor = android.content.res.ColorStateList.valueOf(activeBlue)
+                setTextColor(textPrimary)
+                backgroundTintList = android.content.res.ColorStateList.valueOf(surfacePrimary)
             }
             binding.btnFilterOffer.apply {
                 strokeWidth = 3
-                strokeColor = android.content.res.ColorStateList.valueOf(
-                    androidx.core.content.ContextCompat.getColor(context, R.color.text_primary)
-                )
-                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_secondary))
+                strokeColor = android.content.res.ColorStateList.valueOf(strokeGrey)
+                setTextColor(textSecondary)
+                backgroundTintList = android.content.res.ColorStateList.valueOf(surfacePrimary)
             }
         }
         applyFilter()
@@ -213,8 +218,8 @@ class MyAdsAdapter(
         val btnDelete: View = view.findViewById(R.id.btnDelete)
         val switchActive: SwitchCompat = view.findViewById(R.id.switchActive)
         val tvActiveLabel: TextView = view.findViewById(R.id.tvActiveLabel)
-        val btnPrev: TextView = view.findViewById(R.id.btnPrev)
-        val btnNext: TextView = view.findViewById(R.id.btnNext)
+        val btnPrev: ImageView = view.findViewById(R.id.btnPrev)
+        val btnNext: ImageView = view.findViewById(R.id.btnNext)
         var imageIndex = 0
     }
 
@@ -279,39 +284,33 @@ class MyAdsAdapter(
         holder.switchActive.setOnCheckedChangeListener(null)
         holder.switchActive.isChecked = isCurrentlyActive
         
-        // Update label and colors
         val context = holder.itemView.context
+        val greenColor = androidx.core.content.ContextCompat.getColor(context, R.color.toggle_active_green)
+        val greyColor = android.graphics.Color.parseColor("#E0E0E0")
+
         if (isCurrentlyActive) {
             holder.tvActiveLabel.text = context.getString(R.string.ad_visible)
-            holder.tvActiveLabel.setTextColor(android.graphics.Color.parseColor("#34C759"))
-            holder.switchActive.trackTintList = android.content.res.ColorStateList.valueOf(
-                android.graphics.Color.parseColor("#34C759")
-            )
+            holder.tvActiveLabel.setTextColor(greenColor)
+            holder.switchActive.trackTintList = android.content.res.ColorStateList.valueOf(greenColor)
         } else {
             holder.tvActiveLabel.text = context.getString(R.string.ad_hidden)
             holder.tvActiveLabel.setTextColor(
                 androidx.core.content.ContextCompat.getColor(context, R.color.text_secondary)
             )
-            holder.switchActive.trackTintList = android.content.res.ColorStateList.valueOf(
-                android.graphics.Color.parseColor("#E0E0E0")
-            )
+            holder.switchActive.trackTintList = android.content.res.ColorStateList.valueOf(greyColor)
         }
         
         holder.switchActive.setOnCheckedChangeListener { _, checked ->
             if (checked) {
                 holder.tvActiveLabel.text = context.getString(R.string.ad_visible)
-                holder.tvActiveLabel.setTextColor(android.graphics.Color.parseColor("#34C759"))
-                holder.switchActive.trackTintList = android.content.res.ColorStateList.valueOf(
-                    android.graphics.Color.parseColor("#34C759")
-                )
+                holder.tvActiveLabel.setTextColor(greenColor)
+                holder.switchActive.trackTintList = android.content.res.ColorStateList.valueOf(greenColor)
             } else {
                 holder.tvActiveLabel.text = context.getString(R.string.ad_hidden)
                 holder.tvActiveLabel.setTextColor(
                     androidx.core.content.ContextCompat.getColor(context, R.color.text_secondary)
                 )
-                holder.switchActive.trackTintList = android.content.res.ColorStateList.valueOf(
-                    android.graphics.Color.parseColor("#E0E0E0")
-                )
+                holder.switchActive.trackTintList = android.content.res.ColorStateList.valueOf(greyColor)
             }
             onToggle(item, checked)
         }

@@ -24,6 +24,8 @@ import com.example.myapplication.databinding.ActivityListingDetailBinding
 import com.example.myapplication.favorites.AddFavoriteRequest
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.BottomNavHelper
+import com.example.myapplication.NavScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -63,6 +65,7 @@ class ListingDetailActivity : BaseActivity() {
 
         // HomeHeaderHelper wires category tabs (rvHomeTopTabs) and search container
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
+        BottomNavHelper.setup(this, NavScreen.NONE)
 
         findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
