@@ -25,6 +25,7 @@ class LanguageActivity : BaseActivity() {
             findViewById(android.R.id.content),
             sharedVm.categories
         )
+        BottomNavHelper.setup(this, NavScreen.NONE)
 
         setupAppBar()
         setupLanguageButtons()

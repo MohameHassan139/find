@@ -7,17 +7,22 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.MainActivity
+import com.example.myapplication.NavScreen
+import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.databinding.ActivityPhoneAuthBinding
+import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
 
 class PhoneAuthActivity : BaseActivity() {
 
     private lateinit var binding: ActivityPhoneAuthBinding
+    private val sharedVm: SharedCategoriesViewModel by viewModels()
     private var phoneNumber = ""
     private var resendTimer: CountDownTimer? = null
 
@@ -40,6 +45,9 @@ class PhoneAuthActivity : BaseActivity() {
             v.setPadding(v.paddingLeft, statusBar.top, v.paddingRight, v.paddingBottom)
             insets
         }
+
+        HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
+        BottomNavHelper.setup(this, NavScreen.NONE)
 
         showPhoneStep()
 

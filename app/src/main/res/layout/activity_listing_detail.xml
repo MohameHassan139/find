@@ -23,12 +23,23 @@
         <LinearLayout
             android:id="@+id/llAppBar"
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="10dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:background="@color/surface_primary">
+
+            <!-- Status bar spacer -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="28dp" />
+
+            <!-- Bar content -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="10dp">
 
             <!-- Back button -->
             <ImageButton
@@ -96,7 +107,8 @@
                     android:contentDescription="Find"
                     android:padding="2dp" />
             </LinearLayout>
-        </LinearLayout>
+            </LinearLayout><!-- end bar content -->
+        </LinearLayout><!-- end llAppBar -->
 
         <!-- Search bar -->
         <LinearLayout

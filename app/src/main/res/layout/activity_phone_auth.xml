@@ -41,189 +41,216 @@
             android:onClick="finish" />
     </LinearLayout>
 
-    <!-- Title Card -->
-    <LinearLayout
+    <!-- Reusable home header: search + category tabs -->
+    <include layout="@layout/layout_home_header" />
+
+    <!-- Scrollable content -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:background="@color/surface_tabs"
-        android:gravity="center"
-        android:layout_marginTop="16dp"
-        android:layout_marginHorizontal="16dp">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/login_create_account"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary" />
-    </LinearLayout>
-
-    <!-- ── STEP 1: Phone ── -->
-    <LinearLayout
-        android:id="@+id/layoutPhone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="24dp"
-        android:layout_marginHorizontal="16dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/profile_phone"
-            android:textSize="14sp"
-            android:textColor="@color/text_secondary"
-            android:layout_gravity="end"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Phone input row -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <!-- Number field -->
-            <EditText
-                android:id="@+id/etPhone"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/surface_primary"
-                android:gravity="end|center_vertical"
-                android:hint="@string/str_5xxxxxxxx"
-                android:textSize="16sp"
-                android:paddingHorizontal="12dp"
-                android:inputType="phone" />
-
-            <!-- Country code - now editable -->
-            <EditText
-                android:id="@+id/etCountryCode"
-                android:layout_width="72dp"
-                android:layout_height="match_parent"
-                android:text="@string/str_966"
-                android:textSize="16sp"
-                android:textStyle="bold"
+            <!-- Title Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:background="@color/surface_tabs"
                 android:gravity="center"
-                android:background="@color/surface_primary"
-                android:inputType="phone"
-                android:maxLength="5"
-                android:layout_marginStart="4dp" />
-        </LinearLayout>
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="16dp">
 
-        <!-- Send OTP button -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@color/surface_primary"
-            android:gravity="center"
-            android:layout_marginTop="12dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_create_account"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary" />
+            </LinearLayout>
 
-            <ProgressBar
-                android:id="@+id/progressPhone"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="8dp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/btnSendOtp"
-                android:layout_width="wrap_content"
+            <!-- ── STEP 1: Phone ── -->
+            <LinearLayout
+                android:id="@+id/layoutPhone"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/send_otp"
-                android:textSize="16sp"
-                android:textColor="@color/find_primary"
-                android:padding="8dp" />
-        </LinearLayout>
-    </LinearLayout>
+                android:orientation="vertical"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="16dp">
 
-    <!-- ── STEP 2: OTP ── -->
-    <LinearLayout
-        android:id="@+id/layoutOtp"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_phone"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_gravity="end"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Phone input row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:orientation="horizontal">
+
+                    <!-- Number field -->
+                    <EditText
+                        android:id="@+id/etPhone"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@color/surface_primary"
+                        android:gravity="end|center_vertical"
+                        android:hint="@string/str_5xxxxxxxx"
+                        android:textSize="16sp"
+                        android:paddingHorizontal="12dp"
+                        android:inputType="phone" />
+
+                    <!-- Country code -->
+                    <EditText
+                        android:id="@+id/etCountryCode"
+                        android:layout_width="72dp"
+                        android:layout_height="match_parent"
+                        android:text="@string/str_966"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:background="@color/surface_primary"
+                        android:inputType="phone"
+                        android:maxLength="5"
+                        android:layout_marginStart="4dp" />
+                </LinearLayout>
+
+                <!-- Send OTP button -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@color/surface_primary"
+                    android:gravity="center"
+                    android:layout_marginTop="12dp">
+
+                    <ProgressBar
+                        android:id="@+id/progressPhone"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/btnSendOtp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/send_otp"
+                        android:textSize="16sp"
+                        android:textColor="@color/find_primary"
+                        android:padding="8dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ── STEP 2: OTP ── -->
+            <LinearLayout
+                android:id="@+id/layoutOtp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvOtpHint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/send_otp_to"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- OTP input -->
+                <EditText
+                    android:id="@+id/etOtp"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@color/surface_primary"
+                    android:gravity="center"
+                    android:hint="• • • • • •"
+                    android:textSize="22sp"
+                    android:inputType="numberPassword"
+                    android:maxLength="6"
+                    android:letterSpacing="0.5" />
+
+                <!-- Resend timer -->
+                <TextView
+                    android:id="@+id/tvResend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/resend_after_60s"
+                    android:textSize="13sp"
+                    android:textColor="@color/find_primary"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="8dp"
+                    android:layout_marginTop="8dp" />
+
+                <!-- Verify button -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@color/surface_primary"
+                    android:gravity="center"
+                    android:layout_marginTop="12dp">
+
+                    <ProgressBar
+                        android:id="@+id/progressOtp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/btnVerifyOtp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/verify"
+                        android:textSize="16sp"
+                        android:textColor="@color/text_primary"
+                        android:padding="8dp" />
+                </LinearLayout>
+
+                <!-- Change phone -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@color/surface_primary"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp">
+
+                    <TextView
+                        android:id="@+id/btnChangePhone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/change_number"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_primary"
+                        android:padding="8dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Nav -->
+    <include
+        android:id="@+id/cvBottomNav"
+        layout="@layout/layout_bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="24dp"
-        android:layout_marginHorizontal="16dp"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/tvOtpHint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/send_otp_to"
-            android:textSize="14sp"
-            android:textColor="@color/text_secondary"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="12dp" />
-
-        <!-- OTP input -->
-        <EditText
-            android:id="@+id/etOtp"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@color/surface_primary"
-            android:gravity="center"
-            android:hint="• • • • • •"
-            android:textSize="22sp"
-            android:inputType="numberPassword"
-            android:maxLength="6"
-            android:letterSpacing="0.5" />
-
-        <!-- Resend timer -->
-        <TextView
-            android:id="@+id/tvResend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/resend_after_60s"
-            android:textSize="13sp"
-            android:textColor="@color/find_primary"
-            android:layout_gravity="center_horizontal"
-            android:padding="8dp"
-            android:layout_marginTop="8dp" />
-
-        <!-- Verify button -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@color/surface_primary"
-            android:gravity="center"
-            android:layout_marginTop="12dp">
-
-            <ProgressBar
-                android:id="@+id/progressOtp"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="8dp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/btnVerifyOtp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/verify"
-                android:textSize="16sp"
-                android:textColor="@color/text_primary"
-                android:padding="8dp" />
-        </LinearLayout>
-
-        <!-- Change phone -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@color/surface_primary"
-            android:gravity="center"
-            android:layout_marginTop="8dp">
-
-            <TextView
-                android:id="@+id/btnChangePhone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/change_number"
-                android:textSize="15sp"
-                android:textColor="@color/text_primary"
-                android:padding="8dp" />
-        </LinearLayout>
-    </LinearLayout>
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="16dp" />
 
 </LinearLayout>
