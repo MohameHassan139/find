@@ -9,10 +9,9 @@
     android:focusable="true"
     android:focusableInTouchMode="false"
     app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
+    app:cardElevation="3dp"
     app:cardBackgroundColor="@color/white"
-    app:strokeWidth="1dp"
-    app:strokeColor="#E0E0E0">
+    app:strokeWidth="0dp">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -23,6 +22,20 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp">
+
+            <!-- Category name at the top -->
+            <TextView
+                android:id="@+id/tvCategoryTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="6dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -37,44 +50,44 @@
                     android:rowCount="3"
                     android:useDefaultMargins="false">
 
-                <!-- Row 1 -->
-                <android.webkit.WebView android:id="@+id/ivSub0"
-                    android:layout_width="0dp" android:layout_height="0dp"
-                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
-                <android.webkit.WebView android:id="@+id/ivSub1"
-                    android:layout_width="0dp" android:layout_height="0dp"
-                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
-                <android.webkit.WebView android:id="@+id/ivSub2"
-                    android:layout_width="0dp" android:layout_height="0dp"
-                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
+                    <!-- Row 1 -->
+                    <android.webkit.WebView android:id="@+id/ivSub0"
+                        android:layout_width="0dp" android:layout_height="0dp"
+                        android:layout_columnWeight="1" android:layout_rowWeight="1" />
+                    <android.webkit.WebView android:id="@+id/ivSub1"
+                        android:layout_width="0dp" android:layout_height="0dp"
+                        android:layout_columnWeight="1" android:layout_rowWeight="1" />
+                    <android.webkit.WebView android:id="@+id/ivSub2"
+                        android:layout_width="0dp" android:layout_height="0dp"
+                        android:layout_columnWeight="1" android:layout_rowWeight="1" />
 
-                <!-- Row 2 -->
-                <android.webkit.WebView android:id="@+id/ivSub3"
-                    android:layout_width="0dp" android:layout_height="0dp"
-                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
-                <android.webkit.WebView android:id="@+id/ivSub4"
-                    android:layout_width="0dp" android:layout_height="0dp"
-                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
-                <android.webkit.WebView android:id="@+id/ivSub5"
-                    android:layout_width="0dp" android:layout_height="0dp"
-                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
+                    <!-- Row 2 -->
+                    <android.webkit.WebView android:id="@+id/ivSub3"
+                        android:layout_width="0dp" android:layout_height="0dp"
+                        android:layout_columnWeight="1" android:layout_rowWeight="1" />
+                    <android.webkit.WebView android:id="@+id/ivSub4"
+                        android:layout_width="0dp" android:layout_height="0dp"
+                        android:layout_columnWeight="1" android:layout_rowWeight="1" />
+                    <android.webkit.WebView android:id="@+id/ivSub5"
+                        android:layout_width="0dp" android:layout_height="0dp"
+                        android:layout_columnWeight="1" android:layout_rowWeight="1" />
 
-                <!-- Row 3 -->
-                <android.webkit.WebView android:id="@+id/ivSub6"
-                    android:layout_width="0dp" android:layout_height="0dp"
-                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
-                <android.webkit.WebView android:id="@+id/ivSub7"
-                    android:layout_width="0dp" android:layout_height="0dp"
-                    android:layout_columnWeight="1" android:layout_rowWeight="1" />
+                    <!-- Row 3 -->
+                    <android.webkit.WebView android:id="@+id/ivSub6"
+                        android:layout_width="0dp" android:layout_height="0dp"
+                        android:layout_columnWeight="1" android:layout_rowWeight="1" />
+                    <android.webkit.WebView android:id="@+id/ivSub7"
+                        android:layout_width="0dp" android:layout_height="0dp"
+                        android:layout_columnWeight="1" android:layout_rowWeight="1" />
 
-                <!-- Last slot: "more" dots -->
-                <TextView android:id="@+id/tvMoreDots"
-                    android:layout_width="0dp" android:layout_height="0dp"
-                    android:layout_columnWeight="1" android:layout_rowWeight="1"
-                    android:gravity="center"
-                    android:text="•••"
-                    android:textSize="10sp"
-                    android:textColor="@color/text_tertiary" />
+                    <!-- Last slot: "more" dots -->
+                    <TextView android:id="@+id/tvMoreDots"
+                        android:layout_width="0dp" android:layout_height="0dp"
+                        android:layout_columnWeight="1" android:layout_rowWeight="1"
+                        android:gravity="center"
+                        android:text="•••"
+                        android:textSize="10sp"
+                        android:textColor="@color/text_tertiary" />
 
                 </GridLayout>
 
@@ -94,18 +107,6 @@
                     android:textColor="@color/text_tertiary"
                     android:visibility="gone" />
             </FrameLayout>
-
-            <!-- Category name -->
-            <TextView
-                android:id="@+id/tvCategoryTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:gravity="center"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:textSize="12sp"
-                android:textColor="@color/text_primary" />
 
         </LinearLayout>
 

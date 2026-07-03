@@ -286,7 +286,7 @@ class MyAdsAdapter(
         
         val context = holder.itemView.context
         val greenColor = androidx.core.content.ContextCompat.getColor(context, R.color.toggle_active_green)
-        val greyColor = android.graphics.Color.parseColor("#E0E0E0")
+        val greyColor = androidx.core.content.ContextCompat.getColor(context, R.color.switch_inactive_track)
 
         if (isCurrentlyActive) {
             holder.tvActiveLabel.text = context.getString(R.string.ad_visible)

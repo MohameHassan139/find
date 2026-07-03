@@ -45,7 +45,7 @@
     <color name="category_banner_bg">#FF2A2000</color>
     <color name="plus_circle_stroke">#FFC8A96E</color>
     <color name="plus_circle_fill">#FF1E1E1E</color>
-    <color name="menu_circle_stroke">#FF555555</color>
+    <color name="menu_circle_stroke">#FFFFFFFF</color>
     <color name="bottom_nav_bg">#CC1E1E1E</color>
     <color name="shadow_divider">#FF2A2A2A</color>
     <color name="my_ads_icon_bg">#FF2A2000</color>
@@ -56,5 +56,6 @@
     <color name="icon_tint_muted">#FFAAAAAA</color>
     <color name="error_red">#FFCF4444</color>
     <color name="toggle_active_green">#FF4CAF50</color>
+    <color name="switch_inactive_track">#FF3E3E3E</color>
     <color name="tab_inactive_border">#FF888888</color>
 </resources>

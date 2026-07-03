@@ -25,7 +25,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/surface_primary">
+            android:background="@color/surface_primary"
+            android:layoutDirection="ltr">
 
             <!-- Status bar spacer -->
             <View
@@ -194,6 +195,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginTop="10dp"
+                android:clipToOutline="true"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="3dp"
                 app:cardBackgroundColor="@color/surface_primary">
@@ -203,183 +205,181 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- Title -->
-                    <TextView
-                        android:id="@+id/tvTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_primary"
-                        android:textAlignment="viewStart" />
-
-                    <!-- Meta row: seller avatar+name (right) | price (left) -->
+                    <!-- Shaded Top Section -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="16dp"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="8dp">
+                        android:orientation="vertical"
+                        android:background="@color/surface_secondary">
 
-                        <!-- Price + riyal icon -->
+                        <!-- Title -->
+                        <TextView
+                            android:id="@+id/tvTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="69dp"
+                            android:padding="16dp"
+                            android:textAlignment="viewStart"
+                            android:textColor="@color/text_primary"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <!-- Meta Row: Seller Info (Right) | Price & Time (Left) -->
                         <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:gravity="start|center_vertical">
+                            android:gravity="center_vertical"
+                            android:paddingHorizontal="16dp"
+                            android:paddingTop="4dp"
+                            android:paddingBottom="12dp"
+                            android:layoutDirection="locale">
 
-                            <ImageView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:src="@drawable/ic_riyal"
-                                android:layout_marginEnd="4dp"
-                                android:contentDescription="riyal" />
-
-                            <TextView
-                                android:id="@+id/tvPrice"
-                                android:layout_width="wrap_content"
+                            <!-- Seller Info Group (Right in RTL, Left in LTR) -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
                                 android:layout_height="wrap_content"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:fontFamily="monospace"
-                                android:textColor="@color/find_primary" />
-                        </LinearLayout>
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical|center">
 
-                        <!-- Seller avatar + name -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
+                                <!-- Avatar -->
+                                <ImageView
+                                    android:id="@+id/ivAvatar"
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:src="@drawable/ic_avatar_placeholder"
+                                    android:scaleType="centerCrop"
+                                    android:background="@drawable/bg_menu_circle"
+                                    android:padding="2dp" />
 
-                            <TextView
-                                android:id="@+id/tvSellerName"
-                                android:layout_width="wrap_content"
+                                <!-- Text: Name on top, Location below -->
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:gravity="start"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_marginEnd="8dp">
+
+                                    <TextView
+                                        android:id="@+id/tvSellerName"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/text_primary" />
+
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:gravity="center_vertical"
+                                        android:layout_marginTop="2dp">
+
+                                        <!-- Pin icon -->
+                                        <ImageView
+                                            android:layout_width="14dp"
+                                            android:layout_height="14dp"
+                                            android:src="@drawable/ic_location"
+                                            app:tint="@color/find_gray_text"
+                                            android:layout_marginEnd="4dp"
+                                            android:importantForAccessibility="no" />
+
+                                        <TextView
+                                            android:id="@+id/tvLocation"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:textSize="12sp"
+                                            android:textColor="@color/find_gray_text" />
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <!-- Price & Time Group (Left in RTL, Right in LTR) -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
                                 android:layout_height="wrap_content"
-                                android:textSize="13sp"
-                                android:textColor="@color/text_primary"
-                                android:layout_marginEnd="6dp" />
+                                android:orientation="vertical"
+                                android:gravity="end">
 
-                            <ImageView
-                                android:id="@+id/ivAvatar"
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:src="@drawable/ic_avatar_placeholder"
-                                android:scaleType="centerCrop" />
-                        </LinearLayout>
-                    </LinearLayout>
+                                <!-- Price -->
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_gravity="end">
 
-                    <!-- Location + Time on the same line -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="16dp"
-                        android:paddingBottom="12dp">
+                                    <TextView
+                                        android:id="@+id/tvRiyalSymbol"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text=" ﷼"
+                                        android:textSize="16sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/text_primary"
+                                        android:layout_marginEnd="3dp" />
 
-                        <!-- Time (left in RTL) -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="start|center_vertical">
+                                    <TextView
+                                        android:id="@+id/tvPrice"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="16sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/text_primary" />
+                                </LinearLayout>
 
-                            <ImageView
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:src="@drawable/ic_time"
-                                android:layout_marginEnd="4dp"
-                                android:importantForAccessibility="no" />
+                                <!-- Time -->
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_gravity="end"
+                                    android:layout_marginTop="4dp">
 
-                            <TextView
-                                android:id="@+id/tvTime"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="12sp"
-                                android:textColor="@color/find_gray_text" />
-                        </LinearLayout>
+                                    <ImageView
+                                        android:layout_width="14dp"
+                                        android:layout_height="14dp"
+                                        android:src="@drawable/ic_time"
+                                        android:layout_marginEnd="4dp"
+                                        app:tint="@color/find_gray_text"
+                                        android:importantForAccessibility="no" />
 
-                        <!-- Location (right in RTL) -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="end|center_vertical">
-
-                            <TextView
-                                android:id="@+id/tvLocation"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="12sp"
-                                android:textColor="@color/find_gray_text"
-                                android:layout_marginEnd="4dp" />
-
-                            <ImageView
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:src="@drawable/ic_location"
-                                android:importantForAccessibility="no" />
+                                    <TextView
+                                        android:id="@+id/tvTime"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="12sp"
+                                        android:textColor="@color/find_gray_text" />
+                                </LinearLayout>
+                            </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
 
                     <View android:layout_width="match_parent" android:layout_height="1dp"
                         android:background="@color/divider" />
 
-                    <!-- Action bar: إتصال / واتساب / محادثة + favorite + prev/next -->
+                    <!-- Action bar: Call / WhatsApp / Chat (Right) | Chevrons (Left) -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:orientation="horizontal"
-                        android:background="@color/surface_primary">
+                        android:background="@color/surface_primary"
+                        android:gravity="center_vertical"
+                        android:layoutDirection="locale">
 
-                        <!-- Prev / Next + Favorite -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal"
-                            android:gravity="center"
-                            android:paddingHorizontal="8dp">
-
-                            <Button
-                                android:id="@+id/btnPrev"
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
-                                android:text="‹"
-                                android:textSize="20sp"
-                                android:textStyle="bold"
-                                android:padding="0dp"
-                                style="@style/Widget.MaterialComponents.Button.TextButton" />
-
-                            <Button
-                                android:id="@+id/btnNext"
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
-                                android:text="›"
-                                android:textSize="20sp"
-                                android:textStyle="bold"
-                                android:padding="0dp"
-                                style="@style/Widget.MaterialComponents.Button.TextButton" />
-                        </LinearLayout>
-
-                        <View android:layout_width="1dp" android:layout_height="match_parent"
-                            android:background="@color/divider" />
-
-                        <!-- Chat / WhatsApp / Call buttons -->
+                        <!-- Call / WhatsApp / Chat buttons container (RIGHT side in RTL) -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="match_parent"
                             android:orientation="horizontal">
 
-                            <!-- محادثة -->
+                            <!-- إتصال -->
                             <LinearLayout
-                                android:id="@+id/btnChat"
+                                android:id="@+id/btnCall"
                                 android:layout_width="0dp"
                                 android:layout_weight="1"
                                 android:layout_height="match_parent"
@@ -388,18 +388,18 @@
                                 android:background="?attr/selectableItemBackground">
 
                                 <ImageView
-                                    android:id="@+id/ivChat"
+                                    android:id="@+id/ivCall"
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
-                                    android:src="@drawable/ic_chat"
-                                    android:contentDescription="@string/cd_chat"
+                                    android:src="@drawable/ic_phone"
+                                    android:contentDescription="@string/cd_call"
                                     app:tint="@color/text_primary" />
 
                                 <TextView
-                                    android:id="@+id/tvChat"
+                                    android:id="@+id/tvCall"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/btn_chat"
+                                    android:text="@string/btn_call"
                                     android:textSize="11sp"
                                     android:textColor="@color/text_primary" />
                             </LinearLayout>
@@ -430,9 +430,9 @@
                                     android:textColor="@color/text_primary" />
                             </LinearLayout>
 
-                            <!-- إتصال -->
+                            <!-- محادثة -->
                             <LinearLayout
-                                android:id="@+id/btnCall"
+                                android:id="@+id/btnChat"
                                 android:layout_width="0dp"
                                 android:layout_weight="1"
                                 android:layout_height="match_parent"
@@ -441,55 +441,82 @@
                                 android:background="?attr/selectableItemBackground">
 
                                 <ImageView
-                                    android:id="@+id/ivCall"
+                                    android:id="@+id/ivChat"
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
-                                    android:src="@drawable/ic_phone"
-                                    android:contentDescription="@string/cd_call"
+                                    android:contentDescription="@string/cd_chat"
+                                    android:src="@drawable/ic_nav_chat"
                                     app:tint="@color/text_primary" />
 
                                 <TextView
-                                    android:id="@+id/tvCall"
+                                    android:id="@+id/tvChat"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/btn_call"
+                                    android:text="@string/btn_chat"
                                     android:textSize="11sp"
                                     android:textColor="@color/text_primary" />
                             </LinearLayout>
                         </LinearLayout>
 
-                        <!-- Favorite icon (kept as-is, lite) -->
+                        <!-- Main vertical divider (bold) -->
+                        <View android:layout_width="1dp" android:layout_height="match_parent"
+                            android:background="@color/divider" />
+
+                        <!-- Chevrons container (LEFT side in RTL) -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            android:paddingHorizontal="16dp">
+
+                            <!-- Next button (right chevron) -->
+                            <ImageButton
+                                android:id="@+id/btnNext"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:src="@drawable/ic_chevron_next"
+                                app:tint="@color/text_primary"
+                                android:padding="6dp"
+                                android:contentDescription="Next" />
+
+                            <!-- Prev button (left chevron) -->
+                            <ImageButton
+                                android:id="@+id/btnPrev"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:src="@drawable/ic_chevron_prev"
+                                app:tint="@color/text_primary"
+                                android:padding="6dp"
+                                android:contentDescription="Previous" />
+                        </LinearLayout>
+
+                        <!-- Hidden favorite view to keep compatibility with Kotlin logic -->
                         <ImageView
                             android:id="@+id/ivFavoriteDetail"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginHorizontal="8dp"
-                            android:padding="4dp"
-                            android:src="@drawable/ic_favorites"
-                            android:background="@drawable/ripple_circle"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:contentDescription="Favorite" />
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:visibility="gone"
+                            android:importantForAccessibility="no" />
 
                     </LinearLayout>
 
-                    <View android:layout_width="match_parent" android:layout_height="1dp"
-                        android:background="@color/divider" />
-
-                    <!-- Description -->
-                    <TextView
-                        android:id="@+id/tvDescription"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:textSize="15sp"
-                        android:textColor="@color/text_primary"
-                        android:lineSpacingMultiplier="1.6"
-                        android:textAlignment="viewStart" />
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
+            <!-- Description -->
+            <TextView
+                android:id="@+id/tvDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                android:textSize="15sp"
+                android:textColor="@color/text_primary"
+                android:lineSpacingMultiplier="1.6"
+                android:textAlignment="viewStart" />
 
             <!-- Images (full width, below card) -->
             <LinearLayout

@@ -3,7 +3,7 @@
     android:shape="oval">
     <stroke
         android:width="1.5dp"
-        android:color="#BDBDBD" />
+        android:color="@color/menu_circle_stroke" />
     <solid android:color="@android:color/transparent" />
     <size
         android:width="44dp"

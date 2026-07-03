@@ -44,13 +44,22 @@ class ConversationsAdapter(
             b.tvLastMessage.text = conv.lastMessage ?: ""
             b.tvTime.text = DateUtils.formatConversationTime(conv.lastMessageAt)
 
+            val otherUnread = if (isBuyer) conv.sellerUnread else conv.buyerUnread
             if (unreadCount > 0) {
                 b.tvUnreadBadge.text = unreadCount.toString()
                 b.tvUnreadBadge.visibility = View.VISIBLE
                 b.tvUnreadDay.visibility = View.VISIBLE
+                b.ivCheck.visibility = View.GONE
             } else {
                 b.tvUnreadBadge.visibility = View.GONE
                 b.tvUnreadDay.visibility = View.GONE
+                b.ivCheck.visibility = View.VISIBLE
+                val checkColor = if (otherUnread > 0) {
+                    androidx.core.content.ContextCompat.getColor(b.root.context, R.color.text_secondary)
+                } else {
+                    androidx.core.content.ContextCompat.getColor(b.root.context, R.color.find_active_blue)
+                }
+                b.ivCheck.setColorFilter(checkColor, android.graphics.PorterDuff.Mode.SRC_IN)
             }
 
             if (!otherAvatar.isNullOrEmpty()) {

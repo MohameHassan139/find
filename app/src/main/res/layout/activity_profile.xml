@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
-                app:cardBackgroundColor="#B2DFDB"
+                app:cardBackgroundColor="@color/nafath_bg"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <LinearLayout
@@ -65,7 +65,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/profile_verify_nafath_btn"
-                        android:backgroundTint="#00897B"
+                        android:backgroundTint="@color/nafath_button"
                         android:textColor="@color/white"
                         android:textSize="13sp"
                         android:paddingHorizontal="20dp"
@@ -81,7 +81,7 @@
                 android:layout_marginTop="16dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
-                app:cardBackgroundColor="#B0BEC5"
+                app:cardBackgroundColor="@color/fal_bg"
                 app:layout_constraintTop_toBottomOf="@id/cardNafath">
 
                 <LinearLayout
@@ -115,7 +115,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/profile_verify_fal_btn"
-                        android:backgroundTint="#263238"
+                        android:backgroundTint="@color/fal_button"
                         android:textColor="@color/white"
                         android:textSize="13sp"
                         android:paddingHorizontal="20dp"
@@ -130,7 +130,7 @@
                 android:layout_height="120dp"
                 android:layout_marginTop="32dp"
                 android:background="@drawable/bg_menu_circle"
-                android:backgroundTint="#FFF9C4"
+                android:backgroundTint="@color/find_yellow_bg"
                 android:clickable="true"
                 android:focusable="true"
                 app:layout_constraintTop_toBottomOf="@id/cardFal"
@@ -152,7 +152,7 @@
                     android:layout_margin="8dp"
                     android:src="@drawable/ic_edit_pen"
                     android:background="@drawable/bg_menu_circle"
-                    android:backgroundTint="#4CAF50"
+                    android:backgroundTint="@color/toggle_active_green"
                     android:padding="6dp"
                     android:contentDescription="Edit" />
             </FrameLayout>
@@ -240,7 +240,7 @@
                 android:text="@string/logout"
                 android:textSize="15sp"
                 android:backgroundTint="#1AFF3B30"
-                android:textColor="#FF3B30"
+                android:textColor="@color/error_red"
                 style="@style/Widget.MaterialComponents.Button"
                 app:layout_constraintTop_toBottomOf="@id/btnSave"
                 app:layout_constraintBottom_toBottomOf="parent" />

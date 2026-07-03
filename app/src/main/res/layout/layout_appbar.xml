@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/llAppBar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@color/surface_primary"
-    android:elevation="4dp">
+    android:elevation="4dp"
+    android:layoutDirection="ltr">
 
     <!-- Status bar spacer -->
     <View
@@ -31,6 +33,7 @@
             android:background="@drawable/bg_menu_circle"
             android:padding="10dp"
             android:src="@drawable/ic_menu_black"
+            app:tint="@color/icon_tint"
             android:contentDescription="القائمة" />
 
         <!-- Spacer -->

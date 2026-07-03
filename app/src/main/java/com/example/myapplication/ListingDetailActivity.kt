@@ -186,12 +186,15 @@ class ListingDetailActivity : BaseActivity() {
         binding.btnNext.alpha = 0.3f
 
         binding.llImages.removeAllViews()
+        val gap = (8 * resources.displayMetrics.density).toInt()
         l.images.forEach { url ->
             val iv = ImageView(this)
-            iv.layoutParams = LinearLayout.LayoutParams(
+            val lp = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 resources.displayMetrics.widthPixels
             )
+            lp.bottomMargin = gap
+            iv.layoutParams = lp
             iv.scaleType = ImageView.ScaleType.CENTER_CROP
             Glide.with(iv.context).load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

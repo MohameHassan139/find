@@ -24,6 +24,7 @@
     <color name="shimmer_highlight">#F5F5F5</color>
     <color name="error_red">#E24B4A</color>
     <color name="toggle_active_green">#34C759</color>
+    <color name="switch_inactive_track">#FFE0E0E0</color>
     <color name="tab_inactive_border">#AAAAAA</color>
     <color name="badge_red">#E24B4A</color>
     <color name="chip_selected_bg">#F5EDD8</color>

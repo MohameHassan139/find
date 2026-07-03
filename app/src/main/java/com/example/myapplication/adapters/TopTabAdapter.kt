@@ -18,7 +18,7 @@ class TopTabAdapter(
     private val onSelected: (ApiCategory?) -> Unit
 ) : RecyclerView.Adapter<TopTabAdapter.VH>() {
 
-    private val gold = "#C8A96E".toColorInt()
+    // Selected color is resolved dynamically from resources
 
     class VH(val b: ItemTopTabBinding) : RecyclerView.ViewHolder(b.root)
 
@@ -38,7 +38,8 @@ class TopTabAdapter(
         holder.b.tvLabel.text = label
         holder.b.tvLabel.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
         holder.b.tvLabel.textSize = if (isActive) 17f else 15f
-        holder.b.underline.setBackgroundColor(if (isActive) gold else Color.TRANSPARENT)
+        val activeColor = androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.find_active_blue)
+        holder.b.underline.setBackgroundColor(if (isActive) activeColor else Color.TRANSPARENT)
 
         holder.b.root.setOnClickListener {
             onSelected(cat)
