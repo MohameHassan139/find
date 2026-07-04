@@ -473,9 +473,9 @@ class MainActivity : BaseActivity() {
 
     private fun setRegionPillActive(label: String) {
         binding.tvRegionLabel.text = label
-        binding.tvRegionLabel.setTextColor(getColor(R.color.white))
-        binding.spinnerRegion.setBackgroundResource(R.drawable.bg_chip_selected)
-        binding.ivRegionChevron.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.white))
+        binding.tvRegionLabel.setTextColor(getColor(R.color.text_primary))
+        binding.spinnerRegion.setBackgroundResource(R.drawable.bg_spinner_pill)
+        binding.ivRegionChevron.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.text_primary))
     }
 
     private fun resetCityPill() {
@@ -487,9 +487,9 @@ class MainActivity : BaseActivity() {
 
     private fun setCityPillActive(label: String) {
         binding.tvCityLabel.text = label
-        binding.tvCityLabel.setTextColor(getColor(R.color.white))
-        binding.spinnerCity.setBackgroundResource(R.drawable.bg_chip_selected)
-        binding.ivCityChevron.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.white))
+        binding.tvCityLabel.setTextColor(getColor(R.color.text_primary))
+        binding.spinnerCity.setBackgroundResource(R.drawable.bg_spinner_pill)
+        binding.ivCityChevron.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.text_primary))
     }
 
     private var pendingCategoryId: Int? = null
