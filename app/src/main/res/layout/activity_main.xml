@@ -27,11 +27,12 @@
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:layout_marginHorizontal="12dp"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:background="@drawable/bg_search_bar"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:layoutDirection="locale"
+            android:layoutDirection="ltr"
             android:paddingHorizontal="12dp">
 
             <!-- Icon on the START side (left in LTR, right in RTL) -->
@@ -49,10 +50,13 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:hint="@string/search_hint"
+                android:layoutDirection="locale"
                 android:gravity="start|center_vertical"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:paddingHorizontal="8dp"
+                android:paddingVertical="0dp"
+                android:includeFontPadding="false"
                 android:textSize="14sp"
                 android:textColorHint="@color/find_gray_text" />
         </LinearLayout>
@@ -61,8 +65,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvTopTabs"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@color/surface_tabs"
+            android:layout_height="@dimen/home_tab_height"
+            android:background="@drawable/bg_tab_row"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
@@ -71,7 +75,7 @@
             android:id="@+id/rvSubTabs"
             android:layout_width="match_parent"
             android:layout_height="44dp"
-            android:background="@color/surface_tabs"
+            android:background="@drawable/bg_tab_row"
             android:visibility="gone"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -81,7 +85,7 @@
             android:id="@+id/rvExtraTabs"
             android:layout_width="match_parent"
             android:layout_height="44dp"
-            android:background="@color/surface_tabs"
+            android:background="@drawable/bg_tab_row"
             android:visibility="gone"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -90,50 +94,92 @@
         <LinearLayout
             android:id="@+id/llFilterBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="44dp"
             android:orientation="horizontal"
-            android:gravity="start|center_vertical"
-            android:paddingHorizontal="10dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:background="@color/surface_tabs"
+            android:gravity="start"
+            android:background="@drawable/bg_tab_row"
             android:visibility="gone">
 
-            <TextView
-                android:id="@+id/chipAll"
+            <!-- الكل Tab -->
+            <LinearLayout
+                android:id="@+id/llChipAll"
                 android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:text="@string/filter_all"
-                android:gravity="center"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
                 android:paddingHorizontal="14dp"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:background="@drawable/bg_chip_selected"
-                android:layout_marginEnd="6dp" />
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+                <com.example.myapplication.widgets.StrokeTextView
+                    android:id="@+id/chipAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_all"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_primary" />
+                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+                <View
+                    android:id="@+id/underlineAll"
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="@android:color/transparent" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/chipOffer"
+            <!-- العرض Tab -->
+            <LinearLayout
+                android:id="@+id/llChipOffer"
                 android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:text="@string/filter_offer"
-                android:gravity="center"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
                 android:paddingHorizontal="14dp"
-                android:textSize="13sp"
-                android:textColor="@color/find_gray_text"
-                android:background="@drawable/bg_chip_unselected"
-                android:layout_marginEnd="6dp" />
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+                <com.example.myapplication.widgets.StrokeTextView
+                    android:id="@+id/chipOffer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_offer"
+                    android:textSize="14sp"
+                    android:textColor="@color/find_gray_text" />
+                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+                <View
+                    android:id="@+id/underlineOffer"
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="@android:color/transparent" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/chipRequest"
+            <!-- الطلب Tab -->
+            <LinearLayout
+                android:id="@+id/llChipRequest"
                 android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:text="@string/filter_request"
-                android:gravity="center"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
                 android:paddingHorizontal="14dp"
-                android:textSize="13sp"
-                android:textColor="@color/find_gray_text"
-                android:background="@drawable/bg_chip_unselected" />
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+                <com.example.myapplication.widgets.StrokeTextView
+                    android:id="@+id/chipRequest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_request"
+                    android:textSize="14sp"
+                    android:textColor="@color/find_gray_text" />
+                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+                <View
+                    android:id="@+id/underlineRequest"
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="@android:color/transparent" />
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -145,8 +191,9 @@
             android:orientation="horizontal"
             android:gravity="start|center_vertical"
             android:paddingHorizontal="10dp"
+            android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:background="@color/surface_tabs"
+            android:background="@drawable/bg_tab_row"
             android:visibility="gone">
 
             <LinearLayout
@@ -155,7 +202,7 @@
                 android:layout_height="36dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:background="@drawable/bg_chip_unselected"
+                android:background="@drawable/bg_spinner_pill"
                 android:paddingHorizontal="14dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -170,6 +217,7 @@
                     android:layout_marginEnd="6dp" />
 
                 <ImageView
+                    android:id="@+id/ivRegionChevron"
                     android:layout_width="14dp"
                     android:layout_height="14dp"
                     android:src="@drawable/ic_chevron_left"
@@ -183,7 +231,7 @@
                 android:layout_height="36dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:background="@drawable/bg_chip_unselected"
+                android:background="@drawable/bg_spinner_pill"
                 android:paddingHorizontal="14dp"
                 android:layout_marginStart="6dp"
                 android:clickable="true"
@@ -200,6 +248,7 @@
                     android:layout_marginEnd="6dp" />
 
                 <ImageView
+                    android:id="@+id/ivCityChevron"
                     android:layout_width="14dp"
                     android:layout_height="14dp"
                     android:src="@drawable/ic_chevron_left"
@@ -213,7 +262,7 @@
         <LinearLayout
             android:id="@+id/bootShimmer"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="@dimen/home_tab_height"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp"

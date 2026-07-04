@@ -8,7 +8,9 @@ import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.ApiFilterOption
 import com.example.myapplication.databinding.ItemTopTabBinding
+import com.example.myapplication.R
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.widgets.StrokeTextView
 
 class ExtraTabAdapter(
     private var items: List<ApiFilterOption>,
@@ -30,11 +32,24 @@ class ExtraTabAdapter(
         val label = LocaleHelper.localizedName(holder.itemView.context, opt.nameAr, opt.nameEn)
         val isActive = selectedId == position
 
-        holder.b.tvLabel.text = label
-        holder.b.tvLabel.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
-        holder.b.tvLabel.textSize = 13f
-        holder.b.tvLabel.setTextColor(if (isActive) Color.BLACK else gray)
-        holder.b.underline.setBackgroundColor(if (isActive) gold else Color.TRANSPARENT)
+        val tvLabel = holder.b.tvLabel
+        tvLabel.text = label
+        tvLabel.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
+        tvLabel.textSize = 13f
+        
+        if (tvLabel is StrokeTextView) {
+            tvLabel.isStrokeEnabled = isActive
+            tvLabel.setTextColor(if (isActive) Color.WHITE else holder.itemView.context.getColor(R.color.find_gray_text))
+        } else {
+            val textColor = if (isActive) {
+                holder.itemView.context.getColor(R.color.text_primary)
+            } else {
+                holder.itemView.context.getColor(R.color.find_gray_text)
+            }
+            tvLabel.setTextColor(textColor)
+        }
+        val activeColor = holder.itemView.context.getColor(R.color.find_active_blue)
+        holder.b.underline.setBackgroundColor(if (isActive) activeColor else Color.TRANSPARENT)
         
         // No icons for extras
 

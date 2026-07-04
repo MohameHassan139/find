@@ -8,8 +8,8 @@
     android:clickable="true"
     android:focusable="true"
     android:focusableInTouchMode="false"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="3dp"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="1.5dp"
     app:cardBackgroundColor="@color/white"
     app:strokeWidth="0dp">
 
@@ -29,11 +29,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:layout_marginBottom="6dp"
+                android:layout_marginBottom="8dp"
                 android:gravity="center"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
 

@@ -27,6 +27,7 @@ import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.utils.AuthGuard
+import com.example.myapplication.widgets.StrokeTextView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -217,19 +218,19 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setupTypeChips() {
-        binding.chipAll.setOnClickListener {
+        binding.llChipAll.setOnClickListener {
             vm.selectType(null)
             updateChipStyles(null)
             resetCityFilter()
             showRegionRow()
         }
-        binding.chipOffer.setOnClickListener {
+        binding.llChipOffer.setOnClickListener {
             vm.selectType("offer")
             updateChipStyles("offer")
             resetCityFilter()
             showRegionRow()
         }
-        binding.chipRequest.setOnClickListener {
+        binding.llChipRequest.setOnClickListener {
             vm.selectType("request")
             updateChipStyles("request")
             resetCityFilter()
@@ -249,14 +250,19 @@ class MainActivity : BaseActivity() {
     }
 
     private fun updateChipStyles(active: String?) {
-        fun style(tv: TextView, isActive: Boolean) {
-            tv.setBackgroundResource(if (isActive) R.drawable.bg_chip_selected else R.drawable.bg_chip_unselected)
-            tv.setTextColor(if (isActive) getColor(R.color.white) else getColor(R.color.find_gray_text))
+        fun style(tv: TextView, underline: View, isActive: Boolean) {
             tv.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
+            if (tv is StrokeTextView) {
+                tv.isStrokeEnabled = isActive
+                tv.setTextColor(if (isActive) android.graphics.Color.WHITE else getColor(R.color.find_gray_text))
+            } else {
+                tv.setTextColor(if (isActive) getColor(R.color.text_primary) else getColor(R.color.find_gray_text))
+            }
+            underline.setBackgroundColor(if (isActive) getColor(R.color.find_active_blue) else android.graphics.Color.TRANSPARENT)
         }
-        style(binding.chipAll, active == null)
-        style(binding.chipOffer, active == "offer")
-        style(binding.chipRequest, active == "request")
+        style(binding.chipAll, binding.underlineAll, active == null)
+        style(binding.chipOffer, binding.underlineOffer, active == "offer")
+        style(binding.chipRequest, binding.underlineRequest, active == "request")
     }
 
     private enum class BodyState { CATEGORIES, SUBCATEGORIES, GRID_LOADING, LOADING, ADS, EMPTY }
@@ -460,26 +466,30 @@ class MainActivity : BaseActivity() {
 
     private fun resetRegionPill() {
         binding.tvRegionLabel.text = getString(R.string.all_regions)
-        binding.tvRegionLabel.setTextColor(getColor(R.color.find_gray_text))
-        binding.spinnerRegion.setBackgroundResource(R.drawable.bg_chip_unselected)
+        binding.tvRegionLabel.setTextColor(getColor(R.color.text_primary))
+        binding.spinnerRegion.setBackgroundResource(R.drawable.bg_spinner_pill)
+        binding.ivRegionChevron.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.text_primary))
     }
 
     private fun setRegionPillActive(label: String) {
         binding.tvRegionLabel.text = label
         binding.tvRegionLabel.setTextColor(getColor(R.color.white))
         binding.spinnerRegion.setBackgroundResource(R.drawable.bg_chip_selected)
+        binding.ivRegionChevron.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.white))
     }
 
     private fun resetCityPill() {
         binding.tvCityLabel.text = getString(R.string.all_cities)
-        binding.tvCityLabel.setTextColor(getColor(R.color.find_gray_text))
-        binding.spinnerCity.setBackgroundResource(R.drawable.bg_chip_unselected)
+        binding.tvCityLabel.setTextColor(getColor(R.color.text_primary))
+        binding.spinnerCity.setBackgroundResource(R.drawable.bg_spinner_pill)
+        binding.ivCityChevron.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.text_primary))
     }
 
     private fun setCityPillActive(label: String) {
         binding.tvCityLabel.text = label
         binding.tvCityLabel.setTextColor(getColor(R.color.white))
         binding.spinnerCity.setBackgroundResource(R.drawable.bg_chip_selected)
+        binding.ivCityChevron.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.white))
     }
 
     private var pendingCategoryId: Int? = null

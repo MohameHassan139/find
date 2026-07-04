@@ -11,6 +11,7 @@ import com.example.myapplication.ApiSubCategory
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemTopTabBinding
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.widgets.StrokeTextView
 
 class SubTabAdapter(
     private var items: List<ApiSubCategory>,
@@ -32,16 +33,24 @@ class SubTabAdapter(
         val label = LocaleHelper.localizedName(holder.itemView.context, sub.nameAr, sub.nameEn)
         val isActive = selectedId == position
 
-        holder.b.tvLabel.text = label
-        holder.b.tvLabel.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
-        holder.b.tvLabel.textSize = 14f
-        val textColor = if (isActive) {
-            holder.itemView.context.getColor(R.color.text_primary)
+        val tvLabel = holder.b.tvLabel
+        tvLabel.text = label
+        tvLabel.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
+        tvLabel.textSize = 14f
+        
+        if (tvLabel is StrokeTextView) {
+            tvLabel.isStrokeEnabled = isActive
+            tvLabel.setTextColor(if (isActive) Color.WHITE else holder.itemView.context.getColor(R.color.find_gray_text))
         } else {
-            gray
+            val textColor = if (isActive) {
+                holder.itemView.context.getColor(R.color.text_primary)
+            } else {
+                holder.itemView.context.getColor(R.color.find_gray_text)
+            }
+            tvLabel.setTextColor(textColor)
         }
-        holder.b.tvLabel.setTextColor(textColor)
-        holder.b.underline.setBackgroundColor(if (isActive) gold else Color.TRANSPARENT)
+        val activeColor = holder.itemView.context.getColor(R.color.find_active_blue)
+        holder.b.underline.setBackgroundColor(if (isActive) activeColor else Color.TRANSPARENT)
 
         holder.b.root.setOnClickListener {
             onSelected(sub)

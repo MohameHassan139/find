@@ -77,10 +77,10 @@
 
                 <!-- Riyal icon + price -->
                 <ImageView
-                    android:layout_width="13dp"
-                    android:layout_height="13dp"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
                     android:src="@drawable/ic_riyal"
-                    android:layout_marginEnd="3dp"
+                    android:layout_marginEnd="4dp"
                     android:contentDescription="riyal" />
 
                 <TextView
@@ -90,7 +90,7 @@
                     android:textSize="13sp"
                     android:textStyle="bold"
                     android:fontFamily="monospace"
-                    android:textColor="@color/find_primary" />
+                    android:textColor="@color/text_primary" />
 
             </LinearLayout>
 

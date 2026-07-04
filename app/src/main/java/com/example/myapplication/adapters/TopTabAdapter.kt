@@ -11,6 +11,7 @@ import com.example.myapplication.ApiCategory
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemTopTabBinding
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.widgets.StrokeTextView
 
 class TopTabAdapter(
     private var items: List<ApiCategory>,
@@ -35,10 +36,23 @@ class TopTabAdapter(
         }
         val isActive = selectedId == position
 
-        holder.b.tvLabel.text = label
-        holder.b.tvLabel.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
-        holder.b.tvLabel.textSize = if (isActive) 17f else 15f
+        val tvLabel = holder.b.tvLabel
+        tvLabel.text = label
+        tvLabel.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
+        tvLabel.textSize = if (isActive) 17f else 15f
+        
         val activeColor = androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.find_active_blue)
+        if (tvLabel is StrokeTextView) {
+            tvLabel.isStrokeEnabled = isActive
+            tvLabel.setTextColor(if (isActive) Color.WHITE else androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.find_gray_text))
+        } else {
+            val textColor = if (isActive) {
+                androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.text_primary)
+            } else {
+                androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.find_gray_text)
+            }
+            tvLabel.setTextColor(textColor)
+        }
         holder.b.underline.setBackgroundColor(if (isActive) activeColor else Color.TRANSPARENT)
 
         holder.b.root.setOnClickListener {

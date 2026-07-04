@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/llCategoryRoot"
     android:layout_width="wrap_content"
-    android:layout_height="48dp"
+    android:layout_height="@dimen/home_tab_height"
     android:gravity="center"
     android:orientation="vertical"
     android:paddingHorizontal="14dp">
@@ -21,7 +21,7 @@
         android:id="@+id/vUnderline"
         android:layout_width="match_parent"
         android:layout_height="3dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="6dp"
         android:background="@color/find_primary"
         android:visibility="invisible" />
 
