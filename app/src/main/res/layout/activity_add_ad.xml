@@ -289,12 +289,14 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="12dp">
 
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:src="@drawable/ic_riyal"
-                    android:layout_marginEnd="6dp"
-                    android:contentDescription="riyal" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="﷼"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginEnd="6dp" />
 
                 <TextView
                     android:layout_width="wrap_content"

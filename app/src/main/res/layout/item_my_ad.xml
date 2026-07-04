@@ -84,7 +84,7 @@
                             android:layout_marginStart="4dp" />
                     </LinearLayout>
 
-                    <!-- Price — icon LEFT of number, locale-aware -->
+                    <!-- Price — symbol LEFT of number -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -92,11 +92,13 @@
                         android:gravity="center_vertical"
                         android:layoutDirection="ltr">
 
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="18dp"
-                            android:src="@drawable/ic_riyal"
-                            android:contentDescription="@string/price"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" ﷼"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary"
                             android:layout_marginEnd="4dp" />
 
                         <TextView
