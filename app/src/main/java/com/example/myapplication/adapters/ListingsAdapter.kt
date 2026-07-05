@@ -56,10 +56,13 @@ class ListingsAdapter(
         b.tvTitle.text = item.title ?: "—"
 
         b.tvPrice.text = item.price?.let {
-            val fmt = if (it % 1 == 0.0) it.toLong().toString() else it.toString()
+            val fmt = if (it % 1 == 0.0) {
+                java.text.NumberFormat.getNumberInstance(java.util.Locale.US).format(it.toLong())
+            } else {
+                java.text.NumberFormat.getNumberInstance(java.util.Locale.US).format(it)
+            }
             fmt
         } ?: "—"
-        b.tvPrice.typeface = android.graphics.Typeface.MONOSPACE
 
         b.tvLocation.text = item.regionNameAr ?: item.city ?: ""
         b.tvTime.text = formatTime(item.createdAt, holder.itemView.context)
