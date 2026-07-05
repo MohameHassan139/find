@@ -4,6 +4,8 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.MotionEvent
+import android.annotation.SuppressLint
 import android.widget.ProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -48,6 +50,7 @@ class ListingsAdapter(
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is FooterVH) return
         val item = items[position]
@@ -92,9 +95,11 @@ class ListingsAdapter(
             b.ivAvatar.setImageResource(R.drawable.ic_avatar_placeholder)
         }
 
-        // Image gallery setup
-        holder.imageUrls = item.images
-        holder.currentImageIndex = 0
+        // Image gallery setup - preserve index if re-bound
+        if (holder.imageUrls != item.images) {
+            holder.imageUrls = item.images
+            holder.currentImageIndex = 0
+        }
         
         // Show/hide navigation arrows
         if (item.images.size > 1) {
@@ -105,7 +110,7 @@ class ListingsAdapter(
             b.ivNextImage.visibility = View.GONE
         }
 
-        // Load first image
+        // Load current image
         loadImage(b, holder.imageUrls, holder.currentImageIndex)
 
         // Previous image button
@@ -125,6 +130,57 @@ class ListingsAdapter(
             if (holder.imageUrls.isNotEmpty()) {
                 holder.currentImageIndex = (holder.currentImageIndex + 1) % holder.imageUrls.size
                 loadImage(b, holder.imageUrls, holder.currentImageIndex)
+            }
+        }
+
+        // Add swipe gesture support on the main image
+        var downX = 0f
+        var downY = 0f
+        b.ivImage.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    downX = event.x
+                    downY = event.y
+                    v.parent.requestDisallowInterceptTouchEvent(true)
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    val upX = event.x
+                    val upY = event.y
+                    val diffX = upX - downX
+                    val diffY = upY - downY
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 100) {
+                        if (holder.imageUrls.isNotEmpty()) {
+                            val isRtl = LocaleHelper.isArabic(v.context)
+                            if (diffX > 0) {
+                                // Swipe right
+                                if (isRtl) {
+                                    holder.currentImageIndex = (holder.currentImageIndex + 1) % holder.imageUrls.size
+                                } else {
+                                    holder.currentImageIndex = if (holder.currentImageIndex > 0) holder.currentImageIndex - 1 else holder.imageUrls.size - 1
+                                }
+                            } else {
+                                // Swipe left
+                                if (isRtl) {
+                                    holder.currentImageIndex = if (holder.currentImageIndex > 0) holder.currentImageIndex - 1 else holder.imageUrls.size - 1
+                                } else {
+                                    holder.currentImageIndex = (holder.currentImageIndex + 1) % holder.imageUrls.size
+                                }
+                            }
+                            loadImage(b, holder.imageUrls, holder.currentImageIndex)
+                        }
+                    } else if (Math.abs(diffX) < 10 && Math.abs(diffY) < 10) {
+                        v.performClick()
+                        onClick(item)
+                    }
+                    v.parent.requestDisallowInterceptTouchEvent(false)
+                    true
+                }
+                MotionEvent.ACTION_CANCEL -> {
+                    v.parent.requestDisallowInterceptTouchEvent(false)
+                    false
+                }
+                else -> false
             }
         }
 

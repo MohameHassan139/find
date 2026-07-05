@@ -3,6 +3,8 @@
 <resources>
     <color name="surface_primary">#FFFFFFFF</color>
     <color name="surface_secondary">#FFF8F8F8</color>
+    <color name="ad_details_header_bg">#EEEEEE</color>
+    <color name="ad_details_chevron_tint">#FF000000</color>
     <color name="surface_tabs">#FFFFF3D6</color>
     <color name="surface_field">#FFFFFFFF</color>
     <color name="surface_menu_item">#FFFFFFFF</color>

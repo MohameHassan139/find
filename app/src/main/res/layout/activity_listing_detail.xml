@@ -189,16 +189,25 @@
             android:orientation="vertical"
             android:paddingBottom="24dp">
 
+            <!-- Top shadow for CardView -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginHorizontal="6dp"
+                android:layout_marginTop="13dp"
+                android:background="@drawable/bg_top_shadow" />
+
             <!-- Main card -->
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="6dp"
+                android:layout_marginTop="0dp"
                 android:clipToOutline="true"
-                app:cardCornerRadius="10dp"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Card.TopRounded"
                 app:cardElevation="3dp"
-                app:cardBackgroundColor="@color/surface_primary">
+                app:cardBackgroundColor="@color/surface_primary"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -206,157 +215,139 @@
                     android:orientation="vertical">
 
                     <!-- Shaded Top Section -->
-                    <LinearLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/clShadedHeader"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:background="@color/surface_secondary">
+                        android:layout_height="140dp"
+                        android:background="@color/ad_details_header_bg">
 
                         <!-- Title -->
                         <TextView
                             android:id="@+id/tvTitle"
-                            android:layout_width="match_parent"
-                            android:layout_height="69dp"
-                            android:padding="16dp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginTop="16dp"
                             android:textAlignment="viewStart"
                             android:textColor="@color/text_primary"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textSize="19sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:textStyle="bold"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
 
-                        <!-- Meta Row: Seller Info (Right) | Price & Time (Left) -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <!-- Avatar (Seller logo, size 24x24, top 82dp, left 186.5dp) -->
+                        <ImageView
+                            android:id="@+id/ivAvatar"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_avatar_placeholder"
+                            android:scaleType="centerCrop"
+                            android:background="@drawable/bg_menu_circle"
+                            android:padding="1dp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:layout_marginTop="82dp"
+                            android:layout_marginStart="186.5dp" />
+
+                        <!-- Seller Name (To the end/left of Avatar in RTL, 10sp, Regular) -->
+                        <TextView
+                            android:id="@+id/tvSellerName"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:paddingHorizontal="16dp"
-                            android:paddingTop="4dp"
-                            android:paddingBottom="12dp"
-                            android:layoutDirection="locale">
+                            android:layout_marginHorizontal="8dp"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textColor="@color/text_primary"
+                            android:textSize="10sp"
+                            android:textAlignment="viewStart"
+                            app:layout_constraintTop_toTopOf="@id/ivAvatar"
+                            app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
+                            app:layout_constraintStart_toEndOf="@id/ivAvatar"
+                            app:layout_constraintEnd_toStartOf="@id/tvRiyalSymbol" />
 
-                            <!-- Seller Info Group (Right in RTL, Left in LTR) -->
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_weight="1"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical|center">
+                        <!-- Price (Left side in RTL, 10sp, Regular) -->
+                        <TextView
+                            android:id="@+id/tvPrice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="10sp"
+                            android:textColor="@color/text_primary"
+                            app:layout_constraintTop_toTopOf="@id/ivAvatar"
+                            app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginEnd="16dp" />
 
-                                <!-- Avatar -->
-                                <ImageView
-                                    android:id="@+id/ivAvatar"
-                                    android:layout_width="36dp"
-                                    android:layout_height="36dp"
-                                    android:src="@drawable/ic_avatar_placeholder"
-                                    android:scaleType="centerCrop"
-                                    android:background="@drawable/bg_menu_circle"
-                                    android:padding="2dp" />
+                        <!-- Riyal Symbol (To the start/right of Price in RTL, 10sp, Regular) -->
+                        <TextView
+                            android:id="@+id/tvRiyalSymbol"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" ﷼"
+                            android:textSize="10sp"
+                            android:textColor="@color/text_primary"
+                            app:layout_constraintTop_toTopOf="@id/tvPrice"
+                            app:layout_constraintBottom_toBottomOf="@id/tvPrice"
+                            app:layout_constraintEnd_toStartOf="@id/tvPrice"
+                            android:layout_marginEnd="2dp" />
 
-                                <!-- Text: Name on top, Location below -->
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="start"
-                                    android:layout_marginStart="8dp"
-                                    android:layout_marginEnd="8dp">
+                        <!-- Location Icon (Centered under Avatar, top 118dp) -->
+                        <ImageView
+                            android:id="@+id/ivLocationIcon"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_location"
+                            app:tint="@color/find_gray_text"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="@id/ivAvatar"
+                            app:layout_constraintEnd_toEndOf="@id/ivAvatar"
+                            android:layout_marginTop="118dp" />
 
-                                    <TextView
-                                        android:id="@+id/tvSellerName"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textSize="14sp"
-                                        android:textStyle="bold"
-                                        android:textColor="@color/text_primary" />
+                        <!-- Location Text (To the end/left of Pin Icon in RTL, 10sp, Regular) -->
+                        <TextView
+                            android:id="@+id/tvLocation"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="8dp"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textColor="@color/find_gray_text"
+                            android:textSize="10sp"
+                            android:textAlignment="viewStart"
+                            app:layout_constraintTop_toTopOf="@id/ivLocationIcon"
+                            app:layout_constraintBottom_toBottomOf="@id/ivLocationIcon"
+                            app:layout_constraintStart_toEndOf="@id/ivLocationIcon"
+                            app:layout_constraintEnd_toStartOf="@id/ivTimeIcon" />
 
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:orientation="horizontal"
-                                        android:gravity="center_vertical"
-                                        android:layout_marginTop="2dp">
+                        <!-- Time Text (Left side in RTL, 10sp, Regular) -->
+                        <TextView
+                            android:id="@+id/tvTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="10sp"
+                            android:textColor="@color/find_gray_text"
+                            app:layout_constraintTop_toTopOf="@id/ivLocationIcon"
+                            app:layout_constraintBottom_toBottomOf="@id/ivLocationIcon"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginEnd="16dp" />
 
-                                        <!-- Pin icon -->
-                                        <ImageView
-                                            android:layout_width="14dp"
-                                            android:layout_height="14dp"
-                                            android:src="@drawable/ic_location"
-                                            app:tint="@color/find_gray_text"
-                                            android:layout_marginEnd="4dp"
-                                            android:importantForAccessibility="no" />
+                        <!-- Clock Icon (To the start/right of Time in RTL) -->
+                        <ImageView
+                            android:id="@+id/ivTimeIcon"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_time"
+                            app:tint="@color/find_gray_text"
+                            app:layout_constraintTop_toTopOf="@id/tvTime"
+                            app:layout_constraintBottom_toBottomOf="@id/tvTime"
+                            app:layout_constraintEnd_toStartOf="@id/tvTime"
+                            android:layout_marginEnd="4dp" />
 
-                                        <TextView
-                                            android:id="@+id/tvLocation"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:textSize="12sp"
-                                            android:textColor="@color/find_gray_text" />
-                                    </LinearLayout>
-                                </LinearLayout>
-                            </LinearLayout>
-
-                            <!-- Price & Time Group (Left in RTL, Right in LTR) -->
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_weight="1"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:gravity="end">
-
-                                <!-- Price -->
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="center_vertical"
-                                    android:layout_gravity="end">
-
-                                    <TextView
-                                        android:id="@+id/tvRiyalSymbol"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text=" ﷼"
-                                        android:textSize="16sp"
-                                        android:textStyle="bold"
-                                        android:textColor="@color/text_primary"
-                                        android:layout_marginEnd="3dp" />
-
-                                    <TextView
-                                        android:id="@+id/tvPrice"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textSize="16sp"
-                                        android:textStyle="bold"
-                                        android:textColor="@color/text_primary" />
-                                </LinearLayout>
-
-                                <!-- Time -->
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="center_vertical"
-                                    android:layout_gravity="end"
-                                    android:layout_marginTop="4dp">
-
-                                    <ImageView
-                                        android:layout_width="14dp"
-                                        android:layout_height="14dp"
-                                        android:src="@drawable/ic_time"
-                                        android:layout_marginEnd="4dp"
-                                        app:tint="@color/find_gray_text"
-                                        android:importantForAccessibility="no" />
-
-                                    <TextView
-                                        android:id="@+id/tvTime"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/find_gray_text" />
-                                </LinearLayout>
-                            </LinearLayout>
-                        </LinearLayout>
-                    </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <View android:layout_width="match_parent" android:layout_height="1dp"
                         android:background="@color/divider" />
@@ -462,36 +453,45 @@
                         <View android:layout_width="1dp" android:layout_height="match_parent"
                             android:background="@color/divider" />
 
-                        <!-- Chevrons container (LEFT side in RTL) -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
+                        <!-- Chevrons container (LEFT side in RTL, width 120dp, forced LTR) -->
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="120dp"
                             android:layout_height="match_parent"
-                            android:orientation="horizontal"
-                            android:gravity="center"
-                            android:paddingHorizontal="16dp">
-
-                            <!-- Next button (right chevron) -->
-                            <ImageButton
-                                android:id="@+id/btnNext"
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
-                                android:background="?attr/selectableItemBackgroundBorderless"
-                                android:src="@drawable/ic_chevron_next"
-                                app:tint="@color/text_primary"
-                                android:padding="6dp"
-                                android:contentDescription="Next" />
+                            android:background="@color/surface_primary"
+                            android:layoutDirection="ltr">
 
                             <!-- Prev button (left chevron) -->
                             <ImageButton
                                 android:id="@+id/btnPrev"
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
+                                android:layout_width="20dp"
+                                android:layout_height="35dp"
                                 android:background="?attr/selectableItemBackgroundBorderless"
-                                android:src="@drawable/ic_chevron_prev"
-                                app:tint="@color/text_primary"
-                                android:padding="6dp"
+                                android:src="@drawable/ic_figma_chevron_left"
+                                app:tint="@color/ad_details_chevron_tint"
+                                android:scaleType="fitCenter"
+                                android:padding="0dp"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                android:layout_marginStart="9dp"
                                 android:contentDescription="Previous" />
-                        </LinearLayout>
+
+                            <!-- Next button (right chevron) -->
+                            <ImageButton
+                                android:id="@+id/btnNext"
+                                android:layout_width="20dp"
+                                android:layout_height="35dp"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:src="@drawable/ic_figma_chevron_right"
+                                app:tint="@color/ad_details_chevron_tint"
+                                android:scaleType="fitCenter"
+                                android:padding="0dp"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                android:layout_marginStart="72dp"
+                                android:contentDescription="Next" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <!-- Hidden favorite view to keep compatibility with Kotlin logic -->
                         <ImageView
@@ -504,7 +504,7 @@
                     </LinearLayout>
 
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Description -->
             <TextView
@@ -524,7 +524,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                android:paddingHorizontal="16dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

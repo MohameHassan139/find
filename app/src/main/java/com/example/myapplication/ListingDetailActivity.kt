@@ -187,11 +187,13 @@ class ListingDetailActivity : BaseActivity() {
 
         binding.llImages.removeAllViews()
         val gap = (8 * resources.displayMetrics.density).toInt()
+        val sidePadding = (32 * resources.displayMetrics.density).toInt()
+        val imageSize = resources.displayMetrics.widthPixels - sidePadding
         l.images.forEach { url ->
             val iv = ImageView(this)
             val lp = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                resources.displayMetrics.widthPixels
+                imageSize
             )
             lp.bottomMargin = gap
             iv.layoutParams = lp

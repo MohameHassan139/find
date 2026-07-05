@@ -27,7 +27,7 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:paddingStart="26dp"
-            android:paddingEnd="6dp"
+            android:paddingEnd="12dp"
             android:paddingTop="14dp"
             android:paddingBottom="11dp">
 
@@ -201,12 +201,12 @@
             <!-- Left arrow -->
             <ImageView
                 android:id="@+id/ivPrevImage"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
                 android:layout_gravity="bottom|start"
                 android:layout_marginStart="3dp"
                 android:layout_marginBottom="2dp"
-                android:padding="1dp"
+                android:padding="0dp"
                 android:src="@drawable/ic_card_chevron_left"
                 android:clickable="true"
                 android:focusable="true"
@@ -216,12 +216,12 @@
             <!-- Right arrow -->
             <ImageView
                 android:id="@+id/ivNextImage"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
                 android:layout_gravity="bottom|end"
                 android:layout_marginEnd="3dp"
                 android:layout_marginBottom="2dp"
-                android:padding="1dp"
+                android:padding="0dp"
                 android:src="@drawable/ic_card_chevron_right"
                 android:clickable="true"
                 android:focusable="true"
