@@ -16,7 +16,14 @@
     <color name="text_primary">#FFF0F0F0</color>
     <color name="text_secondary">#FFAAAAAA</color>
     <color name="text_tertiary">#FF777777</color>
-    <color name="bubble_received">#FF2A2A2A</color>
+    <color name="bubble_sent">#FF2C2C2E</color>
+    <color name="bubble_received">#FF3A3A3C</color>
+    <color name="bubble_text_sent">#FFFFFFFF</color>
+    <color name="bubble_text_received">#FFFFFFFF</color>
+    <color name="bubble_time_sent">#FFAAAAAA</color>
+    <color name="bubble_time_received">#FFAAAAAA</color>
+    <color name="bubble_stroke_sent">#FF3A3A3C</color>
+    <color name="bubble_stroke_received">#FF48484A</color>
     <color name="shimmer_base">#FF2E2E2E</color>
     <color name="shimmer_highlight">#FF3A3A3A</color>
     <color name="chip_selected_bg">#FF3A2800</color>

@@ -5,81 +5,92 @@
     android:paddingHorizontal="12dp"
     android:paddingVertical="3dp">
 
-    <!-- MY message — sticks to the LEFT -->
+    <!-- MY message (Sent) — sticks to LEFT in AR (RTL) and RIGHT in EN (LTR) -->
     <LinearLayout
         android:id="@+id/layoutSent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:orientation="vertical"
+        android:layout_gravity="end"
+        android:background="@drawable/bg_bubble_sent"
+        android:orientation="horizontal"
+        android:gravity="bottom"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="9dp"
+        android:layoutDirection="locale"
         android:visibility="gone">
 
+        <!-- Message text -->
         <TextView
             android:id="@+id/tvMessageSent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_bubble_sent"
-            android:paddingHorizontal="14dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="8dp"
             android:textSize="14sp"
-            android:textColor="@color/text_primary"
-            android:maxWidth="280dp"
-            android:layoutDirection="locale" />
+            android:textColor="@color/bubble_text_sent"
+            android:lineSpacingExtra="3dp"
+            android:maxWidth="220dp"
+            android:layout_marginEnd="8dp"
+            android:textAlignment="viewStart" />
 
+        <!-- Time + Checkmarks -->
         <LinearLayout
+            android:id="@+id/layoutTimeSent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginTop="2dp">
-
-            <ImageView
-                android:id="@+id/ivReadStatus"
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:src="@drawable/ic_double_check"
-                android:layout_marginEnd="4dp" />
+            android:layoutDirection="locale">
 
             <TextView
                 android:id="@+id/tvTimeSent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"
-                android:textColor="@color/text_tertiary" />
+                android:textSize="11sp"
+                android:textColor="@color/bubble_time_sent"
+                android:layout_marginEnd="3dp" />
+
+            <ImageView
+                android:id="@+id/ivReadStatus"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_double_check" />
         </LinearLayout>
+
     </LinearLayout>
 
-    <!-- OTHER message — sticks to the RIGHT -->
+    <!-- OTHER message (Received) — sticks to RIGHT in AR (RTL) and LEFT in EN (LTR) -->
     <LinearLayout
         android:id="@+id/layoutReceived"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:orientation="vertical"
+        android:layout_gravity="start"
+        android:background="@drawable/bg_bubble_received"
+        android:orientation="horizontal"
+        android:gravity="bottom"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="9dp"
+        android:layoutDirection="locale"
         android:visibility="gone">
 
+        <!-- Message text -->
         <TextView
             android:id="@+id/tvMessageReceived"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_bubble_received"
-            android:paddingHorizontal="14dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="8dp"
             android:textSize="14sp"
-            android:textColor="@color/text_primary"
-            android:maxWidth="260dp" />
+            android:textColor="@color/bubble_text_received"
+            android:lineSpacingExtra="3dp"
+            android:maxWidth="220dp"
+            android:layout_marginEnd="8dp"
+            android:textAlignment="viewStart" />
 
+        <!-- Time -->
         <TextView
             android:id="@+id/tvTimeReceived"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="2dp"
-            android:textSize="10sp"
-            android:textColor="@color/text_tertiary" />
+            android:textSize="11sp"
+            android:textColor="@color/bubble_time_received" />
+
     </LinearLayout>
 
 </FrameLayout>
