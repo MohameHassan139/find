@@ -41,6 +41,20 @@
     <color name="send_button_bg">#C8A96E</color>
     <color name="input_bg">#F5F5F5</color>
 
+    <!-- Chats screen design colors -->
+    <color name="chats_header_bg">#FFF4CC</color>
+    <color name="chats_header_border">#40000000</color>
+    <color name="chats_header_text">#000000</color>
+    <color name="chats_chip_bg">#FFF4CC</color>
+    <color name="chats_chip_text">#000000</color>
+    <color name="chats_chip_selected_border">#007AFF</color>
+    <color name="chats_chip_unselected_border">#40000000</color>
+    <color name="chats_item_bg">#FFFFFF</color>
+    <color name="chats_item_title">#000000</color>
+    <color name="chats_item_subtitle">#000000</color>
+    <color name="chats_item_time">#000000</color>
+    <color name="chats_item_divider">#000000</color>
+
     <!-- Surface colors (defined in colors_surface.xml) -->
     <color name="notif_unread_bg">#FFF9E6</color>
     <color name="notif_read_bg">#FFFFFFFF</color>

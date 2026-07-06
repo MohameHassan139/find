@@ -39,33 +39,51 @@ class ConversationsAdapter(
             val otherName = if (isBuyer) conv.sellerName else conv.buyerName
             val otherAvatar = if (isBuyer) conv.sellerAvatar else conv.buyerAvatar
             val unreadCount = if (isBuyer) conv.buyerUnread else conv.sellerUnread
+            val otherUnread = if (isBuyer) conv.sellerUnread else conv.buyerUnread
 
             b.tvName.text = otherName ?: "مجهول"
             b.tvLastMessage.text = conv.lastMessage ?: ""
-            b.tvTime.text = DateUtils.formatConversationTime(conv.lastMessageAt)
+            val timeStr = DateUtils.formatConversationTime(conv.lastMessageAt)
+            val isSentByMe = if (!conv.lastSenderId.isNullOrEmpty()) {
+                conv.lastSenderId == myId
+            } else {
+                otherUnread > 0
+            }
 
-            val otherUnread = if (isBuyer) conv.sellerUnread else conv.buyerUnread
             if (unreadCount > 0) {
+                b.tvTime.visibility = View.GONE
+                b.tvUnreadDay.visibility = View.VISIBLE
+                b.tvUnreadDay.text = if (timeStr.isNotEmpty()) timeStr else "الأحد"
                 b.tvUnreadBadge.text = unreadCount.toString()
                 b.tvUnreadBadge.visibility = View.VISIBLE
-                b.tvUnreadDay.visibility = View.VISIBLE
                 b.ivCheck.visibility = View.GONE
             } else {
-                b.tvUnreadBadge.visibility = View.GONE
+                b.tvTime.visibility = View.VISIBLE
+                b.tvTime.text = if (timeStr.isNotEmpty()) timeStr else "9:00 م"
+                b.tvTime.setTextColor(
+                    androidx.core.content.ContextCompat.getColor(b.root.context, R.color.chats_item_time)
+                )
                 b.tvUnreadDay.visibility = View.GONE
-                b.ivCheck.visibility = View.VISIBLE
-                val checkColor = if (otherUnread > 0) {
-                    androidx.core.content.ContextCompat.getColor(b.root.context, R.color.text_secondary)
+                b.tvUnreadBadge.visibility = View.GONE
+
+                if (isSentByMe) {
+                    b.ivCheck.visibility = View.VISIBLE
+                    val checkColor = if (otherUnread > 0) {
+                        android.graphics.Color.parseColor("#AAAAAA")
+                    } else {
+                        android.graphics.Color.parseColor("#007AFF")
+                    }
+                    b.ivCheck.setColorFilter(checkColor, android.graphics.PorterDuff.Mode.SRC_IN)
                 } else {
-                    androidx.core.content.ContextCompat.getColor(b.root.context, R.color.find_active_blue)
+                    b.ivCheck.visibility = View.GONE
                 }
-                b.ivCheck.setColorFilter(checkColor, android.graphics.PorterDuff.Mode.SRC_IN)
             }
 
             if (!otherAvatar.isNullOrEmpty()) {
                 Glide.with(b.ivAvatar.context)
                     .load(otherAvatar)
                     .placeholder(R.drawable.ic_avatar_placeholder)
+                    .error(R.drawable.ic_avatar_placeholder)
                     .circleCrop()
                     .into(b.ivAvatar)
             } else {

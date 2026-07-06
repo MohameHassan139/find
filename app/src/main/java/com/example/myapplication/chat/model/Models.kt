@@ -24,11 +24,13 @@ data class Conversation(
     @SerializedName("buyer_avatar") val buyerAvatar: String?,
     @SerializedName("last_message") val lastMessage: String?,
     @SerializedName("last_message_at") val lastMessageAt: String?,
+    @SerializedName("last_sender_id") val lastSenderId: String? = null,
     @SerializedName("buyer_unread") val buyerUnread: Int = 0,
     @SerializedName("seller_unread") val sellerUnread: Int = 0
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
+        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -55,6 +57,7 @@ data class Conversation(
         parcel.writeString(buyerAvatar)
         parcel.writeString(lastMessage)
         parcel.writeString(lastMessageAt)
+        parcel.writeString(lastSenderId)
         parcel.writeInt(buyerUnread)
         parcel.writeInt(sellerUnread)
     }

@@ -39,6 +39,7 @@
     <string name="nav_chats">Chats</string>
     <string name="favorites_tab">Favorites</string>
     <string name="str___________">Unread</string>
+    <string name="filter_unread">Unread</string>
     <string name="filter_all">All</string>
     <string name="str________________">لا توجد إعلانات</string>
     <string name="btn_messages">Messages</string>

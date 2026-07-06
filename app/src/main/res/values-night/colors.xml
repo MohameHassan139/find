@@ -33,6 +33,20 @@
     <color name="search_bg">#FF2A2A2A</color>
     <color name="input_bg">#FF2A2A2A</color>
 
+    <!-- Chats screen design colors (Dark Mode) -->
+    <color name="chats_header_bg">#2D2408</color>
+    <color name="chats_header_border">#80C8A96E</color>
+    <color name="chats_header_text">#FFFFFF</color>
+    <color name="chats_chip_bg">#2D2408</color>
+    <color name="chats_chip_text">#FFFFFF</color>
+    <color name="chats_chip_selected_border">#007AFF</color>
+    <color name="chats_chip_unselected_border">#555555</color>
+    <color name="chats_item_bg">#1E1E1E</color>
+    <color name="chats_item_title">#FFFFFF</color>
+    <color name="chats_item_subtitle">#CCCCCC</color>
+    <color name="chats_item_time">#CCCCCC</color>
+    <color name="chats_item_divider">#555555</color>
+
     <!-- Surface colors (used in place of hardcoded whites) -->
     <color name="surface_primary">#FF252525</color>
     <color name="surface_secondary">#FF252525</color>

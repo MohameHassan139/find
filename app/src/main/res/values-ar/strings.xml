@@ -39,6 +39,7 @@
     <string name="nav_chats">المحادثات</string>
     <string name="favorites_tab">المفضلة</string>
     <string name="str___________">غير مقروءة</string>
+    <string name="filter_unread">غير مقروءة</string>
     <string name="filter_all">الكل</string>
     <string name="str________________">لا توجد إعلانات</string>
     <string name="btn_messages">رسائل</string>

@@ -88,11 +88,10 @@ class ConversationsActivity : BaseActivity() {
     private fun setupChip(chip: android.widget.TextView, isSelected: Boolean) {
         if (isSelected) {
             chip.setBackgroundResource(R.drawable.bg_chip_selected)
-            chip.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.text_primary))
         } else {
             chip.setBackgroundResource(R.drawable.bg_chip_unselected)
-            chip.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.text_secondary))
         }
+        chip.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.chats_chip_text))
     }
 
     private fun setupObservers() {
