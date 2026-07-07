@@ -86,4 +86,26 @@ object LocaleHelper {
 
         return context.createConfigurationContext(config)
     }
+
+    /**
+     * Helper to ensure a back arrow view's layout direction follows current locale:
+     * - Arabic (ar): RTL (points RIGHT →)
+     * - English (en): LTR (points LEFT ←)
+     */
+    fun setupBackArrow(view: android.view.View) {
+        view.layoutDirection = android.view.View.LAYOUT_DIRECTION_LOCALE
+    }
+
+    /**
+     * Apply the custom layout direction to the appbar:
+     * - Arabic (ar): LTR (buttons on left, logo on right, back arrow points left)
+     * - English (en): RTL (buttons on right, logo on left, back arrow points right)
+     */
+    fun applyAppBarDirection(appBarView: android.view.View) {
+        if (isArabic(appBarView.context)) {
+            appBarView.layoutDirection = android.view.View.LAYOUT_DIRECTION_LTR
+        } else {
+            appBarView.layoutDirection = android.view.View.LAYOUT_DIRECTION_RTL
+        }
+    }
 }

@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +15,7 @@ import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.chat.model.Message
 import com.example.myapplication.chat.utils.DateUtils
 
-class MessagesAdapter(context: Context) :
+class MessagesAdapter(private val context: Context) :
     ListAdapter<Message, MessagesAdapter.VH>(DIFF) {
 
     private val myUserId = TokenManager.getUserId(context)
@@ -32,6 +32,11 @@ class MessagesAdapter(context: Context) :
         return myUserId == msg.senderId
     }
 
+    private fun isRtl(): Boolean {
+        val config = context.resources.configuration
+        return config.layoutDirection == View.LAYOUT_DIRECTION_RTL
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = VH(
         LayoutInflater.from(parent.context).inflate(R.layout.item_message, parent, false)
     )
@@ -39,8 +44,8 @@ class MessagesAdapter(context: Context) :
     override fun onBindViewHolder(holder: VH, position: Int) = holder.bind(getItem(position))
 
     inner class VH(view: View) : RecyclerView.ViewHolder(view) {
-        private val layoutSent: LinearLayout = view.findViewById(R.id.layoutSent)
-        private val layoutReceived: LinearLayout = view.findViewById(R.id.layoutReceived)
+        private val layoutSent: View = view.findViewById(R.id.layoutSent)
+        private val layoutReceived: View = view.findViewById(R.id.layoutReceived)
         private val tvSent: TextView = view.findViewById(R.id.tvMessageSent)
         private val tvReceived: TextView = view.findViewById(R.id.tvMessageReceived)
         private val tvTimeSent: TextView = view.findViewById(R.id.tvTimeSent)
@@ -48,6 +53,14 @@ class MessagesAdapter(context: Context) :
         private val ivRead: ImageView = view.findViewById(R.id.ivReadStatus)
 
         fun bind(msg: Message) {
+            val rtl = isRtl()
+            val density = context.resources.displayMetrics.density
+
+            val fillColorSent = ContextCompat.getColor(context, R.color.bubble_sent)
+            val strokeColorSent = ContextCompat.getColor(context, R.color.bubble_stroke_sent)
+            val fillColorReceived = ContextCompat.getColor(context, R.color.bubble_received)
+            val strokeColorReceived = ContextCompat.getColor(context, R.color.bubble_stroke_received)
+
             if (isMine(msg)) {
                 layoutSent.visibility = View.VISIBLE
                 layoutReceived.visibility = View.GONE
@@ -56,11 +69,38 @@ class MessagesAdapter(context: Context) :
                 ivRead.setImageResource(
                     if (msg.isRead) R.drawable.ic_double_check else R.drawable.ic_single_check
                 )
+
+                // Sent message bubble tail: bottom-left in RTL (AR), bottom-right in LTR (EN)
+                val tailOnLeft = rtl
+                val drawable = BubbleDrawable(
+                    fillColor = fillColorSent,
+                    strokeColor = strokeColorSent,
+                    strokeWidth = 1f * density,
+                    cornerRadius = 16f * density,
+                    tailWidth = 10f * density,
+                    tailHeight = 10f * density,
+                    isTailOnLeft = tailOnLeft
+                )
+                layoutSent.background = drawable
+
             } else {
                 layoutSent.visibility = View.GONE
                 layoutReceived.visibility = View.VISIBLE
                 tvReceived.text = msg.text
                 tvTimeReceived.text = DateUtils.formatMessageTime(msg.createdAt)
+
+                // Received message bubble tail: bottom-right in RTL (AR), bottom-left in LTR (EN)
+                val tailOnLeft = !rtl
+                val drawable = BubbleDrawable(
+                    fillColor = fillColorReceived,
+                    strokeColor = strokeColorReceived,
+                    strokeWidth = 1f * density,
+                    cornerRadius = 16f * density,
+                    tailWidth = 10f * density,
+                    tailHeight = 10f * density,
+                    isTailOnLeft = tailOnLeft
+                )
+                layoutReceived.background = drawable
             }
         }
     }

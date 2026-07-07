@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myapplication.AddAdActivity
+import com.example.myapplication.ListingDetailActivity
 import com.example.myapplication.R
 import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.auth.AuthRetrofitClient
@@ -77,37 +78,38 @@ class MyAdsActivity : BaseActivity() {
 
     private fun setFilter(type: String) {
         currentFilter = type
-        val activeBlue = androidx.core.content.ContextCompat.getColor(this, R.color.find_active_blue)
-        val strokeGrey = androidx.core.content.ContextCompat.getColor(this, R.color.tab_inactive_border)
-        val textPrimary = androidx.core.content.ContextCompat.getColor(this, R.color.text_primary)
-        val textSecondary = androidx.core.content.ContextCompat.getColor(this, R.color.text_secondary)
-        val surfacePrimary = androidx.core.content.ContextCompat.getColor(this, R.color.surface_primary)
+        val activeBlue = androidx.core.content.ContextCompat.getColor(this, R.color.chats_chip_selected_border)
+        val textPrimary = androidx.core.content.ContextCompat.getColor(this, R.color.black)
+        val textInactive = androidx.core.content.ContextCompat.getColor(this, R.color.tab_inactive_text)
+        val bgGrey = androidx.core.content.ContextCompat.getColor(this, R.color.bg_switcher)
+        val density = resources.displayMetrics.density
+        val activeStrokePx = (1 * density).toInt()
 
         if (type == "offer") {
             binding.btnFilterOffer.apply {
-                strokeWidth = 9
+                strokeWidth = activeStrokePx
                 strokeColor = android.content.res.ColorStateList.valueOf(activeBlue)
                 setTextColor(textPrimary)
-                backgroundTintList = android.content.res.ColorStateList.valueOf(surfacePrimary)
+                backgroundTintList = android.content.res.ColorStateList.valueOf(bgGrey)
             }
             binding.btnFilterRequest.apply {
-                strokeWidth = 3
-                strokeColor = android.content.res.ColorStateList.valueOf(strokeGrey)
-                setTextColor(textSecondary)
-                backgroundTintList = android.content.res.ColorStateList.valueOf(surfacePrimary)
+                strokeWidth = 0
+                strokeColor = null
+                setTextColor(textInactive)
+                backgroundTintList = android.content.res.ColorStateList.valueOf(bgGrey)
             }
         } else {
             binding.btnFilterRequest.apply {
-                strokeWidth = 9
+                strokeWidth = activeStrokePx
                 strokeColor = android.content.res.ColorStateList.valueOf(activeBlue)
                 setTextColor(textPrimary)
-                backgroundTintList = android.content.res.ColorStateList.valueOf(surfacePrimary)
+                backgroundTintList = android.content.res.ColorStateList.valueOf(bgGrey)
             }
             binding.btnFilterOffer.apply {
-                strokeWidth = 3
-                strokeColor = android.content.res.ColorStateList.valueOf(strokeGrey)
-                setTextColor(textSecondary)
-                backgroundTintList = android.content.res.ColorStateList.valueOf(surfacePrimary)
+                strokeWidth = 0
+                strokeColor = null
+                setTextColor(textInactive)
+                backgroundTintList = android.content.res.ColorStateList.valueOf(bgGrey)
             }
         }
         applyFilter()
@@ -285,6 +287,14 @@ class MyAdsAdapter(
         holder.switchActive.isChecked = isCurrentlyActive
         
         val context = holder.itemView.context
+        
+        holder.itemView.setOnClickListener {
+            val intent = Intent(context, ListingDetailActivity::class.java).apply {
+                putExtra(ListingDetailActivity.EXTRA_LISTING_ID, item.id)
+            }
+            context.startActivity(intent)
+        }
+        
         val greenColor = androidx.core.content.ContextCompat.getColor(context, R.color.toggle_active_green)
         val greyColor = androidx.core.content.ContextCompat.getColor(context, R.color.switch_inactive_track)
 

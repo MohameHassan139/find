@@ -81,4 +81,10 @@
     <color name="toggle_active_green">#FF4CAF50</color>
     <color name="switch_inactive_track">#FF3E3E3E</color>
     <color name="tab_inactive_border">#FF888888</color>
+
+    <!-- Switcher and divider colors (added for dark mode support) -->
+    <color name="tab_inactive_text">#66FFFFFF</color>
+    <color name="bg_switcher">#FF2A2A2A</color>
+    <color name="switcher_divider">#D9FFFFFF</color>
+    <color name="card_divider">#FF48484A</color>
 </resources>

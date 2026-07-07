@@ -15,6 +15,30 @@ open class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
     }
 
+    override fun setContentView(layoutResID: Int) {
+        super.setContentView(layoutResID)
+        setupAppBarDirection()
+    }
+
+    override fun setContentView(view: View?) {
+        super.setContentView(view)
+        setupAppBarDirection()
+    }
+
+    override fun setContentView(view: View?, params: ViewGroup.LayoutParams?) {
+        super.setContentView(view, params)
+        setupAppBarDirection()
+    }
+
+    private fun setupAppBarDirection() {
+        findViewById<View>(R.id.llAppBar)?.let {
+            com.example.myapplication.utils.LocaleHelper.applyAppBarDirection(it)
+        }
+        findViewById<View>(R.id.appBarBack)?.let {
+            com.example.myapplication.utils.LocaleHelper.applyAppBarDirection(it)
+        }
+    }
+
     /**
      * Call after setContentView().
      * Pads the root view top by status bar height.

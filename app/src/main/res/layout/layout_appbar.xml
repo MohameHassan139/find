@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:background="@color/surface_primary"
     android:elevation="4dp"
-    android:layoutDirection="ltr">
+    android:layoutDirection="locale">
 
     <!-- Status bar spacer -->
     <View

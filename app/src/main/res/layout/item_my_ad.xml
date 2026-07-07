@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="14dp"
     app:cardCornerRadius="14dp"
-    app:cardElevation="6dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/black"
+    app:strokeWidth="1dp"
     app:cardBackgroundColor="@color/surface_primary">
 
     <LinearLayout
@@ -14,14 +16,14 @@
         android:orientation="vertical"
         android:layoutDirection="locale">
 
-        <!-- Top: image + info — image on RIGHT in LTR, LEFT in RTL -->
+        <!-- Top Content Section (Row, 130.dp height) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:orientation="horizontal"
             android:layoutDirection="locale">
 
-            <!-- Info side — shown first in XML = LEFT in LTR, RIGHT in RTL -->
+            <!-- Right Details Area (Column) — shown first in XML = LEFT in LTR, RIGHT in RTL -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -48,7 +50,7 @@
 
                 <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
 
-                <!-- Price and Seller Name row -->
+                <!-- Price and Username baseline row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -78,13 +80,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="11sp"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="@color/black"
                             android:maxLines="1"
                             android:ellipsize="end"
-                            android:layout_marginStart="4dp" />
+                            android:layout_marginStart="8dp" />
                     </LinearLayout>
 
-                    <!-- Price — symbol LEFT of number -->
+                    <!-- Price — number on Left, symbol on Right -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -93,21 +95,19 @@
                         android:layoutDirection="ltr">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=" ﷼"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/text_primary"
-                            android:layout_marginEnd="4dp" />
-
-                        <TextView
                             android:id="@+id/tvPrice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/text_primary" />
+                            android:textSize="10sp"
+                            android:textColor="@color/black" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" ﷼"
+                            android:textSize="10sp"
+                            android:textColor="@color/black"
+                            android:layout_marginStart="4dp" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -119,7 +119,7 @@
                     android:gravity="center_vertical"
                     android:layoutDirection="locale">
 
-                    <!-- Time -->
+                    <!-- Location -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -129,21 +129,24 @@
                         android:layoutDirection="locale">
 
                         <ImageView
-                            android:layout_width="12dp"
-                            android:layout_height="12dp"
-                            android:src="@drawable/ic_time"
-                            android:contentDescription="@string/time" />
+                            android:layout_width="11dp"
+                            android:layout_height="13dp"
+                            android:src="@drawable/ic_location"
+                            app:tint="@color/black"
+                            android:contentDescription="@string/location" />
 
                         <TextView
-                            android:id="@+id/tvTime"
+                            android:id="@+id/tvLocation"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="12sp"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="@color/black"
+                            android:maxLines="1"
+                            android:ellipsize="end"
                             android:layout_marginStart="3dp" />
                     </LinearLayout>
 
-                    <!-- Location -->
+                    <!-- Time -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -152,59 +155,60 @@
                         android:layoutDirection="locale">
 
                         <ImageView
-                            android:layout_width="11dp"
-                            android:layout_height="13dp"
-                            android:src="@drawable/ic_location"
-                            android:contentDescription="@string/location" />
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_time"
+                            app:tint="@color/black"
+                            android:contentDescription="@string/time" />
 
                         <TextView
-                            android:id="@+id/tvLocation"
+                            android:id="@+id/tvTime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="12sp"
-                            android:textColor="@color/text_secondary"
-                            android:maxLines="1"
-                            android:ellipsize="end"
+                            android:textColor="@color/black"
                             android:layout_marginStart="3dp" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Image side — shown last in XML = RIGHT in LTR, LEFT in RTL -->
+            <!-- Left Image Viewport Box (renders on Left in RTL) -->
             <FrameLayout
                 android:layout_width="130dp"
-                android:layout_height="match_parent"
-                android:clipToOutline="true"
-                android:background="@drawable/bg_card_image_clip">
+                android:layout_height="match_parent">
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/ivImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_photo_placeholder" />
+                    android:src="@drawable/ic_photo_placeholder"
+                    android:background="@color/image_placeholder_bg"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Card.ImageSide" />
 
-                <!-- Prev arrow — no background, thin chevron, auto-mirrors in RTL -->
+                <!-- Prev arrow — thin chevron from design without background block -->
                 <ImageView
                     android:id="@+id/btnPrev"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center_vertical|start"
+                    android:layout_width="36dp"
+                    android:layout_height="56dp"
+                    android:layout_gravity="bottom|start"
                     android:layout_marginStart="4dp"
-                    android:src="@drawable/ic_chevron_prev"
+                    android:layout_marginBottom="2dp"
+                    android:src="@drawable/ic_card_chevron_left"
                     android:scaleType="fitCenter"
                     android:autoMirrored="true"
                     android:contentDescription="previous"
                     android:visibility="gone" />
 
-                <!-- Next arrow — no background, thin chevron, auto-mirrors in RTL -->
+                <!-- Next arrow — thin chevron from design without background block -->
                 <ImageView
                     android:id="@+id/btnNext"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center_vertical|end"
+                    android:layout_width="36dp"
+                    android:layout_height="56dp"
+                    android:layout_gravity="bottom|end"
                     android:layout_marginEnd="4dp"
-                    android:src="@drawable/ic_chevron_next"
+                    android:layout_marginBottom="2dp"
+                    android:src="@drawable/ic_card_chevron_right"
                     android:scaleType="fitCenter"
                     android:autoMirrored="true"
                     android:contentDescription="next"
@@ -215,73 +219,22 @@
         <View 
             android:layout_width="match_parent" 
             android:layout_height="1dp"
-            android:background="@color/divider" />
+            android:background="@color/card_divider" />
 
-        <!-- Bottom actions: buttons LEFT, divider, toggle RIGHT (locale-aware) -->
+        <!-- Bottom Panel (60.dp height) -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingVertical="12dp"
-            android:paddingHorizontal="16dp"
-            android:layoutDirection="ltr">
+            android:layoutDirection="locale">
 
-            <!-- Edit and Delete buttons — LEFT in LTR, RIGHT in RTL -->
+            <!-- Right Interactive Region: Visibility toggles centered -->
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <Button
-                    android:id="@+id/btnEdit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:minWidth="100dp"
-                    android:minHeight="0dp"
-                    android:paddingHorizontal="12dp"
-                    android:text="@string/btn_edit"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary"
-                    android:backgroundTint="@color/add_ad_header_bg"
-                    app:cornerRadius="8dp"
-                    style="@style/Widget.MaterialComponents.Button" />
-
-                <Button
-                    android:id="@+id/btnDelete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:minWidth="100dp"
-                    android:minHeight="0dp"
-                    android:paddingHorizontal="12dp"
-                    android:layout_marginTop="6dp"
-                    android:text="@string/btn_delete"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/white"
-                    android:backgroundTint="@color/error_red"
-                    app:cornerRadius="8dp"
-                    style="@style/Widget.MaterialComponents.Button" />
-            </LinearLayout>
-
-            <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
-
-            <!-- Vertical divider -->
-            <View
-                android:layout_width="1dp"
-                android:layout_height="60dp"
-                android:background="@color/divider"
-                android:layout_marginHorizontal="16dp" />
-
-            <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
-
-            <!-- Toggle visibility — RIGHT in LTR, LEFT in RTL -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -298,9 +251,63 @@
                     android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_secondary"
-                    android:layout_marginStart="6dp"
+                    android:layout_marginStart="8dp"
+                    android:paddingVertical="4dp"
                     android:text="@string/ad_hidden" />
+            </LinearLayout>
+
+            <!-- Central Vertical line divider axis -->
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="12dp"
+                android:background="@color/card_divider" />
+
+            <!-- Left Interactive Region: Stacked buttons centered -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEdit"
+                    android:layout_width="87dp"
+                    android:layout_height="24dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:padding="0dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:gravity="center"
+                    android:text="@string/btn_edit"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:backgroundTint="@color/add_ad_header_bg"
+                    app:cornerRadius="8dp"
+                    style="@style/Widget.MaterialComponents.Button" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDelete"
+                    android:layout_width="87dp"
+                    android:layout_height="24dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:padding="0dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:gravity="center"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/btn_delete"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="@color/error_red"
+                    app:cornerRadius="8dp"
+                    style="@style/Widget.MaterialComponents.Button" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

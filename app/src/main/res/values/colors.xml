@@ -77,4 +77,10 @@
     <!-- FAL colors (from image) -->
     <color name="fal_bg">#A8B8C8</color>
     <color name="fal_button">#003D5C</color>
+
+    <!-- Switcher and divider colors (added for dark mode support) -->
+    <color name="tab_inactive_text">#66000000</color>
+    <color name="bg_switcher">#F4F4F4</color>
+    <color name="switcher_divider">#D9000000</color>
+    <color name="card_divider">#E8E8E8</color>
 </resources>

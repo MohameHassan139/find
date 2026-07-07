@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:background="@color/surface_primary"
     android:elevation="4dp"
-    android:layoutDirection="ltr">
+    android:layoutDirection="locale">
 
     <!-- Status bar spacer -->
     <View
@@ -34,7 +34,7 @@
             android:padding="10dp"
             android:src="@drawable/ic_back"
             app:tint="@color/icon_tint"
-            android:contentDescription="رجوع" />
+            android:contentDescription="@string/cd_back" />
 
         <!-- Menu button — next to back -->
         <ImageButton
@@ -46,7 +46,7 @@
             android:padding="10dp"
             android:src="@drawable/ic_menu_black"
             app:tint="@color/icon_tint"
-            android:contentDescription="القائمة" />
+            android:contentDescription="@string/cd_menu" />
 
         <!-- Spacer -->
         <View

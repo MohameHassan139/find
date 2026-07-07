@@ -64,7 +64,7 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_chevron_left"
+                    android:src="@drawable/ic_chevron_right"
                     app:tint="@color/text_secondary"
                     android:layout_marginStart="8dp"
                     android:contentDescription="Go" />
@@ -109,7 +109,7 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_chevron_left"
+                    android:src="@drawable/ic_chevron_right"
                     app:tint="@color/text_secondary"
                     android:layout_marginStart="8dp"
                     android:contentDescription="Go" />

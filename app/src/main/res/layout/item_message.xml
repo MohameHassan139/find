@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="12dp"
+    android:layoutDirection="locale"
+    android:paddingHorizontal="10dp"
     android:paddingVertical="3dp">
 
-    <!-- MY message (Sent) — sticks to LEFT in AR (RTL) and RIGHT in EN (LTR) -->
-    <LinearLayout
+    <!-- MY message (Sent) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutSent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:background="@drawable/bg_bubble_sent"
-        android:orientation="horizontal"
-        android:gravity="bottom"
         android:paddingHorizontal="14dp"
-        android:paddingVertical="9dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="10dp"
         android:layoutDirection="locale"
         android:visibility="gone">
 
@@ -24,50 +24,54 @@
             android:id="@+id/tvMessageSent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             android:textSize="14sp"
             android:textColor="@color/bubble_text_sent"
             android:lineSpacingExtra="3dp"
-            android:maxWidth="220dp"
-            android:layout_marginEnd="8dp"
+            android:maxWidth="230dp"
             android:textAlignment="viewStart" />
 
-        <!-- Time + Checkmarks -->
+        <!-- Time + Checkmarks at Bottom-Left of Bubble -->
         <LinearLayout
             android:id="@+id/layoutTimeSent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/tvMessageSent"
+            app:layout_constraintStart_toStartOf="parent"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layoutDirection="locale">
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="10dp">
+
+            <ImageView
+                android:id="@+id/ivReadStatus"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_double_check"
+                android:layout_marginEnd="3dp" />
 
             <TextView
                 android:id="@+id/tvTimeSent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="11sp"
-                android:textColor="@color/bubble_time_sent"
-                android:layout_marginEnd="3dp" />
-
-            <ImageView
-                android:id="@+id/ivReadStatus"
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:src="@drawable/ic_double_check" />
+                android:textColor="@color/bubble_time_sent" />
         </LinearLayout>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- OTHER message (Received) — sticks to RIGHT in AR (RTL) and LEFT in EN (LTR) -->
-    <LinearLayout
+    <!-- OTHER message (Received) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutReceived"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:background="@drawable/bg_bubble_received"
-        android:orientation="horizontal"
-        android:gravity="bottom"
         android:paddingHorizontal="14dp"
-        android:paddingVertical="9dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="10dp"
         android:layoutDirection="locale"
         android:visibility="gone">
 
@@ -76,21 +80,28 @@
             android:id="@+id/tvMessageReceived"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             android:textSize="14sp"
             android:textColor="@color/bubble_text_received"
             android:lineSpacingExtra="3dp"
-            android:maxWidth="220dp"
-            android:layout_marginEnd="8dp"
+            android:maxWidth="230dp"
             android:textAlignment="viewStart" />
 
-        <!-- Time -->
+        <!-- Time at Bottom-Left of Bubble -->
         <TextView
             android:id="@+id/tvTimeReceived"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/tvMessageReceived"
+            app:layout_constraintStart_toStartOf="parent"
             android:textSize="11sp"
-            android:textColor="@color/bubble_time_received" />
+            android:textColor="@color/bubble_time_received"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="10dp" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

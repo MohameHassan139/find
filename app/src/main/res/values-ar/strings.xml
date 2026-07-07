@@ -57,7 +57,7 @@
     <string name="my_ads_title">إعلاناتي</string>
     <string name="app_name_ar">فايند</string>
     <string name="login_create_account">تسجيل الدخول / إنشاء حساب</string>
-    <string name="profile_phone">📞  الهاتف</string>
+    <string name="profile_phone"> الهاتف</string>
     <string name="str_5xxxxxxxx">5XXXXXXXX</string>
     <string name="str_966">+966</string>
     <string name="send_otp">إرسال رمز التحقق</string>
@@ -65,7 +65,7 @@
     <string name="resend_after_60s">إعادة الإرسال بعد 60s</string>
     <string name="verify">تحقق</string>
     <string name="change_number">تغيير الرقم</string>
-    <string name="profile_name">👤  الاسم</string>
+    <string name="profile_name"> الاسم</string>
     <string name="str_____">ظاهر</string>
     <string name="save_changes">حفظ التغييرات</string>
     <string name="logout">تسجيل الخروج</string>

@@ -21,4 +21,13 @@
         <item name="cornerSizeBottomLeft">0dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
     </style>
+
+    <!-- Shape appearance overlay for card image: rounded corners on the right side in LTR -->
+    <style name="ShapeAppearance.Card.ImageSide" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeTopRight">14dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
 </resources>
