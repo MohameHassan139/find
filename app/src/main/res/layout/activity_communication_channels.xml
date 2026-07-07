@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/bg_screen"
+    android:background="@color/settings_bg"
     android:layoutDirection="locale">
 
     <!-- Top Bar -->
@@ -24,141 +24,181 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="6dp"
+            android:paddingTop="21dp"
+            android:paddingBottom="14dp">
 
-            <!-- Communication Channels Header -->
-            <LinearLayout
+            <!-- Big white card matching Figma: 378dp wide, shadow, 5dp radius -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/surface_primary"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="14dp"
-                android:layout_marginBottom="24dp">
+                app:cardBackgroundColor="@color/surface_primary"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="3dp"
+                app:strokeWidth="0dp">
 
-                <FrameLayout
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@drawable/bg_menu_icon_yellow"
-                    android:padding="6dp">
-                    <ImageView
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="16dp">
+
+                    <!-- ── Header row: icon + label ── -->
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/ic_menu_contact"
-                        android:contentDescription="Channels" />
-                </FrameLayout>
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layoutDirection="locale"
+                        android:paddingHorizontal="11dp"
+                        android:paddingBottom="16dp">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="قنوات التواصل:"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
-            </LinearLayout>
+                        <!-- Yellow icon holder at START -->
+                        <FrameLayout
+                            android:layout_width="48dp"
+                            android:layout_height="42dp"
+                            android:background="@drawable/bg_settings_icon_holder"
+                            android:padding="6dp">
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/ic_settings_channels"
+                                android:scaleType="fitCenter"
+                                android:contentDescription="Channels" />
+                        </FrameLayout>
 
-            <!-- In-App Chat Option -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/surface_primary"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="14dp"
-                android:layout_marginBottom="1dp">
+                        <!-- Label -->
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="قنوات التواصل:"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary" />
 
-                <CheckBox
-                    android:id="@+id/cbInApp"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="12dp" />
+                    </LinearLayout>
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="محادثة في التطبيق"
-                    android:textSize="14sp"
-                    android:textColor="@color/text_primary" />
+                    <!-- ── Row 1: In-App Chat ── -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layoutDirection="locale"
+                        android:paddingHorizontal="20dp"
+                        android:layout_marginBottom="13dp">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_menu_contact"
-                    app:tint="@color/text_secondary"
-                    android:contentDescription="Chat" />
-            </LinearLayout>
+                        <!-- Chat icon at START -->
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/ic_nav_chat"
+                            app:tint="@color/text_primary"
+                            android:scaleType="fitCenter"
+                            android:contentDescription="In-app chat" />
 
-            <!-- WhatsApp Option -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/surface_primary"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="14dp"
-                android:layout_marginBottom="1dp">
+                        <!-- Label -->
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="محادثة في التطبيق"
+                            android:textSize="15sp"
+                            android:textColor="@color/text_primary" />
 
-                <CheckBox
-                    android:id="@+id/cbWhatsapp"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="12dp" />
+                        <!-- Checkbox at END -->
+                        <CheckBox
+                            android:id="@+id/cbInApp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="واتساب"
-                    android:textSize="14sp"
-                    android:textColor="@color/text_primary" />
+                    </LinearLayout>
 
-                <TextView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:text="📱"
-                    android:textSize="18sp"
-                    android:gravity="center"
-                    android:contentDescription="WhatsApp" />
-            </LinearLayout>
+                    <!-- ── Row 2: WhatsApp ── -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layoutDirection="locale"
+                        android:paddingHorizontal="20dp"
+                        android:layout_marginBottom="13dp">
 
-            <!-- Call Option -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/surface_primary"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="14dp">
+                        <!-- WhatsApp icon at START (tinted to match Figma monochrome) -->
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/ic_whatsapp"
+                            app:tint="@color/text_primary"
+                            android:scaleType="fitCenter"
+                            android:contentDescription="WhatsApp" />
 
-                <CheckBox
-                    android:id="@+id/cbCall"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="12dp" />
+                        <!-- Label -->
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="واتساب"
+                            android:textSize="15sp"
+                            android:textColor="@color/text_primary" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="اتصال"
-                    android:textSize="14sp"
-                    android:textColor="@color/text_primary" />
+                        <!-- Checkbox at END -->
+                        <CheckBox
+                            android:id="@+id/cbWhatsapp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp" />
 
-                <TextView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:text="📞"
-                    android:textSize="18sp"
-                    android:gravity="center"
-                    android:contentDescription="Call" />
-            </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- ── Row 3: Call ── -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layoutDirection="locale"
+                        android:paddingHorizontal="20dp">
+
+                        <!-- Call icon at START -->
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/ic_call"
+                            app:tint="@color/text_primary"
+                            android:scaleType="fitCenter"
+                            android:contentDescription="Call" />
+
+                        <!-- Label -->
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="اتصال"
+                            android:textSize="15sp"
+                            android:textColor="@color/text_primary" />
+
+                        <!-- Checkbox at END -->
+                        <CheckBox
+                            android:id="@+id/cbCall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </ScrollView>
