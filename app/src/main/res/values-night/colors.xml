@@ -3,6 +3,7 @@
     <!-- Dark mode overrides -->
     <color name="black">#FFFFFFFF</color>
     <color name="white">#FF1E1E1E</color>
+    <color name="chat_bubble_background_gradient_start">#FF2A2000</color>
 
     <!-- Backgrounds -->
     <color name="find_gray_bg">#FF121212</color>
@@ -12,6 +13,8 @@
 
     <!-- Chat / UI colors -->
     <color name="bg_screen">#FF121212</color>
+    <color name="settings_bg">#FF121212</color>
+    <color name="settings_icon_holder_bg">#FF2A2000</color>
     <color name="divider">#FF2E2E2E</color>
     <color name="text_primary">#FFF0F0F0</color>
     <color name="text_secondary">#FFAAAAAA</color>

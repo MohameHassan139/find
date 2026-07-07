@@ -1,10 +1,12 @@
 package com.example.myapplication
 
 import android.content.Context
-import android.os.Bundle
+import android.graphics.Color
 import android.widget.TextView
 import androidx.activity.viewModels
+import android.os.Bundle
 import com.example.myapplication.utils.LocaleHelper
+import com.google.android.material.card.MaterialCardView
 
 class LanguageActivity : BaseActivity() {
 
@@ -37,41 +39,48 @@ class LanguageActivity : BaseActivity() {
     }
 
     private fun setupLanguageButtons() {
-        val btnArabic = findViewById<TextView>(R.id.btnArabic)
-        val btnEnglish = findViewById<TextView>(R.id.btnEnglish)
-        
-        val currentLang = LocaleHelper.getLanguage(this)
-        
-        // Update UI based on current language
-        updateLanguageButtons(currentLang)
-        
-        btnArabic.setOnClickListener {
+        val cardArabic  = findViewById<MaterialCardView>(R.id.btnArabic)
+        val cardEnglish = findViewById<MaterialCardView>(R.id.btnEnglish)
+
+        // Set initial state
+        updateLanguageButtons(LocaleHelper.getLanguage(this))
+
+        cardArabic.setOnClickListener {
             if (LocaleHelper.getLanguage(this) != "ar") {
                 LocaleHelper.setLanguage(this, "ar")
             }
         }
-        
-        btnEnglish.setOnClickListener {
+
+        cardEnglish.setOnClickListener {
             if (LocaleHelper.getLanguage(this) != "en") {
                 LocaleHelper.setLanguage(this, "en")
             }
         }
     }
-    
+
     private fun updateLanguageButtons(currentLang: String) {
-        val btnArabic = findViewById<TextView>(R.id.btnArabic)
-        val btnEnglish = findViewById<TextView>(R.id.btnEnglish)
-        
+        val cardArabic  = findViewById<MaterialCardView>(R.id.btnArabic)
+        val cardEnglish = findViewById<MaterialCardView>(R.id.btnEnglish)
+
+        val blueColor      = Color.parseColor("#007AFF")
+        val strokeSelected = resources.getDimensionPixelSize(R.dimen.language_stroke_selected)
+
         if (currentLang == "ar") {
-            btnArabic.setBackgroundResource(R.drawable.bg_language_selected)
-            btnArabic.setTextColor(getColor(R.color.find_active_blue))
-            btnEnglish.setBackgroundResource(R.drawable.bg_language_unselected)
-            btnEnglish.setTextColor(getColor(R.color.text_primary))
+            // Arabic selected
+            cardArabic.strokeColor  = blueColor
+            cardArabic.strokeWidth  = strokeSelected
+
+            // English unselected
+            cardEnglish.strokeColor = Color.TRANSPARENT
+            cardEnglish.strokeWidth = 0
         } else {
-            btnEnglish.setBackgroundResource(R.drawable.bg_language_selected)
-            btnEnglish.setTextColor(getColor(R.color.find_active_blue))
-            btnArabic.setBackgroundResource(R.drawable.bg_language_unselected)
-            btnArabic.setTextColor(getColor(R.color.text_primary))
+            // English selected
+            cardEnglish.strokeColor = blueColor
+            cardEnglish.strokeWidth = strokeSelected
+
+            // Arabic unselected
+            cardArabic.strokeColor  = Color.TRANSPARENT
+            cardArabic.strokeWidth  = 0
         }
     }
 }

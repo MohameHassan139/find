@@ -138,7 +138,7 @@
     <string name="settings_theme_system">⚙️ System</string>
     <string name="settings_lang_arabic">🇸🇦 العربية</string>
     <string name="settings_lang_english">🇬🇧 English</string>
-    <string name="settings_communication_channels">Communication Channels:</string>
+    <string name="settings_communication_channels">Communication Channels</string>
     <string name="settings_night_mode">Night Mode</string>
     <string name="settings_delete_account">Delete Account</string>
     <string name="settings_delete_account_title">Delete Account</string>

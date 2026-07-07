@@ -67,8 +67,6 @@ class SettingsActivity : BaseActivity() {
         setupNavigation()
         setupNightMode()
         setupDeleteAccount()
-        setupThemeChips()
-        setupLanguageChips()
     }
 
     private fun setupAppBar() {
@@ -100,7 +98,7 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun setupDeleteAccount() {
-        findViewById<TextView>(R.id.btnDeleteAccount).setOnClickListener {
+        findViewById<android.view.View>(R.id.btnDeleteAccount).setOnClickListener {
             androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle(getString(R.string.settings_delete_account_title))
                 .setMessage(getString(R.string.settings_delete_account_message))
@@ -150,81 +148,4 @@ class SettingsActivity : BaseActivity() {
         }
     }
 
-    // ── Theme ────────────────────────────────────────────────────────────────
-
-    private val chipLight   get() = findViewById<TextView>(R.id.chipLight)
-    private val chipDark    get() = findViewById<TextView>(R.id.chipDark)
-    private val chipSystem  get() = findViewById<TextView>(R.id.chipSystem)
-    private val tvCurrentTheme get() = findViewById<TextView>(R.id.tvCurrentTheme)
-
-    private fun setupThemeChips() {
-        refreshThemeChips(getSavedTheme(this))
-
-        chipLight.setOnClickListener  { applyAndSaveTheme(THEME_LIGHT) }
-        chipDark.setOnClickListener   { applyAndSaveTheme(THEME_DARK) }
-        chipSystem.setOnClickListener { applyAndSaveTheme(THEME_SYSTEM) }
-    }
-
-    private fun applyAndSaveTheme(theme: String) {
-        saveTheme(this, theme)
-        refreshThemeChips(theme)
-        when (theme) {
-            THEME_LIGHT  -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            THEME_DARK   -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            else         -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-        }
-    }
-
-    private fun refreshThemeChips(active: String) {
-        setChipActive(chipLight,  active == THEME_LIGHT)
-        setChipActive(chipDark,   active == THEME_DARK)
-        setChipActive(chipSystem, active == THEME_SYSTEM)
-        tvCurrentTheme.text = when (active) {
-            THEME_LIGHT  -> getString(R.string.settings_theme_light)
-            THEME_DARK   -> getString(R.string.settings_theme_dark)
-            else         -> getString(R.string.settings_theme_system)
-        }
-    }
-
-    // ── Language ─────────────────────────────────────────────────────────────
-
-    private val chipArabic  get() = findViewById<TextView>(R.id.chipArabic)
-    private val chipEnglish get() = findViewById<TextView>(R.id.chipEnglish)
-    private val tvCurrentLang get() = findViewById<TextView>(R.id.tvCurrentLang)
-
-    private fun setupLanguageChips() {
-        refreshLangChips(LocaleHelper.getLanguage(this))
-
-        chipArabic.setOnClickListener  { applyLanguage("ar") }
-        chipEnglish.setOnClickListener { applyLanguage("en") }
-    }
-
-    private fun applyLanguage(lang: String) {
-        if (LocaleHelper.getLanguage(this) == lang) return
-        LocaleHelper.setLanguage(this, lang)
-        // AppCompat will recreate the activity automatically
-    }
-
-    private fun refreshLangChips(active: String) {
-        setChipActive(chipArabic,  active == "ar")
-        setChipActive(chipEnglish, active == "en")
-        tvCurrentLang.text = if (active == "ar")
-            getString(R.string.settings_lang_arabic)
-        else
-            getString(R.string.settings_lang_english)
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private fun setChipActive(chip: TextView, active: Boolean) {
-        chip.setBackgroundResource(
-            if (active) R.drawable.bg_chip_selected else R.drawable.bg_chip_unselected
-        )
-        chip.setTextColor(
-            if (active)
-                getColor(R.color.white)
-            else
-                getColor(R.color.text_secondary)
-        )
-    }
 }

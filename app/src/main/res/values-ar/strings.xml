@@ -135,7 +135,7 @@
     <string name="settings_theme_system">⚙️ تلقائي</string>
     <string name="settings_lang_arabic">🇸🇦 العربية</string>
     <string name="settings_lang_english">🇬🇧 English</string>
-    <string name="settings_communication_channels">قنوات التواصل:</string>
+    <string name="settings_communication_channels">قنوات التواصل</string>
     <string name="settings_night_mode">الوضع الليلي</string>
     <string name="settings_delete_account">حذف الحساب</string>
     <string name="settings_delete_account_title">حذف الحساب</string>

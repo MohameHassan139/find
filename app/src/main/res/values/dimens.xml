@@ -4,4 +4,5 @@
     <dimen name="filter_row_padding">12dp</dimen>
     <dimen name="home_tab_height">52dp</dimen>
     <dimen name="home_search_radius">22dp</dimen>
+    <dimen name="language_stroke_selected">2dp</dimen>
 </resources>
