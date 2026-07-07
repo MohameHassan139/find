@@ -25,4 +25,10 @@
     <string name="favorites_empty">No favorites yet</string>
     <string name="added_to_favorites">Added to favorites</string>
     <string name="removed_from_favorites">Removed from favorites</string>
+
+    <!-- Communication channels screen -->
+    <string name="channel_title_header">Communication Channels:</string>
+    <string name="channel_in_app">In-App Chat</string>
+    <string name="channel_whatsapp">WhatsApp</string>
+    <string name="channel_call">Call</string>
 </resources>

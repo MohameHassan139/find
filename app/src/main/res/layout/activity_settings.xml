@@ -119,6 +119,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:src="@drawable/ic_settings_channels"
+                            app:tint="@color/text_primary"
                             android:scaleType="fitCenter" />
                     </FrameLayout>
 
@@ -171,6 +172,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:src="@drawable/ic_settings_night"
+                            app:tint="@color/text_primary"
                             android:scaleType="fitCenter" />
                     </FrameLayout>
 

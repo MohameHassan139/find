@@ -46,15 +46,11 @@ class CommunicationChannelsActivity : BaseActivity() {
         val cbCall = findViewById<CheckBox>(R.id.cbCall)
 
         // Load saved preferences
-        cbInApp.isChecked = prefs.getBoolean("in_app", true)
+        cbInApp.isChecked = true
         cbWhatsapp.isChecked = prefs.getBoolean("whatsapp", true)
         cbCall.isChecked = prefs.getBoolean("call", false)
 
         // Save preferences on change
-        cbInApp.setOnCheckedChangeListener { _, isChecked ->
-            prefs.edit().putBoolean("in_app", isChecked).apply()
-        }
-
         cbWhatsapp.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean("whatsapp", isChecked).apply()
         }

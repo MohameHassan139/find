@@ -143,6 +143,12 @@
     <string name="settings_delete_account_confirm">حذف</string>
     <string name="settings_delete_account_cancel">إلغاء</string>
 
+    <!-- Communication channels screen -->
+    <string name="channel_title_header">قنوات التواصل:</string>
+    <string name="channel_in_app">محادثة في التطبيق</string>
+    <string name="channel_whatsapp">واتساب</string>
+    <string name="channel_call">اتصال</string>
+
     <!-- Profile verification -->
     <string name="profile_verify_nafath">وثق حسابك عبر النفاذ الوطني</string>
     <string name="profile_verify_nafath_btn">توثيق الحساب</string>

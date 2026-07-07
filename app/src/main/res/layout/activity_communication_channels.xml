@@ -64,6 +64,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:src="@drawable/ic_settings_channels"
+                                app:tint="@color/text_primary"
                                 android:scaleType="fitCenter"
                                 android:contentDescription="Channels" />
                         </FrameLayout>
@@ -74,7 +75,7 @@
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
-                            android:text="قنوات التواصل:"
+                            android:text="@string/channel_title_header"
                             android:textSize="15sp"
                             android:textStyle="bold"
                             android:textColor="@color/text_primary" />
@@ -96,7 +97,7 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:src="@drawable/ic_nav_chat"
-                            app:tint="@color/text_primary"
+                            app:tint="@color/text_secondary"
                             android:scaleType="fitCenter"
                             android:contentDescription="In-app chat" />
 
@@ -106,9 +107,9 @@
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
-                            android:text="محادثة في التطبيق"
+                            android:text="@string/channel_in_app"
                             android:textSize="15sp"
-                            android:textColor="@color/text_primary" />
+                            android:textColor="@color/text_secondary" />
 
                         <!-- Checkbox at END -->
                         <CheckBox
@@ -116,7 +117,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:minWidth="0dp"
-                            android:minHeight="0dp" />
+                            android:minHeight="0dp"
+                            android:button="@drawable/cb_custom"
+                            android:buttonTint="@null"
+                            android:checked="true"
+                            android:enabled="false" />
 
                     </LinearLayout>
 
@@ -145,7 +150,7 @@
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
-                            android:text="واتساب"
+                            android:text="@string/channel_whatsapp"
                             android:textSize="15sp"
                             android:textColor="@color/text_primary" />
 
@@ -155,7 +160,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:minWidth="0dp"
-                            android:minHeight="0dp" />
+                            android:minHeight="0dp"
+                            android:button="@drawable/cb_custom"
+                            android:buttonTint="@null" />
 
                     </LinearLayout>
 
@@ -183,7 +190,7 @@
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
-                            android:text="اتصال"
+                            android:text="@string/channel_call"
                             android:textSize="15sp"
                             android:textColor="@color/text_primary" />
 
@@ -193,7 +200,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:minWidth="0dp"
-                            android:minHeight="0dp" />
+                            android:minHeight="0dp"
+                            android:button="@drawable/cb_custom"
+                            android:buttonTint="@null" />
 
                     </LinearLayout>
 

@@ -146,6 +146,12 @@
     <string name="settings_delete_account_confirm">Delete</string>
     <string name="settings_delete_account_cancel">Cancel</string>
 
+    <!-- Communication channels screen -->
+    <string name="channel_title_header">قنوات التواصل:</string>
+    <string name="channel_in_app">محادثة في التطبيق</string>
+    <string name="channel_whatsapp">واتساب</string>
+    <string name="channel_call">اتصال</string>
+
     <!-- Listing Detail screen -->
     <string name="btn_call">إتصال</string>
     <string name="btn_whatsapp">واتساب</string>
