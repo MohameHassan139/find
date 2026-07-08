@@ -3,8 +3,8 @@
     <!-- Shape appearance overlay for card image: rounded corners on the left side in RTL (Arabic) -->
     <style name="ShapeAppearance.Card.ImageSide" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopLeft">14dp</item>
-        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeTopLeft">10dp</item>
+        <item name="cornerSizeBottomLeft">10dp</item>
         <item name="cornerSizeTopRight">0dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
     </style>

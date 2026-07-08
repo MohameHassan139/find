@@ -86,21 +86,26 @@ class FavoritesActivity : BaseActivity() {
     }
 
     private fun updateFilterButtons() {
-        val activeColor = androidx.core.content.ContextCompat.getColor(this, R.color.find_active_blue)
-        val inactiveColor = androidx.core.content.ContextCompat.getColor(this, R.color.text_secondary)
-        val primaryColor = androidx.core.content.ContextCompat.getColor(this, R.color.text_primary)
+        val activeBlue = androidx.core.content.ContextCompat.getColor(this, R.color.chats_chip_selected_border)
+        val textPrimary = androidx.core.content.ContextCompat.getColor(this, R.color.black)
+        val textInactive = androidx.core.content.ContextCompat.getColor(this, R.color.tab_inactive_text)
+        val bgGrey = androidx.core.content.ContextCompat.getColor(this, R.color.bg_switcher)
+        val density = resources.displayMetrics.density
+        val activeStrokePx = (1 * density).toInt()
 
         binding.btnFilterOffer.apply {
             val active = currentFilter == "offer"
-            strokeWidth = if (active) 9 else 3
-            strokeColor = android.content.res.ColorStateList.valueOf(if (active) activeColor else inactiveColor)
-            setTextColor(if (active) primaryColor else inactiveColor)
+            strokeWidth = if (active) activeStrokePx else 0
+            strokeColor = if (active) android.content.res.ColorStateList.valueOf(activeBlue) else null
+            setTextColor(if (active) textPrimary else textInactive)
+            backgroundTintList = android.content.res.ColorStateList.valueOf(bgGrey)
         }
         binding.btnFilterRequest.apply {
             val active = currentFilter == "request"
-            strokeWidth = if (active) 9 else 3
-            strokeColor = android.content.res.ColorStateList.valueOf(if (active) activeColor else inactiveColor)
-            setTextColor(if (active) primaryColor else inactiveColor)
+            strokeWidth = if (active) activeStrokePx else 0
+            strokeColor = if (active) android.content.res.ColorStateList.valueOf(activeBlue) else null
+            setTextColor(if (active) textPrimary else textInactive)
+            backgroundTintList = android.content.res.ColorStateList.valueOf(bgGrey)
         }
     }
 

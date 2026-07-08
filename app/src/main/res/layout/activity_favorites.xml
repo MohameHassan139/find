@@ -36,22 +36,28 @@
                 android:paddingBottom="4dp"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="42dp"
-                    android:layout_height="48dp"
-                    android:text="❤️"
-                    android:textSize="24sp"
-                    android:gravity="center"
-                    android:background="@color/favorites_icon_bg"
-                    android:layout_marginEnd="5dp" />
+                <FrameLayout
+                    android:layout_width="48dp"
+                    android:layout_height="42dp"
+                    android:background="@drawable/bg_favorites_header_icon"
+                    android:layout_marginEnd="12dp">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_favorite_header_vector"
+                        android:importantForAccessibility="no" />
+                </FrameLayout>
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/menu_favorites"
-                    android:textSize="18sp"
-                    android:textColor="@color/text_primary" />
+                    android:text="المفضلة:"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-medium" />
             </LinearLayout>
 
             <!-- Filter tabs: عرض / طلب -->
@@ -59,46 +65,53 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="16dp"
-                android:paddingTop="12dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="4dp"
+                android:gravity="center_horizontal"
                 android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnFilterOffer"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
+                    android:layout_width="139dp"
+                    android:layout_height="41dp"
+                    android:layout_marginEnd="13dp"
                     android:text="@string/filter_offer"
                     android:textSize="15sp"
-                    android:textColor="@color/text_primary"
-                    app:strokeColor="@color/find_active_blue"
-                    app:strokeWidth="3dp"
-                    app:cornerRadius="24dp"
-                    app:backgroundTint="@color/surface_primary"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                    android:textColor="@color/black"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    app:strokeColor="@color/chats_chip_selected_border"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="50dp"
+                    app:backgroundTint="@color/bg_switcher"
+                    app:elevation="4dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnFilterRequest"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="6dp"
+                    android:layout_width="139dp"
+                    android:layout_height="41dp"
+                    android:layout_marginStart="13dp"
                     android:text="@string/filter_request"
                     android:textSize="15sp"
-                    android:textColor="@color/text_secondary"
-                    app:strokeColor="@color/text_secondary"
-                    app:strokeWidth="1dp"
-                    app:cornerRadius="24dp"
-                    app:backgroundTint="@color/surface_primary"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                    android:textColor="@color/tab_inactive_text"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    app:strokeWidth="0dp"
+                    app:cornerRadius="50dp"
+                    app:backgroundTint="@color/bg_switcher"
+                    app:elevation="4dp" />
             </LinearLayout>
 
             <View
-                android:layout_width="350dp"
+                android:layout_width="336dp"
                 android:layout_height="1dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:background="@color/divider" />
+                android:layout_marginTop="18dp"
+                android:background="@color/switcher_divider" />
 
             <FrameLayout
                 android:layout_width="match_parent"

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="22dp"
+    android:height="30dp"
+    android:viewportWidth="30"
+    android:viewportHeight="40">
+    <!-- Black bookmark shape -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M7.667,5 C5.642,5 4,6.738 4,8.883 L4,34.028 C4,34.565 4.41,35 4.916,35 C5.07,35 5.222,34.959 5.357,34.881 L15,29.309 L24.643,34.881 C25.087,35.138 25.644,34.965 25.888,34.495 C25.962,34.352 26,34.192 26,34.028 L26,8.883 C26,6.738 24.358,5 22.333,5 L7.667,5 Z"/>
+    
+    <!-- White filled heart -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M15,11.884 C18.679,7.881 27.876,14.89 15,23.899 C2.124,14.89 11.321,7.884 15,11.89 L15,11.884 Z"/>
+</vector>
