@@ -71,6 +71,7 @@ class MainActivity : BaseActivity() {
         setupSearch()
         refreshUserProfile()
         handleIncomingCategoryIntent(intent)
+        handleNavigationIntent(intent)
     }
 
     private fun setupSearch() {
@@ -79,10 +80,10 @@ class MainActivity : BaseActivity() {
 
         val searchIntent = Intent(this, SearchActivity::class.java)
         binding.llSearchContainer.setOnClickListener {
-            startActivity(searchIntent)
+            startWithPush(searchIntent)
         }
         binding.etSearch.setOnClickListener {
-            startActivity(searchIntent)
+            startWithPush(searchIntent)
         }
     }
 
@@ -510,9 +511,7 @@ class MainActivity : BaseActivity() {
     private fun setupNavigation() {
         BottomNavHelper.setup(this, NavScreen.HOME)
         findViewById<View>(R.id.btnMenu).setOnClickListener {
-            startActivity(Intent(this, MenuActivity::class.java))
-            @Suppress("DEPRECATION")
-            overridePendingTransition(android.R.anim.slide_in_left, 0)
+            startMenuActivity()
         }
     }
 
@@ -526,6 +525,24 @@ class MainActivity : BaseActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         handleIncomingCategoryIntent(intent)
+        handleNavigationIntent(intent)
+    }
+
+    private fun handleNavigationIntent(intent: Intent) {
+        val navScreenStr = intent.getStringExtra("EXTRA_NAV_SCREEN") ?: return
+        intent.removeExtra("EXTRA_NAV_SCREEN")
+        when (navScreenStr) {
+            "ADD" -> {
+                startActivity(Intent(this, AddAdActivity::class.java))
+                @Suppress("DEPRECATION")
+                overridePendingTransition(0, 0)
+            }
+            "CHAT" -> {
+                startActivity(Intent(this, com.example.myapplication.chat.ui.conversations.ConversationsActivity::class.java))
+                @Suppress("DEPRECATION")
+                overridePendingTransition(0, 0)
+            }
+        }
     }
 
     private fun loadFavoriteIds() {

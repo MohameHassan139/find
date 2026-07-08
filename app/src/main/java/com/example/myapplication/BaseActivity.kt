@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -7,8 +8,57 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.myapplication.utils.LocaleHelper
 
 open class BaseActivity : AppCompatActivity() {
+
+    fun startWithPush(intent: Intent) {
+        startActivity(intent)
+        applyPushTransition()
+    }
+
+    fun finishWithPop() {
+        finish()
+        applyPopTransition()
+    }
+
+    fun startMenuActivity() {
+        startActivity(Intent(this, MenuActivity::class.java))
+        @Suppress("DEPRECATION")
+        if (LocaleHelper.isArabic(this)) {
+            overridePendingTransition(R.anim.slide_in_left, 0)
+        } else {
+            overridePendingTransition(R.anim.slide_in_right, 0)
+        }
+    }
+
+    fun finishMenuActivity() {
+        finish()
+        @Suppress("DEPRECATION")
+        if (LocaleHelper.isArabic(this)) {
+            overridePendingTransition(0, R.anim.slide_out_left)
+        } else {
+            overridePendingTransition(0, R.anim.slide_out_right)
+        }
+    }
+
+    fun applyPushTransition() {
+        @Suppress("DEPRECATION")
+        if (LocaleHelper.isArabic(this)) {
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+        } else {
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        }
+    }
+
+    fun applyPopTransition() {
+        @Suppress("DEPRECATION")
+        if (LocaleHelper.isArabic(this)) {
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        } else {
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()

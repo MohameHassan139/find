@@ -54,12 +54,10 @@ class MenuActivity : BaseActivity() {
         }
 
         findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener {
-            finish()
-            overridePendingTransition(0, android.R.anim.slide_out_right)
+            finishMenuActivity()
         }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
-            finish()
-            overridePendingTransition(0, android.R.anim.slide_out_right)
+            finishMenuActivity()
         }
 
         binding.btnLogin.setOnClickListener {
@@ -83,21 +81,23 @@ class MenuActivity : BaseActivity() {
         }
 
         binding.menuMyAccount.setOnClickListener {
-            AuthGuard.requireLogin(this) { startActivity(Intent(this, ProfileActivity::class.java)) }
+            val target = Intent(this, ProfileActivity::class.java)
+            AuthGuard.requireLogin(this, target) { startWithPush(target) }
         }
         binding.menuMyAds.setOnClickListener {
-            AuthGuard.requireLogin(this) { startActivity(Intent(this, MyAdsActivity::class.java)) }
+            val target = Intent(this, MyAdsActivity::class.java)
+            AuthGuard.requireLogin(this, target) { startWithPush(target) }
         }
         binding.menuFavorites.setOnClickListener {
-            AuthGuard.requireLogin(this) { startActivity(Intent(this, FavoritesActivity::class.java)) }
+            val target = Intent(this, FavoritesActivity::class.java)
+            AuthGuard.requireLogin(this, target) { startWithPush(target) }
         }
         binding.menuNotifications.setOnClickListener {
-            AuthGuard.requireLogin(this) {
-                startActivity(Intent(this, com.example.myapplication.notifications.NotificationsActivity::class.java))
-            }
+            val target = Intent(this, com.example.myapplication.notifications.NotificationsActivity::class.java)
+            AuthGuard.requireLogin(this, target) { startWithPush(target) }
         }
         binding.menuSettings.setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
+            startWithPush(Intent(this, SettingsActivity::class.java))
         }
         binding.menuShareApp.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -114,9 +114,9 @@ class MenuActivity : BaseActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun onBackPressed() {
-        super.onBackPressed()
-        overridePendingTransition(0, android.R.anim.slide_out_right)
+        finishMenuActivity()
     }
 
     override fun onResume() {

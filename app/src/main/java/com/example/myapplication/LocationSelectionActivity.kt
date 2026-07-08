@@ -36,10 +36,10 @@ class LocationSelectionActivity : BaseActivity() {
         HomeHeaderHelper.attach(this, binding.root, vm.categories)
 
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
-            startActivity(Intent(this, MenuActivity::class.java))
+            startMenuActivity()
         }
         findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            onBackPressed()
         }
         BottomNavHelper.setup(this, NavScreen.NONE)
 
@@ -102,17 +102,18 @@ class LocationSelectionActivity : BaseActivity() {
                 resultIntent.putExtra("selected_region_id", region.id)
                 resultIntent.putExtra("selected_city_id", city.id)
                 setResult(Activity.RESULT_OK, resultIntent)
-                finish()
+                finishWithPop()
             }
             binding.llListContainer.addView(item)
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun onBackPressed() {
         if (selectedRegion != null) {
             showRegions(vm.regions.value ?: emptyList())
         } else {
-            super.onBackPressed()
+            finishWithPop()
         }
     }
 }

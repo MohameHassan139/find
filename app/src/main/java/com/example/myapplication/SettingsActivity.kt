@@ -70,17 +70,17 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun setupAppBar() {
-        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
-        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finishWithPop() }
+        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener { finishWithPop() }
     }
 
     private fun setupNavigation() {
         findViewById<android.view.View>(R.id.rowLanguage).setOnClickListener {
-            startActivity(Intent(this, LanguageActivity::class.java))
+            startWithPush(Intent(this, LanguageActivity::class.java))
         }
 
         findViewById<android.view.View>(R.id.rowChannels).setOnClickListener {
-            startActivity(Intent(this, CommunicationChannelsActivity::class.java))
+            startWithPush(Intent(this, CommunicationChannelsActivity::class.java))
         }
     }
 

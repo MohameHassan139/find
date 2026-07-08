@@ -58,9 +58,9 @@ class ProfileActivity : BaseActivity() {
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
         BottomNavHelper.setup(this, NavScreen.NONE)
 
-        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finishWithPop() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
-            startActivity(Intent(this, MenuActivity::class.java))
+            startMenuActivity()
         }
         
         binding.profileContainer.setOnClickListener { openGallery() }

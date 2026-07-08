@@ -107,10 +107,15 @@ class ChatActivity : BaseActivity() {
                 .circleCrop().into(binding.ivChatAvatar)
         }
 
-        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finishWithPop() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
-            startActivity(android.content.Intent(this, MenuActivity::class.java))
+            startMenuActivity()
         }
+    }
+
+    @Suppress("DEPRECATION")
+    override fun onBackPressed() {
+        finishWithPop()
     }
 
     private fun setupRecyclerView() {

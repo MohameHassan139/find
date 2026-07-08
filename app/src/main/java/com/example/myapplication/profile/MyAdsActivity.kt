@@ -66,9 +66,9 @@ class MyAdsActivity : BaseActivity() {
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
         BottomNavHelper.setup(this, NavScreen.NONE)
 
-        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finishWithPop() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
-            startActivity(Intent(this, MenuActivity::class.java))
+            startMenuActivity()
         }
         binding.btnFilterOffer.setOnClickListener { setFilter("offer") }
         binding.btnFilterRequest.setOnClickListener { setFilter("request") }
@@ -125,7 +125,10 @@ class MyAdsActivity : BaseActivity() {
             binding.rvAds.adapter = MyAdsAdapter(filtered.toMutableList(),
                 onDelete = { item -> confirmDelete(item) },
                 onToggle = { item, active -> toggleActive(item, active) },
-                onEdit = { intent -> editLauncher.launch(intent) }
+                onEdit = { intent -> 
+                    editLauncher.launch(intent)
+                    applyPushTransition()
+                }
             )
         }
     }
@@ -292,7 +295,11 @@ class MyAdsAdapter(
             val intent = Intent(context, ListingDetailActivity::class.java).apply {
                 putExtra(ListingDetailActivity.EXTRA_LISTING_ID, item.id)
             }
-            context.startActivity(intent)
+            if (context is BaseActivity) {
+                context.startWithPush(intent)
+            } else {
+                context.startActivity(intent)
+            }
         }
         
         val greenColor = androidx.core.content.ContextCompat.getColor(context, R.color.toggle_active_green)

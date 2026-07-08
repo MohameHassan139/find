@@ -43,9 +43,9 @@ class CategorySelectionActivity : BaseActivity() {
         HomeHeaderHelper.attach(this, binding.root, vm.categories)
 
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
-            startActivity(Intent(this, MenuActivity::class.java))
+            startMenuActivity()
         }
-        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { onBackPressed() }
         BottomNavHelper.setup(this, NavScreen.NONE)
 
         showTypes()
@@ -169,15 +169,16 @@ class CategorySelectionActivity : BaseActivity() {
         resultIntent.putExtra("selected_sub_category_id", sub?.id ?: -1)
         resultIntent.putExtra("selected_filter_option_id", filter?.id ?: -1)
         setResult(Activity.RESULT_OK, resultIntent)
-        finish()
+        finishWithPop()
     }
 
+    @Suppress("DEPRECATION")
     override fun onBackPressed() {
         when (currentState) {
             State.FILTER -> selectedMain?.let { showSubCategories(it) }
             State.SUB -> showMainCategories(vm.categories.value ?: emptyList())
             State.MAIN -> showTypes()
-            State.TYPE -> super.onBackPressed()
+            State.TYPE -> finishWithPop()
         }
     }
 }

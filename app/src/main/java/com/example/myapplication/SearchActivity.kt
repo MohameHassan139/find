@@ -86,7 +86,7 @@ class SearchActivity : BaseActivity() {
             onClick = { listing ->
                 val intent = Intent(this, ListingDetailActivity::class.java)
                 intent.putExtra(ListingDetailActivity.EXTRA_LISTING_ID, listing.id)
-                startActivity(intent)
+                startWithPush(intent)
             }
         )
         val llm = LinearLayoutManager(this)
@@ -106,9 +106,9 @@ class SearchActivity : BaseActivity() {
     // ── Search input ──────────────────────────────────────────────────────────
 
     private fun setupSearchInput() {
-        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finishWithPop() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
-            startActivity(Intent(this, MenuActivity::class.java))
+            startMenuActivity()
         }
 
         binding.etSearchQuery.addTextChangedListener { text ->

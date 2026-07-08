@@ -41,7 +41,33 @@ class MessagesAdapter(private val context: Context) :
         LayoutInflater.from(parent.context).inflate(R.layout.item_message, parent, false)
     )
 
-    override fun onBindViewHolder(holder: VH, position: Int) = holder.bind(getItem(position))
+    override fun submitList(list: List<Message>?) {
+        submitList(list, null)
+    }
+
+    override fun submitList(list: List<Message>?, commitCallback: Runnable?) {
+        val oldList = currentList.toList()
+        super.submitList(list) {
+            val newList = currentList
+            if (oldList.isNotEmpty()) {
+                for (i in 0 until newList.size) {
+                    val oldNextSenderId = oldList.getOrNull(i + 1)?.senderId
+                    val newNextSenderId = newList.getOrNull(i + 1)?.senderId
+                    if (oldNextSenderId != newNextSenderId) {
+                        notifyItemChanged(i)
+                    }
+                }
+            }
+            commitCallback?.run()
+        }
+    }
+
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        val msg = getItem(position)
+        val nextMsg = if (position < itemCount - 1) getItem(position + 1) else null
+        val showTail = nextMsg == null || nextMsg.senderId != msg.senderId
+        holder.bind(msg, showTail)
+    }
 
     inner class VH(view: View) : RecyclerView.ViewHolder(view) {
         private val layoutSent: View = view.findViewById(R.id.layoutSent)
@@ -52,7 +78,7 @@ class MessagesAdapter(private val context: Context) :
         private val tvTimeReceived: TextView = view.findViewById(R.id.tvTimeReceived)
         private val ivRead: ImageView = view.findViewById(R.id.ivReadStatus)
 
-        fun bind(msg: Message) {
+        fun bind(msg: Message, showTail: Boolean) {
             val rtl = isRtl()
             val density = context.resources.displayMetrics.density
 
@@ -79,7 +105,8 @@ class MessagesAdapter(private val context: Context) :
                     cornerRadius = 16f * density,
                     tailWidth = 10f * density,
                     tailHeight = 10f * density,
-                    isTailOnLeft = tailOnLeft
+                    isTailOnLeft = tailOnLeft,
+                    drawTail = showTail
                 )
                 layoutSent.background = drawable
 
@@ -98,7 +125,8 @@ class MessagesAdapter(private val context: Context) :
                     cornerRadius = 16f * density,
                     tailWidth = 10f * density,
                     tailHeight = 10f * density,
-                    isTailOnLeft = tailOnLeft
+                    isTailOnLeft = tailOnLeft,
+                    drawTail = showTail
                 )
                 layoutReceived.background = drawable
             }

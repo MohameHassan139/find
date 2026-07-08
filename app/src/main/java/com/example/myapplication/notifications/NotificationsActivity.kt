@@ -53,9 +53,9 @@ class NotificationsActivity : BaseActivity() {
         binding.rvNotifications.layoutManager = LinearLayoutManager(this)
         binding.rvNotifications.adapter = adapter
 
-        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finishWithPop() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
-            startActivity(android.content.Intent(this, MenuActivity::class.java))
+            startMenuActivity()
         }
 
         binding.btnMarkAllRead.setOnClickListener {

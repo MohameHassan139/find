@@ -169,6 +169,14 @@ class PhoneAuthActivity : BaseActivity() {
     private fun goToMain() {
         // If we were launched from another activity (e.g. AuthGuard dialog), just finish back to it.
         // If we were launched as the root (e.g. from logout), go to MainActivity.
+        @Suppress("DEPRECATION")
+        val targetIntent = intent.getParcelableExtra<Intent>("EXTRA_TARGET_INTENT")
+        if (targetIntent != null) {
+            startActivity(targetIntent)
+            finish()
+            return
+        }
+
         if (!isTaskRoot) {
             finish()
         } else {

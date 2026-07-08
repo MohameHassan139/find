@@ -47,7 +47,7 @@ class ConversationsActivity : BaseActivity() {
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
 
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
-            startActivity(Intent(this, com.example.myapplication.MenuActivity::class.java))
+            startMenuActivity()
         }
     }
 
@@ -61,6 +61,7 @@ class ConversationsActivity : BaseActivity() {
                 putExtra(ChatActivity.EXTRA_CONVERSATION, conv)
             }
             chatLauncher.launch(intent)
+            applyPushTransition()
         }
         binding.rvConversations.layoutManager = LinearLayoutManager(this)
         binding.rvConversations.adapter = adapter

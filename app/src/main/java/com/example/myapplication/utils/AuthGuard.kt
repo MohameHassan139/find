@@ -14,7 +14,7 @@ object AuthGuard {
      * If yes, runs [action] immediately.
      * If no, shows a dialog asking the user to log in or cancel.
      */
-    fun requireLogin(context: Context, action: () -> Unit) {
+    fun requireLogin(context: Context, targetIntent: Intent? = null, action: () -> Unit) {
         if (TokenManager.isLoggedIn(context)) {
             action()
             return
@@ -23,7 +23,12 @@ object AuthGuard {
             .setTitle(context.getString(R.string.auth_guard_title))
             .setMessage(context.getString(R.string.auth_guard_message))
             .setPositiveButton(context.getString(R.string.auth_guard_go_login)) { _, _ ->
-                context.startActivity(Intent(context, PhoneAuthActivity::class.java))
+                val loginIntent = Intent(context, PhoneAuthActivity::class.java).apply {
+                    if (targetIntent != null) {
+                        putExtra("EXTRA_TARGET_INTENT", targetIntent)
+                    }
+                }
+                context.startActivity(loginIntent)
             }
             .setNegativeButton(context.getString(R.string.auth_guard_cancel), null)
             .show()

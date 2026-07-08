@@ -18,7 +18,8 @@ class BubbleDrawable(
     private val cornerRadius: Float = 36f,
     private val tailWidth: Float = 20f,
     private val tailHeight: Float = 20f,
-    private val isTailOnLeft: Boolean = true
+    private val isTailOnLeft: Boolean = true,
+    private val drawTail: Boolean = true
 ) : Drawable() {
 
     private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -44,27 +45,29 @@ class BubbleDrawable(
         val left = b.left.toFloat() + inset + if (isTailOnLeft) tailWidth else 0f
         val top = b.top.toFloat() + inset
         val right = b.right.toFloat() - inset - if (!isTailOnLeft) tailWidth else 0f
-        val bottom = b.bottom.toFloat() - inset - tailHeight / 2f
+        val bottom = b.bottom.toFloat() - inset - if (drawTail) (tailHeight / 2f) else 0f
 
         val bodyRect = RectF(left, top, right, bottom)
         path.addRoundRect(bodyRect, cornerRadius, cornerRadius, Path.Direction.CW)
 
-        if (isTailOnLeft) {
-            val tailPath = Path().apply {
-                moveTo(left + cornerRadius, bottom)
-                lineTo(b.left.toFloat() + inset, b.bottom.toFloat() - inset)
-                lineTo(left, bottom - cornerRadius)
-                close()
+        if (drawTail) {
+            if (isTailOnLeft) {
+                val tailPath = Path().apply {
+                    moveTo(left + cornerRadius, bottom)
+                    lineTo(b.left.toFloat() + inset, b.bottom.toFloat() - inset)
+                    lineTo(left, bottom - cornerRadius)
+                    close()
+                }
+                path.op(tailPath, Path.Op.UNION)
+            } else {
+                val tailPath = Path().apply {
+                    moveTo(right - cornerRadius, bottom)
+                    lineTo(b.right.toFloat() - inset, b.bottom.toFloat() - inset)
+                    lineTo(right, bottom - cornerRadius)
+                    close()
+                }
+                path.op(tailPath, Path.Op.UNION)
             }
-            path.op(tailPath, Path.Op.UNION)
-        } else {
-            val tailPath = Path().apply {
-                moveTo(right - cornerRadius, bottom)
-                lineTo(b.right.toFloat() - inset, b.bottom.toFloat() - inset)
-                lineTo(right, bottom - cornerRadius)
-                close()
-            }
-            path.op(tailPath, Path.Op.UNION)
         }
 
         canvas.drawPath(path, fillPaint)

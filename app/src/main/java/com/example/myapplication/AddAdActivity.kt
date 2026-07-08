@@ -117,7 +117,7 @@ class AddAdActivity : BaseActivity() {
 
         // Wire appbar buttons via findViewById (they live inside <include>)
         findViewById<ImageButton>(R.id.btnMenu).setOnClickListener {
-            startActivity(Intent(this, MenuActivity::class.java))
+            startMenuActivity()
         }
 
         BottomNavHelper.setup(this, NavScreen.ADD)

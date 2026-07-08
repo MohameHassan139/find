@@ -60,16 +60,16 @@ class ListingDetailActivity : BaseActivity() {
 
         // Search bar click
         binding.llHomeSearchContainer.setOnClickListener {
-            startActivity(Intent(this, SearchActivity::class.java))
+            startWithPush(Intent(this, SearchActivity::class.java))
         }
 
         // HomeHeaderHelper wires category tabs (rvHomeTopTabs) and search container
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
         BottomNavHelper.setup(this, NavScreen.NONE)
 
-        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finishWithPop() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
-            startActivity(Intent(this, MenuActivity::class.java))
+            startMenuActivity()
         }
         val listingId = intent.getStringExtra(EXTRA_LISTING_ID) ?: run { finish(); return }
         currentListingId = listingId
@@ -205,6 +205,19 @@ class ListingDetailActivity : BaseActivity() {
                 .into(iv)
             binding.llImages.addView(iv)
         }
+
+        if (intent.getBooleanExtra("EXTRA_AUTO_START_CONVERSATION", false)) {
+            intent.removeExtra("EXTRA_AUTO_START_CONVERSATION")
+            startConversation(l.id, l.sellerId?.toString() ?: "")
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val listingId = intent.getStringExtra(EXTRA_LISTING_ID) ?: currentListingId
+        currentListingId = listingId
+        loadListing(listingId)
     }
 
     // ── Contact button state ──────────────────────────────────────────────────
@@ -223,7 +236,15 @@ class ListingDetailActivity : BaseActivity() {
 
     private fun startConversation(listingId: String, sellerId: String) {
         if (!TokenManager.isLoggedIn(this)) {
-            startActivity(Intent(this, PhoneAuthActivity::class.java))
+            val target = Intent(this, ListingDetailActivity::class.java).apply {
+                putExtra(EXTRA_LISTING_ID, listingId)
+                putExtra("EXTRA_AUTO_START_CONVERSATION", true)
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            }
+            val loginIntent = Intent(this, PhoneAuthActivity::class.java).apply {
+                putExtra("EXTRA_TARGET_INTENT", target)
+            }
+            startActivity(loginIntent)
             return
         }
         val token = TokenManager.getToken(this) ?: return

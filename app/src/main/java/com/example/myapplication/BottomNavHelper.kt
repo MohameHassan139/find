@@ -21,26 +21,37 @@ object BottomNavHelper {
 
         activity.findViewById<android.view.View>(R.id.navHome)?.setOnClickListener {
             if (current == NavScreen.HOME) return@setOnClickListener
-            activity.startActivity(
-                Intent(activity, MainActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                }
-            )
+            val intent = Intent(activity, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra("EXTRA_NAV_SCREEN", "HOME")
+            }
+            activity.startActivity(intent)
+            @Suppress("DEPRECATION")
             activity.overridePendingTransition(0, 0)
         }
 
         activity.findViewById<android.view.View>(R.id.navAdd)?.setOnClickListener {
             if (current == NavScreen.ADD) return@setOnClickListener
-            AuthGuard.requireLogin(activity) {
-                activity.startActivity(Intent(activity, AddAdActivity::class.java))
+            val target = Intent(activity, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra("EXTRA_NAV_SCREEN", "ADD")
+            }
+            AuthGuard.requireLogin(activity, target) {
+                activity.startActivity(target)
+                @Suppress("DEPRECATION")
                 activity.overridePendingTransition(0, 0)
             }
         }
 
         activity.findViewById<android.view.View>(R.id.navChat)?.setOnClickListener {
             if (current == NavScreen.CHAT) return@setOnClickListener
-            AuthGuard.requireLogin(activity) {
-                activity.startActivity(Intent(activity, ConversationsActivity::class.java))
+            val target = Intent(activity, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra("EXTRA_NAV_SCREEN", "CHAT")
+            }
+            AuthGuard.requireLogin(activity, target) {
+                activity.startActivity(target)
+                @Suppress("DEPRECATION")
                 activity.overridePendingTransition(0, 0)
             }
         }

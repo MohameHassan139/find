@@ -36,8 +36,8 @@ class CommunicationChannelsActivity : BaseActivity() {
     }
 
     private fun setupAppBar() {
-        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finish() }
-        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener { finish() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finishWithPop() }
+        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener { finishWithPop() }
     }
 
     private fun setupCheckboxes() {
