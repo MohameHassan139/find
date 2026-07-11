@@ -301,6 +301,9 @@
         android:id="@+id/flContent"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/category_grid_bg"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/llStickyHeader"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -309,10 +312,12 @@
                 android:id="@+id/rvCategoryGrid"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/category_grid_bg"
+                android:clipChildren="false"
                 android:clipToPadding="false"
-                android:paddingBottom="8dp"
                 android:paddingTop="8dp"
-                android:paddingHorizontal="10dp"
+                android:paddingBottom="80dp"
+                android:paddingHorizontal="8dp"
                 android:visibility="gone" />
 
             <!-- Case A-2: Sub-category grid (after tapping a top-level category on home) -->
@@ -320,10 +325,12 @@
                 android:id="@+id/rvSubCategoryGrid"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/category_grid_bg"
+                android:clipChildren="false"
                 android:clipToPadding="false"
                 android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:paddingHorizontal="10dp"
+                android:paddingBottom="80dp"
+                android:paddingHorizontal="8dp"
                 android:visibility="gone" />
 
             <!-- Home grid loading spinner -->

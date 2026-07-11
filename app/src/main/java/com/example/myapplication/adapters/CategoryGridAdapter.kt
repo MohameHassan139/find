@@ -20,11 +20,10 @@ class CategoryGridAdapter(
 
     class VH(val b: ItemCategoryGridBinding) : RecyclerView.ViewHolder(b.root)
 
-    // The 8 sub-icon WebViews in order
+    // The 5 sub-icon WebViews in order
     private fun iconSlots(b: ItemCategoryGridBinding): List<android.webkit.WebView> = listOf(
-        b.ivSub0, b.ivSub1, b.ivSub2,
-        b.ivSub3, b.ivSub4, b.ivSub5,
-        b.ivSub6, b.ivSub7
+        b.ivSubAll, b.ivSub1, b.ivSub2,
+        b.ivSub3, b.ivSub4
     )
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -72,7 +71,7 @@ class CategoryGridAdapter(
             if (!url.isNullOrEmpty()) {
                 holder.b.wvSingleIcon.visibility = android.view.View.VISIBLE
                 holder.b.tvSingleDots.visibility = android.view.View.GONE
-                val html = "<html><head><style>body{margin:0;padding:0;overflow:hidden;display:flex;justify-content:center;align-items:center;height:30%;width:30%;background:transparent;} img{width:40%;height:40%;object-fit:contain;}</style></head><body><img src=\"$url\"/></body></html>"
+                val html = "<html><head><meta name='viewport' content='width=device-width,initial-scale=1'><style>*{margin:0;padding:0;box-sizing:border-box;}html,body{width:100%;height:100%;background:transparent;display:flex;justify-content:center;align-items:center;} img{width:70%;height:70%;object-fit:contain;}</style></head><body><img src=\"$url\"/></body></html>"
                 holder.b.wvSingleIcon.loadDataWithBaseURL(url, html, "text/html", "UTF-8", null)
             } else {
                 holder.b.wvSingleIcon.visibility = android.view.View.GONE
@@ -83,17 +82,26 @@ class CategoryGridAdapter(
             holder.b.wvSingleIcon.visibility = android.view.View.GONE
             holder.b.tvSingleDots.visibility = android.view.View.GONE
 
-            val slots = iconSlots(holder.b)
             val subs = cat.subCategories
+            val isElectronics = cat.nameAr.contains("إلكترون") || cat.nameEn?.lowercase()?.contains("electronics") == true
+
+            val slots = iconSlots(holder.b)
 
             slots.forEachIndexed { i, iv ->
-                val sub = subs.getOrNull(i)
+                val sub = when (i) {
+                    0 -> subs.getOrNull(0) // ivSubAll
+                    1 -> subs.getOrNull(1) // ivSub1
+                    2 -> subs.getOrNull(2) // ivSub2
+                    3 -> subs.getOrNull(3) // ivSub3
+                    4 -> if (isElectronics) subs.getOrNull(5) else subs.getOrNull(4) // ivSub4
+                    else -> null
+                }
                 val url = sub?.iconUrl
                 if (!url.isNullOrEmpty()) {
-                    val html = "<html><head><style>body{margin:0;padding:0;overflow:hidden;display:flex;justify-content:center;align-items:center;height:22%;width:22%;background:transparent;} img{width:40%;height:40%;object-fit:contain;}</style></head><body><img src=\"$url\"/></body></html>"
+                    val html = "<html><head><meta name='viewport' content='width=device-width,initial-scale=1'><style>*{margin:0;padding:0;box-sizing:border-box;}html,body{width:100%;height:100%;background:transparent;display:flex;justify-content:center;align-items:center;} img{width:78%;height:78%;object-fit:contain;}</style></head><body><img src=\"$url\"/></body></html>"
                     iv.loadDataWithBaseURL(url, html, "text/html", "UTF-8", null)
                 } else {
-                    val placeholderHtml = "<html><head><style>body{margin:0;padding:0;overflow:hidden;background:transparent;}</style></head><body></body></html>"
+                    val placeholderHtml = "<html><head><style>*{margin:0;padding:0;}html,body{width:100%;height:100%;background:transparent;}</style></head><body></body></html>"
                     iv.loadDataWithBaseURL("about:blank", placeholderHtml, "text/html", "UTF-8", null)
                 }
             }

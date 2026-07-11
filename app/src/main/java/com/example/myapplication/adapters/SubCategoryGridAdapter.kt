@@ -42,10 +42,34 @@ class SubCategoryGridAdapter(
         holder.b.tvSubName.text = LocaleHelper.localizedName(holder.itemView.context, sub.nameAr, sub.nameEn)
         val url = sub.iconUrl
         if (!url.isNullOrEmpty()) {
-            val html = "<html><head><style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;height:30%;width:30%;background:transparent;} img{width:80%;height:80%;object-fit:contain;}</style></head><body><img src=\"$url\"/></body></html>"
+            // Icon fills ~75% of the WebView area, centered — matches Figma proportions
+            val html = """
+                <html>
+                <head>
+                <meta name='viewport' content='width=device-width,initial-scale=1'>
+                <style>
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  html, body {
+                    width: 100%; height: 100%;
+                    background: transparent;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  }
+                  img {
+                    width: 75%;
+                    height: 75%;
+                    object-fit: contain;
+                  }
+                </style>
+                </head>
+                <body><img src="$url"/></body>
+                </html>
+            """.trimIndent()
             holder.b.ivSubIcon.loadDataWithBaseURL(url, html, "text/html", "UTF-8", null)
         } else {
-            holder.b.ivSubIcon.loadUrl("about:blank")
+            val emptyHtml = "<html><head><style>*{margin:0;padding:0;}html,body{width:100%;height:100%;background:transparent;}</style></head><body></body></html>"
+            holder.b.ivSubIcon.loadDataWithBaseURL("about:blank", emptyHtml, "text/html", "UTF-8", null)
         }
 
         holder.b.clickOverlay.setOnClickListener { onClick(sub) }

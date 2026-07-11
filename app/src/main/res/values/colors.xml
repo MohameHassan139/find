@@ -8,6 +8,8 @@
     <color name="find_accent_yellow">#FFF9C4</color>
     <color name="find_active_blue">#2196F3</color>
     <color name="find_gray_bg">#F5F5F5</color>
+    <color name="category_card_bg">#FFFFFF</color>
+    <color name="category_grid_bg">#F5F5F5</color>
     <color name="find_gray_text">#757575</color>
     <color name="find_search_bg">#EEEEEE</color>
     <color name="transparent">#00000000</color>
