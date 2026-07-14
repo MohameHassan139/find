@@ -48,8 +48,8 @@
             <TextView
                 android:id="@+id/btnLogin"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginHorizontal="16dp"
+                android:layout_height="64dp"
+                android:layout_marginHorizontal="5dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/bg_menu_item"
                 android:text="@string/menu_login"
@@ -64,8 +64,8 @@
             <LinearLayout
                 android:id="@+id/menuMyAccount"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginHorizontal="16dp"
+                android:layout_height="64dp"
+                android:layout_marginHorizontal="5dp"
                 android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
@@ -74,10 +74,10 @@
 
                 <!-- Yellow Box Icon -->
                 <FrameLayout
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:background="@drawable/bg_menu_icon_yellow"
-                    android:padding="6dp">
+                    android:padding="4dp">
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -96,10 +96,10 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_chevron_right"
-                    app:tint="@color/text_secondary"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_chevron_right_thin"
+                    app:tint="@color/text_primary"
                     android:layout_marginStart="8dp"
                     android:contentDescription="Go" />
             </LinearLayout>
@@ -108,8 +108,8 @@
             <LinearLayout
                 android:id="@+id/menuMyAds"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginHorizontal="16dp"
+                android:layout_height="64dp"
+                android:layout_marginHorizontal="5dp"
                 android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
@@ -117,10 +117,10 @@
                 android:background="@drawable/bg_menu_item">
 
                 <FrameLayout
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:background="@drawable/bg_menu_icon_yellow"
-                    android:padding="6dp">
+                    android:padding="4dp">
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -139,10 +139,10 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_chevron_right"
-                    app:tint="@color/text_secondary"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_chevron_right_thin"
+                    app:tint="@color/text_primary"
                     android:layout_marginStart="8dp"
                     android:contentDescription="Go" />
             </LinearLayout>
@@ -151,8 +151,8 @@
             <LinearLayout
                 android:id="@+id/menuFavorites"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginHorizontal="16dp"
+                android:layout_height="64dp"
+                android:layout_marginHorizontal="5dp"
                 android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
@@ -160,10 +160,10 @@
                 android:background="@drawable/bg_menu_item">
 
                 <FrameLayout
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:background="@drawable/bg_menu_icon_yellow"
-                    android:padding="6dp">
+                    android:padding="4dp">
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -182,10 +182,10 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_chevron_right"
-                    app:tint="@color/text_secondary"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_chevron_right_thin"
+                    app:tint="@color/text_primary"
                     android:layout_marginStart="8dp"
                     android:contentDescription="Go" />
             </LinearLayout>
@@ -194,8 +194,8 @@
             <LinearLayout
                 android:id="@+id/menuNotifications"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginHorizontal="16dp"
+                android:layout_height="64dp"
+                android:layout_marginHorizontal="5dp"
                 android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
@@ -203,10 +203,10 @@
                 android:background="@drawable/bg_menu_item">
 
                 <FrameLayout
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:background="@drawable/bg_menu_icon_yellow"
-                    android:padding="6dp">
+                    android:padding="4dp">
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -238,10 +238,10 @@
                     android:visibility="gone" />
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_chevron_right"
-                    app:tint="@color/text_secondary"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_chevron_right_thin"
+                    app:tint="@color/text_primary"
                     android:layout_marginStart="8dp"
                     android:contentDescription="Go" />
             </LinearLayout>
@@ -250,8 +250,8 @@
             <LinearLayout
                 android:id="@+id/menuSettings"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginHorizontal="16dp"
+                android:layout_height="64dp"
+                android:layout_marginHorizontal="5dp"
                 android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
@@ -259,10 +259,10 @@
                 android:background="@drawable/bg_menu_item">
 
                 <FrameLayout
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:background="@drawable/bg_menu_icon_yellow"
-                    android:padding="6dp">
+                    android:padding="4dp">
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -281,10 +281,10 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_chevron_right"
-                    app:tint="@color/text_secondary"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_chevron_right_thin"
+                    app:tint="@color/text_primary"
                     android:layout_marginStart="8dp"
                     android:contentDescription="Go" />
             </LinearLayout>
@@ -293,8 +293,8 @@
             <LinearLayout
                 android:id="@+id/menuShareApp"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginHorizontal="16dp"
+                android:layout_height="64dp"
+                android:layout_marginHorizontal="5dp"
                 android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
@@ -302,10 +302,10 @@
                 android:background="@drawable/bg_menu_item">
 
                 <FrameLayout
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:background="@drawable/bg_menu_icon_yellow"
-                    android:padding="6dp">
+                    android:padding="4dp">
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -324,10 +324,10 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_chevron_right"
-                    app:tint="@color/text_secondary"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_chevron_right_thin"
+                    app:tint="@color/text_primary"
                     android:layout_marginStart="8dp"
                     android:contentDescription="Go" />
             </LinearLayout>
@@ -336,8 +336,8 @@
             <LinearLayout
                 android:id="@+id/menuAbout"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginHorizontal="16dp"
+                android:layout_height="64dp"
+                android:layout_marginHorizontal="5dp"
                 android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
@@ -345,10 +345,10 @@
                 android:background="@drawable/bg_menu_item">
 
                 <FrameLayout
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:background="@drawable/bg_menu_icon_yellow"
-                    android:padding="6dp">
+                    android:padding="4dp">
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -361,16 +361,18 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:gravity="left|center_vertical"
                     android:text="@string/menu_about"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_chevron_right"
-                    app:tint="@color/text_secondary"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_chevron_right_thin"
+                    app:tint="@color/text_primary"
                     android:layout_marginStart="8dp"
                     android:contentDescription="Go" />
             </LinearLayout>
@@ -379,8 +381,8 @@
             <LinearLayout
                 android:id="@+id/menuContact"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginHorizontal="16dp"
+                android:layout_height="64dp"
+                android:layout_marginHorizontal="5dp"
                 android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
@@ -388,10 +390,10 @@
                 android:background="@drawable/bg_menu_item">
 
                 <FrameLayout
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:background="@drawable/bg_menu_icon_yellow"
-                    android:padding="6dp">
+                    android:padding="4dp">
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -410,10 +412,10 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_chevron_right"
-                    app:tint="@color/text_secondary"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_chevron_right_thin"
+                    app:tint="@color/text_primary"
                     android:layout_marginStart="8dp"
                     android:contentDescription="Go" />
             </LinearLayout>
