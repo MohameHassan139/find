@@ -189,11 +189,11 @@
                 <!-- Prev arrow — thin chevron from design without background block -->
                 <ImageView
                     android:id="@+id/btnPrev"
-                    android:layout_width="36dp"
-                    android:layout_height="56dp"
+                    android:layout_width="42dp"
+                    android:layout_height="64dp"
                     android:layout_gravity="bottom|start"
                     android:layout_marginStart="4dp"
-                    android:layout_marginBottom="2dp"
+                    android:layout_marginBottom="4dp"
                     android:src="@drawable/ic_card_chevron_left"
                     android:scaleType="fitCenter"
                     android:autoMirrored="true"
@@ -203,11 +203,11 @@
                 <!-- Next arrow — thin chevron from design without background block -->
                 <ImageView
                     android:id="@+id/btnNext"
-                    android:layout_width="36dp"
-                    android:layout_height="56dp"
+                    android:layout_width="42dp"
+                    android:layout_height="64dp"
                     android:layout_gravity="bottom|end"
                     android:layout_marginEnd="4dp"
-                    android:layout_marginBottom="2dp"
+                    android:layout_marginBottom="4dp"
                     android:src="@drawable/ic_card_chevron_right"
                     android:scaleType="fitCenter"
                     android:autoMirrored="true"
@@ -235,14 +235,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="horizontal">
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchActive"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:thumbTint="@android:color/white"
-                    app:trackTint="@color/switch_inactive_track" />
+                android:orientation="horizontal"
+                android:layoutDirection="locale">
 
                 <TextView
                     android:id="@+id/tvActiveLabel"
@@ -251,9 +245,17 @@
                     android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_secondary"
-                    android:layout_marginStart="8dp"
                     android:paddingVertical="4dp"
                     android:text="@string/ad_hidden" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchActive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layoutDirection="ltr"
+                    app:thumbTint="@android:color/white"
+                    app:trackTint="@color/switch_inactive_track" />
             </LinearLayout>
 
             <!-- Central Vertical line divider axis -->

@@ -63,8 +63,8 @@ class CategorySelectionActivity : BaseActivity() {
         binding.llListContainer.removeAllViews()
 
         val types = listOf(
-            LocaleHelper.localizedName(this, "عرض", "Offer") to "offer",
-            LocaleHelper.localizedName(this, "طلب", "Request") to "request"
+            LocaleHelper.localizedName(this, "العرض", "Offer") to "offer",
+            LocaleHelper.localizedName(this, "الطلب", "Request") to "request"
         )
 
         for ((label, value) in types) {
@@ -156,9 +156,9 @@ class CategorySelectionActivity : BaseActivity() {
         val subLabel = sub?.let { LocaleHelper.localizedName(this, it.nameAr, it.nameEn) }
         val filterLabel = filter?.let { LocaleHelper.localizedName(this, it.nameAr, it.nameEn) }
         val typeLabel = if (selectedType == "offer")
-            LocaleHelper.localizedName(this, "عرض", "Offer")
+            LocaleHelper.localizedName(this, "العرض", "Offer")
         else
-            LocaleHelper.localizedName(this, "طلب", "Request")
+            LocaleHelper.localizedName(this, "الطلب", "Request")
 
         val displayText = listOfNotNull(typeLabel, catLabel, subLabel, filterLabel).joinToString(" - ")
 

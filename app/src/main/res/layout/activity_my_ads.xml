@@ -60,20 +60,20 @@
                     android:gravity="center_vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/my_ads_title"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_primary" />
-
-                    <TextView
                         android:layout_width="42dp"
                         android:layout_height="48dp"
                         android:text="📢"
                         android:textSize="24sp"
                         android:gravity="center"
-                        android:background="@color/my_ads_icon_bg"
+                        android:background="@color/my_ads_icon_bg" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/my_ads_title"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
                         android:layout_marginStart="12dp" />
                 </LinearLayout>
             </LinearLayout>

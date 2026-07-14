@@ -88,12 +88,22 @@ class SettingsActivity : BaseActivity() {
         val switchNightMode = findViewById<SwitchCompat>(R.id.switchNightMode)
         val currentTheme = getSavedTheme(this)
         
-        switchNightMode.isChecked = currentTheme == THEME_DARK
+        val isChecked = currentTheme == THEME_DARK
+        switchNightMode.isChecked = isChecked
         
-        switchNightMode.setOnCheckedChangeListener { _, isChecked ->
-            val theme = if (isChecked) THEME_DARK else THEME_LIGHT
-            saveTheme(this, theme)
-            applyTheme(this)
+        val greenColor = androidx.core.content.ContextCompat.getColor(this, R.color.toggle_active_green)
+        val greyColor = androidx.core.content.ContextCompat.getColor(this, R.color.switch_inactive_track)
+        switchNightMode.trackTintList = android.content.res.ColorStateList.valueOf(
+            if (isChecked) greenColor else greyColor
+        )
+        
+        switchNightMode.setOnCheckedChangeListener { _, checked ->
+            switchNightMode.trackTintList = android.content.res.ColorStateList.valueOf(
+                if (checked) greenColor else greyColor
+            )
+            val theme = if (checked) THEME_DARK else THEME_LIGHT
+            saveTheme(this@SettingsActivity, theme)
+            applyTheme(this@SettingsActivity)
         }
     }
 

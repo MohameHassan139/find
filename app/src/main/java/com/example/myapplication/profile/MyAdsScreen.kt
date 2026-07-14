@@ -3,6 +3,7 @@ package com.example.myapplication.profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,9 +11,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -20,6 +22,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.PlatformTextStyle
+import com.example.myapplication.R
 
 // Global Text Style Helper to prevent vertical clipping of Arabic diacritics
 val ArabicTextStyle = TextStyle(
@@ -30,49 +33,57 @@ val ArabicTextStyle = TextStyle(
 
 @Composable
 fun MyAdsScreen() {
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        var selectedSegment by remember { mutableStateOf("العرض") }
-        var isAdVisible by remember { mutableStateOf(false) }
+    val isDark = isSystemInDarkTheme()
+    val screenBg = if (isDark) Color(0xFF121212) else Color(0xFFF4F4F4)
+    val dividerColor = if (isDark) Color(0xFF2E2E2E) else Color.Black.copy(alpha = 0.15f)
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFFF4F4F4))
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Component 1: Screen Header Title Row
-            HeaderTitleRow()
+    val offerText = stringResource(id = R.string.filter_offer)
+    val requestText = stringResource(id = R.string.filter_request)
+    var selectedSegment by remember(offerText) { mutableStateOf(offerText) }
+    var isAdVisible by remember { mutableStateOf(false) }
 
-            // Component 2: Segmented Switcher Pills
-            SegmentedSwitcher(
-                selectedSegment = selectedSegment,
-                onSegmentSelected = { selectedSegment = it }
-            )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(screenBg)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Component 1: Screen Header Title Row
+        HeaderTitleRow()
 
-            // Divider under switcher (15% black)
-            HorizontalDivider(
-                color = Color.Black.copy(alpha = 0.15f),
-                thickness = 1.dp,
-                modifier = Modifier.fillMaxWidth()
-            )
+        // Component 2: Segmented Switcher Pills
+        SegmentedSwitcher(
+            selectedSegment = selectedSegment,
+            onSegmentSelected = { selectedSegment = it }
+        )
 
-            // Component 3: Ad Card Item View
-            AdCardItem(
-                title = "عقر لي البيع",
-                username = "mMohammmed",
-                price = "5000 ريال",
-                location = "منطقة مكة المكرمة",
-                time = "الآن",
-                isAdVisible = isAdVisible,
-                onVisibilityChange = { isAdVisible = it }
-            )
-        }
+        // Divider under switcher
+        HorizontalDivider(
+            color = dividerColor,
+            thickness = 1.dp,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // Component 3: Ad Card Item View
+        AdCardItem(
+            title = "عقر لي البيع",
+            username = "mMohammmed",
+            price = "5000 ريال",
+            location = "منطقة مكة المكرمة",
+            time = "الآن",
+            isAdVisible = isAdVisible,
+            onVisibilityChange = { isAdVisible = it }
+        )
     }
 }
 
 @Composable
 fun HeaderTitleRow() {
+    val isDark = isSystemInDarkTheme()
+    val iconBg = if (isDark) Color(0xFF2A2000) else Color(0xFFFFF4CC)
+    val textColor = if (isDark) Color(0xFFF0F0F0) else Color(0xFF1A1A1A)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -84,7 +95,7 @@ fun HeaderTitleRow() {
         Box(
             modifier = Modifier
                 .size(width = 48.dp, height = 42.dp)
-                .background(Color(0xFFFFF4CC), shape = RoundedCornerShape(5.dp)),
+                .background(iconBg, shape = RoundedCornerShape(5.dp)),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -98,11 +109,11 @@ fun HeaderTitleRow() {
 
         // Title Text Label
         Text(
-            text = "إعلاناتي:",
+            text = stringResource(id = R.string.my_ads_title) + ":",
             style = ArabicTextStyle.copy(
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color.Black
+                color = textColor
             )
         )
     }
@@ -113,23 +124,31 @@ fun SegmentedSwitcher(
     selectedSegment: String,
     onSegmentSelected: (String) -> Unit
 ) {
+    val isDark = isSystemInDarkTheme()
+    val bgSwitcher = if (isDark) Color(0xFF2A2A2A) else Color(0xFFF4F4F4)
+    val activeBorder = Color(0xFF007AFF)
+    val textColor = if (isDark) Color(0xFFF0F0F0) else Color(0xFF1A1A1A)
+
+    val offerText = stringResource(id = R.string.filter_offer)
+    val requestText = stringResource(id = R.string.filter_request)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        listOf("العرض", "الطلب").forEach { segment ->
+        listOf(offerText, requestText).forEach { segment ->
             val isActive = selectedSegment == segment
 
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(41.dp)
-                    .background(Color(0xFFF4F4F4), shape = RoundedCornerShape(50.dp))
+                    .background(bgSwitcher, shape = RoundedCornerShape(50.dp))
                     .then(
                         if (isActive) {
-                            Modifier.border(1.dp, Color(0xFF007AFF), RoundedCornerShape(50.dp))
+                            Modifier.border(1.dp, activeBorder, RoundedCornerShape(50.dp))
                         } else Modifier
                     )
                     .clickable { onSegmentSelected(segment) },
@@ -140,7 +159,7 @@ fun SegmentedSwitcher(
                     style = ArabicTextStyle.copy(
                         fontSize = 15.sp,
                         fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal,
-                        color = if (isActive) Color.Black else Color.Black.copy(alpha = 0.4f)
+                        color = if (isActive) textColor else textColor.copy(alpha = 0.4f)
                     )
                 )
             }
@@ -158,6 +177,17 @@ fun AdCardItem(
     isAdVisible: Boolean,
     onVisibilityChange: (Boolean) -> Unit
 ) {
+    val isDark = isSystemInDarkTheme()
+    val cardBg = if (isDark) Color(0xFF252525) else Color.White
+    val cardBorder = if (isDark) Color(0xFF444444) else Color.Black
+    val textColor = if (isDark) Color(0xFFF0F0F0) else Color.Black
+    val grayColor = if (isDark) Color(0xFFAAAAAA) else Color.Gray
+    val imagePlaceholderBg = if (isDark) Color(0xFF3A3A3A) else Color(0xFFE0E0E0)
+    val editBtnBg = if (isDark) Color(0xFF2A2000) else Color(0xFFFFF4CC)
+    val editBtnText = if (isDark) Color(0xFFFFF4CC) else Color.Black
+    val cardDividerColor = if (isDark) Color(0xFF48484A) else Color.Black.copy(alpha = 0.1f)
+    val verticalDividerColor = if (isDark) Color(0xFF48484A) else Color.Black.copy(alpha = 0.12f)
+
     // Relative corner shape: topEnd and bottomEnd map to top-left and bottom-left in RTL mode
     // This correctly rounds the outer boundary of the card when the image is rendered on the left
     val imageShape = RoundedCornerShape(
@@ -170,8 +200,8 @@ fun AdCardItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, shape = RoundedCornerShape(10.dp))
-            .border(1.dp, Color.Black, RoundedCornerShape(10.dp))
+            .background(cardBg, shape = RoundedCornerShape(10.dp))
+            .border(1.dp, cardBorder, RoundedCornerShape(10.dp))
     ) {
         // Top Content Section (Row, 130.dp height)
         Row(
@@ -194,7 +224,7 @@ fun AdCardItem(
                     style = ArabicTextStyle.copy(
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = textColor
                     ),
                     maxLines = 2,
                     textAlign = TextAlign.Right
@@ -212,7 +242,7 @@ fun AdCardItem(
                         style = ArabicTextStyle.copy(
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.Black
+                            color = textColor
                         )
                     )
 
@@ -225,15 +255,15 @@ fun AdCardItem(
                             text = username,
                             style = ArabicTextStyle.copy(
                                 fontSize = 11.sp,
-                                color = Color.Gray
+                                color = grayColor
                             )
                         )
                         // Circular profile picture avatar wrapper
                         Box(
                             modifier = Modifier
                                 .size(20.dp)
-                                .border(0.5.dp, Color.Gray.copy(alpha = 0.5f), CircleShape)
-                                .background(Color(0xFFE0E0E0), shape = CircleShape)
+                                .border(0.5.dp, grayColor.copy(alpha = 0.5f), CircleShape)
+                                .background(imagePlaceholderBg, shape = CircleShape)
                         )
                     }
                 }
@@ -247,21 +277,21 @@ fun AdCardItem(
                         text = location,
                         style = ArabicTextStyle.copy(
                             fontSize = 10.sp,
-                            color = Color.Gray
+                            color = grayColor
                         )
                     )
                     Text(
                         text = "•",
                         style = ArabicTextStyle.copy(
                             fontSize = 10.sp,
-                            color = Color.Gray
+                            color = grayColor
                         )
                     )
                     Text(
                         text = time,
                         style = ArabicTextStyle.copy(
                             fontSize = 10.sp,
-                            color = Color.Gray
+                            color = grayColor
                         )
                     )
                 }
@@ -272,43 +302,43 @@ fun AdCardItem(
                 modifier = Modifier
                     .size(width = 147.dp, height = 130.dp)
                     .clip(imageShape)
-                    .background(Color(0xFFE0E0E0))
+                    .background(imagePlaceholderBg)
             ) {
                 Text(
                     text = "صورة الإعلان",
-                    style = ArabicTextStyle.copy(fontSize = 12.sp, color = Color.Gray),
+                    style = ArabicTextStyle.copy(fontSize = 12.sp, color = grayColor),
                     modifier = Modifier.align(Alignment.Center)
                 )
 
-                // Left Arrow Overlay (<) — Thin, crisp chevron without blocky background
+                // Left Arrow Overlay (<) — Bigger chevron, positioned at bottom-left corner
                 Box(
                     modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .padding(start = 8.dp)
+                        .align(Alignment.BottomStart)
+                        .padding(start = 4.dp, bottom = 4.dp)
                         .clickable { },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "‹",
                         color = Color.White,
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.ExtraLight
+                        fontSize = 48.sp,
+                        fontWeight = FontWeight.Normal
                     )
                 }
 
-                // Right Arrow Overlay (>) — Thin, crisp chevron without blocky background
+                // Right Arrow Overlay (>) — Bigger chevron, positioned at bottom-right corner
                 Box(
                     modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(end = 8.dp)
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 4.dp, bottom = 4.dp)
                         .clickable { },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "›",
                         color = Color.White,
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.ExtraLight
+                        fontSize = 48.sp,
+                        fontWeight = FontWeight.Normal
                     )
                 }
             }
@@ -316,7 +346,7 @@ fun AdCardItem(
 
         // Bottom panel divider (horizontal line separating top block and bottom panel)
         HorizontalDivider(
-            color = Color.Black.copy(alpha = 0.1f),
+            color = cardDividerColor,
             thickness = 1.dp,
             modifier = Modifier.fillMaxWidth()
         )
@@ -343,8 +373,8 @@ fun AdCardItem(
                     Box(
                         modifier = Modifier
                             .size(width = 87.dp, height = 24.dp)
-                            .background(Color(0xFFFFF4CC), shape = RoundedCornerShape(5.dp))
-                            .border(0.5.dp, Color.Black.copy(alpha = 0.12f), RoundedCornerShape(5.dp))
+                            .background(editBtnBg, shape = RoundedCornerShape(5.dp))
+                            .border(0.5.dp, textColor.copy(alpha = 0.12f), RoundedCornerShape(5.dp))
                             .clickable { },
                         contentAlignment = Alignment.Center
                     ) {
@@ -353,7 +383,7 @@ fun AdCardItem(
                             style = ArabicTextStyle.copy(
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                color = editBtnText
                             )
                         )
                     }
@@ -380,14 +410,14 @@ fun AdCardItem(
 
             // Central Vertical Divider Symmetrical Axis
             VerticalDivider(
-                color = Color.Black.copy(alpha = 0.12f),
+                color = verticalDividerColor,
                 thickness = 1.dp,
                 modifier = Modifier
                     .fillMaxHeight()
                     .padding(vertical = 12.dp)
             )
 
-            // Right Interactive Region (Visibility toggles centered)
+            // Right Interactive Region (Visibility toggles centered) — text first, switch second
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -398,25 +428,30 @@ fun AdCardItem(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Switch(
-                        checked = isAdVisible,
-                        onCheckedChange = onVisibilityChange,
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = Color(0xFF34C759),
-                            uncheckedThumbColor = Color.White,
-                            uncheckedTrackColor = Color(0xFFE9E9EB)
+                    val greenColor = if (isDark) Color(0xFF4CAF50) else Color(0xFF34C759)
+                    val switchTrackColor = if (isDark) Color(0xFF3E3E3E) else Color(0xFFE0E0E0)
+
+                    Text(
+                        text = if (isAdVisible) stringResource(id = R.string.ad_visible) else stringResource(id = R.string.ad_hidden),
+                        style = ArabicTextStyle.copy(
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = if (isAdVisible) greenColor else grayColor
                         )
                     )
 
-                    Text(
-                        text = if (isAdVisible) "عرض" else "مخفي",
-                        style = ArabicTextStyle.copy(
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.Black
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                        Switch(
+                            checked = isAdVisible,
+                            onCheckedChange = onVisibilityChange,
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.White,
+                                checkedTrackColor = greenColor,
+                                uncheckedThumbColor = Color.White,
+                                uncheckedTrackColor = switchTrackColor
+                            )
                         )
-                    )
+                    }
                 }
             }
         }

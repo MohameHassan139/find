@@ -73,7 +73,7 @@ class ListingsAdapter(
         // Type badge color
         val ctx = holder.itemView.context
         val isOffer = item.listingType == "offer"
-        b.tvType.text = if (isOffer) LocaleHelper.localizedName(ctx, "عرض", "Offer") else LocaleHelper.localizedName(ctx, "طلب", "Request")
+        b.tvType.text = if (isOffer) LocaleHelper.localizedName(ctx, "العرض", "Offer") else LocaleHelper.localizedName(ctx, "الطلب", "Request")
         b.tvType.setBackgroundColor(
             if (isOffer) Color.parseColor("#34C759") else Color.parseColor("#FF9500")
         )

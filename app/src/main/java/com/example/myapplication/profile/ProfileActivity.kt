@@ -65,7 +65,6 @@ class ProfileActivity : BaseActivity() {
         
         binding.profileContainer.setOnClickListener { openGallery() }
         binding.btnVerifyNafath.setOnClickListener { handleNafathVerification() }
-        binding.btnUploadLicense.setOnClickListener { handleFalLicenseUpload() }
         binding.btnSave.setOnClickListener { saveProfile() }
         binding.btnSignOut.setOnClickListener { confirmSignOut() }
 
@@ -101,17 +100,6 @@ class ProfileActivity : BaseActivity() {
         // 4. Update user verification status
     }
 
-    private fun handleFalLicenseUpload() {
-        // TODO: Implement FAL license upload functionality
-        Toast.makeText(this, "Opening FAL license upload...", Toast.LENGTH_SHORT).show()
-        
-        // Placeholder for FAL license upload
-        // You would typically:
-        // 1. Open file picker or camera to capture license
-        // 2. Upload to your backend
-        // 3. Verify license with FAL system
-        // 4. Update user verification status
-    }
 
     private fun loadProfile() {
         val token = TokenManager.getToken(this) ?: return
@@ -158,6 +146,7 @@ class ProfileActivity : BaseActivity() {
         }
         val token = TokenManager.getToken(this) ?: return
         binding.btnSave.isEnabled = false
+        binding.btnSave.alpha = 0.5f
         lifecycleScope.launch {
             try {
                 val response = AuthRetrofitClient.authService.updateProfile(
@@ -175,6 +164,7 @@ class ProfileActivity : BaseActivity() {
                 Toast.makeText(this@ProfileActivity, getString(R.string.kt_str_338558d2), Toast.LENGTH_SHORT).show()
             } finally {
                 binding.btnSave.isEnabled = true
+                binding.btnSave.alpha = 1.0f
             }
         }
     }
