@@ -9,6 +9,13 @@
 
     <include layout="@layout/layout_appbar_back" />
 
+    <!-- Reusable home header: search + category tabs -->
+    <include
+        android:id="@+id/homeHeader"
+        layout="@layout/layout_home_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <!-- Main card container -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"

@@ -32,16 +32,8 @@
             android:background="@drawable/bg_search_bar"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:layoutDirection="ltr"
+            android:layoutDirection="locale"
             android:paddingHorizontal="12dp">
-
-            <!-- Icon on the START side (left in LTR, right in RTL) -->
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:src="@drawable/ic_search"
-                android:alpha="0.5"
-                app:tint="@color/find_gray_text" />
 
             <EditText
                 android:id="@+id/etSearch"
@@ -58,7 +50,14 @@
                 android:paddingVertical="0dp"
                 android:includeFontPadding="false"
                 android:textSize="14sp"
-                android:textColorHint="@color/find_gray_text" />
+                android:textColor="@color/black"
+                android:textColorHint="@color/black" />
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_search"
+                app:tint="@color/black" />
         </LinearLayout>
 
         <!-- Top category tabs -->

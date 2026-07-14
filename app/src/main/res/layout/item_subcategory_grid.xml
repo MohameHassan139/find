@@ -45,7 +45,7 @@
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:textSize="14sp"
-                android:textColor="#D9000000"
+                android:textColor="@color/text_primary"
                 android:fontFamily="sans-serif" />
 
             <android.webkit.WebView

@@ -121,27 +121,29 @@
             android:background="@drawable/bg_search_bar"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:layoutDirection="locale"
             android:paddingHorizontal="12dp"
             android:clickable="true"
             android:focusable="true">
-
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:src="@drawable/ic_search"
-                android:alpha="0.5"
-                android:importantForAccessibility="no" />
 
             <TextView
                 android:id="@+id/tvSearchHint"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
+                android:layoutDirection="locale"
                 android:gravity="start|center_vertical"
                 android:paddingHorizontal="8dp"
                 android:textSize="14sp"
-                android:text="@string/search_anything"
-                android:textColor="@color/find_gray_text" />
+                android:text="@string/search_hint"
+                android:textColor="@color/black" />
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_search"
+                app:tint="@color/black"
+                android:importantForAccessibility="no" />
         </LinearLayout>
 
         <!-- Category tabs (reuse HomeHeaderHelper's RecyclerView ids) -->

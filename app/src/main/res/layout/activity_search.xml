@@ -38,14 +38,8 @@
                 android:background="@drawable/bg_search_bar"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
+                android:layoutDirection="locale"
                 android:paddingHorizontal="12dp">
-
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:src="@drawable/ic_search"
-                    android:alpha="0.5"
-                    app:tint="@color/find_gray_text" />
 
                 <EditText
                     android:id="@+id/etSearchQuery"
@@ -53,13 +47,15 @@
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
-                    android:hint="@string/search_anything"
+                    android:hint="@string/search_hint"
+                    android:layoutDirection="locale"
                     android:gravity="start|center_vertical"
                     android:imeOptions="actionSearch"
                     android:inputType="text"
                     android:paddingHorizontal="8dp"
                     android:textSize="14sp"
-                    android:textColorHint="@color/find_gray_text" />
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black" />
 
                 <!-- Clear button -->
                 <ImageButton
@@ -70,6 +66,12 @@
                     android:src="@drawable/ic_close"
                     android:contentDescription="مسح"
                     android:visibility="gone" />
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_search"
+                    app:tint="@color/black" />
             </LinearLayout>
         </LinearLayout>
 
