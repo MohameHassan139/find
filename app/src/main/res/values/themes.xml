@@ -5,6 +5,7 @@
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSurface">@color/surface_primary</item>
         <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOutline">@color/stroke_field</item>
         <item name="android:windowBackground">@color/bg_screen</item>
         <item name="android:colorBackground">@color/bg_screen</item>
         <item name="android:textColorPrimary">@color/text_primary</item>

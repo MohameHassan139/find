@@ -42,13 +42,47 @@
             android:layout_height="1dp"
             android:layout_weight="1" />
 
-        <TextView
+        <!-- Logo -->
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/find_primary" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:src="@drawable/ic_app_logo"
+                android:contentDescription="Find"
+                android:padding="2dp"
+                android:layout_marginEnd="8dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="فايندز"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="-3dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="finds"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:includeFontPadding="false"
+                    android:lineSpacingExtra="-3dp" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Reusable home header: search + category tabs -->
@@ -69,8 +103,8 @@
             <!-- Title Card -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:background="@color/surface_tabs"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_surface_tabs_rounded"
                 android:gravity="center"
                 android:layout_marginTop="16dp"
                 android:layout_marginHorizontal="16dp">
@@ -94,32 +128,24 @@
                 android:layout_marginHorizontal="16dp">
 
                 <TextView
+                    android:id="@+id/labelPhone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/profile_phone"
                     android:textSize="14sp"
                     android:textColor="@color/text_secondary"
-                    android:layout_gravity="end"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_gravity="start"
+                    android:layout_marginBottom="8dp"
+                    android:drawableStart="@drawable/ic_phone"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="@color/text_secondary" />
 
                 <!-- Phone input row -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:orientation="horizontal">
-
-                    <!-- Number field -->
-                    <EditText
-                        android:id="@+id/etPhone"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@color/surface_primary"
-                        android:gravity="end|center_vertical"
-                        android:hint="@string/str_5xxxxxxxx"
-                        android:textSize="16sp"
-                        android:paddingHorizontal="12dp"
-                        android:inputType="phone" />
+                    android:layout_height="50dp"
+                    android:orientation="horizontal"
+                    android:layoutDirection="ltr">
 
                     <!-- Country code -->
                     <EditText
@@ -130,36 +156,58 @@
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:gravity="center"
-                        android:background="@color/surface_primary"
+                        android:textColor="@color/text_primary"
+                        android:background="@drawable/bg_rounded_input"
                         android:inputType="phone"
-                        android:maxLength="5"
-                        android:layout_marginStart="4dp" />
+                        android:maxLength="5" />
+
+                    <!-- Number field -->
+                    <EditText
+                        android:id="@+id/etPhone"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_rounded_input"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_secondary"
+                        android:gravity="start|center_vertical"
+                        android:hint="@string/str_5xxxxxxxx"
+                        android:textSize="16sp"
+                        android:paddingHorizontal="12dp"
+                        android:inputType="phone"
+                        android:layout_marginStart="8dp" />
                 </LinearLayout>
 
                 <!-- Send OTP button -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="@color/surface_primary"
-                    android:gravity="center"
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:id="@+id/btnSendOtp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:minWidth="180dp"
+                        android:paddingHorizontal="24dp"
+                        android:background="@drawable/bg_rounded_input"
+                        android:text="@string/send_otp"
+                        android:textSize="16sp"
+                        android:textColor="@color/text_primary"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground" />
 
                     <ProgressBar
                         android:id="@+id/progressPhone"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:layout_marginEnd="8dp"
+                        android:layout_gravity="center"
                         android:visibility="gone" />
-
-                    <TextView
-                        android:id="@+id/btnSendOtp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/send_otp"
-                        android:textSize="16sp"
-                        android:textColor="@color/find_primary"
-                        android:padding="8dp" />
-                </LinearLayout>
+                </FrameLayout>
             </LinearLayout>
 
             <!-- ── STEP 2: OTP ── -->
@@ -186,8 +234,10 @@
                 <EditText
                     android:id="@+id/etOtp"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@color/surface_primary"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_rounded_input"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_secondary"
                     android:gravity="center"
                     android:hint="• • • • • •"
                     android:textSize="22sp"
@@ -208,47 +258,59 @@
                     android:layout_marginTop="8dp" />
 
                 <!-- Verify button -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="@color/surface_primary"
-                    android:gravity="center"
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:id="@+id/btnVerifyOtp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:minWidth="180dp"
+                        android:paddingHorizontal="24dp"
+                        android:background="@drawable/bg_rounded_input"
+                        android:text="@string/verify"
+                        android:textSize="16sp"
+                        android:textColor="@color/text_primary"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground" />
 
                     <ProgressBar
                         android:id="@+id/progressOtp"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:layout_marginEnd="8dp"
+                        android:layout_gravity="center"
                         android:visibility="gone" />
-
-                    <TextView
-                        android:id="@+id/btnVerifyOtp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/verify"
-                        android:textSize="16sp"
-                        android:textColor="@color/text_primary"
-                        android:padding="8dp" />
-                </LinearLayout>
+                </FrameLayout>
 
                 <!-- Change phone -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="@color/surface_primary"
-                    android:gravity="center"
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginTop="8dp">
 
                     <TextView
                         android:id="@+id/btnChangePhone"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:minWidth="180dp"
+                        android:paddingHorizontal="24dp"
+                        android:background="@drawable/bg_rounded_input"
                         android:text="@string/change_number"
                         android:textSize="15sp"
                         android:textColor="@color/text_primary"
-                        android:padding="8dp" />
-                </LinearLayout>
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground" />
+                </FrameLayout>
             </LinearLayout>
 
         </LinearLayout>

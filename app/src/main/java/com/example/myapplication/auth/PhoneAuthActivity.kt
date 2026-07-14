@@ -158,11 +158,13 @@ class PhoneAuthActivity : BaseActivity() {
 
     private fun setPhoneLoading(on: Boolean) {
         binding.btnSendOtp.isEnabled = !on
+        binding.btnSendOtp.text = if (on) "" else getString(R.string.send_otp)
         binding.progressPhone.visibility = if (on) View.VISIBLE else View.GONE
     }
 
     private fun setOtpLoading(on: Boolean) {
         binding.btnVerifyOtp.isEnabled = !on
+        binding.btnVerifyOtp.text = if (on) "" else getString(R.string.verify)
         binding.progressOtp.visibility = if (on) View.VISIBLE else View.GONE
     }
 
