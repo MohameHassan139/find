@@ -276,6 +276,9 @@ class MainActivity : BaseActivity() {
         binding.rvListings.visibility        = if (state == BodyState.ADS)           View.VISIBLE else View.GONE
         binding.llEmptyState.visibility      = if (state == BodyState.EMPTY)         View.VISIBLE else View.GONE
         if (state == BodyState.LOADING) animateShimmer(binding.llListingsShimmer)
+
+        val showBackToParent = (state == BodyState.EMPTY) && (vm.catIdx > 0) && (vm.catSubIdx != null)
+        binding.btnBackToParent.visibility = if (showBackToParent) View.VISIBLE else View.GONE
     }
 
     private fun observeViewModel() {
@@ -360,6 +363,12 @@ class MainActivity : BaseActivity() {
             AuthGuard.requireLogin(this) {
                 startActivity(Intent(this, AddAdActivity::class.java))
             }
+        }
+
+        binding.btnBackToParent.setOnClickListener {
+            val cats = vm.categories.value ?: return@setOnClickListener
+            val currentCat = cats.getOrNull(vm.catIdx - 1) ?: return@setOnClickListener
+            openCategory(currentCat)
         }
     }
 
