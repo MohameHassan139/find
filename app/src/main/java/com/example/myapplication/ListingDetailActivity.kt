@@ -182,8 +182,8 @@ class ListingDetailActivity : BaseActivity() {
 
         binding.btnPrev.isEnabled = false
         binding.btnNext.isEnabled = false
-        binding.btnPrev.alpha = 0.3f
-        binding.btnNext.alpha = 0.3f
+        binding.btnPrev.alpha = 1.0f
+        binding.btnNext.alpha = 1.0f
 
         binding.llImages.removeAllViews()
         val gap = (8 * resources.displayMetrics.density).toInt()
