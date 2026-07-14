@@ -120,6 +120,7 @@
                             android:minHeight="0dp"
                             android:button="@drawable/cb_custom"
                             android:buttonTint="@null"
+                            app:buttonTint="@null"
                             android:checked="true"
                             android:enabled="false" />
 
@@ -162,7 +163,8 @@
                             android:minWidth="0dp"
                             android:minHeight="0dp"
                             android:button="@drawable/cb_custom"
-                            android:buttonTint="@null" />
+                            android:buttonTint="@null"
+                            app:buttonTint="@null" />
 
                     </LinearLayout>
 
@@ -202,7 +204,8 @@
                             android:minWidth="0dp"
                             android:minHeight="0dp"
                             android:button="@drawable/cb_custom"
-                            android:buttonTint="@null" />
+                            android:buttonTint="@null"
+                            app:buttonTint="@null" />
 
                     </LinearLayout>
 

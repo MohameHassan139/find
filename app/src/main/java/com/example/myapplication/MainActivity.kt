@@ -184,17 +184,10 @@ class MainActivity : BaseActivity() {
             val cats = vm.categories.value ?: emptyList()
             val idx = if (cat == null) 0 else (cats.indexOf(cat) + 1)
             if (idx == 0) {
-                vm.selectTopCategory(0)
-                categoryAdapter.updateData(cats)
-                binding.rvSubTabs.visibility    = View.GONE
-                binding.rvExtraTabs.visibility  = View.GONE
-                binding.llFilterBar.visibility  = View.GONE
-                binding.llRegionRow.visibility  = View.GONE
-                applyBodyState(BodyState.CATEGORIES)
+                resetToHome()
             } else {
                 openCategory(cat!!)
             }
-            topTabAdapter.update(cats, idx)
         }
         binding.rvTopTabs.adapter = topTabAdapter
 
@@ -333,20 +326,20 @@ class MainActivity : BaseActivity() {
         }
 
         vm.isFirstPageLoading.observe(this) { loading ->
-            if (loading && pendingCategoryId == null && !isShowingSubGrid) applyBodyState(BodyState.LOADING)
+            if (loading && pendingCategoryId == null && !isShowingSubGrid && vm.catIdx > 0) applyBodyState(BodyState.LOADING)
         }
 
         vm.isPagingLoading.observe(this) { loading -> listingsAdapter.setFooterLoading(loading) }
         vm.listings.observe(this) { listings ->
             listingsAdapter.updateData(listings)
-            if (!isShowingSubGrid) {
+            if (!isShowingSubGrid && vm.catIdx > 0) {
                 if (listings.isNotEmpty()) applyBodyState(BodyState.ADS)
                 else applyBodyState(BodyState.EMPTY)
             }
         }
 
         vm.isEmptyState.observe(this) { empty ->
-            if (empty && pendingCategoryId == null && !isShowingSubGrid) applyBodyState(BodyState.EMPTY)
+            if (empty && pendingCategoryId == null && !isShowingSubGrid && vm.catIdx > 0) applyBodyState(BodyState.EMPTY)
         }
 
         vm.errorEvent.observe(this) { msg ->
@@ -382,6 +375,19 @@ class MainActivity : BaseActivity() {
         subCategoryAdapter.updateData(cat.subCategories)
         buildSubTabs(cat)
         applyBodyState(BodyState.SUBCATEGORIES)
+    }
+
+    fun resetToHome() {
+        val cats = vm.categories.value ?: emptyList()
+        vm.selectTopCategory(0)
+        categoryAdapter.updateData(cats)
+        binding.rvSubTabs.visibility    = View.GONE
+        binding.rvExtraTabs.visibility  = View.GONE
+        binding.llFilterBar.visibility  = View.GONE
+        binding.llRegionRow.visibility  = View.GONE
+        topTabAdapter.update(cats, 0)
+        isShowingSubGrid = false
+        applyBodyState(BodyState.CATEGORIES)
     }
 
     private fun showListingsMode() {

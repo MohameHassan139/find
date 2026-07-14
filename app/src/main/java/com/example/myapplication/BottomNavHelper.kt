@@ -20,7 +20,12 @@ object BottomNavHelper {
         applyItem(activity, R.id.ivNavChat, R.id.tvNavChat, current == NavScreen.CHAT)
 
         activity.findViewById<android.view.View>(R.id.navHome)?.setOnClickListener {
-            if (current == NavScreen.HOME) return@setOnClickListener
+            if (current == NavScreen.HOME) {
+                if (activity is MainActivity) {
+                    activity.resetToHome()
+                }
+                return@setOnClickListener
+            }
             val intent = Intent(activity, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 putExtra("EXTRA_NAV_SCREEN", "HOME")
