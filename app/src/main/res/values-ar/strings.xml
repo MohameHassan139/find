@@ -38,20 +38,15 @@
     <string name="str______________">اكتب رسالة...</string>
     <string name="nav_chats">المحادثات</string>
     <string name="favorites_tab">المفضلة</string>
-    <string name="str___________">غير مقروءة</string>
     <string name="filter_unread">غير مقروءة</string>
     <string name="filter_all">الكل</string>
-    <string name="str________________">لا توجد إعلانات</string>
     <string name="btn_messages">رسائل</string>
-    <string name="str______">الأحد</string>
-    <string name="str_______">محادثة</string>
     <string name="search_anything">ابحث عن أي شيء</string>
     <string name="filter_offer">العرض</string>
     <string name="filter_request">الطلب</string>
     <string name="all_regions">كل المناطق</string>
     <string name="all_cities">كل المدن</string>
     <string name="category_title">جرّب تغيير الفئة أو المنطقة</string>
-    <string name="str____________________">إعادة تعيين الفلاتر</string>
     <string name="empty_no_ads">لا يوجد إعلان</string>
     <string name="empty_add_ad">أضف إعلان</string>
     <string name="my_ads_title">إعلاناتي</string>
@@ -76,8 +71,6 @@
     <string name="search_hint_text">اكتب كلمة للبحث في الإعلانات</string>
     <string name="no_results">لا توجد نتائج</string>
     <string name="last_message_placeholder">آخر رسالة...</string>
-    <string name="str_900__">9:00 م</string>
-    <string name="str_1">1</string>
     <string name="btn_edit">تعديل</string>
     <string name="btn_delete">حذف</string>
     <string name="ad_visible">ظاهر</string>
@@ -117,6 +110,9 @@
     <string name="menu_language">اللغة</string>
     <string name="language_label">اللغة:</string>
     <string name="filter">تصفية</string>
+    <string name="favorites_empty">لا توجد مفضلات بعد</string>
+    <string name="added_to_favorites">تمت الإضافة إلى المفضلة</string>
+    <string name="removed_from_favorites">تمت الإزالة من المفضلة</string>
 
     <!-- Auth Guard -->
     <string name="auth_guard_title">يجب تسجيل الدخول</string>
@@ -136,6 +132,10 @@
     <string name="settings_lang_arabic">🇸🇦 العربية</string>
     <string name="settings_lang_english">🇬🇧 English</string>
     <string name="settings_communication_channels">قنوات التواصل</string>
+    <string name="settings_blocked_users">المستخدمون المحظورون</string>
+    <string name="blocked_unblock">إلغاء الحظر</string>
+    <string name="blocked_empty">لا يوجد مستخدمون محظورون</string>
+    <string name="blocked_unknown_user">مستخدم غير معروف</string>
     <string name="settings_night_mode">الوضع الليلي</string>
     <string name="settings_delete_account">حذف الحساب</string>
     <string name="settings_delete_account_title">حذف الحساب</string>
@@ -148,6 +148,26 @@
     <string name="channel_in_app">محادثة في التطبيق</string>
     <string name="channel_whatsapp">واتساب</string>
     <string name="channel_call">اتصال</string>
+
+    <!-- Listing Detail screen -->
+    <string name="btn_call">إتصال</string>
+    <string name="btn_whatsapp">واتساب</string>
+    <string name="btn_chat">محادثة</string>
+    <string name="cd_back">رجوع</string>
+    <string name="cd_menu">القائمة</string>
+    <string name="cd_more">خيارات إضافية</string>
+    <string name="cd_call">إتصال</string>
+    <string name="cd_whatsapp">واتساب</string>
+    <string name="cd_chat">محادثة</string>
+    <string name="time_now">الآن</string>
+    <string name="time_minutes">%d دقيقة</string>
+    <string name="time_hours">%d ساعة</string>
+    <string name="time_days">%d يوم</string>
+    <string name="error_open_conversation">تعذر فتح المحادثة</string>
+
+    <!-- Push notifications -->
+    <string name="notif_channel_chat_name">رسائل المحادثة</string>
+    <string name="notif_channel_chat_description">رسائل جديدة من مستخدمين آخرين بخصوص إعلاناتك</string>
 
     <!-- Profile verification -->
     <string name="profile_verify_nafath">وثق حسابك عبر النفاذ الوطني</string>
