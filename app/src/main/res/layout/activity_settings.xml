@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/settings_bg"
+    android:layoutDirection="locale">
+
+    <!-- Top Bar -->
+    <include layout="@layout/layout_appbar_back" />
+
+    <!-- Reusable home header: search + category tabs -->
+    <include layout="@layout/layout_home_header" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="6dp"
+            android:paddingTop="21dp"
+            android:paddingBottom="14dp"
+            android:clipToPadding="false">
+
+            <!-- Language Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/rowLanguage"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="10dp"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="5dp"
+                app:cardBackgroundColor="@color/surface_primary"
+                app:strokeWidth="0dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layoutDirection="locale"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="12dp">
+
+                    <!-- Icon holder — always at START (right in AR, left in EN) -->
+                    <FrameLayout
+                        android:layout_width="48dp"
+                        android:layout_height="42dp"
+                        android:background="@drawable/bg_settings_icon_holder"
+                        android:padding="6dp">
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/ic_language"
+                            app:tint="@color/text_primary"
+                            android:scaleType="fitCenter"
+                            android:contentDescription="Language" />
+                    </FrameLayout>
+
+                    <!-- Label — stretches to fill middle -->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="@string/menu_language"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_primary"
+                        android:textStyle="bold" />
+
+                    <!-- Chevron — always at END; autoMirrored flips it for RTL -->
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/text_secondary"
+                        android:contentDescription="Go" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Communication Channels Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/rowChannels"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="10dp"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="5dp"
+                app:cardBackgroundColor="@color/surface_primary"
+                app:strokeWidth="0dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layoutDirection="locale"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="12dp">
+
+                    <FrameLayout
+                        android:layout_width="48dp"
+                        android:layout_height="42dp"
+                        android:background="@drawable/bg_settings_icon_holder"
+                        android:padding="6dp">
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/ic_settings_channels"
+                            app:tint="@color/text_primary"
+                            android:scaleType="fitCenter" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="@string/settings_communication_channels"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_primary"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/text_secondary"
+                        android:contentDescription="Go" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Blocked Users Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/rowBlockedUsers"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="10dp"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="5dp"
+                app:cardBackgroundColor="@color/surface_primary"
+                app:strokeWidth="0dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layoutDirection="locale"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="12dp">
+
+                    <FrameLayout
+                        android:layout_width="48dp"
+                        android:layout_height="42dp"
+                        android:background="@drawable/bg_settings_icon_holder"
+                        android:padding="6dp">
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/ic_settings_blocked"
+                            app:tint="@color/text_primary"
+                            android:scaleType="fitCenter" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="@string/settings_blocked_users"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_primary"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/text_secondary"
+                        android:contentDescription="Go" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Night Mode Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="10dp"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="5dp"
+                app:cardBackgroundColor="@color/surface_primary"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layoutDirection="locale"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="12dp">
+
+                    <!-- Icon at START -->
+                    <FrameLayout
+                        android:layout_width="48dp"
+                        android:layout_height="42dp"
+                        android:background="@drawable/bg_settings_icon_holder"
+                        android:padding="6dp">
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/ic_settings_night"
+                            app:tint="@color/text_primary"
+                            android:scaleType="fitCenter" />
+                    </FrameLayout>
+
+                    <!-- Label in middle -->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="@string/settings_night_mode"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_primary"
+                        android:textStyle="bold" />
+
+                    <!-- Switch at END -->
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switchNightMode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layoutDirection="ltr"
+                        app:thumbTint="@android:color/white"
+                        app:trackTint="@color/switch_inactive_track" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Spacer to push Delete Account to bottom -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Delete Account Button -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnDeleteAccount"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="14dp"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="5dp"
+                app:cardBackgroundColor="#FF3B30"
+                app:strokeWidth="0dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/settings_delete_account"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Hidden compatibility chips -->
+            <TextView
+                android:id="@+id/chipLight"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/chipDark"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/chipSystem"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvCurrentTheme"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/chipArabic"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/chipEnglish"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvCurrentLang"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Nav -->
+    <include
+        android:id="@+id/cvBottomNav"
+        layout="@layout/layout_bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="16dp" />
+
+</LinearLayout>

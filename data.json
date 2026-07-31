@@ -1,0 +1,2307 @@
+{
+    "success": true,
+    "data": {
+        "categories": [
+            {
+                "id": 2,
+                "name_ar": "\u0639\u0642\u0627\u0631\u0627\u062a",
+                "name_en": "Real Estate",
+                "sub_categories": [
+                    {
+                        "id": 1,
+                        "name_ar": "\u0627\u0644\u0643\u0644",
+                        "name_en": "All",
+                        "icon": "ic_all_1",
+                        "filter_options": [
+                            {
+                                "id": 1,
+                                "name_ar": "\u0644\u0644\u0628\u064a\u0639",
+                                "name_en": "For Sale"
+                            },
+                            {
+                                "id": 2,
+                                "name_ar": "\u0644\u0644\u0625\u064a\u062c\u0627\u0631",
+                                "name_en": "For Rent"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 2,
+                        "name_ar": "\u0645\u062d\u0644\u0627\u062a",
+                        "name_en": "Shops",
+                        "icon": "ic_electronics_1",
+                        "filter_options": [
+                            {
+                                "id": 3,
+                                "name_ar": "\u0644\u0644\u0628\u064a\u0639",
+                                "name_en": "For Sale"
+                            },
+                            {
+                                "id": 4,
+                                "name_ar": "\u0644\u0644\u0625\u064a\u062c\u0627\u0631",
+                                "name_en": "For Rent"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 3,
+                        "name_ar": "\u0639\u0645\u0627\u0626\u0631",
+                        "name_en": "Buildings",
+                        "icon": "ic_electronics_2",
+                        "filter_options": [
+                            {
+                                "id": 5,
+                                "name_ar": "\u0644\u0644\u0628\u064a\u0639",
+                                "name_en": "For Sale"
+                            },
+                            {
+                                "id": 6,
+                                "name_ar": "\u0644\u0644\u0625\u064a\u062c\u0627\u0631",
+                                "name_en": "For Rent"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "name_ar": "\u0645\u0635\u0627\u0646\u0639",
+                        "name_en": "Factories",
+                        "icon": "ic_electronics_3",
+                        "filter_options": [
+                            {
+                                "id": 7,
+                                "name_ar": "\u0644\u0644\u0628\u064a\u0639",
+                                "name_en": "For Sale"
+                            },
+                            {
+                                "id": 8,
+                                "name_ar": "\u0644\u0644\u0625\u064a\u062c\u0627\u0631",
+                                "name_en": "For Rent"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 5,
+                        "name_ar": "\u0634\u0642\u0642",
+                        "name_en": "Apartments",
+                        "icon": "ic_electronics_4",
+                        "filter_options": [
+                            {
+                                "id": 9,
+                                "name_ar": "\u0644\u0644\u0628\u064a\u0639",
+                                "name_en": "For Sale"
+                            },
+                            {
+                                "id": 10,
+                                "name_ar": "\u0644\u0644\u0625\u064a\u062c\u0627\u0631",
+                                "name_en": "For Rent"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 6,
+                        "name_ar": "\u0641\u0644\u0644",
+                        "name_en": "Villas",
+                        "icon": "ic_electronics_5",
+                        "filter_options": [
+                            {
+                                "id": 11,
+                                "name_ar": "\u0644\u0644\u0628\u064a\u0639",
+                                "name_en": "For Sale"
+                            },
+                            {
+                                "id": 12,
+                                "name_ar": "\u0644\u0644\u0625\u064a\u062c\u0627\u0631",
+                                "name_en": "For Rent"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 7,
+                        "name_ar": "\u0642\u0635\u0648\u0631",
+                        "name_en": "Palaces",
+                        "icon": "ic_electronics_6",
+                        "filter_options": [
+                            {
+                                "id": 13,
+                                "name_ar": "\u0644\u0644\u0628\u064a\u0639",
+                                "name_en": "For Sale"
+                            },
+                            {
+                                "id": 14,
+                                "name_ar": "\u0644\u0644\u0625\u064a\u062c\u0627\u0631",
+                                "name_en": "For Rent"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 8,
+                        "name_ar": "\u0627\u0633\u062a\u0631\u0627\u062d\u0627\u062a",
+                        "name_en": "Rest Houses",
+                        "icon": "ic_electronics_7",
+                        "filter_options": [
+                            {
+                                "id": 15,
+                                "name_ar": "\u0644\u0644\u0628\u064a\u0639",
+                                "name_en": "For Sale"
+                            },
+                            {
+                                "id": 16,
+                                "name_ar": "\u0644\u0644\u0625\u064a\u062c\u0627\u0631",
+                                "name_en": "For Rent"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 9,
+                        "name_ar": "\u0634\u0627\u0644\u064a\u0647\u0627\u062a",
+                        "name_en": "Chalets",
+                        "icon": "ic_electronics_8",
+                        "filter_options": [
+                            {
+                                "id": 17,
+                                "name_ar": "\u0644\u0644\u0628\u064a\u0639",
+                                "name_en": "For Sale"
+                            },
+                            {
+                                "id": 18,
+                                "name_ar": "\u0644\u0644\u0625\u064a\u062c\u0627\u0631",
+                                "name_en": "For Rent"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 10,
+                        "name_ar": "\u0645\u0632\u0627\u0631\u0639",
+                        "name_en": "Farms",
+                        "icon": "ic_electronics_9",
+                        "filter_options": [
+                            {
+                                "id": 19,
+                                "name_ar": "\u0644\u0644\u0628\u064a\u0639",
+                                "name_en": "For Sale"
+                            },
+                            {
+                                "id": 20,
+                                "name_ar": "\u0644\u0644\u0625\u064a\u062c\u0627\u0631",
+                                "name_en": "For Rent"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 11,
+                        "name_ar": "\u0645\u062e\u064a\u0645\u0627\u062a",
+                        "name_en": "Camps",
+                        "icon": "ic_electronics_10",
+                        "filter_options": [
+                            {
+                                "id": 21,
+                                "name_ar": "\u0644\u0644\u0628\u064a\u0639",
+                                "name_en": "For Sale"
+                            },
+                            {
+                                "id": 22,
+                                "name_ar": "\u0644\u0644\u0625\u064a\u062c\u0627\u0631",
+                                "name_en": "For Rent"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 12,
+                        "name_ar": "\u0623\u0631\u0627\u0636\u064a",
+                        "name_en": "Lands",
+                        "icon": "ic_electronics_11",
+                        "filter_options": [
+                            {
+                                "id": 23,
+                                "name_ar": "\u0644\u0644\u0628\u064a\u0639",
+                                "name_en": "For Sale"
+                            },
+                            {
+                                "id": 24,
+                                "name_ar": "\u0644\u0644\u0625\u064a\u062c\u0627\u0631",
+                                "name_en": "For Rent"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 13,
+                        "name_ar": "\u0623\u062e\u0631\u0649",
+                        "name_en": "Other",
+                        "icon": "ic_all_2",
+                        "filter_options": [
+                            {
+                                "id": 25,
+                                "name_ar": "\u0644\u0644\u0628\u064a\u0639",
+                                "name_en": "For Sale"
+                            },
+                            {
+                                "id": 26,
+                                "name_ar": "\u0644\u0644\u0625\u064a\u062c\u0627\u0631",
+                                "name_en": "For Rent"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "name_ar": "\u0645\u0631\u0643\u0628\u0627\u062a \u0648\u0644\u0648\u0627\u0632\u0645\u0647\u0627",
+                "name_en": "Vehicles & Accessories",
+                "sub_categories": [
+                    {
+                        "id": 14,
+                        "name_ar": "\u0627\u0644\u0643\u0644",
+                        "name_en": "All",
+                        "icon": "ic_all_1",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 15,
+                        "name_ar": "\u0633\u064a\u0627\u0631\u0627\u062a",
+                        "name_en": "Cars",
+                        "icon": "ic_vehicles_1",
+                        "filter_options": [
+                            {
+                                "id": 27,
+                                "name_ar": "\u062a\u0648\u064a\u0648\u062a\u0627",
+                                "name_en": "Toyota"
+                            },
+                            {
+                                "id": 28,
+                                "name_ar": "\u0644\u0643\u0632\u0633",
+                                "name_en": "Lexus"
+                            },
+                            {
+                                "id": 29,
+                                "name_ar": "\u0646\u064a\u0633\u0627\u0646",
+                                "name_en": "Nissan"
+                            },
+                            {
+                                "id": 30,
+                                "name_ar": "\u0625\u064a\u0646\u0641\u064a\u0646\u064a\u062a\u064a",
+                                "name_en": "Infiniti"
+                            },
+                            {
+                                "id": 31,
+                                "name_ar": "\u0647\u0648\u0646\u062f\u0627",
+                                "name_en": "Honda"
+                            },
+                            {
+                                "id": 32,
+                                "name_ar": "\u0645\u0627\u0632\u062f\u0627",
+                                "name_en": "Mazda"
+                            },
+                            {
+                                "id": 33,
+                                "name_ar": "\u0645\u064a\u062a\u0633\u0648\u0628\u064a\u0634\u064a",
+                                "name_en": "Mitsubishi"
+                            },
+                            {
+                                "id": 34,
+                                "name_ar": "\u0625\u064a\u0633\u0648\u0632\u0648",
+                                "name_en": "Isuzu"
+                            },
+                            {
+                                "id": 35,
+                                "name_ar": "\u0633\u0648\u0632\u0648\u0643\u064a",
+                                "name_en": "Suzuki"
+                            },
+                            {
+                                "id": 36,
+                                "name_ar": "\u0633\u0648\u0628\u0627\u0631\u0648",
+                                "name_en": "Subaru"
+                            },
+                            {
+                                "id": 37,
+                                "name_ar": "\u062c\u064a\u0644\u064a",
+                                "name_en": "Geely"
+                            },
+                            {
+                                "id": 38,
+                                "name_ar": "\u0634\u0627\u0646\u062c\u0627\u0646",
+                                "name_en": "Changan"
+                            },
+                            {
+                                "id": 39,
+                                "name_ar": "\u0647\u0627\u0641\u0627\u0644",
+                                "name_en": "Haval"
+                            },
+                            {
+                                "id": 40,
+                                "name_ar": "\u0634\u064a\u0631\u064a",
+                                "name_en": "Chery"
+                            },
+                            {
+                                "id": 41,
+                                "name_ar": "\u062c\u064a \u0625\u064a\u0647 \u0633\u064a",
+                                "name_en": "GAC"
+                            },
+                            {
+                                "id": 42,
+                                "name_ar": "\u0628\u0627\u064a\u0643",
+                                "name_en": "BAIC"
+                            },
+                            {
+                                "id": 43,
+                                "name_ar": "\u0628\u064a \u0648\u0627\u064a \u062f\u064a",
+                                "name_en": "BYD"
+                            },
+                            {
+                                "id": 44,
+                                "name_ar": "\u062c\u064a\u062a\u0648\u0631",
+                                "name_en": "Jetour"
+                            },
+                            {
+                                "id": 45,
+                                "name_ar": "\u0647\u0648\u0646\u0634\u064a",
+                                "name_en": "Hongqi"
+                            },
+                            {
+                                "id": 46,
+                                "name_ar": "\u0647\u064a\u0648\u0646\u062f\u0627\u064a",
+                                "name_en": "Hyundai"
+                            },
+                            {
+                                "id": 47,
+                                "name_ar": "\u0643\u064a\u0627",
+                                "name_en": "Kia"
+                            },
+                            {
+                                "id": 48,
+                                "name_ar": "\u062c\u064a\u0646\u064a\u0633\u064a\u0633",
+                                "name_en": "Genesis"
+                            },
+                            {
+                                "id": 49,
+                                "name_ar": "\u0641\u0648\u0631\u062f",
+                                "name_en": "Ford"
+                            },
+                            {
+                                "id": 50,
+                                "name_ar": "\u0634\u064a\u0641\u0631\u0648\u0644\u064a\u0647",
+                                "name_en": "Chevrolet"
+                            },
+                            {
+                                "id": 51,
+                                "name_ar": "\u0643\u0627\u062f\u064a\u0644\u0627\u0643",
+                                "name_en": "Cadillac"
+                            },
+                            {
+                                "id": 52,
+                                "name_ar": "\u062a\u0633\u0644\u0627",
+                                "name_en": "Tesla"
+                            },
+                            {
+                                "id": 53,
+                                "name_ar": "\u062f\u0648\u062f\u062c",
+                                "name_en": "Dodge"
+                            },
+                            {
+                                "id": 54,
+                                "name_ar": "\u062c\u064a\u0628",
+                                "name_en": "Jeep"
+                            },
+                            {
+                                "id": 55,
+                                "name_ar": "\u0643\u0631\u0627\u064a\u0633\u0644\u0631",
+                                "name_en": "Chrysler"
+                            },
+                            {
+                                "id": 56,
+                                "name_ar": "\u0644\u064a\u0646\u0643\u0648\u0646",
+                                "name_en": "Lincoln"
+                            },
+                            {
+                                "id": 57,
+                                "name_ar": "\u0645\u0631\u0633\u064a\u062f\u0633",
+                                "name_en": "Mercedes"
+                            },
+                            {
+                                "id": 58,
+                                "name_ar": "\u0628\u064a \u0625\u0645 \u062f\u0628\u0644\u064a\u0648",
+                                "name_en": "BMW"
+                            },
+                            {
+                                "id": 59,
+                                "name_ar": "\u0628\u0648\u0631\u0634",
+                                "name_en": "Porsche"
+                            },
+                            {
+                                "id": 60,
+                                "name_ar": "\u0641\u0648\u0644\u0643\u0633 \u0641\u0627\u062c\u0646",
+                                "name_en": "Volkswagen"
+                            },
+                            {
+                                "id": 61,
+                                "name_ar": "\u0644\u0627\u0646\u062f \u0631\u0648\u0641\u0631",
+                                "name_en": "Land Rover"
+                            },
+                            {
+                                "id": 62,
+                                "name_ar": "\u062c\u0627\u0643\u0648\u0627\u0631",
+                                "name_en": "Jaguar"
+                            },
+                            {
+                                "id": 63,
+                                "name_ar": "\u0631\u0648\u0644\u0632 \u0631\u0648\u064a\u0633",
+                                "name_en": "Rolls-Royce"
+                            },
+                            {
+                                "id": 64,
+                                "name_ar": "\u0628\u0646\u062a\u0644\u064a",
+                                "name_en": "Bentley"
+                            },
+                            {
+                                "id": 65,
+                                "name_ar": "\u0645\u064a\u0646\u064a",
+                                "name_en": "MINI"
+                            },
+                            {
+                                "id": 66,
+                                "name_ar": "\u0641\u064a\u0631\u0627\u0631\u064a",
+                                "name_en": "Ferrari"
+                            },
+                            {
+                                "id": 67,
+                                "name_ar": "\u0644\u0627\u0645\u0628\u0648\u0631\u063a\u064a\u0646\u064a",
+                                "name_en": "Lamborghini"
+                            },
+                            {
+                                "id": 68,
+                                "name_ar": "\u0645\u0627\u0632\u064a\u0631\u0627\u062a\u064a",
+                                "name_en": "Maserati"
+                            },
+                            {
+                                "id": 69,
+                                "name_ar": "\u0623\u0644\u0641\u0627 \u0631\u0648\u0645\u064a\u0648",
+                                "name_en": "Alfa Romeo"
+                            },
+                            {
+                                "id": 70,
+                                "name_ar": "\u0641\u064a\u0627\u062a",
+                                "name_en": "Fiat"
+                            },
+                            {
+                                "id": 71,
+                                "name_ar": "\u0628\u064a\u062c\u0648",
+                                "name_en": "Peugeot"
+                            },
+                            {
+                                "id": 72,
+                                "name_ar": "\u0631\u064a\u0646\u0648",
+                                "name_en": "Renault"
+                            },
+                            {
+                                "id": 73,
+                                "name_ar": "\u0641\u0648\u0644\u0641\u0648",
+                                "name_en": "Volvo"
+                            },
+                            {
+                                "id": 74,
+                                "name_ar": "\u0623\u062e\u0631\u0649",
+                                "name_en": "Other"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 16,
+                        "name_ar": "\u062f\u0631\u0627\u062c\u0627\u062a \u0646\u0627\u0631\u064a\u0629",
+                        "name_en": "Motorcycles",
+                        "icon": "ic_vehicles_2",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 17,
+                        "name_ar": "\u062f\u0631\u0627\u062c\u0627\u062a \u0647\u0648\u0627\u0626\u064a\u0629",
+                        "name_en": "Bicycles",
+                        "icon": "ic_vehicles_3",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 18,
+                        "name_ar": "\u0634\u0627\u062d\u0646\u0627\u062a",
+                        "name_en": "Trucks",
+                        "icon": "ic_vehicles_4",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 19,
+                        "name_ar": "\u0634\u0627\u062d\u0646\u0627\u062a \u062e\u0644\u0627\u0637",
+                        "name_en": "Mixer Trucks",
+                        "icon": "ic_vehicles_5",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 20,
+                        "name_ar": "\u0633\u0637\u062d\u0627\u062a",
+                        "name_en": "Flatbeds",
+                        "icon": "ic_vehicles_6",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 21,
+                        "name_ar": "\u0645\u0639\u062f\u0627\u062a \u062b\u0642\u064a\u0644\u0629",
+                        "name_en": "Heavy Equipment",
+                        "icon": "ic_vehicles_7",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 22,
+                        "name_ar": "\u0643\u0631\u0641\u0627\u0646\u0627\u062a",
+                        "name_en": "Caravans",
+                        "icon": "ic_vehicles_8",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 23,
+                        "name_ar": "\u0633\u0641\u0646",
+                        "name_en": "Ships",
+                        "icon": "ic_vehicles_9",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 24,
+                        "name_ar": "\u0642\u0648\u0627\u0631\u0628",
+                        "name_en": "Boats",
+                        "icon": "ic_vehicles_10",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 25,
+                        "name_ar": "\u062c\u062a \u0628\u0648\u062a",
+                        "name_en": "Jet Boats",
+                        "icon": "ic_vehicles_11",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 26,
+                        "name_ar": "\u062c\u062a \u0633\u0643\u064a",
+                        "name_en": "Jet Ski",
+                        "icon": "ic_vehicles_12",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 27,
+                        "name_ar": "\u062c\u0646\u0648\u0637 \u0633\u064a\u0627\u0631\u0627\u062a",
+                        "name_en": "Car Rims",
+                        "icon": "ic_vehicles_13",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 28,
+                        "name_ar": "\u0642\u0637\u0639 \u063a\u064a\u0627\u0631 \u0633\u064a\u0627\u0631\u0627\u062a",
+                        "name_en": "Car Spare Parts",
+                        "icon": "ic_vehicles_14",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 29,
+                        "name_ar": "\u0644\u0648\u062d\u0627\u062a \u0633\u064a\u0627\u0631\u0627\u062a",
+                        "name_en": "Car Plates",
+                        "icon": "ic_vehicles_15",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 30,
+                        "name_ar": "\u0623\u062e\u0631\u0649",
+                        "name_en": "Other",
+                        "icon": "ic_all_2",
+                        "filter_options": []
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a\u0629",
+                "name_en": "Electronics",
+                "sub_categories": [
+                    {
+                        "id": 31,
+                        "name_ar": "\u0627\u0644\u0643\u0644",
+                        "name_en": "All",
+                        "icon": "ic_all_1",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 32,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0627\u0644\u062a\u0644\u0641\u0627\u0632",
+                        "name_en": "TVs",
+                        "icon": "ic_realestate_1",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 33,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0627\u0644\u0643\u0645\u0628\u064a\u0648\u062a\u0631",
+                        "name_en": "Computers",
+                        "icon": "ic_realestate_2",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 34,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0627\u0644\u0644\u0627\u0628\u062a\u0648\u0628",
+                        "name_en": "Laptops",
+                        "icon": "ic_realestate_3",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 35,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0627\u0644\u062a\u0627\u0628\u0644\u062a",
+                        "name_en": "Tablets",
+                        "icon": "ic_realestate_4",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 36,
+                        "name_ar": "\u062c\u0648\u0627\u0644\u0627\u062a",
+                        "name_en": "Mobile Phones",
+                        "icon": "ic_realestate_5",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 37,
+                        "name_ar": "\u0633\u0627\u0639\u0627\u062a \u0630\u0643\u064a\u0629",
+                        "name_en": "Smart Watches",
+                        "icon": "ic_realestate_6",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 38,
+                        "name_ar": "\u0633\u0645\u0627\u0639\u0627\u062a \u0627\u0644\u0631\u0623\u0633",
+                        "name_en": "Headphones",
+                        "icon": "ic_realestate_7",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 39,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0627\u0644\u0628\u0631\u0648\u062c\u0643\u062a\u0631",
+                        "name_en": "Projectors",
+                        "icon": "ic_realestate_8",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 40,
+                        "name_ar": "\u0645\u0627\u0633\u062d\u0627\u062a \u0636\u0648\u0626\u064a\u0629",
+                        "name_en": "Scanners",
+                        "icon": "ic_realestate_9",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 41,
+                        "name_ar": "\u0637\u0627\u0628\u0639\u0627\u062a",
+                        "name_en": "Printers",
+                        "icon": "ic_realestate_10",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 42,
+                        "name_ar": "\u0643\u0627\u0645\u064a\u0631\u0627\u062a \u0627\u062d\u062a\u0631\u0627\u0641\u064a\u0629",
+                        "name_en": "Professional Cameras",
+                        "icon": "ic_realestate_11",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 43,
+                        "name_ar": "\u0623\u062e\u0631\u0649",
+                        "name_en": "Other",
+                        "icon": "ic_all_2",
+                        "filter_options": []
+                    }
+                ]
+            },
+            {
+                "id": 5,
+                "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0645\u0646\u0632\u0644\u064a\u0629",
+                "name_en": "Home Appliances",
+                "sub_categories": [
+                    {
+                        "id": 44,
+                        "name_ar": "\u0627\u0644\u0643\u0644",
+                        "name_en": "All",
+                        "icon": "ic_all_1",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 45,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0627\u0644\u062a\u0643\u064a\u064a\u0641",
+                        "name_en": "Air Conditioners",
+                        "icon": "ic_appliances_1",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 46,
+                        "name_ar": "\u0645\u0631\u0627\u0648\u062d",
+                        "name_en": "Fans",
+                        "icon": "ic_appliances_2",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 47,
+                        "name_ar": "\u062f\u0641\u0627\u064a\u0627\u062a",
+                        "name_en": "Heaters",
+                        "icon": "ic_appliances_3",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 48,
+                        "name_ar": "\u0633\u062e\u0627\u0646\u0627\u062a \u0645\u064a\u0627\u0647",
+                        "name_en": "Water Heaters",
+                        "icon": "ic_appliances_4",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 49,
+                        "name_ar": "\u063a\u0633\u0627\u0644\u0627\u062a \u0645\u0644\u0627\u0628\u0633",
+                        "name_en": "Washing Machines",
+                        "icon": "ic_appliances_5",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 50,
+                        "name_ar": "\u0645\u062c\u0641\u0641\u0627\u062a \u0645\u0644\u0627\u0628\u0633",
+                        "name_en": "Dryers",
+                        "icon": "ic_appliances_6",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 51,
+                        "name_ar": "\u063a\u0633\u0627\u0644\u0627\u062a \u0635\u062d\u0648\u0646",
+                        "name_en": "Dishwashers",
+                        "icon": "ic_appliances_7",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 52,
+                        "name_ar": "\u062b\u0644\u0627\u062c\u0627\u062a",
+                        "name_en": "Refrigerators",
+                        "icon": "ic_appliances_8",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 53,
+                        "name_ar": "\u0645\u062c\u0645\u062f\u0627\u062a",
+                        "name_en": "Freezers",
+                        "icon": "ic_appliances_9",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 54,
+                        "name_ar": "\u0628\u0631\u0627\u062f\u0627\u062a \u0645\u064a\u0627\u0647",
+                        "name_en": "Water Coolers",
+                        "icon": "ic_appliances_10",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 55,
+                        "name_ar": "\u0623\u0641\u0631\u0627\u0646",
+                        "name_en": "Ovens",
+                        "icon": "ic_appliances_11",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 56,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0627\u0644\u0645\u0627\u064a\u0643\u0631\u0648\u064a\u0641",
+                        "name_en": "Microwaves",
+                        "icon": "ic_appliances_12",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 57,
+                        "name_ar": "\u0642\u0644\u0627\u064a\u0627\u062a \u0647\u0648\u0627\u0626\u064a\u0629",
+                        "name_en": "Air Fryers",
+                        "icon": "ic_appliances_13",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 58,
+                        "name_ar": "\u062e\u0644\u0627\u0637\u0627\u062a",
+                        "name_en": "Blenders",
+                        "icon": "ic_appliances_14",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 59,
+                        "name_ar": "\u0639\u062c\u0627\u0646\u0627\u062a",
+                        "name_en": "Stand Mixers",
+                        "icon": "ic_appliances_15",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 60,
+                        "name_ar": "\u063a\u0644\u0627\u064a\u0627\u062a",
+                        "name_en": "Kettles",
+                        "icon": "ic_appliances_16",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 61,
+                        "name_ar": "\u0645\u0643\u0627\u0626\u0646 \u0627\u0644\u0642\u0647\u0648\u0629",
+                        "name_en": "Coffee Machines",
+                        "icon": "ic_appliances_17",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 62,
+                        "name_ar": "\u0645\u0648\u0644\u062f\u0627\u062a",
+                        "name_en": "Generators",
+                        "icon": "ic_appliances_18",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 63,
+                        "name_ar": "\u0645\u062d\u0631\u0643\u0627\u062a",
+                        "name_en": "Motors",
+                        "icon": "ic_appliances_19",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 64,
+                        "name_ar": "\u0623\u062e\u0631\u0649",
+                        "name_en": "Other",
+                        "icon": "ic_all_2",
+                        "filter_options": []
+                    }
+                ]
+            },
+            {
+                "id": 6,
+                "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0631\u064a\u0627\u0636\u064a\u0629",
+                "name_en": "Sports Equipment",
+                "sub_categories": [
+                    {
+                        "id": 65,
+                        "name_ar": "\u0627\u0644\u0643\u0644",
+                        "name_en": "All",
+                        "icon": "ic_all_1",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 66,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0627\u0644\u0645\u0634\u064a",
+                        "name_en": "Treadmills",
+                        "icon": "ic_sports_1",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 67,
+                        "name_ar": "\u062f\u0631\u0627\u062c\u0627\u062a \u062b\u0627\u0628\u062a\u0629",
+                        "name_en": "Stationary Bikes",
+                        "icon": "ic_sports_2",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 68,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0627\u0644\u0625\u0644\u064a\u0628\u062a\u0643\u0627\u0644",
+                        "name_en": "Elliptical Machines",
+                        "icon": "ic_sports_3",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 69,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0636\u063a\u0637 \u0627\u0644\u0635\u062f\u0631",
+                        "name_en": "Chest Press Machines",
+                        "icon": "ic_sports_4",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 70,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u062a\u0641\u062a\u064a\u062d \u0627\u0644\u0635\u062f\u0631",
+                        "name_en": "Chest Fly Machines",
+                        "icon": "ic_sports_5",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 71,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0627\u0644\u0638\u0647\u0631",
+                        "name_en": "Back Machines",
+                        "icon": "ic_sports_6",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 72,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0633\u062d\u0628 \u0627\u0644\u0643\u0627\u0628\u0644",
+                        "name_en": "Cable Pull Machines",
+                        "icon": "ic_sports_7",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 73,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0627\u0644\u0643\u0627\u0628\u0644 \u0627\u0644\u0645\u0632\u062f\u0648\u062c",
+                        "name_en": "Dual Cable Machines",
+                        "icon": "ic_sports_8",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 74,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0635\u0639\u0648\u062f \u0627\u0644\u062f\u0631\u062c",
+                        "name_en": "Stair Climbers",
+                        "icon": "ic_sports_9",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 75,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0627\u0644\u0623\u0631\u062c\u0644",
+                        "name_en": "Leg Machines",
+                        "icon": "ic_sports_10",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 76,
+                        "name_ar": "\u0645\u0642\u0627\u0639\u062f \u062a\u0645\u0627\u0631\u064a\u0646",
+                        "name_en": "Exercise Benches",
+                        "icon": "ic_sports_11",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 77,
+                        "name_ar": "\u062f\u0645\u0628\u0644\u0632 \u0648\u0623\u0648\u0632\u0627\u0646",
+                        "name_en": "Dumbbells & Weights",
+                        "icon": "ic_sports_12",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 78,
+                        "name_ar": "\u0623\u062e\u0631\u0649",
+                        "name_en": "Other",
+                        "icon": "ic_all_2",
+                        "filter_options": []
+                    }
+                ]
+            },
+            {
+                "id": 7,
+                "name_ar": "\u0627\u062b\u0627\u062b",
+                "name_en": "Furniture",
+                "sub_categories": [
+                    {
+                        "id": 79,
+                        "name_ar": "\u0627\u0644\u0643\u0644",
+                        "name_en": "All",
+                        "icon": "ic_all_1",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 80,
+                        "name_ar": "\u0623\u0628\u0627\u062c\u0648\u0631\u0627\u062a",
+                        "name_en": "Lamps",
+                        "icon": "ic_furniture_1",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 81,
+                        "name_ar": "\u0625\u0636\u0627\u0621\u0627\u062a \u0633\u0642\u0641\u064a\u0629",
+                        "name_en": "Ceiling Lights",
+                        "icon": "ic_furniture_2",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 82,
+                        "name_ar": "\u0645\u0631\u0627\u062a\u0628",
+                        "name_en": "Mattresses",
+                        "icon": "ic_furniture_3",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 83,
+                        "name_ar": "\u0633\u0631\u0631",
+                        "name_en": "Beds",
+                        "icon": "ic_furniture_4",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 84,
+                        "name_ar": "\u062f\u0648\u0627\u0644\u064a\u0628",
+                        "name_en": "Wardrobes",
+                        "icon": "ic_furniture_5",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 85,
+                        "name_ar": "\u0643\u0646\u0628",
+                        "name_en": "Sofas",
+                        "icon": "ic_furniture_6",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 86,
+                        "name_ar": "\u0643\u0631\u0627\u0633\u064a",
+                        "name_en": "Chairs",
+                        "icon": "ic_furniture_7",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 87,
+                        "name_ar": "\u0643\u0631\u0627\u0633\u064a \u0645\u0643\u062a\u0628\u064a\u0629",
+                        "name_en": "Office Chairs",
+                        "icon": "ic_furniture_8",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 88,
+                        "name_ar": "\u0648\u062d\u062f\u0627\u062a \u0627\u0644\u062a\u0644\u0641\u0627\u0632",
+                        "name_en": "TV Units",
+                        "icon": "ic_furniture_9",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 89,
+                        "name_ar": "\u0637\u0627\u0648\u0644\u0627\u062a",
+                        "name_en": "Tables",
+                        "icon": "ic_furniture_10",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 90,
+                        "name_ar": "\u0637\u0627\u0648\u0644\u0627\u062a \u0645\u0643\u062a\u0628\u064a\u0629",
+                        "name_en": "Desks",
+                        "icon": "ic_furniture_11",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 91,
+                        "name_ar": "\u0623\u062e\u0631\u0649",
+                        "name_en": "Other",
+                        "icon": "ic_all_2",
+                        "filter_options": []
+                    }
+                ]
+            },
+            {
+                "id": 8,
+                "name_ar": "\u0644\u0648\u0627\u0632\u0645 \u0631\u062d\u0644\u0627\u062a",
+                "name_en": "Camping Supplies",
+                "sub_categories": [
+                    {
+                        "id": 92,
+                        "name_ar": "\u0627\u0644\u0643\u0644",
+                        "name_en": "All",
+                        "icon": "ic_all_1",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 93,
+                        "name_ar": "\u062e\u064a\u0627\u0645",
+                        "name_en": "Tents",
+                        "icon": "ic_travel_1",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 94,
+                        "name_ar": "\u0643\u0631\u0627\u0633\u064a \u0631\u062d\u0644\u0627\u062a",
+                        "name_en": "Camping Chairs",
+                        "icon": "ic_travel_2",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 95,
+                        "name_ar": "\u0645\u0648\u0627\u0642\u062f \u063a\u0627\u0632",
+                        "name_en": "Gas Stoves",
+                        "icon": "ic_travel_3",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 96,
+                        "name_ar": "\u062d\u0637\u0628",
+                        "name_en": "Firewood",
+                        "icon": "ic_travel_4",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 97,
+                        "name_ar": "\u0641\u062d\u0645",
+                        "name_en": "Charcoal",
+                        "icon": "ic_travel_5",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 98,
+                        "name_ar": "\u0623\u062f\u0648\u0627\u062a \u0637\u0628\u062e",
+                        "name_en": "Cooking Tools",
+                        "icon": "ic_travel_6",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 99,
+                        "name_ar": "\u0634\u0648\u0627\u064a\u0627\u062a",
+                        "name_en": "Grills",
+                        "icon": "ic_travel_7",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 100,
+                        "name_ar": "\u062b\u0644\u0627\u062c\u0627\u062a \u0631\u062d\u0644\u0627\u062a",
+                        "name_en": "Camping Coolers",
+                        "icon": "ic_travel_8",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 101,
+                        "name_ar": "\u0643\u0634\u0627\u0641\u0627\u062a",
+                        "name_en": "Flashlights",
+                        "icon": "ic_travel_9",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 102,
+                        "name_ar": "\u062f\u0631\u0627\u0628\u064a\u0644",
+                        "name_en": "Canteens",
+                        "icon": "ic_travel_10",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 103,
+                        "name_ar": "\u0623\u062c\u0647\u0632\u0629 \u0627\u0644\u0645\u0644\u0627\u062d\u0629",
+                        "name_en": "GPS Devices",
+                        "icon": "ic_travel_11",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 104,
+                        "name_ar": "\u0623\u062e\u0631\u0649",
+                        "name_en": "Other",
+                        "icon": "ic_all_2",
+                        "filter_options": []
+                    }
+                ]
+            },
+            {
+                "id": 9,
+                "name_ar": "\u062d\u064a\u0648\u0627\u0646\u0627\u062a \u0648\u0644\u0648\u0627\u0632\u0645\u0647\u0627",
+                "name_en": "Animals & Supplies",
+                "sub_categories": [
+                    {
+                        "id": 105,
+                        "name_ar": "\u0627\u0644\u0643\u0644",
+                        "name_en": "All",
+                        "icon": "ic_all_1",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 106,
+                        "name_ar": "\u0625\u0628\u0644",
+                        "name_en": "Camels",
+                        "icon": "ic_animals_1",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 107,
+                        "name_ar": "\u062e\u064a\u0648\u0644",
+                        "name_en": "Horses",
+                        "icon": "ic_animals_2",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 108,
+                        "name_ar": "\u0623\u0628\u0642\u0627\u0631",
+                        "name_en": "Cows",
+                        "icon": "ic_animals_3",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 109,
+                        "name_ar": "\u0623\u063a\u0646\u0627\u0645",
+                        "name_en": "Sheep",
+                        "icon": "ic_animals_4",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 110,
+                        "name_ar": "\u0645\u0627\u0639\u0632",
+                        "name_en": "Goats",
+                        "icon": "ic_animals_5",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 111,
+                        "name_ar": "\u062f\u062c\u0627\u062c",
+                        "name_en": "Chickens",
+                        "icon": "ic_animals_6",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 112,
+                        "name_ar": "\u062d\u0645\u0627\u0645",
+                        "name_en": "Pigeons",
+                        "icon": "ic_animals_7",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 113,
+                        "name_ar": "\u0633\u0645\u0627\u0646",
+                        "name_en": "Quails",
+                        "icon": "ic_animals_8",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 114,
+                        "name_ar": "\u0628\u0637",
+                        "name_en": "Ducks",
+                        "icon": "ic_animals_9",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 115,
+                        "name_ar": "\u0623\u0631\u0627\u0646\u0628",
+                        "name_en": "Rabbits",
+                        "icon": "ic_animals_10",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 116,
+                        "name_ar": "\u0623\u062e\u0631\u0649",
+                        "name_en": "Other",
+                        "icon": "ic_all_2",
+                        "filter_options": []
+                    }
+                ]
+            },
+            {
+                "id": 10,
+                "name_ar": "\u0646\u0628\u0627\u062a\u0627\u062a \u0648\u0644\u0648\u0627\u0632\u0645\u0647\u0627",
+                "name_en": "Plants & Supplies",
+                "sub_categories": [
+                    {
+                        "id": 117,
+                        "name_ar": "\u0627\u0644\u0643\u0644",
+                        "name_en": "All",
+                        "icon": "ic_all_1",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 118,
+                        "name_ar": "\u0646\u062e\u064a\u0644",
+                        "name_en": "Palm Trees",
+                        "icon": "ic_plants_1",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 119,
+                        "name_ar": "\u0623\u0634\u062c\u0627\u0631",
+                        "name_en": "Trees",
+                        "icon": "ic_plants_2",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 120,
+                        "name_ar": "\u0646\u0628\u0627\u062a\u0627\u062a \u0632\u064a\u0646\u0629",
+                        "name_en": "Ornamental Plants",
+                        "icon": "ic_plants_3",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 121,
+                        "name_ar": "\u0646\u0628\u0627\u062a\u0627\u062a \u062f\u0627\u062e\u0644\u064a\u0629",
+                        "name_en": "Indoor Plants",
+                        "icon": "ic_plants_4",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 122,
+                        "name_ar": "\u0646\u0628\u0627\u062a\u0627\u062a \u062e\u0627\u0631\u062c\u064a\u0629",
+                        "name_en": "Outdoor Plants",
+                        "icon": "ic_plants_5",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 123,
+                        "name_ar": "\u0628\u0630\u0648\u0631",
+                        "name_en": "Seeds",
+                        "icon": "ic_plants_6",
+                        "filter_options": []
+                    },
+                    {
+                        "id": 124,
+                        "name_ar": "\u0623\u062e\u0631\u0649",
+                        "name_en": "Other",
+                        "icon": "ic_all_2",
+                        "filter_options": []
+                    }
+                ]
+            },
+            {
+                "id": 11,
+                "name_ar": "\u0623\u062e\u0631\u0649",
+                "name_en": "Other",
+                "sub_categories": []
+            }
+        ],
+        "regions": [
+            {
+                "id": 1,
+                "name_ar": "\u0643\u0644 \u0627\u0644\u0645\u0646\u0627\u0637\u0642",
+                "name_en": "All Regions",
+                "cities": []
+            },
+            {
+                "id": 2,
+                "name_ar": "\u0645\u0646\u0637\u0642\u0629 \u0627\u0644\u0631\u064a\u0627\u0636",
+                "name_en": "Riyadh Region",
+                "cities": [
+                    {
+                        "id": 1,
+                        "name_ar": "\u0643\u0644 \u0627\u0644\u0645\u062f\u0646",
+                        "name_en": "All Cities"
+                    },
+                    {
+                        "id": 2,
+                        "name_ar": "\u0627\u0644\u0631\u064a\u0627\u0636",
+                        "name_en": "Riyadh"
+                    },
+                    {
+                        "id": 3,
+                        "name_ar": "\u0627\u0644\u062e\u0631\u062c",
+                        "name_en": "Al Kharj"
+                    },
+                    {
+                        "id": 4,
+                        "name_ar": "\u0627\u0644\u0645\u062c\u0645\u0639\u0629",
+                        "name_en": "Al Majmaah"
+                    },
+                    {
+                        "id": 5,
+                        "name_ar": "\u0627\u0644\u062f\u0648\u0627\u062f\u0645\u064a",
+                        "name_en": "Ad Dawadimi"
+                    },
+                    {
+                        "id": 6,
+                        "name_ar": "\u0627\u0644\u0632\u0644\u0641\u064a",
+                        "name_en": "Az Zulfi"
+                    },
+                    {
+                        "id": 7,
+                        "name_ar": "\u0648\u0627\u062f\u064a \u0627\u0644\u062f\u0648\u0627\u0633\u0631",
+                        "name_en": "Wadi Ad-Dawasir"
+                    },
+                    {
+                        "id": 8,
+                        "name_ar": "\u0634\u0642\u0631\u0627\u0621",
+                        "name_en": "Shaqra"
+                    },
+                    {
+                        "id": 9,
+                        "name_ar": "\u0627\u0644\u0642\u0648\u064a\u0639\u064a\u0629",
+                        "name_en": "Al Quwayiyah"
+                    },
+                    {
+                        "id": 10,
+                        "name_ar": "\u0627\u0644\u0623\u0641\u0644\u0627\u062c",
+                        "name_en": "Al Aflaj"
+                    },
+                    {
+                        "id": 11,
+                        "name_ar": "\u0639\u0641\u064a\u0641",
+                        "name_en": "Afif"
+                    },
+                    {
+                        "id": 12,
+                        "name_ar": "\u0627\u0644\u0645\u0632\u0627\u062d\u0645\u064a\u0629",
+                        "name_en": "Al Muzahimiyah"
+                    },
+                    {
+                        "id": 13,
+                        "name_ar": "\u062d\u0648\u0637\u0629 \u0628\u0646\u064a \u062a\u0645\u064a\u0645",
+                        "name_en": "Hawtat Bani Tamim"
+                    },
+                    {
+                        "id": 14,
+                        "name_ar": "\u0636\u0631\u0645\u0627",
+                        "name_en": "Darma"
+                    },
+                    {
+                        "id": 15,
+                        "name_ar": "\u0631\u0645\u0627\u062d",
+                        "name_en": "Rumah"
+                    },
+                    {
+                        "id": 16,
+                        "name_ar": "\u062d\u0631\u064a\u0645\u0644\u0627\u0621",
+                        "name_en": "Huraymila"
+                    },
+                    {
+                        "id": 17,
+                        "name_ar": "\u062b\u0627\u062f\u0642",
+                        "name_en": "Thadiq"
+                    },
+                    {
+                        "id": 18,
+                        "name_ar": "\u0645\u0631\u0627\u062a",
+                        "name_en": "Marat"
+                    },
+                    {
+                        "id": 19,
+                        "name_ar": "\u0627\u0644\u0633\u0644\u064a\u0644",
+                        "name_en": "As Sulayyil"
+                    },
+                    {
+                        "id": 20,
+                        "name_ar": "\u0627\u0644\u063a\u0627\u0637",
+                        "name_en": "Al Ghat"
+                    },
+                    {
+                        "id": 21,
+                        "name_ar": "\u0627\u0644\u062d\u0631\u064a\u0642",
+                        "name_en": "Al Hariq"
+                    },
+                    {
+                        "id": 22,
+                        "name_ar": "\u062d\u0648\u0637\u0629 \u0633\u062f\u064a\u0631",
+                        "name_en": "Hawtat Sudayr"
+                    },
+                    {
+                        "id": 23,
+                        "name_ar": "\u0627\u0644\u062c\u0644\u0627\u062c\u0644",
+                        "name_en": "Al Jalayl"
+                    },
+                    {
+                        "id": 24,
+                        "name_ar": "\u0631\u0648\u0636\u0629 \u0633\u062f\u064a\u0631",
+                        "name_en": "Rawdat Sudayr"
+                    },
+                    {
+                        "id": 25,
+                        "name_ar": "\u0627\u0644\u0639\u064a\u064a\u0646\u0629",
+                        "name_en": "Al Uyaynah"
+                    },
+                    {
+                        "id": 26,
+                        "name_ar": "\u0627\u0644\u062f\u0631\u0639\u064a\u0629",
+                        "name_en": "Ad Diriyah"
+                    },
+                    {
+                        "id": 27,
+                        "name_ar": "\u0646\u0641\u064a",
+                        "name_en": "Nafi"
+                    },
+                    {
+                        "id": 28,
+                        "name_ar": "\u0627\u0644\u062d\u0627\u0626\u0631",
+                        "name_en": "Al Hair"
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "name_ar": "\u0645\u0646\u0637\u0642\u0629 \u0645\u0643\u0629 \u0627\u0644\u0645\u0643\u0631\u0645\u0629",
+                "name_en": "Makkah Region",
+                "cities": [
+                    {
+                        "id": 29,
+                        "name_ar": "\u0643\u0644 \u0627\u0644\u0645\u062f\u0646",
+                        "name_en": "All Cities"
+                    },
+                    {
+                        "id": 30,
+                        "name_ar": "\u0645\u0643\u0629 \u0627\u0644\u0645\u0643\u0631\u0645\u0629",
+                        "name_en": "Makkah"
+                    },
+                    {
+                        "id": 31,
+                        "name_ar": "\u062c\u062f\u0629",
+                        "name_en": "Jeddah"
+                    },
+                    {
+                        "id": 32,
+                        "name_ar": "\u0627\u0644\u0637\u0627\u0626\u0641",
+                        "name_en": "Taif"
+                    },
+                    {
+                        "id": 33,
+                        "name_ar": "\u0627\u0644\u0642\u0646\u0641\u0630\u0629",
+                        "name_en": "Al Qunfudhah"
+                    },
+                    {
+                        "id": 34,
+                        "name_ar": "\u0631\u0627\u0628\u063a",
+                        "name_en": "Rabigh"
+                    },
+                    {
+                        "id": 35,
+                        "name_ar": "\u0627\u0644\u0644\u064a\u062b",
+                        "name_en": "Al Lith"
+                    },
+                    {
+                        "id": 36,
+                        "name_ar": "\u062e\u0644\u064a\u0635",
+                        "name_en": "Khulays"
+                    },
+                    {
+                        "id": 37,
+                        "name_ar": "\u0627\u0644\u062c\u0645\u0648\u0645",
+                        "name_en": "Al Jumum"
+                    },
+                    {
+                        "id": 38,
+                        "name_ar": "\u0627\u0644\u0639\u0631\u0636\u064a\u0627\u062a",
+                        "name_en": "Al Ardiyat"
+                    },
+                    {
+                        "id": 39,
+                        "name_ar": "\u0628\u062d\u0631\u0629",
+                        "name_en": "Bahrah"
+                    },
+                    {
+                        "id": 40,
+                        "name_ar": "\u0627\u0644\u0643\u0627\u0645\u0644",
+                        "name_en": "Al Kamil"
+                    },
+                    {
+                        "id": 41,
+                        "name_ar": "\u0627\u0644\u062e\u0631\u0645\u0629",
+                        "name_en": "Al Khurma"
+                    },
+                    {
+                        "id": 42,
+                        "name_ar": "\u0631\u0646\u064a\u0629",
+                        "name_en": "Ranyah"
+                    },
+                    {
+                        "id": 43,
+                        "name_ar": "\u062a\u0631\u0628\u0629",
+                        "name_en": "Turabah"
+                    },
+                    {
+                        "id": 44,
+                        "name_ar": "\u0627\u0644\u0645\u0648\u064a\u0629",
+                        "name_en": "Al Muwayh"
+                    },
+                    {
+                        "id": 45,
+                        "name_ar": "\u0645\u064a\u0633\u0627\u0646",
+                        "name_en": "Maysan"
+                    },
+                    {
+                        "id": 46,
+                        "name_ar": "\u0623\u0636\u0645",
+                        "name_en": "Adham"
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "name_ar": "\u0645\u0646\u0637\u0642\u0629 \u0627\u0644\u0645\u062f\u064a\u0646\u0629 \u0627\u0644\u0645\u0646\u0648\u0631\u0629",
+                "name_en": "Madinah Region",
+                "cities": [
+                    {
+                        "id": 47,
+                        "name_ar": "\u0643\u0644 \u0627\u0644\u0645\u062f\u0646",
+                        "name_en": "All Cities"
+                    },
+                    {
+                        "id": 48,
+                        "name_ar": "\u0627\u0644\u0645\u062f\u064a\u0646\u0629 \u0627\u0644\u0645\u0646\u0648\u0631\u0629",
+                        "name_en": "Madinah"
+                    },
+                    {
+                        "id": 49,
+                        "name_ar": "\u064a\u0646\u0628\u0639",
+                        "name_en": "Yanbu"
+                    },
+                    {
+                        "id": 50,
+                        "name_ar": "\u0627\u0644\u0639\u0644\u0627",
+                        "name_en": "Al Ula"
+                    },
+                    {
+                        "id": 51,
+                        "name_ar": "\u0628\u062f\u0631",
+                        "name_en": "Badr"
+                    },
+                    {
+                        "id": 52,
+                        "name_ar": "\u0627\u0644\u062d\u0646\u0627\u0643\u064a\u0629",
+                        "name_en": "Al Hanakiyah"
+                    },
+                    {
+                        "id": 53,
+                        "name_ar": "\u0627\u0644\u0645\u0647\u062f",
+                        "name_en": "Al Mahd"
+                    },
+                    {
+                        "id": 54,
+                        "name_ar": "\u062e\u064a\u0628\u0631",
+                        "name_en": "Khaybar"
+                    },
+                    {
+                        "id": 55,
+                        "name_ar": "\u0648\u0627\u062f\u064a \u0627\u0644\u0641\u0631\u0639",
+                        "name_en": "Wadi Al Fara"
+                    },
+                    {
+                        "id": 56,
+                        "name_ar": "\u0627\u0644\u0639\u064a\u0635",
+                        "name_en": "Al Ays"
+                    },
+                    {
+                        "id": 57,
+                        "name_ar": "\u0635\u0628\u062d",
+                        "name_en": "Subh"
+                    }
+                ]
+            },
+            {
+                "id": 5,
+                "name_ar": "\u0645\u0646\u0637\u0642\u0629 \u0627\u0644\u0642\u0635\u064a\u0645",
+                "name_en": "Al Qassim Region",
+                "cities": [
+                    {
+                        "id": 58,
+                        "name_ar": "\u0643\u0644 \u0627\u0644\u0645\u062f\u0646",
+                        "name_en": "All Cities"
+                    },
+                    {
+                        "id": 59,
+                        "name_ar": "\u0628\u0631\u064a\u062f\u0629",
+                        "name_en": "Buraydah"
+                    },
+                    {
+                        "id": 60,
+                        "name_ar": "\u0639\u0646\u064a\u0632\u0629",
+                        "name_en": "Unayzah"
+                    },
+                    {
+                        "id": 61,
+                        "name_ar": "\u0627\u0644\u0631\u0633",
+                        "name_en": "Ar Rass"
+                    },
+                    {
+                        "id": 62,
+                        "name_ar": "\u0627\u0644\u0645\u0630\u0646\u0628",
+                        "name_en": "Al Mithnab"
+                    },
+                    {
+                        "id": 63,
+                        "name_ar": "\u0627\u0644\u0628\u0643\u064a\u0631\u064a\u0629",
+                        "name_en": "Al Bukayriyah"
+                    },
+                    {
+                        "id": 64,
+                        "name_ar": "\u0627\u0644\u062e\u0628\u0631\u0627\u0621",
+                        "name_en": "Al Khabra"
+                    },
+                    {
+                        "id": 65,
+                        "name_ar": "\u0627\u0644\u0646\u0628\u0647\u0627\u0646\u064a\u0629",
+                        "name_en": "An Nabhaniyah"
+                    },
+                    {
+                        "id": 66,
+                        "name_ar": "\u0631\u064a\u0627\u0636 \u0627\u0644\u062e\u0628\u0631\u0627\u0621",
+                        "name_en": "Riyadh Al Khabra"
+                    },
+                    {
+                        "id": 67,
+                        "name_ar": "\u0639\u064a\u0648\u0646 \u0627\u0644\u062c\u0648\u0627\u0621",
+                        "name_en": "Uyun Al Jiwa"
+                    },
+                    {
+                        "id": 68,
+                        "name_ar": "\u0627\u0644\u0628\u062f\u0627\u0626\u0639",
+                        "name_en": "Al Badai"
+                    },
+                    {
+                        "id": 69,
+                        "name_ar": "\u0627\u0644\u0634\u0645\u0627\u0633\u064a\u0629",
+                        "name_en": "Ash Shimasiyah"
+                    },
+                    {
+                        "id": 70,
+                        "name_ar": "\u0623\u0628\u0627\u0646\u0627\u062a",
+                        "name_en": "Abanat"
+                    },
+                    {
+                        "id": 71,
+                        "name_ar": "\u0636\u0631\u064a\u0629",
+                        "name_en": "Dariyah"
+                    },
+                    {
+                        "id": 72,
+                        "name_ar": "\u0627\u0644\u0623\u0633\u064a\u0627\u062d",
+                        "name_en": "Al Asyah"
+                    }
+                ]
+            },
+            {
+                "id": 6,
+                "name_ar": "\u0627\u0644\u0645\u0646\u0637\u0642\u0629 \u0627\u0644\u0634\u0631\u0642\u064a\u0629",
+                "name_en": "Eastern Region",
+                "cities": [
+                    {
+                        "id": 73,
+                        "name_ar": "\u0643\u0644 \u0627\u0644\u0645\u062f\u0646",
+                        "name_en": "All Cities"
+                    },
+                    {
+                        "id": 74,
+                        "name_ar": "\u0627\u0644\u062f\u0645\u0627\u0645",
+                        "name_en": "Dammam"
+                    },
+                    {
+                        "id": 75,
+                        "name_ar": "\u0627\u0644\u062e\u0628\u0631",
+                        "name_en": "Al Khobar"
+                    },
+                    {
+                        "id": 76,
+                        "name_ar": "\u0627\u0644\u0638\u0647\u0631\u0627\u0646",
+                        "name_en": "Dhahran"
+                    },
+                    {
+                        "id": 77,
+                        "name_ar": "\u0627\u0644\u0623\u062d\u0633\u0627\u0621",
+                        "name_en": "Al Ahsa"
+                    },
+                    {
+                        "id": 78,
+                        "name_ar": "\u0627\u0644\u062c\u0628\u064a\u0644",
+                        "name_en": "Al Jubail"
+                    },
+                    {
+                        "id": 79,
+                        "name_ar": "\u062d\u0641\u0631 \u0627\u0644\u0628\u0627\u0637\u0646",
+                        "name_en": "Hafar Al-Batin"
+                    },
+                    {
+                        "id": 80,
+                        "name_ar": "\u0627\u0644\u0642\u0637\u064a\u0641",
+                        "name_en": "Al Qatif"
+                    },
+                    {
+                        "id": 81,
+                        "name_ar": "\u0627\u0644\u062e\u0641\u062c\u064a",
+                        "name_en": "Al Khafji"
+                    },
+                    {
+                        "id": 82,
+                        "name_ar": "\u0628\u0642\u064a\u0642",
+                        "name_en": "Buqayq"
+                    },
+                    {
+                        "id": 83,
+                        "name_ar": "\u0631\u0623\u0633 \u062a\u0646\u0648\u0631\u0629",
+                        "name_en": "Ras Tanura"
+                    },
+                    {
+                        "id": 84,
+                        "name_ar": "\u0633\u064a\u0647\u0627\u062a",
+                        "name_en": "Sayhat"
+                    },
+                    {
+                        "id": 85,
+                        "name_ar": "\u0635\u0641\u0648\u0649",
+                        "name_en": "Safwa"
+                    },
+                    {
+                        "id": 86,
+                        "name_ar": "\u0639\u0646\u0643",
+                        "name_en": "Anak"
+                    },
+                    {
+                        "id": 87,
+                        "name_ar": "\u0627\u0644\u0646\u0639\u064a\u0631\u064a\u0629",
+                        "name_en": "An Nuayriyah"
+                    },
+                    {
+                        "id": 88,
+                        "name_ar": "\u062a\u0627\u0631\u0648\u062a",
+                        "name_en": "Tarut"
+                    },
+                    {
+                        "id": 89,
+                        "name_ar": "\u0627\u0644\u062c\u0634",
+                        "name_en": "Al Jash"
+                    },
+                    {
+                        "id": 90,
+                        "name_ar": "\u0627\u0644\u0639\u0648\u0627\u0645\u064a\u0629",
+                        "name_en": "Al Awamiyah"
+                    }
+                ]
+            },
+            {
+                "id": 7,
+                "name_ar": "\u0645\u0646\u0637\u0642\u0629 \u0639\u0633\u064a\u0631",
+                "name_en": "Asir Region",
+                "cities": [
+                    {
+                        "id": 91,
+                        "name_ar": "\u0643\u0644 \u0627\u0644\u0645\u062f\u0646",
+                        "name_en": "All Cities"
+                    },
+                    {
+                        "id": 92,
+                        "name_ar": "\u0623\u0628\u0647\u0627",
+                        "name_en": "Abha"
+                    },
+                    {
+                        "id": 93,
+                        "name_ar": "\u062e\u0645\u064a\u0633 \u0645\u0634\u064a\u0637",
+                        "name_en": "Khamis Mushait"
+                    },
+                    {
+                        "id": 94,
+                        "name_ar": "\u0628\u064a\u0634\u0629",
+                        "name_en": "Bishah"
+                    },
+                    {
+                        "id": 95,
+                        "name_ar": "\u0645\u062d\u0627\u064a\u0644 \u0639\u0633\u064a\u0631",
+                        "name_en": "Muhayil Asir"
+                    },
+                    {
+                        "id": 96,
+                        "name_ar": "\u0627\u0644\u0646\u0645\u0627\u0635",
+                        "name_en": "An Namas"
+                    },
+                    {
+                        "id": 97,
+                        "name_ar": "\u0638\u0647\u0631\u0627\u0646 \u0627\u0644\u062c\u0646\u0648\u0628",
+                        "name_en": "Dhahran Al Janub"
+                    },
+                    {
+                        "id": 98,
+                        "name_ar": "\u0623\u062d\u062f \u0631\u0641\u064a\u062f\u0629",
+                        "name_en": "Ahad Rafidah"
+                    },
+                    {
+                        "id": 99,
+                        "name_ar": "\u0633\u0631\u0627\u0629 \u0639\u0628\u064a\u062f\u0629",
+                        "name_en": "Sarat Abidah"
+                    },
+                    {
+                        "id": 100,
+                        "name_ar": "\u0627\u0644\u0645\u062c\u0627\u0631\u062f\u0629",
+                        "name_en": "Al Majardah"
+                    },
+                    {
+                        "id": 101,
+                        "name_ar": "\u0631\u062c\u0627\u0644 \u0623\u0644\u0645\u0639",
+                        "name_en": "Rijal Alma"
+                    },
+                    {
+                        "id": 102,
+                        "name_ar": "\u062a\u062b\u0644\u064a\u062b",
+                        "name_en": "Tathlith"
+                    },
+                    {
+                        "id": 103,
+                        "name_ar": "\u0628\u0644\u0642\u0631\u0646",
+                        "name_en": "Balqarn"
+                    },
+                    {
+                        "id": 104,
+                        "name_ar": "\u0628\u0627\u0631\u0642",
+                        "name_en": "Bariq"
+                    },
+                    {
+                        "id": 105,
+                        "name_ar": "\u0627\u0644\u062d\u0631\u062c\u0629",
+                        "name_en": "Al Harjah"
+                    },
+                    {
+                        "id": 106,
+                        "name_ar": "\u0642\u0646\u0627",
+                        "name_en": "Qana"
+                    }
+                ]
+            },
+            {
+                "id": 8,
+                "name_ar": "\u0645\u0646\u0637\u0642\u0629 \u062a\u0628\u0648\u0643",
+                "name_en": "Tabuk Region",
+                "cities": [
+                    {
+                        "id": 107,
+                        "name_ar": "\u0643\u0644 \u0627\u0644\u0645\u062f\u0646",
+                        "name_en": "All Cities"
+                    },
+                    {
+                        "id": 108,
+                        "name_ar": "\u062a\u0628\u0648\u0643",
+                        "name_en": "Tabuk"
+                    },
+                    {
+                        "id": 109,
+                        "name_ar": "\u0627\u0644\u0648\u062c\u0647",
+                        "name_en": "Al Wajh"
+                    },
+                    {
+                        "id": 110,
+                        "name_ar": "\u0636\u0628\u0627",
+                        "name_en": "Duba"
+                    },
+                    {
+                        "id": 111,
+                        "name_ar": "\u062a\u064a\u0645\u0627\u0621",
+                        "name_en": "Tayma"
+                    },
+                    {
+                        "id": 112,
+                        "name_ar": "\u0623\u0645\u0644\u062c",
+                        "name_en": "Umluj"
+                    },
+                    {
+                        "id": 113,
+                        "name_ar": "\u062d\u0642\u0644",
+                        "name_en": "Haql"
+                    },
+                    {
+                        "id": 114,
+                        "name_ar": "\u0627\u0644\u0628\u062f\u0639",
+                        "name_en": "Al Bad"
+                    },
+                    {
+                        "id": 115,
+                        "name_ar": "\u0634\u0631\u0645\u0627",
+                        "name_en": "Sharma"
+                    },
+                    {
+                        "id": 116,
+                        "name_ar": "\u0644\u0642\u0627\u0646",
+                        "name_en": "Luqan"
+                    },
+                    {
+                        "id": 117,
+                        "name_ar": "\u0642\u064a\u0627\u0644",
+                        "name_en": "Qiyal"
+                    }
+                ]
+            },
+            {
+                "id": 9,
+                "name_ar": "\u0645\u0646\u0637\u0642\u0629 \u062d\u0627\u0626\u0644",
+                "name_en": "Hail Region",
+                "cities": [
+                    {
+                        "id": 118,
+                        "name_ar": "\u0643\u0644 \u0627\u0644\u0645\u062f\u0646",
+                        "name_en": "All Cities"
+                    },
+                    {
+                        "id": 119,
+                        "name_ar": "\u062d\u0627\u0626\u0644",
+                        "name_en": "Hail"
+                    },
+                    {
+                        "id": 120,
+                        "name_ar": "\u0628\u0642\u0639\u0627\u0621",
+                        "name_en": "Baqa"
+                    },
+                    {
+                        "id": 121,
+                        "name_ar": "\u0627\u0644\u063a\u0632\u0627\u0644\u0629",
+                        "name_en": "Al Ghazalah"
+                    },
+                    {
+                        "id": 122,
+                        "name_ar": "\u0627\u0644\u0634\u0646\u0627\u0646",
+                        "name_en": "Ash Shinan"
+                    },
+                    {
+                        "id": 123,
+                        "name_ar": "\u0645\u0648\u0642\u0642",
+                        "name_en": "Mawqaq"
+                    },
+                    {
+                        "id": 124,
+                        "name_ar": "\u0627\u0644\u062d\u0627\u0626\u0637",
+                        "name_en": "Al Hait"
+                    },
+                    {
+                        "id": 125,
+                        "name_ar": "\u0633\u0645\u064a\u0631\u0627\u0621",
+                        "name_en": "Samira"
+                    },
+                    {
+                        "id": 126,
+                        "name_ar": "\u0627\u0644\u0634\u0645\u0644\u064a",
+                        "name_en": "Ash Shamli"
+                    },
+                    {
+                        "id": 127,
+                        "name_ar": "\u062c\u0628\u0629",
+                        "name_en": "Jubbah"
+                    }
+                ]
+            },
+            {
+                "id": 10,
+                "name_ar": "\u0645\u0646\u0637\u0642\u0629 \u0627\u0644\u062d\u062f\u0648\u062f \u0627\u0644\u0634\u0645\u0627\u0644\u064a\u0629",
+                "name_en": "Northern Borders Region",
+                "cities": [
+                    {
+                        "id": 128,
+                        "name_ar": "\u0643\u0644 \u0627\u0644\u0645\u062f\u0646",
+                        "name_en": "All Cities"
+                    },
+                    {
+                        "id": 129,
+                        "name_ar": "\u0639\u0631\u0639\u0631",
+                        "name_en": "Arar"
+                    },
+                    {
+                        "id": 130,
+                        "name_ar": "\u0631\u0641\u062d\u0627\u0621",
+                        "name_en": "Rafha"
+                    },
+                    {
+                        "id": 131,
+                        "name_ar": "\u0637\u0631\u064a\u0641",
+                        "name_en": "Turaif"
+                    },
+                    {
+                        "id": 132,
+                        "name_ar": "\u0627\u0644\u0639\u0648\u064a\u0642\u064a\u0644\u0629",
+                        "name_en": "Al Uwayqilah"
+                    },
+                    {
+                        "id": 133,
+                        "name_ar": "\u0644\u064a\u0646\u0629",
+                        "name_en": "Linah"
+                    }
+                ]
+            },
+            {
+                "id": 11,
+                "name_ar": "\u0645\u0646\u0637\u0642\u0629 \u062c\u0627\u0632\u0627\u0646",
+                "name_en": "Jizan Region",
+                "cities": [
+                    {
+                        "id": 134,
+                        "name_ar": "\u0643\u0644 \u0627\u0644\u0645\u062f\u0646",
+                        "name_en": "All Cities"
+                    },
+                    {
+                        "id": 135,
+                        "name_ar": "\u062c\u0627\u0632\u0627\u0646",
+                        "name_en": "Jizan"
+                    },
+                    {
+                        "id": 136,
+                        "name_ar": "\u0635\u0628\u064a\u0627",
+                        "name_en": "Sabya"
+                    },
+                    {
+                        "id": 137,
+                        "name_ar": "\u0623\u0628\u0648 \u0639\u0631\u064a\u0634",
+                        "name_en": "Abu Arish"
+                    },
+                    {
+                        "id": 138,
+                        "name_ar": "\u0627\u0644\u062f\u0631\u0628",
+                        "name_en": "Ad Darb"
+                    },
+                    {
+                        "id": 139,
+                        "name_ar": "\u0627\u0644\u0631\u064a\u062b",
+                        "name_en": "Ar Rayth"
+                    },
+                    {
+                        "id": 140,
+                        "name_ar": "\u0628\u064a\u0634",
+                        "name_en": "Baysh"
+                    },
+                    {
+                        "id": 141,
+                        "name_ar": "\u0636\u0645\u062f",
+                        "name_en": "Damad"
+                    },
+                    {
+                        "id": 142,
+                        "name_ar": "\u0635\u0627\u0645\u0637\u0629",
+                        "name_en": "Samtah"
+                    },
+                    {
+                        "id": 143,
+                        "name_ar": "\u0641\u0631\u0633\u0627\u0646",
+                        "name_en": "Farasan"
+                    },
+                    {
+                        "id": 144,
+                        "name_ar": "\u0627\u0644\u0639\u0627\u0631\u0636\u0629",
+                        "name_en": "Al Aridah"
+                    },
+                    {
+                        "id": 145,
+                        "name_ar": "\u0627\u0644\u062d\u0631\u062b",
+                        "name_en": "Al Harth"
+                    },
+                    {
+                        "id": 146,
+                        "name_ar": "\u0647\u0631\u0648\u0628",
+                        "name_en": "Haroob"
+                    },
+                    {
+                        "id": 147,
+                        "name_ar": "\u0627\u0644\u0637\u0648\u0627\u0644",
+                        "name_en": "At Tuwal"
+                    },
+                    {
+                        "id": 148,
+                        "name_ar": "\u0645\u064a\u0633\u0627\u0646",
+                        "name_en": "Maysan"
+                    },
+                    {
+                        "id": 149,
+                        "name_ar": "\u0642\u064a\u0627",
+                        "name_en": "Qia"
+                    },
+                    {
+                        "id": 150,
+                        "name_ar": "\u0627\u0644\u0639\u064a\u062f\u0627\u0628\u064a",
+                        "name_en": "Al Eidabi"
+                    },
+                    {
+                        "id": 151,
+                        "name_ar": "\u0627\u0644\u062f\u0627\u064a\u0631",
+                        "name_en": "Ad Dayr"
+                    }
+                ]
+            },
+            {
+                "id": 12,
+                "name_ar": "\u0645\u0646\u0637\u0642\u0629 \u0646\u062c\u0631\u0627\u0646",
+                "name_en": "Najran Region",
+                "cities": [
+                    {
+                        "id": 152,
+                        "name_ar": "\u0643\u0644 \u0627\u0644\u0645\u062f\u0646",
+                        "name_en": "All Cities"
+                    },
+                    {
+                        "id": 153,
+                        "name_ar": "\u0646\u062c\u0631\u0627\u0646",
+                        "name_en": "Najran"
+                    },
+                    {
+                        "id": 154,
+                        "name_ar": "\u0634\u0631\u0648\u0631\u0629",
+                        "name_en": "Sharurah"
+                    },
+                    {
+                        "id": 155,
+                        "name_ar": "\u062d\u0628\u0648\u0646\u0627",
+                        "name_en": "Hubuna"
+                    },
+                    {
+                        "id": 156,
+                        "name_ar": "\u0628\u062f\u0631 \u0627\u0644\u062c\u0646\u0648\u0628",
+                        "name_en": "Badr Al Janub"
+                    },
+                    {
+                        "id": 157,
+                        "name_ar": "\u062b\u0627\u0631",
+                        "name_en": "Thar"
+                    },
+                    {
+                        "id": 158,
+                        "name_ar": "\u064a\u062f\u0645\u0629",
+                        "name_en": "Yadamah"
+                    },
+                    {
+                        "id": 159,
+                        "name_ar": "\u062e\u0628\u0627\u0634",
+                        "name_en": "Khubash"
+                    }
+                ]
+            },
+            {
+                "id": 13,
+                "name_ar": "\u0645\u0646\u0637\u0642\u0629 \u0627\u0644\u0628\u0627\u062d\u0629",
+                "name_en": "Al Bahah Region",
+                "cities": [
+                    {
+                        "id": 160,
+                        "name_ar": "\u0643\u0644 \u0627\u0644\u0645\u062f\u0646",
+                        "name_en": "All Cities"
+                    },
+                    {
+                        "id": 161,
+                        "name_ar": "\u0627\u0644\u0628\u0627\u062d\u0629",
+                        "name_en": "Al Bahah"
+                    },
+                    {
+                        "id": 162,
+                        "name_ar": "\u0628\u0644\u062c\u0631\u0634\u064a",
+                        "name_en": "Baljurashi"
+                    },
+                    {
+                        "id": 163,
+                        "name_ar": "\u0627\u0644\u0645\u0646\u062f\u0642",
+                        "name_en": "Al Mandaq"
+                    },
+                    {
+                        "id": 164,
+                        "name_ar": "\u0627\u0644\u0639\u0642\u064a\u0642",
+                        "name_en": "Al Aqiq"
+                    },
+                    {
+                        "id": 165,
+                        "name_ar": "\u0642\u0644\u0648\u0629",
+                        "name_en": "Qilwah"
+                    },
+                    {
+                        "id": 166,
+                        "name_ar": "\u0627\u0644\u0645\u062e\u0648\u0627\u0629",
+                        "name_en": "Al Mikhwah"
+                    },
+                    {
+                        "id": 167,
+                        "name_ar": "\u0627\u0644\u062d\u062c\u0631\u0629",
+                        "name_en": "Al Hajrah"
+                    },
+                    {
+                        "id": 168,
+                        "name_ar": "\u063a\u0627\u0645\u062f \u0627\u0644\u0632\u0646\u0627\u062f",
+                        "name_en": "Ghamid Az Zinad"
+                    },
+                    {
+                        "id": 169,
+                        "name_ar": "\u0627\u0644\u0642\u0631\u0649",
+                        "name_en": "Al Qura"
+                    },
+                    {
+                        "id": 170,
+                        "name_ar": "\u0627\u0644\u0623\u0645\u0648\u0627\u0647",
+                        "name_en": "Al Amwah"
+                    }
+                ]
+            },
+            {
+                "id": 14,
+                "name_ar": "\u0645\u0646\u0637\u0642\u0629 \u0627\u0644\u062c\u0648\u0641",
+                "name_en": "Al Jouf Region",
+                "cities": [
+                    {
+                        "id": 171,
+                        "name_ar": "\u0643\u0644 \u0627\u0644\u0645\u062f\u0646",
+                        "name_en": "All Cities"
+                    },
+                    {
+                        "id": 172,
+                        "name_ar": "\u0633\u0643\u0627\u0643\u0627",
+                        "name_en": "Sakaka"
+                    },
+                    {
+                        "id": 173,
+                        "name_ar": "\u062f\u0648\u0645\u0629 \u0627\u0644\u062c\u0646\u062f\u0644",
+                        "name_en": "Dawmat Al Jandal"
+                    },
+                    {
+                        "id": 174,
+                        "name_ar": "\u0627\u0644\u0642\u0631\u064a\u0627\u062a",
+                        "name_en": "Al Qurayyat"
+                    },
+                    {
+                        "id": 175,
+                        "name_ar": "\u0637\u0628\u0631\u062c\u0644",
+                        "name_en": "Tabarjal"
+                    },
+                    {
+                        "id": 176,
+                        "name_ar": "\u0627\u0644\u062d\u062f\u064a\u062b\u0629",
+                        "name_en": "Al Haditha"
+                    }
+                ]
+            }
+        ]
+    }
+}

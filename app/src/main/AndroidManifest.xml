@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:name=".App"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MyApplication">
+
+        <!-- Main -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Auth -->
+        <activity android:name=".auth.PhoneAuthActivity" android:exported="false" />
+        <activity android:name=".MenuActivity" android:exported="false" />
+        <activity android:name=".AddAdActivity" android:exported="false" />
+        <activity android:name=".LocationSelectionActivity" android:exported="false" />
+        <activity android:name=".CategorySelectionActivity" android:exported="false" />
+        <activity android:name=".ListingDetailActivity" android:exported="false" />
+        <activity android:name=".SearchActivity" android:exported="false"
+            android:windowSoftInputMode="stateVisible" />
+
+        <!-- Profile -->
+        <activity android:name=".profile.ProfileActivity" android:exported="false" />
+        <activity android:name=".profile.MyAdsActivity" android:exported="false" />
+
+        <!-- Settings -->
+        <activity android:name=".SettingsActivity" android:exported="false" />
+        <activity android:name=".LanguageActivity" android:exported="false" />
+        <activity android:name=".CommunicationChannelsActivity" android:exported="false" />
+
+        <!-- Favorites -->
+        <activity android:name=".favorites.FavoritesActivity" android:exported="false" />
+
+        <!-- Notifications -->
+        <activity android:name=".notifications.NotificationsActivity" android:exported="false" />
+        <activity android:name=".moderation.BlockedUsersActivity" android:exported="false" />
+
+        <!-- Chat -->
+        <activity
+            android:name=".chat.ui.conversations.ConversationsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".chat.ui.conversations.ListingConversationsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".chat.ui.chat.ChatActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Push notifications (FCM) -->
+        <service
+            android:name=".push.FcmService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/notif_channel_chat_id" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/find_primary" />
+    </application>
+
+</manifest>

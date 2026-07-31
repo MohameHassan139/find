@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingHorizontal="16dp">
+
+    <!-- Shimmer Pills -->
+    <View
+        android:id="@+id/shimmer1"
+        android:layout_width="80dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_category_shimmer" />
+
+    <View
+        android:id="@+id/shimmer2"
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_category_shimmer" />
+
+    <View
+        android:id="@+id/shimmer3"
+        android:layout_width="120dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_category_shimmer" />
+
+    <View
+        android:id="@+id/shimmer4"
+        android:layout_width="70dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_category_shimmer" />
+        
+</LinearLayout>

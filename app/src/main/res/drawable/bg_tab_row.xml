@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Bottom border/divider color -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/surface_primary" />
+        </shape>
+    </item>
+    <!-- Main background of the tab row, leaving 3dp space at the bottom for the divider -->
+    <item android:bottom="3dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/surface_tabs" />
+        </shape>
+    </item>
+</layer-list>

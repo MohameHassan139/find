@@ -1,0 +1,82 @@
+package com.example.myapplication.adapters
+
+import android.graphics.Color
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.example.myapplication.ApiSubCategory
+import com.example.myapplication.R
+import com.example.myapplication.databinding.ItemSubcategoryGridBinding
+import com.example.myapplication.utils.LocaleHelper
+
+/**
+ * Displays sub-categories with a "الكل" card at position 0 (represented as null).
+ * onClick receives null for "الكل", or the ApiSubCategory for any real item.
+ */
+class SubCategoryGridAdapter(
+    private var items: List<ApiSubCategory>,
+    private val onClick: (ApiSubCategory) -> Unit
+) : RecyclerView.Adapter<SubCategoryGridAdapter.VH>() {
+
+    class VH(val b: ItemSubcategoryGridBinding) : RecyclerView.ViewHolder(b.root)
+
+    override fun getItemCount() = items.size
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+        val b = ItemSubcategoryGridBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        b.ivSubIcon.setBackgroundColor(0) // Transparent
+        b.ivSubIcon.isClickable = false
+        b.ivSubIcon.isFocusable = false
+        b.ivSubIcon.isFocusableInTouchMode = false
+        b.ivSubIcon.settings.apply {
+            javaScriptEnabled = true
+            useWideViewPort = true
+            loadWithOverviewMode = true
+        }
+        return VH(b)
+    }
+
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        val sub = items[position]
+
+        holder.b.tvSubName.text = LocaleHelper.localizedName(holder.itemView.context, sub.nameAr, sub.nameEn)
+        val url = sub.iconUrl
+        if (!url.isNullOrEmpty()) {
+            // Icon fills ~75% of the WebView area, centered — matches Figma proportions
+            val html = """
+                <html>
+                <head>
+                <meta name='viewport' content='width=device-width,initial-scale=1'>
+                <style>
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  html, body {
+                    width: 100%; height: 100%;
+                    background: transparent;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  }
+                  img {
+                    width: 75%;
+                    height: 75%;
+                    object-fit: contain;
+                  }
+                </style>
+                </head>
+                <body><img src="$url"/></body>
+                </html>
+            """.trimIndent()
+            holder.b.ivSubIcon.loadDataWithBaseURL(url, html, "text/html", "UTF-8", null)
+        } else {
+            val emptyHtml = "<html><head><style>*{margin:0;padding:0;}html,body{width:100%;height:100%;background:transparent;}</style></head><body></body></html>"
+            holder.b.ivSubIcon.loadDataWithBaseURL("about:blank", emptyHtml, "text/html", "UTF-8", null)
+        }
+
+        holder.b.clickOverlay.setOnClickListener { onClick(sub) }
+    }
+
+    fun updateData(newItems: List<ApiSubCategory>) {
+        items = newItems
+        notifyDataSetChanged()
+    }
+}

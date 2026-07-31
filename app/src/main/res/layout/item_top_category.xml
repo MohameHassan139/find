@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/llCategoryRoot"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/home_tab_height"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingHorizontal="14dp">
+
+    <TextView
+        android:id="@+id/tvCategoryName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nav_home"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp"
+        android:fontFamily="sans-serif-medium" />
+
+    <!-- Gold underline for active state -->
+    <View
+        android:id="@+id/vUnderline"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/find_primary"
+        android:visibility="invisible" />
+
+</LinearLayout>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/settings_bg"
+    android:layoutDirection="locale">
+
+    <!-- Top Bar -->
+    <include layout="@layout/layout_appbar_back" />
+
+    <!-- Reusable home header: search + category tabs -->
+    <include layout="@layout/layout_home_header" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="6dp"
+            android:paddingTop="21dp"
+            android:paddingBottom="14dp">
+
+            <!-- Big white card matching Figma: 378dp wide, shadow, 5dp radius -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/surface_primary"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="3dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="16dp">
+
+                    <!-- ── Header row: icon + label ── -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layoutDirection="locale"
+                        android:paddingHorizontal="11dp"
+                        android:paddingBottom="16dp">
+
+                        <!-- Yellow icon holder at START -->
+                        <FrameLayout
+                            android:layout_width="48dp"
+                            android:layout_height="42dp"
+                            android:background="@drawable/bg_settings_icon_holder"
+                            android:padding="6dp">
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/ic_settings_channels"
+                                app:tint="@color/text_primary"
+                                android:scaleType="fitCenter"
+                                android:contentDescription="Channels" />
+                        </FrameLayout>
+
+                        <!-- Label -->
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="@string/channel_title_header"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary" />
+
+                    </LinearLayout>
+
+                    <!-- ── Row 1: In-App Chat ── -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layoutDirection="locale"
+                        android:paddingHorizontal="20dp"
+                        android:layout_marginBottom="13dp">
+
+                        <!-- Chat icon at START -->
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/ic_nav_chat"
+                            app:tint="@color/text_secondary"
+                            android:scaleType="fitCenter"
+                            android:contentDescription="In-app chat" />
+
+                        <!-- Label -->
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="@string/channel_in_app"
+                            android:textSize="15sp"
+                            android:textColor="@color/text_secondary" />
+
+                        <!-- Checkbox at END -->
+                        <CheckBox
+                            android:id="@+id/cbInApp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:button="@drawable/cb_custom"
+                            android:buttonTint="@null"
+                            app:buttonTint="@null"
+                            android:checked="true"
+                            android:enabled="false" />
+
+                    </LinearLayout>
+
+                    <!-- ── Row 2: WhatsApp ── -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layoutDirection="locale"
+                        android:paddingHorizontal="20dp"
+                        android:layout_marginBottom="13dp">
+
+                        <!-- WhatsApp icon at START (tinted to match Figma monochrome) -->
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/ic_whatsapp"
+                            app:tint="@color/text_primary"
+                            android:scaleType="fitCenter"
+                            android:contentDescription="WhatsApp" />
+
+                        <!-- Label -->
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="@string/channel_whatsapp"
+                            android:textSize="15sp"
+                            android:textColor="@color/text_primary" />
+
+                        <!-- Checkbox at END -->
+                        <CheckBox
+                            android:id="@+id/cbWhatsapp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:button="@drawable/cb_custom"
+                            android:buttonTint="@null"
+                            app:buttonTint="@null" />
+
+                    </LinearLayout>
+
+                    <!-- ── Row 3: Call ── -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layoutDirection="locale"
+                        android:paddingHorizontal="20dp">
+
+                        <!-- Call icon at START -->
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/ic_call"
+                            app:tint="@color/text_primary"
+                            android:scaleType="fitCenter"
+                            android:contentDescription="Call" />
+
+                        <!-- Label -->
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="@string/channel_call"
+                            android:textSize="15sp"
+                            android:textColor="@color/text_primary" />
+
+                        <!-- Checkbox at END -->
+                        <CheckBox
+                            android:id="@+id/cbCall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:button="@drawable/cb_custom"
+                            android:buttonTint="@null"
+                            app:buttonTint="@null" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Nav -->
+    <include
+        android:id="@+id/cvBottomNav"
+        layout="@layout/layout_bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="16dp" />
+
+</LinearLayout>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/ripple_item"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:gravity="center_vertical"
+        android:layoutDirection="locale"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp">
+
+        <!-- 1st Child: Avatar (Renders at Start: FAR RIGHT in AR, FAR LEFT in EN) -->
+        <ImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/ic_avatar_placeholder"
+            android:scaleType="centerCrop" />
+
+        <!-- 2nd Child: Text Info (Renders in MIDDLE) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="start|center_vertical"
+            android:layout_marginHorizontal="12dp">
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="اسم المستخدم"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/chats_item_title"
+                android:textAlignment="viewStart"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp">
+
+                <ImageView
+                    android:id="@+id/ivCheck"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_double_check"
+                    android:layout_marginEnd="4dp"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/tvLastMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="آخر رسالة..."
+                    android:textSize="14sp"
+                    android:textColor="@color/chats_item_subtitle"
+                    android:textAlignment="viewStart"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 3rd Child: Time + Unread Badge (Renders at End: FAR LEFT in AR, FAR RIGHT in EN) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginStart="4dp">
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="9:00 م"
+                android:textSize="15sp"
+                android:textColor="@color/chats_item_time" />
+
+            <TextView
+                android:id="@+id/tvUnreadDay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="الأحد"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#FF3B30"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvUnreadBadge"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:text="1"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:background="@drawable/bg_badge"
+                android:layout_marginTop="4dp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Bottom Line Divider (starts under the name, extending all the way to the end edge in both AR & EN) -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginEnd="0dp"
+        android:background="@color/chats_item_divider" />
+
+</LinearLayout>

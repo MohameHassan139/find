@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/surface_secondary"
+    android:layoutDirection="locale">
+
+    <include layout="@layout/layout_appbar_back" />
+
+    <!-- Reusable home header: search + category tabs -->
+    <include
+        android:id="@+id/homeHeader"
+        layout="@layout/layout_home_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- Main card container -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="4dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="3dp"
+        app:cardBackgroundColor="@color/surface_primary">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- Section header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="4dp"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="48dp"
+                    android:layout_height="42dp"
+                    android:background="@drawable/bg_favorites_header_icon"
+                    android:layout_marginEnd="12dp">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_favorite_header_vector"
+                        android:importantForAccessibility="no" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="المفضلة:"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-medium" />
+            </LinearLayout>
+
+            <!-- Filter tabs: عرض / طلب -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="4dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnFilterOffer"
+                    android:layout_width="139dp"
+                    android:layout_height="41dp"
+                    android:layout_marginEnd="13dp"
+                    android:text="@string/filter_offer"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    app:strokeColor="@color/chats_chip_selected_border"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="50dp"
+                    app:backgroundTint="@color/bg_switcher"
+                    app:elevation="4dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnFilterRequest"
+                    android:layout_width="139dp"
+                    android:layout_height="41dp"
+                    android:layout_marginStart="13dp"
+                    android:text="@string/filter_request"
+                    android:textSize="15sp"
+                    android:textColor="@color/tab_inactive_text"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    app:strokeWidth="0dp"
+                    app:cornerRadius="50dp"
+                    app:backgroundTint="@color/bg_switcher"
+                    app:elevation="4dp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="336dp"
+                android:layout_height="1dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="18dp"
+                android:background="@color/switcher_divider" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/emptyView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💔"
+                        android:textSize="48sp"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:id="@+id/tvEmpty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="50dp"
+                        android:text="@string/favorites_empty"
+                        android:textSize="16sp"
+                        android:textColor="@color/text_secondary" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvFavorites"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="110dp"
+                    android:clipToPadding="false"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Bottom Nav -->
+    <include
+        android:id="@+id/cvBottomNav"
+        layout="@layout/layout_bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="16dp" />
+
+</LinearLayout>

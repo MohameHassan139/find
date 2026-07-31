@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_screen"
+    android:layoutDirection="locale">
+
+    <!-- Top Bar (appbar + search header) -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/surface_primary"
+        android:orientation="vertical">
+
+        <include layout="@layout/layout_appbar" />
+
+        <!-- Reusable home header: search + category tabs -->
+        <include layout="@layout/layout_home_header" />
+
+        <!-- Header Banner ("المحادثات") -->
+        <TextView
+            android:id="@+id/tvChatsHeader"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginHorizontal="6dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_chats_header"
+            android:gravity="center"
+            android:text="@string/nav_chats"
+            android:textColor="@color/chats_header_text"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- Divider below header banner -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="6dp"
+            android:background="@color/chats_header_border" />
+
+        <!-- Filter Chips Container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layoutDirection="locale"
+            android:gravity="center"
+            android:paddingHorizontal="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:id="@+id/chipAll"
+                android:layout_width="wrap_content"
+                android:layout_height="26dp"
+                android:background="@drawable/bg_chip_selected"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="@string/filter_all"
+                android:textColor="@color/chats_chip_text"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/chipUnread"
+                android:layout_width="wrap_content"
+                android:layout_height="26dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_chip_unselected"
+                android:gravity="center"
+                android:paddingHorizontal="14dp"
+                android:text="@string/filter_unread"
+                android:textColor="@color/chats_chip_text"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/chipFavorite"
+                android:layout_width="wrap_content"
+                android:layout_height="26dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_chip_unselected"
+                android:gravity="center"
+                android:paddingHorizontal="14dp"
+                android:text="@string/favorites_tab"
+                android:textColor="@color/chats_chip_text"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <!-- Divider line below chips -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/chats_item_divider" />
+
+    </LinearLayout>
+
+    <!-- Content Area -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- Shimmer Loading -->
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/surface_primary">
+                <include layout="@layout/item_shimmer_conversation" />
+                <include layout="@layout/item_shimmer_conversation" />
+                <include layout="@layout/item_shimmer_conversation" />
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <!-- Conversation List -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvConversations"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/surface_primary"
+                android:clipToPadding="false" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <!-- Empty State -->
+        <LinearLayout
+            android:id="@+id/layoutEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_chat_empty"
+                android:alpha="0.4" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="لا توجد محادثات"
+                android:textSize="16sp"
+                android:textColor="@color/text_secondary" />
+        </LinearLayout>
+
+        <!-- Error State -->
+        <LinearLayout
+            android:id="@+id/layoutError"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_error"
+                android:alpha="0.5" />
+
+            <TextView
+                android:id="@+id/tvErrorMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/error_occurred"
+                android:textSize="15sp"
+                android:gravity="center"
+                android:textColor="@color/text_secondary" />
+
+            <Button
+                android:id="@+id/btnRetry"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/str_______________"
+                android:paddingHorizontal="24dp"
+                android:backgroundTint="@color/find_primary"
+                style="@style/Widget.MaterialComponents.Button" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!-- Bottom Nav -->
+    <include
+        android:id="@+id/cvBottomNav"
+        layout="@layout/layout_bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="16dp" />
+
+</LinearLayout>

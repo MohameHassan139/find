@@ -1,0 +1,146 @@
+package com.example.myapplication
+
+import com.example.myapplication.R
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BaseActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
+import com.example.myapplication.auth.PhoneAuthActivity
+import com.example.myapplication.auth.TokenManager
+import com.example.myapplication.chat.api.RetrofitClient
+import com.example.myapplication.favorites.FavoritesActivity
+import com.example.myapplication.profile.MyAdsActivity
+import com.example.myapplication.profile.ProfileActivity
+import com.example.myapplication.databinding.ActivityMenuBinding
+import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.utils.AuthGuard
+import com.example.myapplication.utils.HomeHeaderHelper
+import com.example.myapplication.SharedCategoriesViewModel
+import androidx.activity.viewModels
+import kotlinx.coroutines.launch
+
+class MenuActivity : BaseActivity() {
+
+    private lateinit var binding: ActivityMenuBinding
+    private val sharedVm: SharedCategoriesViewModel by viewModels()
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.wrap(newBase))
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        LocaleHelper.applyLocale(this)
+        super.onCreate(savedInstanceState)
+        binding = ActivityMenuBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        applyWindowInsets()
+
+        HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
+        BottomNavHelper.setup(this, NavScreen.NONE)
+
+        // Show user name if logged in
+        if (TokenManager.isLoggedIn(this)) {
+            val name = TokenManager.getName(this)
+            if (name.isNotEmpty()) binding.btnLogin.text = name
+            else binding.btnLogin.text = getString(R.string.kt_str_c0f5269a)
+        }
+
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener {
+            finishMenuActivity()
+        }
+        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
+            finishMenuActivity()
+        }
+
+        binding.btnLogin.setOnClickListener {
+            if (TokenManager.isLoggedIn(this)) {
+                AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.logout_confirm_title))
+                    .setMessage(getString(R.string.logout_confirm_message))
+                    .setPositiveButton(getString(R.string.logout_confirm_yes)) { _, _ ->
+                        TokenManager.clear(this)
+                        binding.btnLogin.text = getString(R.string.menu_login)
+                        startActivity(Intent(this, MainActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                        })
+                        finish()
+                    }
+                    .setNegativeButton(getString(R.string.logout_confirm_no), null)
+                    .show()
+            } else {
+                startActivity(Intent(this, PhoneAuthActivity::class.java))
+            }
+        }
+
+        binding.menuMyAccount.setOnClickListener {
+            val target = Intent(this, ProfileActivity::class.java)
+            AuthGuard.requireLogin(this, target) { startWithPush(target) }
+        }
+        binding.menuMyAds.setOnClickListener {
+            val target = Intent(this, MyAdsActivity::class.java)
+            AuthGuard.requireLogin(this, target) { startWithPush(target) }
+        }
+        binding.menuFavorites.setOnClickListener {
+            val target = Intent(this, FavoritesActivity::class.java)
+            AuthGuard.requireLogin(this, target) { startWithPush(target) }
+        }
+        binding.menuNotifications.setOnClickListener {
+            val target = Intent(this, com.example.myapplication.notifications.NotificationsActivity::class.java)
+            AuthGuard.requireLogin(this, target) { startWithPush(target) }
+        }
+        binding.menuSettings.setOnClickListener {
+            startWithPush(Intent(this, SettingsActivity::class.java))
+        }
+        binding.menuShareApp.setOnClickListener {
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, "Check out the Find app!")
+            }
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.menu_share_app)))
+        }
+        binding.menuAbout.setOnClickListener {
+            Toast.makeText(this, getString(R.string.menu_about), Toast.LENGTH_SHORT).show()
+        }
+        binding.menuContact.setOnClickListener {
+            Toast.makeText(this, getString(R.string.menu_contact), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    override fun onBackPressed() {
+        finishMenuActivity()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (TokenManager.isLoggedIn(this)) fetchNotifBadge()
+    }
+
+    private fun fetchNotifBadge() {
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.build(this@MenuActivity).getUserData()
+                if (response.isSuccessful) {
+                    val payload = response.body()?.data
+                    val unread = payload?.unreadNotifications
+                        ?: payload?.notifications?.count { !it.isRead }
+                        ?: 0
+                    if (unread > 0) {
+                        binding.tvNotifBadge.text = if (unread > 99) "99+" else unread.toString()
+                        binding.tvNotifBadge.visibility = View.VISIBLE
+                    } else {
+                        binding.tvNotifBadge.visibility = View.GONE
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+    }
+}

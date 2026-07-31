@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/settings_bg"
+    android:layoutDirection="locale">
+
+    <!-- Top Bar -->
+    <include layout="@layout/layout_appbar_back" />
+
+    <!-- Reusable home header: search + category tabs -->
+    <include layout="@layout/layout_home_header" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="6dp"
+            android:paddingTop="21dp"
+            android:paddingBottom="14dp">
+
+            <!-- Big white card containing header + both buttons -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/surface_primary"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="3dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp">
+
+                    <!-- Header row: language icon at START, label after it -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layoutDirection="locale"
+                        android:paddingHorizontal="11dp"
+                        android:paddingBottom="16dp">
+
+                        <!-- Icon holder — yellow background, at START -->
+                        <FrameLayout
+                            android:layout_width="48dp"
+                            android:layout_height="42dp"
+                            android:background="@drawable/bg_settings_icon_holder"
+                            android:padding="6dp">
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/ic_language"
+                                app:tint="@color/text_primary"
+                                android:scaleType="fitCenter"
+                                android:contentDescription="Language" />
+                        </FrameLayout>
+
+                        <!-- Label -->
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="@string/language_label"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary" />
+
+                    </LinearLayout>
+
+                    <!-- Arabic button (selected by default) -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/btnArabic"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginHorizontal="17dp"
+                        android:layout_marginBottom="10dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:cardBackgroundColor="@color/settings_bg"
+                        app:cardCornerRadius="5dp"
+                        app:cardElevation="3dp"
+                        app:strokeColor="#007AFF"
+                        app:strokeWidth="2dp">
+
+                        <TextView
+                            android:id="@+id/tvArabic"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="العربية"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:textColor="@color/text_primary" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- English button (unselected by default) -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/btnEnglish"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginHorizontal="17dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:cardBackgroundColor="@color/settings_bg"
+                        app:cardCornerRadius="5dp"
+                        app:cardElevation="3dp"
+                        app:strokeColor="@android:color/transparent"
+                        app:strokeWidth="0dp">
+
+                        <TextView
+                            android:id="@+id/tvEnglish"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="English"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:textColor="@color/text_primary" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Nav -->
+    <include
+        android:id="@+id/cvBottomNav"
+        layout="@layout/layout_bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="16dp" />
+
+</LinearLayout>
