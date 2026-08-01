@@ -164,6 +164,7 @@
     <string name="time_hours">%d ساعة</string>
     <string name="time_days">%d يوم</string>
     <string name="error_open_conversation">تعذر فتح المحادثة</string>
+    <string name="yesterday">أمس</string>
 
     <!-- Push notifications -->
     <string name="notif_channel_chat_name">رسائل المحادثة</string>

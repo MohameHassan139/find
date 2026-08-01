@@ -136,7 +136,10 @@ class ListingConvAdapter(
         val conv = items[position]
         holder.tvName.text = conv.otherUser?.name ?: "مجهول"
         holder.tvLastMessage.text = conv.lastMessage ?: ""
-        holder.tvTime.text = DateUtils.formatConversationTime(conv.lastMessageAt)
+        holder.tvTime.text = DateUtils.formatConversationTime(
+            conv.lastMessageAt,
+            holder.tvTime.context.getString(com.example.myapplication.R.string.yesterday)
+        )
         val unread = conv.myUnread
         holder.tvUnreadBadge.visibility = if (unread > 0) View.VISIBLE else View.GONE
         holder.tvUnreadBadge.text = unread.toString()

@@ -20,13 +20,16 @@ object DateUtils {
             }
             if (date == null) return dateString
             val outputFmt = SimpleDateFormat("h:mm a", Locale.getDefault())
-            "م ${outputFmt.format(date)}"
+            outputFmt.format(date)
         } catch (e: Exception) {
             dateString
         }
     }
 
-    fun formatConversationTime(dateString: String?): String {
+    /** [yesterdayLabel] is caller-supplied (rather than hardcoded here) so this stays a
+     * pure, locale-agnostic function callers can pass a localized string into — see
+     * R.string.yesterday at each call site. */
+    fun formatConversationTime(dateString: String?, yesterdayLabel: String): String {
         if (dateString.isNullOrEmpty()) return ""
         return try {
             val inputFormats = listOf(
@@ -46,9 +49,9 @@ object DateUtils {
             return when {
                 isSameDay(calendar, today) -> {
                     val fmt = SimpleDateFormat("h:mm a", Locale.getDefault())
-                    "م ${fmt.format(date)}"
+                    fmt.format(date)
                 }
-                isYesterday(calendar, today) -> "الأحد"
+                isYesterday(calendar, today) -> yesterdayLabel
                 else -> {
                     val fmt = SimpleDateFormat("dd/MM", Locale.getDefault())
                     fmt.format(date)

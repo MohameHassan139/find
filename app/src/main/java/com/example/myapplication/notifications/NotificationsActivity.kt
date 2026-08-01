@@ -153,7 +153,10 @@ class NotificationsAdapter : ListAdapter<AppNotification, NotificationsAdapter.V
         fun bind(n: AppNotification) {
             tvTitle.text = n.titleAr ?: ""
             tvBody.text = n.bodyAr ?: ""
-            tvTime.text = DateUtils.formatConversationTime(n.createdAt)
+            tvTime.text = DateUtils.formatConversationTime(
+                n.createdAt,
+                tvTime.context.getString(R.string.yesterday)
+            )
             viewUnread.visibility = if (!n.isRead) View.VISIBLE else View.INVISIBLE
             val ctx = itemView.context
             itemView.setBackgroundColor(

@@ -39,7 +39,10 @@ class ConversationsAdapter(
 
             b.tvName.text = otherName ?: "مجهول"
             b.tvLastMessage.text = conv.lastMessage ?: ""
-            val timeStr = DateUtils.formatConversationTime(conv.lastMessageAt)
+            val timeStr = DateUtils.formatConversationTime(
+                conv.lastMessageAt,
+                itemView.context.getString(R.string.yesterday)
+            )
             // Whether the LAST message was sent by me isn't in this endpoint's
             // shape anymore (no last_sender_id) — my_unread == 0 is the best
             // available proxy: either I sent last, or I've already read theirs.

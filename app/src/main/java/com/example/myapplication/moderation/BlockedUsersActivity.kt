@@ -116,7 +116,10 @@ class BlockedUsersAdapter(
 
         fun bind(user: BlockedUserDto, onUnblock: (BlockedUserDto) -> Unit) {
             tvName.text = user.name ?: itemView.context.getString(R.string.blocked_unknown_user)
-            tvBlockedAt.text = DateUtils.formatConversationTime(user.blockedAt)
+            tvBlockedAt.text = DateUtils.formatConversationTime(
+                user.blockedAt,
+                itemView.context.getString(R.string.yesterday)
+            )
             if (!user.avatar.isNullOrEmpty()) {
                 Glide.with(ivAvatar.context)
                     .load(user.avatar)

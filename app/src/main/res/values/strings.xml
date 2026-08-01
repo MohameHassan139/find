@@ -164,6 +164,7 @@
     <string name="time_hours">%d hr</string>
     <string name="time_days">%d days</string>
     <string name="error_open_conversation">Could not open conversation</string>
+    <string name="yesterday">Yesterday</string>
 
     <!-- Push notifications -->
     <string name="notif_channel_chat_id" translatable="false">chat_messages</string>
