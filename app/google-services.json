@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "718242631231",
+    "project_id": "find-52c41",
+    "storage_bucket": "find-52c41.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:718242631231:android:d61d5555bc1da1c070328a",
+        "android_client_info": {
+          "package_name": "com.finds.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBm3mCaT52-aUr6lWBmxyYd169sTOZ3HZg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
