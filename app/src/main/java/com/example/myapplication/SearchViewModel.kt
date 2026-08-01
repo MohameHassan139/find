@@ -125,9 +125,15 @@ class SearchViewModel : ViewModel() {
                 )
                 if (response.isSuccessful) {
                     val body = JSONObject(response.body()?.string() ?: "")
-                    val arr = body.optJSONArray("data") ?: JSONArray()
-                    val meta = body.optJSONObject("meta")
-                    val fetchedLastPage = meta?.optInt("last_page", 1) ?: 1
+                    // GET /listings wraps results as data: { items: [...], pagination: {...} }
+                    // (matches ListingsService.swift's DataObj on iOS) — data itself is an
+                    // object, not the array directly. This was the actual search-returns-
+                    // nothing bug: optJSONArray("data") silently returns empty since "data"
+                    // is a JSON object here, not an array.
+                    val data = body.optJSONObject("data")
+                    val arr = data?.optJSONArray("items") ?: JSONArray()
+                    val pagination = data?.optJSONObject("pagination")
+                    val fetchedLastPage = pagination?.optInt("last_page", 1) ?: 1
                     val fetched = parseListings(arr)
                     withContext(Dispatchers.Main) {
                         lastPage = fetchedLastPage

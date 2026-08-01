@@ -313,9 +313,13 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
                 if (res.isSuccessful) {
                     val root = JSONObject(res.body()?.string() ?: "")
-                    val arr = root.optJSONArray("data") ?: JSONArray()
-                    val meta = root.optJSONObject("meta")
-                    val fetchedLast = meta?.optInt("last_page", 1) ?: 1
+                    // GET /listings wraps results as data: { items: [...], pagination: {...} }
+                    // (matches ListingsService.swift's DataObj on iOS) — data itself is an
+                    // object, not the array directly.
+                    val data = root.optJSONObject("data")
+                    val arr = data?.optJSONArray("items") ?: JSONArray()
+                    val pagination = data?.optJSONObject("pagination")
+                    val fetchedLast = pagination?.optInt("last_page", 1) ?: 1
                     val result = parseListings(arr)
                     
                     withContext(Dispatchers.Main) {
