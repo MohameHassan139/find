@@ -171,14 +171,23 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 } else {
                     withContext(Dispatchers.Main) {
                         _isBootLoading.value = false
-                        _errorEvent.value = "فشل تحميل الأقسام: ${res.code()}"
+                        _errorEvent.value = getApplication<Application>().getString(R.string.error_occurred)
                     }
                 }
             } catch (e: Exception) {
                 android.util.Log.e("MainVM", "Boot error", e)
                 withContext(Dispatchers.Main) {
                     _isBootLoading.value = false
-                    _errorEvent.value = "خطأ: ${e.localizedMessage}"
+                    val app = getApplication<Application>()
+                    // Network failures (DNS, timeout, etc.) get the app's existing
+                    // "could not connect" copy; anything else (e.g. a malformed
+                    // response) falls back to a generic message — either way, never
+                    // the raw exception text, which isn't localized or user-friendly.
+                    _errorEvent.value = if (e is java.io.IOException) {
+                        app.getString(R.string.kt_str_6c8b9134)
+                    } else {
+                        app.getString(R.string.error_occurred)
+                    }
                 }
             }
         }
