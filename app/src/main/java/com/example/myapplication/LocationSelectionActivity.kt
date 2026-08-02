@@ -54,7 +54,11 @@ class LocationSelectionActivity : BaseActivity() {
         selectedRegion = null
         binding.llListContainer.removeAllViews()
 
-        if (regions.isEmpty()) {
+        // Filter out synthetic "all regions" entries sent by the API.
+        // A user posting an ad must pick a real region, not a catch-all value.
+        val realRegions = regions.filter { !it.isAllOption() }
+
+        if (realRegions.isEmpty()) {
             val tv = TextView(this).apply {
                 text = LocaleHelper.localizedName(this@LocationSelectionActivity, "جارٍ التحميل...", "Loading...")
                 setPadding(32, 32, 32, 32)
@@ -63,7 +67,7 @@ class LocationSelectionActivity : BaseActivity() {
             return
         }
 
-        for (region in regions) {
+        for (region in realRegions) {
             val item = layoutInflater.inflate(R.layout.item_location, binding.llListContainer, false)
             item.findViewById<TextView>(R.id.tvItemName).text =
                 LocaleHelper.localizedName(this, region.nameAr, region.nameEn)
@@ -79,7 +83,10 @@ class LocationSelectionActivity : BaseActivity() {
 
     private fun showCities(region: RegionItem) {
         binding.llListContainer.removeAllViews()
-        val cities = vm.citiesForRegion(region.id)
+        val allCities = vm.citiesForRegion(region.id)
+
+        // Filter out synthetic "all cities" entries sent by the API.
+        val cities = allCities.filter { !it.isAllOption() }
 
         if (cities.isEmpty()) {
             val tv = TextView(this).apply {

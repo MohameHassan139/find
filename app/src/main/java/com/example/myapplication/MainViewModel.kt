@@ -51,8 +51,34 @@ data class ApiSubCategory(
 
 data class ApiFilterOption(val id: Int, val nameAr: String, val nameEn: String? = null)
 
+/** The backend sends a synthetic "All" entry as the first filter option for most
+ * sub-categories (its own real id, e.g. 82 — not a client-side sentinel). It means
+ * "don't filter by this dimension," so it should never be sent as filter_option_id
+ * (see MainViewModel.fetchListings) and should never be offered as a choice when
+ * actually creating a listing (see CategorySelectionActivity) — a listing can't
+ * itself be tagged "All". */
+fun ApiFilterOption?.isAllOption(): Boolean =
+    this != null && (nameAr.trim() == "الكل" || nameEn?.trim().equals("All", ignoreCase = true))
+
+/** Same guard applied to sub-categories — the API sometimes includes a catch-all
+ * "الكل" sub-category that has no meaning for a specific listing being created. */
+fun ApiSubCategory.isAllOption(): Boolean =
+    nameAr.trim() == "الكل" || nameEn?.trim().equals("All", ignoreCase = true) == true
+
 data class RegionItem(val id: Int, val nameAr: String, val nameEn: String? = null)
 data class CityItem(val id: Int, val nameAr: String, val nameEn: String? = null, val regionId: Int)
+
+/** Mirrors ApiFilterOption.isAllOption — the API sends a synthetic "all regions"
+ * or "all cities" entry that must not be offered when creating an ad. */
+fun RegionItem.isAllOption(): Boolean =
+    nameAr.trim().let { it == "الكل" || it == "كل المناطق" } ||
+    nameEn?.trim().equals("All", ignoreCase = true) == true ||
+    nameEn?.trim().equals("All Regions", ignoreCase = true) == true
+
+fun CityItem.isAllOption(): Boolean =
+    nameAr.trim().let { it == "الكل" || it == "كل المدن" } ||
+    nameEn?.trim().equals("All", ignoreCase = true) == true ||
+    nameEn?.trim().equals("All Cities", ignoreCase = true) == true
 
 data class ApiListing(
     val id: String,
@@ -242,10 +268,20 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     fun selectSubCategory(subIdx: Int?) {
         catSubIdx = subIdx
-        catExtraIdx = null
+        // Default the extras row (e.g. "All / For Sale / For Rent") to its "All" entry
+        // when the sub-category provides one, so it shows selected out of the box
+        // instead of nothing being highlighted.
+        catExtraIdx = defaultExtraIndex(subIdx)
         catRegId = null
         catCityId = null
         fetchListings(reset = true)
+    }
+
+    private fun defaultExtraIndex(subIdx: Int?): Int? {
+        val cat = _categories.value?.getOrNull(catIdx - 1) ?: return null
+        val sub = subIdx?.let { cat.subCategories.getOrNull(it) } ?: return null
+        val first = sub.filterOptions.firstOrNull() ?: return null
+        return if (first.isAllOption()) 0 else null
     }
 
     fun selectExtra(extraIdx: Int?) {
@@ -281,6 +317,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val ss = catSubIdx?.let { subs.getOrNull(it) }
         val extras = ss?.filterOptions ?: emptyList()
         val se = catExtraIdx?.let { extras.getOrNull(it) }
+        // "All" means show every tag on this row, not "match this literal id" — see
+        // ApiFilterOption.isAllOption().
+        val filterOptionId = se?.takeUnless { it.isAllOption() }?.id
 
         if (reset) {
             currentPage = 1
@@ -305,7 +344,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                     perPage = PAGE_SIZE,
                     categoryId = cat.id,
                     subCategoryId = ss?.id,
-                    filterOptionId = se?.id,
+                    filterOptionId = filterOptionId,
                     regionId = catRegId,
                     city = cityName,
                     listingType = catType

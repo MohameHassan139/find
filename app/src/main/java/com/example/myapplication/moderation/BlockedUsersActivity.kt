@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,11 +15,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myapplication.BaseActivity
+import com.example.myapplication.BottomNavHelper
+import com.example.myapplication.MainViewModel
+import com.example.myapplication.NavScreen
 import com.example.myapplication.R
 import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.chat.model.BlockedUserDto
 import com.example.myapplication.chat.utils.DateUtils
 import com.example.myapplication.databinding.ActivityBlockedUsersBinding
+import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.utils.ModerationDialogs
 import com.example.myapplication.utils.ModerationState
@@ -28,6 +33,7 @@ class BlockedUsersActivity : BaseActivity() {
 
     private lateinit var binding: ActivityBlockedUsersBinding
     private lateinit var adapter: BlockedUsersAdapter
+    private lateinit var vm: MainViewModel
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.wrap(newBase))
@@ -38,8 +44,16 @@ class BlockedUsersActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityBlockedUsersBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyWindowInsets()
 
-        binding.btnBack.setOnClickListener { finishWithPop() }
+        vm = ViewModelProvider(this)[MainViewModel::class.java]
+
+        // Wire shared components
+        HomeHeaderHelper.attach(this, binding.root, vm.categories)
+        BottomNavHelper.setup(this, NavScreen.NONE)
+
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finishWithPop() }
+        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener { startMenuActivity() }
 
         adapter = BlockedUsersAdapter { user -> unblock(user) }
         binding.rvBlockedUsers.layoutManager = LinearLayoutManager(this)
@@ -71,12 +85,12 @@ class BlockedUsersActivity : BaseActivity() {
     private fun showLoading() {
         binding.progressBar.visibility = View.VISIBLE
         binding.rvBlockedUsers.visibility = View.GONE
-        binding.tvEmpty.visibility = View.GONE
+        binding.emptyView.visibility = View.GONE
     }
 
     private fun showList(items: List<BlockedUserDto>) {
         binding.progressBar.visibility = View.GONE
-        binding.tvEmpty.visibility = View.GONE
+        binding.emptyView.visibility = View.GONE
         binding.rvBlockedUsers.visibility = View.VISIBLE
         adapter.submitList(items)
     }
@@ -84,7 +98,7 @@ class BlockedUsersActivity : BaseActivity() {
     private fun showEmpty() {
         binding.progressBar.visibility = View.GONE
         binding.rvBlockedUsers.visibility = View.GONE
-        binding.tvEmpty.visibility = View.VISIBLE
+        binding.emptyView.visibility = View.VISIBLE
         binding.tvEmpty.text = getString(R.string.blocked_empty)
     }
 }

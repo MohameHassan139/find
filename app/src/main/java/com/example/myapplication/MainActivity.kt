@@ -413,9 +413,11 @@ class MainActivity : BaseActivity() {
 
     private fun showListingsMode() {
         isShowingSubGrid = false
-        // Show chips row, hide region row until a chip is tapped
+        // Every row here (type chips, extras, region) already has a default value
+        // selected — "All" — so show them all immediately instead of gating the
+        // region row behind a redundant tap on a chip that's already active.
         binding.llFilterBar.visibility = View.VISIBLE
-        binding.llRegionRow.visibility = View.GONE
+        binding.llRegionRow.visibility = View.VISIBLE
         updateChipStyles(vm.catType)
         applyBodyState(BodyState.LOADING)
         vm.fetchListings()
@@ -428,7 +430,7 @@ class MainActivity : BaseActivity() {
             binding.rvExtraTabs.visibility = View.GONE
             // No sub-list → show chips immediately
             binding.llFilterBar.visibility  = View.VISIBLE
-            binding.llRegionRow.visibility  = View.GONE
+            binding.llRegionRow.visibility  = View.VISIBLE
             return
         }
         binding.rvSubTabs.visibility   = View.VISIBLE

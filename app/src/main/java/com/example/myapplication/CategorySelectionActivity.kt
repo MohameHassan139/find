@@ -111,12 +111,16 @@ class CategorySelectionActivity : BaseActivity() {
         currentState = State.SUB
         binding.llListContainer.removeAllViews()
 
-        if (cat.subCategories.isEmpty()) {
+        // Drop any catch-all "الكل"/"All" sub-category the API sends — a listing
+        // must have a real, specific sub-category, not a catch-all entry.
+        val realSubs = cat.subCategories.filter { !it.isAllOption() }
+
+        if (realSubs.isEmpty()) {
             returnResult(cat, null, null)
             return
         }
 
-        for (sub in cat.subCategories) {
+        for (sub in realSubs) {
             val item = layoutInflater.inflate(R.layout.item_category, binding.llListContainer, false)
             item.findViewById<TextView>(R.id.tvItemName).text =
                 LocaleHelper.localizedName(this, sub.nameAr, sub.nameEn)
@@ -138,7 +142,11 @@ class CategorySelectionActivity : BaseActivity() {
         currentState = State.FILTER
         binding.llListContainer.removeAllViews()
 
+        // "All" isn't a real, assignable value (see ApiFilterOption.isAllOption) — a
+        // listing being created has to have an actual specific type, so don't offer it
+        // as a choice here.
         for (opt in sub.filterOptions) {
+            if (opt.isAllOption()) continue
             val item = layoutInflater.inflate(R.layout.item_category, binding.llListContainer, false)
             item.findViewById<TextView>(R.id.tvItemName).text =
                 LocaleHelper.localizedName(this, opt.nameAr, opt.nameEn)

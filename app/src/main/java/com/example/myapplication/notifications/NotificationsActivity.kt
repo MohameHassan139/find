@@ -148,7 +148,8 @@ class NotificationsAdapter : ListAdapter<AppNotification, NotificationsAdapter.V
         private val tvTitle: TextView = view.findViewById(R.id.tvTitle)
         private val tvBody: TextView = view.findViewById(R.id.tvBody)
         private val tvTime: TextView = view.findViewById(R.id.tvTime)
-        private val viewUnread: View = view.findViewById(R.id.viewUnreadDot)
+        private val viewUnreadDot: View = view.findViewById(R.id.viewUnreadDot)
+        private val viewUnreadBar: View = view.findViewById(R.id.viewUnreadBar)
 
         fun bind(n: AppNotification) {
             tvTitle.text = n.titleAr ?: ""
@@ -157,14 +158,9 @@ class NotificationsAdapter : ListAdapter<AppNotification, NotificationsAdapter.V
                 n.createdAt,
                 tvTime.context.getString(R.string.yesterday)
             )
-            viewUnread.visibility = if (!n.isRead) View.VISIBLE else View.INVISIBLE
-            val ctx = itemView.context
-            itemView.setBackgroundColor(
-                if (!n.isRead)
-                    ctx.getColor(R.color.notif_unread_bg)
-                else
-                    ctx.getColor(R.color.notif_read_bg)
-            )
+            val unreadVisibility = if (!n.isRead) View.VISIBLE else View.INVISIBLE
+            viewUnreadDot.visibility = unreadVisibility
+            viewUnreadBar.visibility = unreadVisibility
         }
     }
 }
