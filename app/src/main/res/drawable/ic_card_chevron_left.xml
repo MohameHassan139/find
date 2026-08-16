@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Carousel chevron, left. Converted verbatim from the Figma export
+    "Group (1).svg": 26x40 viewBox, black fill with a 1-unit white stroke.
+
+    1 viewport unit = 1dp, so the outline keeps its weight no matter what
+    box the ImageView gives it (see Widget.Find.CarouselArrow, which uses
+    scaleType="center" to draw it at its intrinsic size).
+
+    autoMirrored so the glyph flips in RTL. Paired with the start/end gravity
+    in the layouts, that keeps both arrows pointing outward in either
+    language: in Arabic "previous" sits on the right and this drawable
+    mirrors to point right.
+
+    The Figma export wrapped this path in <g opacity="0.5"> — that's the
+    disabled state of the arrow in the mock (the frame shows the first
+    image, so "previous" is unavailable), not part of the asset, so it is
+    deliberately not baked in here.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="28dp"
-    android:height="28dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24"
+    android:width="26dp"
+    android:height="40dp"
+    android:viewportWidth="26"
+    android:viewportHeight="40"
     android:autoMirrored="true">
-    <!-- White outline path -->
     <path
-        android:fillColor="#00000000"
+        android:fillColor="#000000"
         android:strokeColor="#FFFFFF"
-        android:strokeWidth="2.4"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M15,18 L9,12 L15,6" />
-    <!-- Black core path -->
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#000000"
-        android:strokeWidth="1.2"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M15,18 L9,12 L15,6" />
+        android:strokeWidth="1"
+        android:pathData="M20.5701,0.5C19.9579,0.500029 19.4177,0.723823 18.9949,1.14551L1.20776,18.3594C0.752156,18.7959 0.49977,19.3418 0.499756,19.9912C0.499756,20.6274 0.755029,21.1676 1.19897,21.6143L1.20581,21.6211L18.9939,38.8369L18.9968,38.8398C19.4079,39.2316 19.9433,39.4824 20.5701,39.4824C21.8146,39.4824 22.8003,38.5107 22.8005,37.2422C22.8005,36.6164 22.553,36.0733 22.1531,35.6709L22.1462,35.6641L5.94116,19.9912L22.1462,4.30078L22.1531,4.29395C22.5549,3.88968 22.8005,3.32928 22.8005,2.72363C22.8005,1.4482 21.8081,0.5 20.5701,0.5Z" />
 </vector>

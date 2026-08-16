@@ -186,32 +186,24 @@
                     android:background="@color/image_placeholder_bg"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Card.ImageSide" />
 
-                <!-- Prev arrow — thin chevron from design without background block -->
+                <!-- Prev arrow. Same style as the home/favorites card so every
+                     ad item shares one arrow definition; iOS centres these
+                     vertically rather than pinning them to the bottom. -->
                 <ImageView
                     android:id="@+id/btnPrev"
-                    android:layout_width="42dp"
-                    android:layout_height="64dp"
+                    style="@style/Widget.Find.CarouselArrow"
                     android:layout_gravity="bottom|start"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginBottom="4dp"
                     android:src="@drawable/ic_card_chevron_left"
-                    android:scaleType="fitCenter"
-                    android:autoMirrored="true"
-                    android:contentDescription="previous"
+                    android:contentDescription="@string/cd_previous_image"
                     android:visibility="gone" />
 
-                <!-- Next arrow — thin chevron from design without background block -->
+                <!-- Next arrow. -->
                 <ImageView
                     android:id="@+id/btnNext"
-                    android:layout_width="42dp"
-                    android:layout_height="64dp"
+                    style="@style/Widget.Find.CarouselArrow"
                     android:layout_gravity="bottom|end"
-                    android:layout_marginEnd="4dp"
-                    android:layout_marginBottom="4dp"
                     android:src="@drawable/ic_card_chevron_right"
-                    android:scaleType="fitCenter"
-                    android:autoMirrored="true"
-                    android:contentDescription="next"
+                    android:contentDescription="@string/cd_next_image"
                     android:visibility="gone" />
             </FrameLayout>
         </LinearLayout>

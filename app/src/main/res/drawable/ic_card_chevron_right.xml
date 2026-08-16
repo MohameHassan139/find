@@ -1,24 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Carousel chevron, right. Converted verbatim from the Figma export
+    "Group.svg" — the mirror of ic_card_chevron_left. See that file for the
+    sizing and RTL notes.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="28dp"
-    android:height="28dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24"
+    android:width="26dp"
+    android:height="40dp"
+    android:viewportWidth="26"
+    android:viewportHeight="40"
     android:autoMirrored="true">
-    <!-- White outline path -->
     <path
-        android:fillColor="#00000000"
+        android:fillColor="#000000"
         android:strokeColor="#FFFFFF"
-        android:strokeWidth="2.4"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M9,6 L15,12 L9,18" />
-    <!-- Black core path -->
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#000000"
-        android:strokeWidth="1.2"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M9,6 L15,12 L9,18" />
+        android:strokeWidth="1"
+        android:pathData="M5.41626,0.5C6.02845,0.500029 6.56865,0.723823 6.99146,1.14551L24.7786,18.3594C25.2342,18.7959 25.4866,19.3418 25.4866,19.9912C25.4866,20.6274 25.2313,21.1676 24.7874,21.6143L24.7805,21.6211L6.99243,38.8369L6.9895,38.8398C6.57842,39.2316 6.04302,39.4824 5.41626,39.4824C4.17168,39.4824 3.18602,38.5107 3.18579,37.2422C3.18579,36.6164 3.43328,36.0733 3.83325,35.6709L3.84009,35.6641L20.0452,19.9912L3.84009,4.30078L3.83325,4.29395C3.43142,3.88968 3.18588,3.32928 3.18579,2.72363C3.18579,1.4482 4.17824,0.5 5.41626,0.5Z" />
 </vector>

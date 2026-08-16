@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+        Image-carousel arrow for ad items.
+
+        The glyph itself is the Figma asset (ic_card_chevron_*, converted from
+        the Group.svg / Group (1).svg exports at 26x40dp).
+
+        scaleType="center" draws the vector at its intrinsic 26x40dp instead of
+        stretching it to the box, so the outline keeps its weight. The box is
+        larger than the glyph purely to give a usable touch target, and the
+        extra space doubles as the inset: 26x40dp of glyph centred in a
+        38x52dp box leaves exactly 6dp on every side. The layouts anchor it
+        bottom|start / bottom|end, so the glyph lands 6dp in from the bottom
+        corner of the image — low in the frame, as the design has it — with no
+        margins needed.
+
+        Shared by item_listing_card.xml (home / favorites / search) and
+        item_my_ad.xml so every ad item uses one definition.
+
+        parent="" is required: the dotted name would otherwise make AAPT infer
+        a parent style called Widget.Find, which doesn't exist.
+    -->
+    <style name="Widget.Find.CarouselArrow" parent="">
+        <item name="android:layout_width">38dp</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+</resources>
