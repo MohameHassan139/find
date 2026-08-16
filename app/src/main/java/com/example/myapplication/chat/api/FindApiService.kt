@@ -8,7 +8,7 @@ import com.example.myapplication.auth.MeResponse
 import com.example.myapplication.auth.OtpRequest
 import com.example.myapplication.auth.OtpResponse
 import com.example.myapplication.auth.SingleListingResponse
-import com.example.myapplication.auth.ToggleActiveRequest
+import com.example.myapplication.auth.UpdateStatusRequest
 import com.example.myapplication.auth.UpdateProfileRequest
 import com.example.myapplication.auth.UploadAvatarResponse
 import com.example.myapplication.auth.VerifyOtpRequest
@@ -57,10 +57,13 @@ interface FindApiService {
     @DELETE("listings/{id}")
     suspend fun deleteListing(@Path("id") id: String): Response<Unit>
 
+    // Hide/unhide. Sends ONLY {"status": "active"|"hidden"} — the contract the
+    // backend actually reads, and the same call iOS makes from
+    // ListingsService.setListingStatus. Must never carry `images`.
     @PATCH("listings/{id}")
-    suspend fun toggleListing(
+    suspend fun setListingStatus(
         @Path("id") id: String,
-        @Body body: ToggleActiveRequest
+        @Body body: UpdateStatusRequest
     ): Response<SingleListingResponse>
 
     @GET("conversations")
@@ -154,9 +157,15 @@ interface FindApiService {
 
     // ── Favorites ─────────────────────────────────────────────────────────────
 
+    // Paginated: data.items + data.pagination. Callers should walk pages rather
+    // than reading page 1 only (per_page defaults to 15 server-side).
     @GET("favorites")
-    suspend fun getFavorites(@Query("page") page: Int = 1): Response<okhttp3.ResponseBody>
+    suspend fun getFavorites(
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 50
+    ): Response<com.example.myapplication.favorites.FavoritesResponse>
 
+    // Idempotent server-side — posting the same listing twice won't duplicate.
     @POST("favorites")
     suspend fun addFavorite(@Body body: com.example.myapplication.favorites.AddFavoriteRequest): Response<okhttp3.ResponseBody>
 
@@ -164,7 +173,9 @@ interface FindApiService {
     suspend fun removeFavorite(@Path("listing_id") listingId: String): Response<okhttp3.ResponseBody>
 
     @GET("listings/{id}/is-favorited")
-    suspend fun isFavorited(@Path("id") listingId: String): Response<okhttp3.ResponseBody>
+    suspend fun isFavorited(
+        @Path("id") listingId: String
+    ): Response<com.example.myapplication.favorites.IsFavoritedResponse>
 
     // ── Moderation (App Store/Play Store content-moderation requirement) ───────
 

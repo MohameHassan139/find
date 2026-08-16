@@ -71,9 +71,26 @@ data class SingleListingResponse(
     val status: Boolean?
 )
 
-data class ToggleActiveRequest(
-    @SerializedName("is_active") val isActive: Boolean
-)
+/**
+ * Body for hide/unhide: `PATCH /listings/{id}` with **only** `status`.
+ *
+ * The API's contract is `{"status": "active"|"hidden"}` — the same call the iOS
+ * client makes from `ListingsService.setListingStatus`. This previously sent
+ * `{"is_active": true|false}`, a field the backend doesn't read, so hide/unhide
+ * silently did nothing.
+ *
+ * Never add `images` here: sending that key makes the backend delete and
+ * recreate every image row, S3 files included.
+ */
+data class UpdateStatusRequest(val status: String) {
+    companion object {
+        const val ACTIVE = "active"
+        const val HIDDEN = "hidden"
+
+        fun forVisible(visible: Boolean) =
+            UpdateStatusRequest(if (visible) ACTIVE else HIDDEN)
+    }
+}
 
 data class ListingItem(
     val id: String,                                          // UUID string
@@ -81,7 +98,10 @@ data class ListingItem(
     val price: Double?,                                      // number not string
     val description: String? = null,
     @SerializedName("listing_type") val listingType: String?,
-    @SerializedName("is_active") val isActive: Boolean = true,
+    // `status` is the authoritative visibility field the API actually sends
+    // ("active" / "hidden"). There used to be an `is_active: Boolean = true`
+    // here as well, but the backend never sends it, so it defaulted to true
+    // for every ad and made hidden listings render as visible — see [isVisible].
     val status: String? = null,
     @SerializedName("created_at") val createdAt: String?,
     val images: List<String>?,                               // direct URL strings
@@ -91,7 +111,10 @@ data class ListingItem(
     @SerializedName("region_id") val regionId: Int? = null,
     @SerializedName("category_id") val categoryId: Int? = null,
     @SerializedName("sub_category_id") val subCategoryId: Int? = null
-)
+) {
+    /** iOS treats anything not explicitly "hidden" as visible; same rule here. */
+    val isVisible: Boolean get() = status != UpdateStatusRequest.HIDDEN
+}
 
 data class SellerInfo(val id: Int = 0, val name: String?, val avatar: String?)
 data class RegionInfo(val id: Int = 0, @SerializedName("name_ar") val nameAr: String?)

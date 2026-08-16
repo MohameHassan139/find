@@ -588,19 +588,27 @@ class MainActivity : BaseActivity() {
         lifecycleScope.launch {
             try {
                 val api = RetrofitClient.build(this@MainActivity)
-                val response = withContext(Dispatchers.IO) { api.getFavorites() }
-                if (response.isSuccessful) {
-                    val body = response.body()?.string() ?: return@launch
-                    val ids = mutableSetOf<String>()
-                    val root = org.json.JSONObject(body)
-                    val arr = root.optJSONArray("data") ?: return@launch
-                    for (i in 0 until arr.length()) {
-                        // data[] items ARE the listing directly per API spec
-                        val id = arr.getJSONObject(i).optString("id")
-                        if (id.isNotEmpty()) ids.add(id)
-                    }
-                    listingsAdapter.setFavoriteIds(ids)
+                // /favorites is paginated as data.items + data.pagination — it is
+                // NOT a bare data[] array. Reading it as an array returned null
+                // and bailed out here, so no heart on the grid ever filled in.
+                // Walk every page so users with many favorites are covered.
+                val ids = withContext(Dispatchers.IO) {
+                    val collected = mutableSetOf<String>()
+                    var page = 1
+                    var lastPage = 1
+                    do {
+                        val response = api.getFavorites(page = page)
+                        if (!response.isSuccessful) break
+                        val data = response.body()?.data ?: break
+                        data.items.orEmpty().forEach { item ->
+                            if (item.id.isNotEmpty()) collected.add(item.id)
+                        }
+                        lastPage = data.pagination?.lastPage ?: 1
+                        page++
+                    } while (page <= lastPage && page <= 20) // hard safety cap
+                    collected
                 }
+                listingsAdapter.setFavoriteIds(ids)
             } catch (_: Exception) {}
         }
     }

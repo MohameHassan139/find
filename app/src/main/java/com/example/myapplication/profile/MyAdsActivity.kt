@@ -26,7 +26,7 @@ import com.example.myapplication.ListingDetailActivity
 import com.example.myapplication.R
 import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.auth.ListingItem
-import com.example.myapplication.auth.ToggleActiveRequest
+import com.example.myapplication.auth.UpdateStatusRequest
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityMyAdsBinding
@@ -124,7 +124,7 @@ class MyAdsActivity : BaseActivity() {
             binding.rvAds.visibility = View.VISIBLE
             binding.rvAds.adapter = MyAdsAdapter(filtered.toMutableList(),
                 onDelete = { item -> confirmDelete(item) },
-                onToggle = { item, active -> toggleActive(item, active) },
+                onToggle = { item, visible -> toggleVisible(item, visible) },
                 onEdit = { intent -> 
                     editLauncher.launch(intent)
                     applyPushTransition()
@@ -189,15 +189,48 @@ class MyAdsActivity : BaseActivity() {
         }
     }
 
-    private fun toggleActive(item: ListingItem, active: Boolean) {
+    /**
+     * Hide/unhide. PATCHes only `{"status": "active"|"hidden"}` — the contract
+     * iOS uses; the previous `{"is_active": …}` body was ignored by the backend.
+     *
+     * Optimistic like iOS's MyAdsView: flip local state immediately, then revert
+     * the row if the call fails, so the switch can't sit in a state the server
+     * never accepted.
+     */
+    private fun toggleVisible(item: ListingItem, visible: Boolean) {
         if (TokenManager.getToken(this) == null) return
+
+        val target = if (visible) UpdateStatusRequest.ACTIVE else UpdateStatusRequest.HIDDEN
+        updateLocalStatus(item.id, target)
+
         lifecycleScope.launch {
-            try {
-                RetrofitClient.build(this@MyAdsActivity).toggleListing(
-                    item.id, ToggleActiveRequest(active)
-                )
-            } catch (_: Exception) {}
+            val succeeded = try {
+                val response = RetrofitClient.build(this@MyAdsActivity)
+                    .setListingStatus(item.id, UpdateStatusRequest.forVisible(visible))
+                response.isSuccessful
+            } catch (_: Exception) {
+                false
+            }
+
+            if (!succeeded) {
+                val reverted = if (target == UpdateStatusRequest.HIDDEN) {
+                    UpdateStatusRequest.ACTIVE
+                } else {
+                    UpdateStatusRequest.HIDDEN
+                }
+                updateLocalStatus(item.id, reverted)
+                Toast.makeText(
+                    this@MyAdsActivity,
+                    getString(R.string.error_generic),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
+    }
+
+    private fun updateLocalStatus(id: String, status: String) {
+        allAds = allAds.map { if (it.id == id) it.copy(status = status) else it }
+        applyFilter()
     }
 
     private fun showLoading() {
@@ -294,8 +327,10 @@ class MyAdsAdapter(
                 .circleCrop().into(holder.ivSellerAvatar)
         }
 
-        // Toggle — use status field ("active"/"hidden") since API returns status not is_active
-        val isCurrentlyActive = item.isActive || item.status == "active"
+        // Visibility comes from `status` alone. The old expression OR'd in an
+        // `isActive` field that defaulted to true and was never sent by the
+        // API, so every ad — hidden ones included — rendered as visible.
+        val isCurrentlyActive = item.isVisible
         holder.switchActive.setOnCheckedChangeListener(null)
         holder.switchActive.isChecked = isCurrentlyActive
         

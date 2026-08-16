@@ -324,8 +324,10 @@ class ListingDetailActivity : BaseActivity() {
                 val api = RetrofitClient.build(this@ListingDetailActivity)
                 val response = withContext(Dispatchers.IO) { api.isFavorited(listingId) }
                 if (response.isSuccessful) {
-                    val body = response.body()?.string() ?: return@launch
-                    isFavorited = org.json.JSONObject(body).optBoolean("is_favorited", false)
+                    // The flag lives at data.is_favorited, not at the top level —
+                    // reading it off the root always yielded false, so the heart
+                    // opened unfilled even for favorited listings.
+                    isFavorited = response.body()?.isFavorited ?: false
                     updateFavoriteIcon()
                 }
             } catch (_: Exception) {}

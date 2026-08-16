@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.ApiListing
 import com.example.myapplication.ListingDetailActivity
+import com.example.myapplication.auth.ListingItem
 import com.example.myapplication.MenuActivity
 import com.example.myapplication.R
 import com.example.myapplication.SharedCategoriesViewModel
@@ -131,23 +132,46 @@ class FavoritesActivity : BaseActivity() {
         lifecycleScope.launch {
             try {
                 val api = RetrofitClient.build(this@FavoritesActivity)
-                val response = withContext(Dispatchers.IO) { api.getFavorites() }
+
+                // /favorites is data.items + data.pagination, not a bare data[]
+                // array — parsing it as an array always produced an empty list,
+                // which is why this screen showed the empty state permanently.
+                // Every page is walked so long favorites lists aren't truncated
+                // at the server's default per_page of 15.
+                val loaded = withContext(Dispatchers.IO) {
+                    val collected = mutableListOf<ApiListing>()
+                    var page = 1
+                    var lastPage = 1
+                    var failed = false
+                    do {
+                        val response = api.getFavorites(page = page)
+                        if (!response.isSuccessful) {
+                            failed = page == 1
+                            break
+                        }
+                        val data = response.body()?.data ?: break
+                        collected += data.items.orEmpty().map { it.toApiListing() }
+                        lastPage = data.pagination?.lastPage ?: 1
+                        page++
+                    } while (page <= lastPage && page <= 20) // hard safety cap
+                    if (failed) null else collected
+                }
 
                 binding.progressBar.visibility = View.GONE
 
-                if (response.isSuccessful) {
-                    val body = response.body()?.string() ?: ""
-                    allFavorites = parseFavorites(body)
-                    favoriteIds.clear()
-                    allFavorites.forEach { favoriteIds.add(it.id) }
-
-                    if (allFavorites.isEmpty()) {
-                        binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
-                    } else {
-                        applyFilter()
-                    }
-                } else {
+                if (loaded == null) {
                     showError()
+                    return@launch
+                }
+
+                allFavorites = loaded
+                favoriteIds.clear()
+                allFavorites.forEach { favoriteIds.add(it.id) }
+
+                if (allFavorites.isEmpty()) {
+                    binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
+                } else {
+                    applyFilter()
                 }
             } catch (_: Exception) {
                 binding.progressBar.visibility = View.GONE
@@ -183,36 +207,21 @@ class FavoritesActivity : BaseActivity() {
         binding.tvEmpty.text = getString(R.string.kt_str_338558d2)
     }
 
-    // GET /favorites returns data[] where each item IS the listing directly
-    private fun parseFavorites(json: String): List<ApiListing> {
-        return try {
-            val root = JSONObject(json)
-            val dataArr = root.optJSONArray("data") ?: return emptyList()
-            val list = mutableListOf<ApiListing>()
-            for (i in 0 until dataArr.length()) {
-                val obj = dataArr.getJSONObject(i)
-                val images = mutableListOf<String>()
-                obj.optJSONArray("images")?.let { arr ->
-                    for (j in 0 until arr.length()) images.add(arr.getString(j))
-                }
-                val seller = obj.optJSONObject("seller")
-                val region = obj.optJSONObject("region")
-                list.add(
-                    ApiListing(
-                        id = obj.optString("id"),
-                        title = obj.optString("title").takeIf { it.isNotEmpty() },
-                        price = obj.optDouble("price").takeIf { !it.isNaN() },
-                        listingType = obj.optString("listing_type").takeIf { it.isNotEmpty() },
-                        createdAt = obj.optString("created_at").takeIf { it.isNotEmpty() },
-                        images = images,
-                        sellerName = seller?.let { if (it.isNull("name")) null else it.optString("name").ifEmpty { null } },
-                        sellerAvatar = seller?.let { if (it.isNull("avatar")) null else it.optString("avatar").ifEmpty { null } },
-                        regionNameAr = region?.optString("name_ar")?.ifEmpty { null },
-                        city = obj.optString("city").takeIf { it.isNotEmpty() }
-                    )
-                )
-            }
-            list
-        } catch (_: Exception) { emptyList() }
-    }
+    /**
+     * Maps the typed favorites payload onto the adapter's display model.
+     * Replaces the old hand-rolled JSON walk, which is where the wrong
+     * `data[]` assumption lived.
+     */
+    private fun ListingItem.toApiListing() = ApiListing(
+        id = id,
+        title = title?.takeIf { it.isNotEmpty() },
+        price = price,
+        listingType = listingType?.takeIf { it.isNotEmpty() },
+        createdAt = createdAt?.takeIf { it.isNotEmpty() },
+        images = images.orEmpty(),
+        sellerName = seller?.name?.takeIf { it.isNotEmpty() },
+        sellerAvatar = seller?.avatar?.takeIf { it.isNotEmpty() },
+        regionNameAr = region?.nameAr?.takeIf { it.isNotEmpty() },
+        city = city?.takeIf { it.isNotEmpty() }
+    )
 }
