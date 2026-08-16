@@ -350,7 +350,7 @@ class MainActivity : BaseActivity() {
             if (loading && pendingCategoryId == null && !isShowingSubGrid && vm.catIdx > 0) applyBodyState(BodyState.LOADING)
         }
 
-        vm.isPagingLoading.observe(this) { loading -> listingsAdapter.setFooterLoading(loading) }
+        // No paging spinner under the list — pages append silently as you scroll.
         vm.listings.observe(this) { listings ->
             listingsAdapter.updateData(listings)
             if (!isShowingSubGrid && vm.catIdx > 0) {

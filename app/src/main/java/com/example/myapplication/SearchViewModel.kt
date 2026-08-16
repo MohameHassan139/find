@@ -146,6 +146,9 @@ class SearchViewModel : ViewModel() {
                     }
                 } else {
                     withContext(Dispatchers.Main) {
+                        // Roll the page counter back so the next scroll retries
+                        // this page rather than skipping it.
+                        if (!reset) currentPage--
                         _isPagingLoading.value = false
                         _bodyState.value = if (reset) State.EMPTY else State.RESULTS
                         isFetching = false
@@ -153,6 +156,7 @@ class SearchViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
+                    if (!reset) currentPage--
                     _isPagingLoading.value = false
                     _bodyState.value = if (reset) State.EMPTY else State.RESULTS
                     _errorEvent.value = "تعذر البحث"

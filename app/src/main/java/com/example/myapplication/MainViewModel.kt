@@ -360,21 +360,28 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                     val pagination = data?.optJSONObject("pagination")
                     val fetchedLast = pagination?.optInt("last_page", 1) ?: 1
                     val result = parseListings(arr)
-                    
+
                     withContext(Dispatchers.Main) {
                         lastPage = fetchedLast
                         val current = if (reset) emptyList() else (_listings.value ?: emptyList())
                         _listings.value = current + result
-                        _isFirstPageLoading.value = false
-                        _isPagingLoading.value = false
                     }
+                } else if (!reset) {
+                    // The request completed but wasn't 2xx. Roll the page counter
+                    // back so the next scroll retries this page instead of
+                    // skipping it — currentPage was incremented before the call.
+                    withContext(Dispatchers.Main) { currentPage-- }
                 }
             } catch (_: Exception) {
+                if (!reset) withContext(Dispatchers.Main) { currentPage-- }
+            } finally {
+                // Always clear the loading flags, on every exit path. These used
+                // to be cleared only inside the success branch and the catch, so
+                // a non-2xx response (500/404) left the spinner running forever.
                 withContext(Dispatchers.Main) {
                     _isFirstPageLoading.value = false
                     _isPagingLoading.value = false
                 }
-            } finally {
                 isFetching = false
             }
         }

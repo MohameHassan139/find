@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.MotionEvent
 import android.annotation.SuppressLint
-import android.widget.ProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -21,40 +20,22 @@ class ListingsAdapter(
     private var items: List<ApiListing>,
     private val onClick: (ApiListing) -> Unit = {},
     private val onFavoriteClick: ((ApiListing, Boolean) -> Unit)? = null
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<ListingsAdapter.ItemVH>() {
 
-    private var showFooterLoader = false
     private val favoriteIds = mutableSetOf<String>()
-
-    companion object {
-        private const val TYPE_ITEM = 0
-        private const val TYPE_FOOTER = 1
-    }
 
     inner class ItemVH(val b: ItemListingCardBinding) : RecyclerView.ViewHolder(b.root) {
         var currentImageIndex = 0
         var imageUrls: List<String> = emptyList()
     }
-    inner class FooterVH(view: View) : RecyclerView.ViewHolder(view)
 
-    override fun getItemViewType(position: Int) =
-        if (showFooterLoader && position == items.size) TYPE_FOOTER else TYPE_ITEM
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == TYPE_FOOTER) {
-            val v = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_footer_loader, parent, false)
-            FooterVH(v)
-        } else {
-            ItemVH(ItemListingCardBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-        }
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemVH =
+        ItemVH(ItemListingCardBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is FooterVH) return
+    override fun onBindViewHolder(holder: ItemVH, position: Int) {
         val item = items[position]
-        val b = (holder as ItemVH).b
+        val b = holder.b
 
         b.tvTitle.text = item.title ?: "—"
 
@@ -215,7 +196,7 @@ class ListingsAdapter(
         }
     }
 
-    override fun getItemCount() = items.size + if (showFooterLoader) 1 else 0
+    override fun getItemCount() = items.size
 
     fun updateData(newItems: List<ApiListing>) {
         items = newItems
@@ -229,13 +210,6 @@ class ListingsAdapter(
     }
 
     fun getCurrentItems(): List<ApiListing> = items
-
-    fun setFooterLoading(loading: Boolean) {
-        if (showFooterLoader == loading) return
-        showFooterLoader = loading
-        if (loading) notifyItemInserted(items.size)
-        else notifyItemRemoved(items.size)
-    }
 
     private fun formatTime(dateStr: String?, ctx: android.content.Context? = null): String {
         if (dateStr.isNullOrEmpty()) return ""

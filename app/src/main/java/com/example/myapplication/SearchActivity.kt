@@ -204,9 +204,7 @@ class SearchActivity : BaseActivity() {
             resultsAdapter.updateData(listings)
         }
 
-        vm.isPagingLoading.observe(this) { loading ->
-            resultsAdapter.setFooterLoading(loading)
-        }
+        // No paging spinner under the results — pages append silently as you scroll.
 
         vm.currentQuery.observe(this) { q ->
             binding.tvEmptyQuery.text = if (!q.isNullOrBlank()) "لا توجد نتائج لـ \"$q\"" else ""
