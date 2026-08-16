@@ -367,4 +367,8 @@
     <string name="error_generic">An error occurred, please try again</string>
     <string name="error_session_expired">Your session has expired, please log in again</string>
     <string name="error_no_connection">Could not connect to server</string>
+
+    <!-- Content descriptions for the listing-card image carousel arrows. -->
+    <string name="cd_previous_image">Previous image</string>
+    <string name="cd_next_image">Next image</string>
 </resources>

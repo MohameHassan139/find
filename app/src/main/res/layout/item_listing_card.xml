@@ -199,33 +199,37 @@
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Card.ImageSide"
                 android:importantForAccessibility="no" />
 
-            <!-- Left arrow -->
+            <!-- Previous arrow — pinned to the start edge.
+                 Must be start/end, not left/right: both chevrons are
+                 autoMirrored, so in RTL the glyphs flip. With absolute
+                 gravity the buttons stayed put while their arrows flipped,
+                 leaving them pointing at each other in Arabic. -->
             <ImageView
                 android:id="@+id/ivPrevImage"
                 android:layout_width="36dp"
                 android:layout_height="56dp"
-                android:layout_gravity="center_vertical|left"
-                android:layout_marginLeft="4dp"
+                android:layout_gravity="center_vertical|start"
+                android:layout_marginStart="4dp"
                 android:src="@drawable/ic_card_chevron_left"
                 android:scaleType="fitCenter"
                 android:clickable="true"
                 android:focusable="true"
                 android:visibility="gone"
-                android:contentDescription="Previous image" />
+                android:contentDescription="@string/cd_previous_image" />
 
-            <!-- Right arrow -->
+            <!-- Next arrow — pinned to the end edge. -->
             <ImageView
                 android:id="@+id/ivNextImage"
                 android:layout_width="36dp"
                 android:layout_height="56dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_marginRight="4dp"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginEnd="4dp"
                 android:src="@drawable/ic_card_chevron_right"
                 android:scaleType="fitCenter"
                 android:clickable="true"
                 android:focusable="true"
                 android:visibility="gone"
-                android:contentDescription="Next image" />
+                android:contentDescription="@string/cd_next_image" />
 
             <!-- Favorite bookmark top-end -->
             <ImageView

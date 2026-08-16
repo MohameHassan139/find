@@ -366,4 +366,8 @@
     <string name="error_generic">حدث خطأ، يرجى المحاولة مرة أخرى</string>
     <string name="error_session_expired">انتهت الجلسة، يرجى تسجيل الدخول مرة أخرى</string>
     <string name="error_no_connection">تعذر الاتصال بالخادم</string>
+
+    <!-- Content descriptions for the listing-card image carousel arrows. -->
+    <string name="cd_previous_image">الصورة السابقة</string>
+    <string name="cd_next_image">الصورة التالية</string>
 </resources>
