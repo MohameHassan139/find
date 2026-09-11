@@ -1,9 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dark design menu glyph: 3 bold bars with rounded ends (tinted white by the app bar) -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-  <path
-      android:fillColor="#FFFFFF"
-      android:pathData="M3,18h18v-2H3v2zM3,13h18v-2H3v2zM3,6v2h18V6H3z"/>
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.6"
+        android:strokeLineCap="round"
+        android:pathData="M2.5,5.2 L21.5,5.2 M2.5,12 L21.5,12 M2.5,18.8 L21.5,18.8" />
 </vector>

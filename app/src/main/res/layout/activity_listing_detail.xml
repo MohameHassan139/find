@@ -13,8 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/surface_primary"
-        android:elevation="4dp"
+        android:background="@color/header_bg"
+        android:elevation="@dimen/header_elevation"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/surface_primary"
+            android:background="@drawable/bg_appbar"
             android:layoutDirection="locale">
 
             <!-- Status bar spacer -->
@@ -107,7 +107,7 @@
                         android:text="فايندز"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:textColor="@color/text_primary"
+                        android:textColor="@color/appbar_logo_text"
                         android:includeFontPadding="false"
                         android:lineSpacingExtra="-3dp" />
 
@@ -117,7 +117,7 @@
                         android:text="finds"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:textColor="@color/text_primary"
+                        android:textColor="@color/appbar_logo_text"
                         android:includeFontPadding="false"
                         android:lineSpacingExtra="-3dp" />
                 </LinearLayout>
@@ -150,13 +150,13 @@
                 android:paddingHorizontal="8dp"
                 android:textSize="14sp"
                 android:text="@string/search_hint"
-                android:textColor="@color/black" />
+                android:textColor="@color/search_hint_text" />
 
             <ImageView
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:src="@drawable/ic_search"
-                app:tint="@color/black"
+                app:tint="@color/search_icon_tint"
                 android:importantForAccessibility="no" />
         </LinearLayout>
 
@@ -165,7 +165,7 @@
             android:id="@+id/rvHomeTopTabs"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="@color/surface_tabs"
+            android:background="@color/tab_bar_bg"
             android:orientation="horizontal"
             android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -178,7 +178,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp"
-            android:background="@color/surface_tabs">
+            android:background="@color/tab_bar_bg">
 
             <View android:layout_width="80dp" android:layout_height="32dp"
                 android:layout_marginEnd="8dp" android:background="@drawable/bg_category_shimmer" />

@@ -12,7 +12,7 @@
         android:id="@+id/llAppBar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/surface_primary"
+        android:background="@drawable/bg_appbar"
         android:gravity="center_vertical"
         android:paddingHorizontal="16dp"
         android:orientation="horizontal">
@@ -22,7 +22,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/ic_back"
-            app:tint="@color/icon_tint"
+            app:tint="@color/appbar_icon_tint"
             android:background="@drawable/bg_menu_circle"
             android:contentDescription="@string/cd_back"
             android:onClick="finish" />
@@ -33,7 +33,7 @@
             android:layout_height="40dp"
             android:layout_marginStart="8dp"
             android:src="@drawable/ic_menu_black"
-            app:tint="@color/icon_tint"
+            app:tint="@color/appbar_icon_tint"
             android:background="@drawable/bg_menu_circle"
             android:contentDescription="@string/cd_menu" />
 
@@ -68,7 +68,7 @@
                     android:text="فايندز"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="@color/text_primary"
+                    android:textColor="@color/appbar_logo_text"
                     android:includeFontPadding="false"
                     android:lineSpacingExtra="-3dp" />
 
@@ -78,7 +78,7 @@
                     android:text="finds"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="@color/text_primary"
+                    android:textColor="@color/appbar_logo_text"
                     android:includeFontPadding="false"
                     android:lineSpacingExtra="-3dp" />
             </LinearLayout>

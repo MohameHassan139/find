@@ -1,5 +1,6 @@
 package com.example.myapplication.adapters
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -38,6 +39,10 @@ class SubCategoryGridAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val sub = items[position]
+        // Dark design (sub-category pages): pure #FFFFFF icons on black cards.
+        // Invert the dark server icons in night mode; the brightness boost lifts
+        // any dark-gray pixels to full white while black details stay black.
+        val iconCss = if (isNightMode(holder.itemView.context)) "filter: invert(1) brightness(1.2);" else ""
 
         holder.b.tvSubName.text = LocaleHelper.localizedName(holder.itemView.context, sub.nameAr, sub.nameEn)
         val url = sub.iconUrl
@@ -60,6 +65,7 @@ class SubCategoryGridAdapter(
                     width: 75%;
                     height: 75%;
                     object-fit: contain;
+                    $iconCss
                   }
                 </style>
                 </head>
@@ -74,6 +80,10 @@ class SubCategoryGridAdapter(
 
         holder.b.clickOverlay.setOnClickListener { onClick(sub) }
     }
+
+    private fun isNightMode(context: android.content.Context): Boolean =
+        (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+            Configuration.UI_MODE_NIGHT_YES
 
     fun updateData(newItems: List<ApiSubCategory>) {
         items = newItems

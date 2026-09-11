@@ -14,8 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/surface_primary"
-        android:elevation="4dp"
+        android:background="@color/header_bg"
+        android:elevation="@dimen/header_elevation"
         app:layout_constraintTop_toTopOf="parent">
 
         <!-- Top bar -->
@@ -51,13 +51,13 @@
                 android:includeFontPadding="false"
                 android:textSize="14sp"
                 android:textColor="@color/black"
-                android:textColorHint="@color/black" />
+                android:textColorHint="@color/search_hint_text" />
 
             <ImageView
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:src="@drawable/ic_search"
-                app:tint="@color/black" />
+                app:tint="@color/search_icon_tint" />
         </LinearLayout>
 
         <!-- Top category tabs -->
@@ -66,6 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/home_tab_height"
             android:background="@drawable/bg_tab_row"
+            android:paddingBottom="@dimen/tab_row_gap"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
@@ -75,6 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:background="@drawable/bg_tab_row"
+            android:paddingBottom="@dimen/tab_row_gap"
             android:visibility="gone"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -85,6 +87,7 @@
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:background="@drawable/bg_tab_row"
+            android:paddingBottom="@dimen/tab_row_gap"
             android:visibility="gone"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -97,6 +100,7 @@
             android:orientation="horizontal"
             android:gravity="start"
             android:background="@drawable/bg_tab_row"
+            android:paddingBottom="@dimen/tab_row_gap"
             android:visibility="gone">
 
             <!-- الكل Tab -->
@@ -117,7 +121,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/filter_all"
                     android:textSize="14sp"
-                    android:textColor="@color/text_primary" />
+                    android:textColor="@color/tab_label_active" />
                 <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
                 <View
                     android:id="@+id/underlineAll"
@@ -144,7 +148,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/filter_offer"
                     android:textSize="14sp"
-                    android:textColor="@color/find_gray_text" />
+                    android:textColor="@color/tab_label_inactive" />
                 <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
                 <View
                     android:id="@+id/underlineOffer"
@@ -171,7 +175,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/filter_request"
                     android:textSize="14sp"
-                    android:textColor="@color/find_gray_text" />
+                    android:textColor="@color/tab_label_inactive" />
                 <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
                 <View
                     android:id="@+id/underlineRequest"
@@ -219,7 +223,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/all_regions"
                         android:textSize="14sp"
-                        android:textColor="@color/text_primary" />
+                        android:textColor="@color/tab_row_text" />
 
                     <View
                         android:layout_width="0dp"
@@ -231,7 +235,7 @@
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:src="@drawable/ic_chevron_right"
-                        app:tint="@color/text_primary" />
+                        app:tint="@color/tab_row_text" />
 
                 </LinearLayout>
 
@@ -254,7 +258,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/all_cities"
                         android:textSize="14sp"
-                        android:textColor="@color/text_primary" />
+                        android:textColor="@color/tab_row_text" />
 
                     <View
                         android:layout_width="0dp"
@@ -266,7 +270,7 @@
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:src="@drawable/ic_chevron_right"
-                        app:tint="@color/text_primary" />
+                        app:tint="@color/tab_row_text" />
 
                 </LinearLayout>
 
@@ -278,6 +282,7 @@
             android:id="@+id/bootShimmer"
             android:layout_width="match_parent"
             android:layout_height="@dimen/home_tab_height"
+            android:background="@color/tab_bar_loading_bg"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp"

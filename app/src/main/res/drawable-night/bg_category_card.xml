@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dark design category card: black fill, 1dp #7B7B7B border, 15dp corners.
+     The white glow around it comes from bg_category_card_glow on the item root. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/category_card_bg" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/category_card_stroke" />
+    <corners android:radius="15dp" />
+</shape>

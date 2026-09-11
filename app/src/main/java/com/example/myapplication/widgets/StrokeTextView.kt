@@ -1,6 +1,7 @@
 package com.example.myapplication.widgets
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -47,10 +48,13 @@ class StrokeTextView @JvmOverloads constructor(
             setTextColor(strokeColor)
             
             val density = resources.displayMetrics.density
-            val shadowRadius = 3f * density
+            val isNight = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+                Configuration.UI_MODE_NIGHT_YES
+            // Light: original soft shadow. Dark design: text-shadow 0 4px 4px rgba(0,0,0,0.25)
+            val shadowRadius = if (isNight) 2.6f * density else 3f * density
             val shadowDx = 0f
-            val shadowDy = 1.5f * density
-            val shadowColor = 0x59000000 // 35% black shadow
+            val shadowDy = if (isNight) 4f * density else 1.5f * density
+            val shadowColor = if (isNight) 0x40000000 else 0x59000000
             setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor)
             
             super.onDraw(canvas)

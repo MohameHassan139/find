@@ -1,5 +1,6 @@
 package com.example.myapplication.adapters
 
+import android.content.res.Configuration
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -60,6 +61,9 @@ class CategoryGridAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val cat = items[position]
+        // Dark design: icons are drawn white at 85% opacity on black cells.
+        // The server icons are dark glyphs, so invert them only in night mode.
+        val iconCss = if (isNightMode(holder.itemView.context)) "filter:invert(1) brightness(1.2);opacity:0.85;" else ""
         holder.b.tvCategoryTitle.text = LocaleHelper.localizedName(holder.itemView.context, cat.nameAr, cat.nameEn)
 
         val isOther = position == items.size - 1 || cat.nameAr.contains("اخرى") || cat.nameAr.contains("اخر") || cat.nameAr.contains("أخرى")
@@ -71,7 +75,7 @@ class CategoryGridAdapter(
             if (!url.isNullOrEmpty()) {
                 holder.b.wvSingleIcon.visibility = android.view.View.VISIBLE
                 holder.b.tvSingleDots.visibility = android.view.View.GONE
-                val html = "<html><head><meta name='viewport' content='width=device-width,initial-scale=1'><style>*{margin:0;padding:0;box-sizing:border-box;}html,body{width:100%;height:100%;background:transparent;display:flex;justify-content:center;align-items:center;} img{width:70%;height:70%;object-fit:contain;}</style></head><body><img src=\"$url\"/></body></html>"
+                val html = "<html><head><meta name='viewport' content='width=device-width,initial-scale=1'><style>*{margin:0;padding:0;box-sizing:border-box;}html,body{width:100%;height:100%;background:transparent;display:flex;justify-content:center;align-items:center;} img{width:70%;height:70%;object-fit:contain;$iconCss}</style></head><body><img src=\"$url\"/></body></html>"
                 holder.b.wvSingleIcon.loadDataWithBaseURL(url, html, "text/html", "UTF-8", null)
             } else {
                 holder.b.wvSingleIcon.visibility = android.view.View.GONE
@@ -98,7 +102,7 @@ class CategoryGridAdapter(
                 }
                 val url = sub?.iconUrl
                 if (!url.isNullOrEmpty()) {
-                    val html = "<html><head><meta name='viewport' content='width=device-width,initial-scale=1'><style>*{margin:0;padding:0;box-sizing:border-box;}html,body{width:100%;height:100%;background:transparent;display:flex;justify-content:center;align-items:center;} img{width:78%;height:78%;object-fit:contain;}</style></head><body><img src=\"$url\"/></body></html>"
+                    val html = "<html><head><meta name='viewport' content='width=device-width,initial-scale=1'><style>*{margin:0;padding:0;box-sizing:border-box;}html,body{width:100%;height:100%;background:transparent;display:flex;justify-content:center;align-items:center;} img{width:78%;height:78%;object-fit:contain;$iconCss}</style></head><body><img src=\"$url\"/></body></html>"
                     iv.loadDataWithBaseURL(url, html, "text/html", "UTF-8", null)
                 } else {
                     val placeholderHtml = "<html><head><style>*{margin:0;padding:0;}html,body{width:100%;height:100%;background:transparent;}</style></head><body></body></html>"
@@ -111,6 +115,10 @@ class CategoryGridAdapter(
     }
 
     override fun getItemCount() = items.size
+
+    private fun isNightMode(context: android.content.Context): Boolean =
+        (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+            Configuration.UI_MODE_NIGHT_YES
 
     fun updateData(newItems: List<ApiCategory>) {
         items = newItems

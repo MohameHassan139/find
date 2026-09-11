@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/surface_primary"
-    android:elevation="4dp"
+    android:background="@drawable/bg_appbar"
+    android:elevation="@dimen/header_elevation"
     android:layoutDirection="locale">
 
     <!-- Status bar spacer -->
@@ -33,7 +33,7 @@
             android:background="@drawable/bg_menu_circle"
             android:padding="10dp"
             android:src="@drawable/ic_menu_black"
-            app:tint="@color/icon_tint"
+            app:tint="@color/appbar_icon_tint"
             android:contentDescription="القائمة" />
 
         <!-- Spacer -->
@@ -68,7 +68,7 @@
                     android:text="فايندز"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="@color/text_primary"
+                    android:textColor="@color/appbar_logo_text"
                     android:includeFontPadding="false"
                     android:lineSpacingExtra="-3dp" />
 
@@ -78,7 +78,7 @@
                     android:text="finds"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="@color/text_primary"
+                    android:textColor="@color/appbar_logo_text"
                     android:includeFontPadding="false"
                     android:lineSpacingExtra="-3dp" />
             </LinearLayout>

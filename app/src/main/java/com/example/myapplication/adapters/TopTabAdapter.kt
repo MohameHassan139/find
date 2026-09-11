@@ -41,19 +41,20 @@ class TopTabAdapter(
         tvLabel.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
         tvLabel.textSize = if (isActive) 17f else 15f
         
-        val activeColor = androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.find_active_blue)
         if (tvLabel is StrokeTextView) {
             tvLabel.isStrokeEnabled = isActive
-            tvLabel.setTextColor(if (isActive) Color.WHITE else androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.find_gray_text))
+            tvLabel.setTextColor(if (isActive) Color.WHITE else androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.tab_label_inactive))
         } else {
             val textColor = if (isActive) {
-                androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.text_primary)
+                androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.tab_label_active)
             } else {
-                androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.find_gray_text)
+                androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.tab_label_inactive)
             }
             tvLabel.setTextColor(textColor)
         }
-        holder.b.underline.setBackgroundColor(if (isActive) activeColor else Color.TRANSPARENT)
+        // Active indicator: flat bar in light mode, rounded #007AFF pill in dark mode
+        if (isActive) holder.b.underline.setBackgroundResource(R.drawable.bg_tab_underline_active)
+        else holder.b.underline.background = null
 
         holder.b.root.setOnClickListener {
             onSelected(cat)

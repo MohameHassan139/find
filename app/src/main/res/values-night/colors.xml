@@ -72,7 +72,8 @@
     <color name="plus_circle_stroke">#FFC8A96E</color>
     <color name="plus_circle_fill">#FF1E1E1E</color>
     <color name="menu_circle_stroke">#FFFFFFFF</color>
-    <color name="bottom_nav_bg">#CC1E1E1E</color>
+    <!-- Fill now comes from bg_bottom_nav_glass (dark design glass pill) -->
+    <color name="bottom_nav_bg">#00000000</color>
     <color name="shadow_divider">#FF2A2A2A</color>
     <color name="my_ads_icon_bg">#FF2A2000</color>
     <color name="favorites_icon_bg">#FF2A0000</color>
@@ -92,9 +93,47 @@
     <color name="card_divider">#FF48484A</color>
 
     <!-- Category Grid Dark Mode overrides -->
-    <color name="category_grid_bg">#FF121212</color>
-    <color name="category_card_bg">#FF252525</color>
-    <color name="category_mini_cell_bg">#FF252525</color>
-    <color name="category_card_stroke">#FF444444</color>
-    <color name="category_mini_cell_stroke">#FF444444</color>
+    <!-- rgba(123,123,123,0.85) 0.5dp border around each mini icon cell -->
+    <color name="category_mini_cell_stroke">#D97B7B7B</color>
+
+    <!-- ── Home screen dark design (Figma "iPhone 13" dark) ─────────────── -->
+    <!-- Content frame behind the category grid -->
+    <color name="category_grid_bg">#FF1C1C1E</color>
+    <!-- Category cards: pure black, #7B7B7B 1dp border, 85% white text -->
+    <color name="category_card_bg">#FF000000</color>
+    <color name="category_card_stroke">#FF7B7B7B</color>
+    <color name="category_mini_cell_bg">#FF000000</color>
+    <color name="category_card_text">#D9FFFFFF</color>
+
+    <!-- Top bar + search -->
+    <color name="header_bg">#FF2C2C2E</color>
+    <!-- 0.5dp rgba(123,123,123,0.5) line over #2C2C2E -->
+    <color name="appbar_divider">#FF545456</color>
+    <color name="appbar_icon_tint">#FFFFFFFF</color>
+    <color name="appbar_logo_text">#FFFFFFFF</color>
+    <color name="search_bar_bg">#FF3A3A3C</color>
+    <color name="search_hint_text">#FF6F6F73</color>
+    <color name="search_icon_tint">#D9FFFFFF</color>
+
+    <!-- Category tab rows: yellow bar, black 40% labels, iOS-blue indicator -->
+    <color name="tab_bar_bg">#FFF4CC40</color>
+    <color name="tab_bar_divider">#FF2C2C2E</color>
+    <color name="tab_bar_shimmer">#26000000</color>
+    <color name="tab_bar_loading_bg">#FFF4CC40</color>
+    <color name="tab_label_active">#FF000000</color>
+    <color name="tab_label_inactive">#66000000</color>
+    <color name="tab_underline_active">#FF007AFF</color>
+    <color name="tab_row_text">#D9000000</color>
+    <color name="tab_row_pill_stroke">#66000000</color>
+
+    <!-- ── Bottom navigation bar (dark design) ──────────────────────────── -->
+    <!-- Frosted pill: ~45% white (43% at top → 47% at bottom) with a light 1dp rim -->
+    <color name="nav_glass_top">#6EFFFFFF</color>
+    <color name="nav_glass_bottom">#78FFFFFF</color>
+    <color name="nav_glass_rim">#52FFFFFF</color>
+    <!-- Selected: black icon, 85% black label. Others: whole item at 30% opacity -->
+    <color name="nav_icon_selected">#FF000000</color>
+    <color name="nav_text_selected">#D9000000</color>
+    <color name="nav_icon_unselected">#4D000000</color>
+    <color name="nav_text_unselected">#41000000</color>
 </resources>

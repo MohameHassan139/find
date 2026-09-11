@@ -92,4 +92,35 @@
     <color name="bg_switcher">#F4F4F4</color>
     <color name="switcher_divider">#D9000000</color>
     <color name="card_divider">#E8E8E8</color>
+
+    <!-- ── Home header / category grid tokens ─────────────────────────────
+         Light values alias the colors these views already used, so light
+         mode looks exactly the same. Dark values live in values-night.
+         (Bottom navigation bar colors are intentionally NOT part of this.) -->
+    <color name="header_bg">@color/surface_primary</color>
+    <color name="appbar_divider">@color/surface_primary</color>
+    <color name="appbar_icon_tint">@color/icon_tint</color>
+    <color name="appbar_logo_text">@color/text_primary</color>
+    <color name="search_bar_bg">@color/search_bg</color>
+    <color name="search_hint_text">@color/black</color>
+    <color name="search_icon_tint">@color/black</color>
+    <color name="tab_bar_bg">@color/surface_tabs</color>
+    <color name="tab_bar_divider">@color/surface_primary</color>
+    <color name="tab_bar_shimmer">#FFE0E0E0</color>
+    <color name="tab_bar_loading_bg">#00000000</color>
+    <color name="tab_label_active">@color/text_primary</color>
+    <color name="tab_label_inactive">@color/find_gray_text</color>
+    <color name="tab_underline_active">@color/find_active_blue</color>
+    <color name="tab_row_text">@color/text_primary</color>
+    <color name="tab_row_pill_stroke">@color/tab_inactive_border</color>
+    <color name="category_card_text">@color/text_primary</color>
+
+    <!-- ── Bottom navigation bar tokens (light = previous look) ── -->
+    <color name="nav_icon_selected">@color/text_primary</color>
+    <color name="nav_text_selected">@color/text_primary</color>
+    <color name="nav_icon_unselected">@color/text_secondary</color>
+    <color name="nav_text_unselected">@color/text_secondary</color>
+    <color name="nav_glass_top">#00000000</color>
+    <color name="nav_glass_bottom">#00000000</color>
+    <color name="nav_glass_rim">#00000000</color>
 </resources>

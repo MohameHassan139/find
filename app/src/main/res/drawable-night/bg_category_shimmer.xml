@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Loading pills sit on the yellow tab bar in dark mode -> translucent black -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/shimmer_base" />
+    <solid android:color="@color/tab_bar_shimmer" />
     <corners android:radius="16dp" />
 </shape>

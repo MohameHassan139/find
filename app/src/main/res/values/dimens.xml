@@ -5,4 +5,12 @@
     <dimen name="home_tab_height">52dp</dimen>
     <dimen name="home_search_radius">22dp</dimen>
     <dimen name="language_stroke_selected">2dp</dimen>
+    <!-- Elevations that the dark design replaces with borders / glow (0dp in values-night) -->
+    <dimen name="header_elevation">4dp</dimen>
+    <dimen name="category_card_elevation">8dp</dimen>
+    <dimen name="bottom_nav_elevation">4dp</dimen>
+    <!-- Tab rows: height of the bottom strip, and padding that keeps the active
+         indicator above it (0dp in light = unchanged; dark design has a 5dp gap) -->
+    <dimen name="tab_row_strip">3dp</dimen>
+    <dimen name="tab_row_gap">0dp</dimen>
 </resources>

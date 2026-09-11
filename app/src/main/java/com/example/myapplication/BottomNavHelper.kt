@@ -63,11 +63,12 @@ object BottomNavHelper {
     }
 
     private fun applyItem(activity: AppCompatActivity, ivId: Int, tvId: Int, selected: Boolean) {
-        // Resolve colors from theme so they adapt to light/dark mode automatically
-        val colorSelected   = activity.getColor(R.color.text_primary)
-        val colorUnselected = activity.getColor(R.color.text_secondary)
-        val color = if (selected) colorSelected else colorUnselected
-        activity.findViewById<ImageView>(ivId)?.setColorFilter(color, PorterDuff.Mode.SRC_IN)
-        activity.findViewById<TextView>(tvId)?.setTextColor(color)
+        // Resolve colors from resources so they adapt to light/dark mode automatically.
+        // Light: same text_primary / text_secondary as before.
+        // Dark: black selected item, other items at 30% opacity on the glass pill.
+        val iconColor = activity.getColor(if (selected) R.color.nav_icon_selected else R.color.nav_icon_unselected)
+        val textColor = activity.getColor(if (selected) R.color.nav_text_selected else R.color.nav_text_unselected)
+        activity.findViewById<ImageView>(ivId)?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
+        activity.findViewById<TextView>(tvId)?.setTextColor(textColor)
     }
 }

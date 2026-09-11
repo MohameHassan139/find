@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Light mode: no glow (cards keep their normal elevation shadow).
+     Dark mode uses drawable-night-*/bg_category_card_glow.9.png:
+     drop-shadow(0 0 10px rgba(255,255,255,0.9)) around a 15dp-radius card inset 6dp. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@android:color/transparent" />
+</shape>

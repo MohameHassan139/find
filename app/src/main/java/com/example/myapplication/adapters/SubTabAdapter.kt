@@ -40,17 +40,18 @@ class SubTabAdapter(
         
         if (tvLabel is StrokeTextView) {
             tvLabel.isStrokeEnabled = isActive
-            tvLabel.setTextColor(if (isActive) Color.WHITE else holder.itemView.context.getColor(R.color.find_gray_text))
+            tvLabel.setTextColor(if (isActive) Color.WHITE else holder.itemView.context.getColor(R.color.tab_label_inactive))
         } else {
             val textColor = if (isActive) {
-                holder.itemView.context.getColor(R.color.text_primary)
+                holder.itemView.context.getColor(R.color.tab_label_active)
             } else {
-                holder.itemView.context.getColor(R.color.find_gray_text)
+                holder.itemView.context.getColor(R.color.tab_label_inactive)
             }
             tvLabel.setTextColor(textColor)
         }
-        val activeColor = holder.itemView.context.getColor(R.color.find_active_blue)
-        holder.b.underline.setBackgroundColor(if (isActive) activeColor else Color.TRANSPARENT)
+        // Active indicator: flat bar in light mode, rounded #007AFF pill in dark mode
+        if (isActive) holder.b.underline.setBackgroundResource(R.drawable.bg_tab_underline_active)
+        else holder.b.underline.background = null
 
         holder.b.root.setOnClickListener {
             onSelected(sub)
