@@ -93,34 +93,40 @@
     <color name="switcher_divider">#D9000000</color>
     <color name="card_divider">#E8E8E8</color>
 
-    <!-- ── Home header / category grid tokens ─────────────────────────────
-         Light values alias the colors these views already used, so light
-         mode looks exactly the same. Dark values live in values-night.
-         (Bottom navigation bar colors are intentionally NOT part of this.) -->
-    <color name="header_bg">@color/surface_primary</color>
-    <color name="appbar_divider">@color/surface_primary</color>
-    <color name="appbar_icon_tint">@color/icon_tint</color>
-    <color name="appbar_logo_text">@color/text_primary</color>
-    <color name="search_bar_bg">@color/search_bg</color>
-    <color name="search_hint_text">@color/black</color>
-    <color name="search_icon_tint">@color/black</color>
-    <color name="tab_bar_bg">@color/surface_tabs</color>
-    <color name="tab_bar_divider">@color/surface_primary</color>
-    <color name="tab_bar_shimmer">#FFE0E0E0</color>
-    <color name="tab_bar_loading_bg">#00000000</color>
-    <color name="tab_label_active">@color/text_primary</color>
-    <color name="tab_label_inactive">@color/find_gray_text</color>
-    <color name="tab_underline_active">@color/find_active_blue</color>
-    <color name="tab_row_text">@color/text_primary</color>
-    <color name="tab_row_pill_stroke">@color/tab_inactive_border</color>
-    <color name="category_card_text">@color/text_primary</color>
+    <!-- ── Home header / category grid tokens (Figma "main page", light) ──
+         Dark values live in values-night/colors.xml. -->
+    <!-- Top bar: white with a 0.5dp rgba(123,123,123,0.5) bottom line, black glyphs -->
+    <color name="header_bg">#FFFFFFFF</color>
+    <color name="appbar_divider">#FFBDBDBD</color>
+    <color name="appbar_icon_tint">#FF000000</color>
+    <color name="appbar_logo_text">#FF000000</color>
+    <!-- Search: #F4F4F4 field, #505050 hint, rgba(34,34,34,0.85) icon -->
+    <color name="search_bar_bg">#FFF4F4F4</color>
+    <color name="search_hint_text">#FF505050</color>
+    <color name="search_icon_tint">#D9222222</color>
+    <!-- Category tab rows: #FFF4CC bar, black 40% labels, #007AFF indicator -->
+    <color name="tab_bar_bg">#FFFFF4CC</color>
+    <color name="tab_bar_divider">#FFFFFFFF</color>
+    <color name="tab_bar_shimmer">#1F000000</color>
+    <color name="tab_bar_loading_bg">#FFFFF4CC</color>
+    <color name="tab_label_active">#FF000000</color>
+    <color name="tab_label_inactive">#66000000</color>
+    <color name="tab_underline_active">#FF007AFF</color>
+    <color name="tab_row_text">#D9000000</color>
+    <color name="tab_row_pill_stroke">#66000000</color>
+    <!-- Category cards: white, #7B7B7B border, 85% black title, black icons/dots -->
+    <color name="category_card_text">#D9000000</color>
+    <color name="category_card_dots">#FF000000</color>
 
-    <!-- ── Bottom navigation bar tokens (light = previous look) ── -->
-    <color name="nav_icon_selected">@color/text_primary</color>
-    <color name="nav_text_selected">@color/text_primary</color>
-    <color name="nav_icon_unselected">@color/text_secondary</color>
-    <color name="nav_text_unselected">@color/text_secondary</color>
-    <color name="nav_glass_top">#00000000</color>
-    <color name="nav_glass_bottom">#00000000</color>
-    <color name="nav_glass_rim">#00000000</color>
+    <!-- ── Bottom navigation bar (light design) ── -->
+    <!-- Frosted pill: ~45% white, 25% black outer rim + thin white inner highlight -->
+    <color name="nav_glass_top">#66FFFFFF</color>
+    <color name="nav_glass_bottom">#8CFFFFFF</color>
+    <color name="nav_glass_rim">#40000000</color>
+    <color name="nav_glass_highlight">#CCFFFFFF</color>
+    <!-- Selected: black icon, 85% black label. Others: whole item at 30% opacity -->
+    <color name="nav_icon_selected">#FF000000</color>
+    <color name="nav_text_selected">#D9000000</color>
+    <color name="nav_icon_unselected">#4D000000</color>
+    <color name="nav_text_unselected">#41000000</color>
 </resources>

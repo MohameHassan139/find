@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Loading pills on the tab bar -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#E0E0E0" />
+    <solid android:color="@color/tab_bar_shimmer" />
     <corners android:radius="16dp" />
 </shape>

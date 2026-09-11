@@ -104,6 +104,7 @@
     <color name="category_card_stroke">#FF7B7B7B</color>
     <color name="category_mini_cell_bg">#FF000000</color>
     <color name="category_card_text">#D9FFFFFF</color>
+    <color name="category_card_dots">#D9FFFFFF</color>
 
     <!-- Top bar + search -->
     <color name="header_bg">#FF2C2C2E</color>

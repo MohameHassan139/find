@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Top app bar background. Light: same flat surface color as before. -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <solid android:color="@color/header_bg" />
-</shape>
+<!-- Light design: white bar with a 0.5dp rgba(123,123,123,0.5) bottom border. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/appbar_divider" />
+        </shape>
+    </item>
+    <item android:bottom="0.5dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/header_bg" />
+        </shape>
+    </item>
+</layer-list>

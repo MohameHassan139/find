@@ -20,7 +20,8 @@
     <color name="plus_circle_stroke">#FF000000</color>
     <color name="plus_circle_fill">#FFFFFFFF</color>
     <color name="menu_circle_stroke">#FF000000</color>
-    <color name="bottom_nav_bg">#80FFFFFF</color>
+    <!-- Fill comes from bg_bottom_nav_glass (glass pill from the design) -->
+    <color name="bottom_nav_bg">#00000000</color>
     <color name="shadow_divider">#FFE0E0E0</color>
     <color name="my_ads_icon_bg">#FFFFF9E6</color>
     <color name="favorites_icon_bg">#FFFFF0F0</color>
