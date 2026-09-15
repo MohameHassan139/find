@@ -15,9 +15,9 @@ enum class NavScreen { HOME, ADD, CHAT, NONE }
 object BottomNavHelper {
 
     fun setup(activity: AppCompatActivity, current: NavScreen) {
-        applyItem(activity, R.id.ivNavHome, R.id.tvNavHome, current == NavScreen.HOME)
-        applyItem(activity, R.id.ivNavAdd,  R.id.tvNavAdd,  current == NavScreen.ADD)
-        applyItem(activity, R.id.ivNavChat, R.id.tvNavChat, current == NavScreen.CHAT)
+        applyItem(activity, R.id.navHome, R.id.ivNavHome, R.id.tvNavHome, current == NavScreen.HOME)
+        applyItem(activity, R.id.navAdd,  R.id.ivNavAdd,  R.id.tvNavAdd,  current == NavScreen.ADD)
+        applyItem(activity, R.id.navChat, R.id.ivNavChat, R.id.tvNavChat, current == NavScreen.CHAT)
 
         activity.findViewById<android.view.View>(R.id.navHome)?.setOnClickListener {
             if (current == NavScreen.HOME) {
@@ -62,13 +62,13 @@ object BottomNavHelper {
         }
     }
 
-    private fun applyItem(activity: AppCompatActivity, ivId: Int, tvId: Int, selected: Boolean) {
-        // Resolve colors from resources so they adapt to light/dark mode automatically.
-        // Light: same text_primary / text_secondary as before.
-        // Dark: black selected item, other items at 30% opacity on the glass pill.
+    private fun applyItem(activity: AppCompatActivity, containerId: Int, ivId: Int, tvId: Int, selected: Boolean) {
         val iconColor = activity.getColor(if (selected) R.color.nav_icon_selected else R.color.nav_icon_unselected)
         val textColor = activity.getColor(if (selected) R.color.nav_text_selected else R.color.nav_text_unselected)
         activity.findViewById<ImageView>(ivId)?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
         activity.findViewById<TextView>(tvId)?.setTextColor(textColor)
+        activity.findViewById<android.view.View>(containerId)?.setBackgroundResource(
+            if (selected) R.drawable.bg_nav_item_selected else 0
+        )
     }
 }

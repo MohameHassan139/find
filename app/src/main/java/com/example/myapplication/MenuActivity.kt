@@ -46,18 +46,21 @@ class MenuActivity : BaseActivity() {
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
         BottomNavHelper.setup(this, NavScreen.NONE)
 
-        // Show user name if logged in
+        // Hide top login box when already logged in to prevent duplicate "الملف الشخصي" box
         if (TokenManager.isLoggedIn(this)) {
-            val name = TokenManager.getName(this)
-            if (name.isNotEmpty()) binding.btnLogin.text = name
-            else binding.btnLogin.text = getString(R.string.kt_str_c0f5269a)
+            binding.btnLogin.visibility = View.GONE
+        } else {
+            binding.btnLogin.visibility = View.VISIBLE
+            binding.btnLogin.text = getString(R.string.menu_login)
         }
 
-        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener {
+        findViewById<android.widget.ImageButton>(R.id.btnBack)?.setOnClickListener {
             finishMenuActivity()
         }
-        findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
-            finishMenuActivity()
+        findViewById<android.widget.ImageButton>(R.id.btnMenu)?.apply {
+            setImageResource(R.drawable.ic_menu_circle_blue)
+            imageTintList = null
+            setOnClickListener { finishMenuActivity() }
         }
 
         binding.btnLogin.setOnClickListener {

@@ -54,7 +54,8 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_avatar_placeholder"
+                        android:src="@drawable/ic_blocked_users_empty"
+                        app:tint="@color/text_primary"
                         android:importantForAccessibility="no" />
                 </FrameLayout>
 
@@ -64,7 +65,7 @@
                     android:layout_weight="1"
                     android:text="@string/settings_blocked_users"
                     android:textSize="15sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_primary"
                     android:fontFamily="sans-serif-medium" />
             </LinearLayout>
 
@@ -108,12 +109,11 @@
                         android:gravity="center"
                         android:visibility="gone">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🚫"
-                            android:textSize="48sp"
-                            android:gravity="center" />
+                        <ImageView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:src="@drawable/ic_blocked_users_empty"
+                            app:tint="@color/error_red" />
 
                         <TextView
                             android:id="@+id/tvEmpty"

@@ -4,8 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cvBottomNav"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    app:cardCornerRadius="30dp"
+    android:layout_height="65dp"
+    app:cardCornerRadius="32.5dp"
     app:cardElevation="@dimen/bottom_nav_elevation"
     app:cardBackgroundColor="@color/bottom_nav_bg">
 
@@ -16,7 +16,8 @@
         android:orientation="horizontal"
         android:layoutDirection="locale"
         android:gravity="center_vertical"
-        android:paddingHorizontal="4dp">
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp">
 
         <!-- الرئيسية -->
         <LinearLayout
@@ -26,12 +27,13 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:paddingVertical="6dp">
+            android:layout_marginHorizontal="4dp"
+            android:paddingVertical="4dp">
 
             <ImageView
                 android:id="@+id/ivNavHome"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:src="@drawable/ic_nav_home"
                 android:scaleType="fitCenter"
                 android:contentDescription="الرئيسية" />
@@ -42,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="@string/nav_home"
-                android:textSize="9sp"
+                android:textSize="10sp"
                 android:textColor="@color/nav_text_unselected" />
         </LinearLayout>
 
@@ -54,12 +56,13 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:paddingVertical="6dp">
+            android:layout_marginHorizontal="4dp"
+            android:paddingVertical="4dp">
 
             <ImageView
                 android:id="@+id/ivNavAdd"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:src="@drawable/ic_nav_add"
                 android:scaleType="fitCenter"
                 android:contentDescription="أضف إعلان" />
@@ -70,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="@string/nav_add_ad"
-                android:textSize="9sp"
+                android:textSize="10sp"
                 android:textColor="@color/nav_text_unselected" />
         </LinearLayout>
 
@@ -82,12 +85,13 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:paddingVertical="6dp">
+            android:layout_marginHorizontal="4dp"
+            android:paddingVertical="4dp">
 
             <ImageView
                 android:id="@+id/ivNavChat"
-                android:layout_width="24dp"
-                android:layout_height="20dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:src="@drawable/ic_nav_chat"
                 android:scaleType="fitCenter"
                 android:contentDescription="المحادثات" />
@@ -98,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="@string/nav_chats"
-                android:textSize="9sp"
+                android:textSize="10sp"
                 android:textColor="@color/nav_text_unselected" />
         </LinearLayout>
 

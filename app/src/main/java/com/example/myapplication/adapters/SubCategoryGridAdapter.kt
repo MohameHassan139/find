@@ -39,13 +39,10 @@ class SubCategoryGridAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val sub = items[position]
-        // Dark design (sub-category pages): pure #FFFFFF icons on black cards.
-        // Invert the dark server icons in night mode; the brightness boost lifts
-        // any dark-gray pixels to full white while black details stay black.
-        val iconCss = if (isNightMode(holder.itemView.context)) "filter: invert(1) brightness(1.2);" else ""
+        val isDark = isNightMode(holder.itemView.context)
 
         holder.b.tvSubName.text = LocaleHelper.localizedName(holder.itemView.context, sub.nameAr, sub.nameEn)
-        val url = sub.iconUrl
+        val url = sub.iconUrl(isDark)
         if (!url.isNullOrEmpty()) {
             // Icon fills ~75% of the WebView area, centered — matches Figma proportions
             val html = """
@@ -62,10 +59,9 @@ class SubCategoryGridAdapter(
                     align-items: center;
                   }
                   img {
-                    width: 75%;
-                    height: 75%;
+                    width: 88%;
+                    height: 88%;
                     object-fit: contain;
-                    $iconCss
                   }
                 </style>
                 </head>

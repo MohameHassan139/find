@@ -42,11 +42,14 @@ class ListingDetailActivity : BaseActivity() {
     private lateinit var binding: ActivityListingDetailBinding
     private var isFavorited = false
     private var currentListingId = ""
+    private var siblingIds: ArrayList<String> = arrayListOf()
+    private var currentIndex: Int = -1
     private val sharedVm: SharedCategoriesViewModel by viewModels()
 
     companion object {
         const val EXTRA_LISTING_ID = "listing_id"
         const val EXTRA_CURRENT_INDEX = "current_index"
+        const val EXTRA_SIBLING_IDS = "sibling_ids"
     }
 
     override fun attachBaseContext(newBase: Context) {
@@ -75,6 +78,12 @@ class ListingDetailActivity : BaseActivity() {
         }
         val listingId = intent.getStringExtra(EXTRA_LISTING_ID) ?: run { finish(); return }
         currentListingId = listingId
+        siblingIds = intent.getStringArrayListExtra(EXTRA_SIBLING_IDS) ?: arrayListOf()
+        currentIndex = intent.getIntExtra(EXTRA_CURRENT_INDEX, -1)
+        if (currentIndex == -1 && siblingIds.isNotEmpty()) {
+            currentIndex = siblingIds.indexOf(listingId)
+        }
+        updateNavigationArrows()
         loadListing(listingId)
         if (TokenManager.isLoggedIn(this)) {
             checkIsFavorited(listingId)
@@ -180,10 +189,7 @@ class ListingDetailActivity : BaseActivity() {
             startConversation(l.id)
         }
 
-        binding.btnPrev.isEnabled = false
-        binding.btnNext.isEnabled = false
-        binding.btnPrev.alpha = 1.0f
-        binding.btnNext.alpha = 1.0f
+        updateNavigationArrows()
 
         binding.llImages.removeAllViews()
         val gap = (8 * resources.displayMetrics.density).toInt()
@@ -212,11 +218,51 @@ class ListingDetailActivity : BaseActivity() {
         }
     }
 
+    private fun updateNavigationArrows() {
+        val canGoPrev = siblingIds.isNotEmpty() && currentIndex > 0
+        val canGoNext = siblingIds.isNotEmpty() && currentIndex in 0 until (siblingIds.size - 1)
+
+        binding.btnPrev.isEnabled = canGoPrev
+        binding.btnPrev.alpha = if (canGoPrev) 1.0f else 0.22f
+        binding.btnPrev.setOnClickListener {
+            if (canGoPrev) {
+                navigateToSibling(currentIndex - 1)
+            }
+        }
+
+        binding.btnNext.isEnabled = canGoNext
+        binding.btnNext.alpha = if (canGoNext) 1.0f else 0.22f
+        binding.btnNext.setOnClickListener {
+            if (canGoNext) {
+                navigateToSibling(currentIndex + 1)
+            }
+        }
+    }
+
+    private fun navigateToSibling(newIndex: Int) {
+        if (newIndex !in siblingIds.indices) return
+        currentIndex = newIndex
+        val newId = siblingIds[newIndex]
+        currentListingId = newId
+        updateNavigationArrows()
+        loadListing(newId)
+        if (TokenManager.isLoggedIn(this)) {
+            checkIsFavorited(newId)
+        }
+        binding.nsvContent.smoothScrollTo(0, 0)
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
         val listingId = intent.getStringExtra(EXTRA_LISTING_ID) ?: currentListingId
         currentListingId = listingId
+        siblingIds = intent.getStringArrayListExtra(EXTRA_SIBLING_IDS) ?: siblingIds
+        currentIndex = intent.getIntExtra(EXTRA_CURRENT_INDEX, currentIndex)
+        if (currentIndex == -1 && siblingIds.isNotEmpty()) {
+            currentIndex = siblingIds.indexOf(listingId)
+        }
+        updateNavigationArrows()
         loadListing(listingId)
     }
 
@@ -224,9 +270,9 @@ class ListingDetailActivity : BaseActivity() {
 
     private fun setContactButtonState(icon: android.widget.ImageView, label: android.widget.TextView, available: Boolean) {
         val color = if (available)
-            android.graphics.Color.parseColor("#333333")
+            androidx.core.content.ContextCompat.getColor(this, R.color.text_primary)
         else
-            android.graphics.Color.parseColor("#AAAAAA")
+            androidx.core.content.ContextCompat.getColor(this, R.color.text_secondary)
         icon.setColorFilter(color)
         label.setTextColor(color)
         icon.alpha = if (available) 1f else 0.5f
@@ -235,7 +281,7 @@ class ListingDetailActivity : BaseActivity() {
     // ── Moderation (report/block) ───────────────────────────────────────────
 
     private fun setupModerationMenu(l: DetailListing) {
-        val btn = findViewById<android.widget.ImageButton>(R.id.btnModeration)
+        val btn = binding.btnModeration
         val myId = TokenManager.getUserId(this)
         val isOwnListing = l.sellerId != null && myId.isNotEmpty() && l.sellerId.toString() == myId
         if (l.sellerId == null || isOwnListing) {

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="44dp"
+    android:height="44dp"
+    android:viewportWidth="44"
+    android:viewportHeight="44">
+    <!-- Blue circle outline matching iOS blue_menu -->
+    <path
+        android:strokeColor="#FF007AFF"
+        android:strokeWidth="1.8"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M22,1.5 A20.5,20.5 0 1,1 21.99,1.5 Z" />
+    <!-- Three rounded bars -->
+    <path
+        android:strokeColor="#FF007AFF"
+        android:strokeWidth="3.6"
+        android:strokeLineCap="round"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,15 L32,15" />
+    <path
+        android:strokeColor="#FF007AFF"
+        android:strokeWidth="3.6"
+        android:strokeLineCap="round"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,22 L32,22" />
+    <path
+        android:strokeColor="#FF007AFF"
+        android:strokeWidth="3.6"
+        android:strokeLineCap="round"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,29 L32,29" />
+</vector>

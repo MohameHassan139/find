@@ -210,6 +210,7 @@ class ListingsAdapter(
     }
 
     fun getCurrentItems(): List<ApiListing> = items
+    fun getItems(): List<ApiListing> = items
 
     private fun formatTime(dateStr: String?, ctx: android.content.Context? = null): String {
         if (dateStr.isNullOrEmpty()) return ""

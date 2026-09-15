@@ -75,6 +75,7 @@ class AddAdActivity : BaseActivity() {
             selectedLocation = data?.getStringExtra("selected_location") ?: ""
             selectedRegionId = data?.getIntExtra("selected_region_id", 1) ?: 1
             binding.tvLocationText.text = selectedLocation.ifEmpty { getString(R.string.location_label) }
+            updatePublishButtonState()
         }
     }
 
@@ -89,6 +90,7 @@ class AddAdActivity : BaseActivity() {
             selectedSubCategoryId = data?.getIntExtra("selected_sub_category_id", -1) ?: -1
             selectedFilterOptionId = data?.getIntExtra("selected_filter_option_id", -1) ?: -1
             binding.tvCategoryText.text = selectedCategory.ifEmpty { getString(R.string.category_label) }
+            updatePublishButtonState()
         }
     }
 
@@ -127,6 +129,17 @@ class AddAdActivity : BaseActivity() {
             binding.btnPublish.text = getString(R.string.kt_str_91d6db7f)
         }
 
+        binding.etAdTitle.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) { updatePublishButtonState() }
+        })
+        binding.etPrice.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) { updatePublishButtonState() }
+        })
+
         binding.llAddImageBtn.setOnClickListener { imagePickerLauncher.launch("image/*") }
         binding.llLocationContainer.setOnClickListener {
             locationPickerLauncher.launch(Intent(this, LocationSelectionActivity::class.java))
@@ -136,6 +149,7 @@ class AddAdActivity : BaseActivity() {
         }
         binding.btnPublish.setOnClickListener { if (editingId != null) updateAd() else publishAd() }
 
+        updatePublishButtonState()
         refreshImageGallery()
     }
 
@@ -199,6 +213,14 @@ class AddAdActivity : BaseActivity() {
     }
 
     // ── Publish ───────────────────────────────────────────────────────────────
+
+    private fun updatePublishButtonState() {
+        val title = binding.etAdTitle.text?.toString()?.trim().orEmpty()
+        val price = binding.etPrice.text?.toString()?.trim().orEmpty()
+        val canPublish = title.isNotEmpty() && price.isNotEmpty() && selectedLocation.isNotEmpty() && selectedCategory.isNotEmpty()
+        binding.btnPublish.isEnabled = canPublish
+        binding.btnPublish.alpha = if (canPublish) 1.0f else 0.45f
+    }
 
     private fun publishAd() {
         if (TokenManager.getToken(this) == null) {

@@ -86,6 +86,10 @@ class SearchActivity : BaseActivity() {
             onClick = { listing ->
                 val intent = Intent(this, ListingDetailActivity::class.java)
                 intent.putExtra(ListingDetailActivity.EXTRA_LISTING_ID, listing.id)
+                val allIds = ArrayList(resultsAdapter.getItems().map { it.id })
+                val index = allIds.indexOf(listing.id)
+                intent.putStringArrayListExtra(ListingDetailActivity.EXTRA_SIBLING_IDS, allIds)
+                intent.putExtra(ListingDetailActivity.EXTRA_CURRENT_INDEX, index)
                 startWithPush(intent)
             }
         )

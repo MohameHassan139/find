@@ -61,13 +61,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="المفضلة:"
+                    android:text="@string/ios_favorites_title"
                     android:textSize="15sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_primary"
                     android:fontFamily="sans-serif-medium" />
             </LinearLayout>
 
-            <!-- Filter tabs: عرض / طلب -->
+            <!-- Filter tabs: عروض / طلبات -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,35 +82,36 @@
                     android:layout_width="139dp"
                     android:layout_height="41dp"
                     android:layout_marginEnd="13dp"
-                    android:text="@string/filter_offer"
+                    android:text="@string/ios_listing_type_offer_label"
                     android:textSize="15sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_primary"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:paddingTop="0dp"
                     android:paddingBottom="0dp"
-                    app:strokeColor="@color/chats_chip_selected_border"
-                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/find_active_blue"
+                    app:strokeWidth="2dp"
                     app:cornerRadius="50dp"
                     app:backgroundTint="@color/bg_switcher"
-                    app:elevation="4dp" />
+                    app:elevation="2dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnFilterRequest"
                     android:layout_width="139dp"
                     android:layout_height="41dp"
                     android:layout_marginStart="13dp"
-                    android:text="@string/filter_request"
+                    android:text="@string/ios_listing_type_request_label"
                     android:textSize="15sp"
                     android:textColor="@color/tab_inactive_text"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:paddingTop="0dp"
                     android:paddingBottom="0dp"
-                    app:strokeWidth="0dp"
+                    app:strokeColor="@color/stroke_field"
+                    app:strokeWidth="1dp"
                     app:cornerRadius="50dp"
                     app:backgroundTint="@color/bg_switcher"
-                    app:elevation="4dp" />
+                    app:elevation="2dp" />
             </LinearLayout>
 
             <View
@@ -140,12 +141,11 @@
                     android:gravity="center"
                     android:visibility="gone">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="💔"
-                        android:textSize="48sp"
-                        android:gravity="center" />
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:src="@drawable/ic_favorites"
+                        app:tint="@color/text_secondary" />
 
                     <TextView
                         android:id="@+id/tvEmpty"

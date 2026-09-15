@@ -24,108 +24,75 @@
             android:padding="16dp"
             android:layoutDirection="locale">
 
-            <!-- Nafath Verification Card -->
+            <!-- Nafath Verification Banner -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardNafath"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="80dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/nafath_bg"
+                app:cardElevation="0dp"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <LinearLayout
+                <ImageView
+                    android:id="@+id/ivNafathBanner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:padding="16dp"
-                    android:layoutDirection="locale">
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="50dp"
-                        android:src="@drawable/ic_nafath"
-                        android:scaleType="fitCenter"
-                        android:contentDescription="Nafath" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/profile_verify_nafath"
-                        android:textColor="#004D40"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginEnd="12dp"
-                        android:textSize="14sp"
-                        android:gravity="center" />
-
-                    <Button
-                        android:id="@+id/btnVerifyNafath"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/profile_verify_nafath_btn"
-                        android:backgroundTint="@color/nafath_button"
-                        android:textColor="@color/white"
-                        android:textSize="13sp"
-                        android:paddingHorizontal="20dp"
-                        style="@style/Widget.MaterialComponents.Button" />
-                </LinearLayout>
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_nafath"
+                    android:scaleType="fitXY"
+                    android:contentDescription="Nafath" />
             </androidx.cardview.widget.CardView>
 
-            <!-- Profile Image Container -->
-            <FrameLayout
+            <!-- Profile Image Container (iOS Parity: 120dp x 103dp, 16dp rounded box, 18% yellow fill) -->
+            <androidx.cardview.widget.CardView
                 android:id="@+id/profileContainer"
                 android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginTop="32dp"
-                android:background="@drawable/bg_profile_image_rect"
+                android:layout_height="103dp"
+                android:layout_marginTop="28dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#2EF5C518"
                 android:clickable="true"
                 android:focusable="true"
                 app:layout_constraintTop_toBottomOf="@id/cardNafath"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <!-- Outer Card to force crop of avatar image to a perfect circle -->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center"
-                    app:cardCornerRadius="50dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="@android:color/transparent">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
                     <ImageView
                         android:id="@+id/ivAvatar"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:src="@drawable/ic_user_placeholder"
-                        android:scaleType="centerCrop" />
-                </androidx.cardview.widget.CardView>
+                        android:src="@drawable/ic_person_avatar"
+                        android:scaleType="centerCrop"
+                        app:tint="@color/text_primary" />
 
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_gravity="bottom|start"
-                    android:layout_margin="8dp"
-                    android:src="@drawable/ic_edit_pen"
-                    android:background="@drawable/bg_menu_circle"
-                    android:backgroundTint="@color/toggle_active_green"
-                    android:padding="6dp"
-                    android:contentDescription="Edit" />
-            </FrameLayout>
+                    <ImageView
+                        android:layout_width="17dp"
+                        android:layout_height="17dp"
+                        android:layout_gravity="bottom|end"
+                        android:layout_margin="8dp"
+                        android:src="@drawable/ic_pen_edit"
+                        app:tint="@color/text_primary"
+                        android:contentDescription="Edit" />
+                </FrameLayout>
+            </androidx.cardview.widget.CardView>
 
             <!-- Name Label -->
             <TextView
                 android:id="@+id/labelName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="28dp"
                 android:text="@string/profile_name"
                 android:textColor="@color/text_primary"
                 android:textSize="14sp"
-                android:drawableStart="@drawable/ic_name"
+                android:drawableStart="@drawable/ic_person_id_card"
                 android:drawablePadding="8dp"
+                app:drawableTint="@color/text_primary"
+                android:gravity="center_vertical"
                 app:layout_constraintTop_toBottomOf="@id/profileContainer"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -157,6 +124,8 @@
                 android:textSize="14sp"
                 android:drawableStart="@drawable/ic_phone"
                 android:drawablePadding="8dp"
+                app:drawableTint="@color/text_primary"
+                android:gravity="center_vertical"
                 app:layout_constraintTop_toBottomOf="@id/etName"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -172,46 +141,37 @@
                 android:gravity="start|center_vertical"
                 android:textSize="15sp"
                 android:textColor="@color/text_secondary"
-                android:layoutDirection="locale"
-                android:textDirection="locale"
+                android:layoutDirection="ltr"
+                android:textDirection="ltr"
                 app:layout_constraintTop_toBottomOf="@id/labelPhone" />
 
-            <!-- Save Button Wrapper Card -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardSave"
+            <!-- Save Button (Yellow primary button #F5C518) -->
+            <TextView
+                android:id="@+id/btnSave"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginTop="24dp"
-                app:cardCornerRadius="5dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/surface_primary"
-                app:layout_constraintTop_toBottomOf="@id/tvPhone">
+                android:background="@drawable/bg_btn_publish"
+                android:text="@string/save_changes"
+                android:textSize="17sp"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toBottomOf="@id/tvPhone" />
 
-                <TextView
-                    android:id="@+id/btnSave"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/save_changes"
-                    android:textSize="16sp"
-                    android:textColor="@color/find_active_blue"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true" />
-            </androidx.cardview.widget.CardView>
-
-            <!-- Sign Out Button Wrapper Card -->
+            <!-- Sign Out Button -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardSignOut"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="32dp"
-                app:cardCornerRadius="5dp"
+                app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
                 app:cardBackgroundColor="@color/surface_primary"
-                app:layout_constraintTop_toBottomOf="@id/cardSave"
+                app:layout_constraintTop_toBottomOf="@id/btnSave"
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <TextView
@@ -219,7 +179,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="@string/logout"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textColor="@color/error_red"
                     android:textStyle="bold"
                     android:gravity="center"

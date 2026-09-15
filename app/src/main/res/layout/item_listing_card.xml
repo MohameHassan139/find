@@ -10,7 +10,7 @@
     android:focusable="true"
     android:focusableInTouchMode="false"
     app:cardCornerRadius="10dp"
-    app:cardBackgroundColor="@color/white"
+    app:cardBackgroundColor="@color/surface_primary"
     app:cardElevation="0dp"
     app:strokeWidth="0dp">
 
@@ -103,14 +103,12 @@
                         android:textSize="10sp"
                         android:textColor="@color/text_primary" />
 
-                    <TextView
-                        android:id="@+id/tvRiyalSymbol"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=" ﷼"
-                        android:textSize="10sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_primary"
+                    <ImageView
+                        android:id="@+id/ivRiyalSymbol"
+                        android:layout_width="10dp"
+                        android:layout_height="11dp"
+                        android:src="@drawable/ic_currency_sar"
+                        app:tint="@color/text_primary"
                         android:layout_marginStart="3dp" />
                 </LinearLayout>
             </LinearLayout>
@@ -137,7 +135,7 @@
                     <ImageView
                         android:layout_width="12dp"
                         android:layout_height="12dp"
-                        android:src="@drawable/ic_location"
+                        android:src="@drawable/ic_map_pin"
                         app:tint="@color/text_primary"
                         android:layout_marginEnd="4dp"
                         android:importantForAccessibility="no" />

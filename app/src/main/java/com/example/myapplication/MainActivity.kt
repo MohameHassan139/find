@@ -187,6 +187,10 @@ class MainActivity : BaseActivity() {
             onClick = { listing ->
                 val intent = Intent(this, ListingDetailActivity::class.java)
                 intent.putExtra(ListingDetailActivity.EXTRA_LISTING_ID, listing.id)
+                val allIds = ArrayList(listingsAdapter.getItems().map { it.id })
+                val index = allIds.indexOf(listing.id)
+                intent.putStringArrayListExtra(ListingDetailActivity.EXTRA_SIBLING_IDS, allIds)
+                intent.putExtra(ListingDetailActivity.EXTRA_CURRENT_INDEX, index)
                 startActivity(intent)
             },
             onFavoriteClick = { listing, isFav ->
@@ -469,9 +473,15 @@ class MainActivity : BaseActivity() {
             }
             popup.setOnMenuItemClickListener { item ->
                 val region = regions[item.itemId]
-                setRegionPillActive(LocaleHelper.localizedName(this, region.nameAr, region.nameEn))
-                vm.selectRegion(region.id)
-                buildCityDropdown(region.id)
+                if (region.isAllOption()) {
+                    resetRegionPill()
+                    vm.selectRegion(null)
+                    buildCityDropdown(null)
+                } else {
+                    setRegionPillActive(LocaleHelper.localizedName(this, region.nameAr, region.nameEn))
+                    vm.selectRegion(region.id)
+                    buildCityDropdown(region.id)
+                }
                 true
             }
             popup.show()
@@ -495,8 +505,13 @@ class MainActivity : BaseActivity() {
             }
             popup.setOnMenuItemClickListener { item ->
                 val city = cities[item.itemId]
-                setCityPillActive(LocaleHelper.localizedName(this, city.nameAr, city.nameEn))
-                vm.selectCity(city.id)
+                if (city.isAllOption()) {
+                    resetCityPill()
+                    vm.selectCity(null)
+                } else {
+                    setCityPillActive(LocaleHelper.localizedName(this, city.nameAr, city.nameEn))
+                    vm.selectCity(city.id)
+                }
                 true
             }
             popup.show()

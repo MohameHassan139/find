@@ -75,7 +75,7 @@ class ProfileActivity : BaseActivity() {
         }
         
         binding.profileContainer.setOnClickListener { openGallery() }
-        binding.btnVerifyNafath.setOnClickListener { handleNafathVerification() }
+        binding.cardNafath.setOnClickListener { handleNafathVerification() }
         binding.btnSave.setOnClickListener { saveProfile() }
         binding.btnSignOut.setOnClickListener { confirmSignOut() }
 
@@ -89,10 +89,11 @@ class ProfileActivity : BaseActivity() {
 
     private fun handleImageSelected(uri: Uri) {
         // Load the selected image into the ImageView
+        binding.ivAvatar.imageTintList = null
         Glide.with(this)
             .load(uri)
-            .placeholder(R.drawable.ic_profile_placeholder)
-            .circleCrop()
+            .placeholder(R.drawable.ic_person_avatar)
+            .centerCrop()
             .into(binding.ivAvatar)
 
         uploadAvatar(uri)
@@ -152,6 +153,18 @@ class ProfileActivity : BaseActivity() {
     }
 
 
+    private fun formatPhoneNumber(raw: String?): String {
+        if (raw.isNullOrBlank()) return ""
+        val digits = raw.replace(Regex("[^0-9]"), "")
+        val formatted = when {
+            digits.startsWith("966") -> "+$digits"
+            digits.startsWith("05")  -> "+966" + digits.removePrefix("0")
+            digits.startsWith("5")   -> "+966$digits"
+            else                     -> if (raw.startsWith("+")) raw else "+$raw"
+        }
+        return "\u200E$formatted\u200E"
+    }
+
     private fun loadProfile() {
         val token = TokenManager.getToken(this) ?: return
         val name = TokenManager.getName(this)
@@ -159,12 +172,13 @@ class ProfileActivity : BaseActivity() {
         val avatar = TokenManager.getAvatar(this)
 
         binding.etName.setText(name)
-        binding.tvPhone.text = phone
+        binding.tvPhone.text = formatPhoneNumber(phone)
 
         if (avatar.isNotEmpty()) {
+            binding.ivAvatar.imageTintList = null
             Glide.with(this).load(avatar)
-                .placeholder(R.drawable.ic_profile_placeholder)
-                .circleCrop()
+                .placeholder(R.drawable.ic_person_avatar)
+                .centerCrop()
                 .into(binding.ivAvatar)
         }
 
@@ -175,13 +189,14 @@ class ProfileActivity : BaseActivity() {
                 if (response.isSuccessful) {
                     val user = response.body()?.user ?: return@launch
                     binding.etName.setText(user.name ?: "")
-                    binding.tvPhone.text = user.phone ?: ""
+                    binding.tvPhone.text = formatPhoneNumber(user.phone)
                     whatsappEnabled = user.whatsappEnabled
                     callEnabled = user.callEnabled
                     if (!user.avatar.isNullOrEmpty()) {
+                        binding.ivAvatar.imageTintList = null
                         Glide.with(this@ProfileActivity).load(user.avatar)
-                            .placeholder(R.drawable.ic_profile_placeholder)
-                            .circleCrop()
+                            .placeholder(R.drawable.ic_person_avatar)
+                            .centerCrop()
                             .into(binding.ivAvatar)
                         TokenManager.save(this@ProfileActivity, token,
                             user.name ?: "", user.phone ?: "", user.avatar)

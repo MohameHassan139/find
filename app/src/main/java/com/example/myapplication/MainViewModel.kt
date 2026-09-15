@@ -12,7 +12,36 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 
-private const val ICON_BASE = "https://ocebfvgwgpebjxetnixc.supabase.co/storage/v1/object/public/listings-images/subCatigory/"
+import android.content.Context
+import android.content.res.Configuration
+
+object MediaUrlHelper {
+    const val MEDIA_BASE = "https://ocebfvgwgpebjxetnixc.supabase.co/storage/v1/object/public/listings-images/Finds-media/"
+
+    fun getIconUrl(iconName: String?, isDark: Boolean = false): String? {
+        if (iconName.isNullOrBlank()) return null
+        val clean = iconName.trim()
+        val modeFolder = if (isDark) "dark" else "light"
+
+        if (clean.startsWith("http://", ignoreCase = true) || clean.startsWith("https://", ignoreCase = true)) {
+            if (clean.contains("/subCatigory/")) {
+                val fileName = clean.substringAfterLast("/")
+                val nameWithoutExt = if (fileName.contains(".")) fileName.substringBeforeLast(".") else fileName
+                return "$MEDIA_BASE$modeFolder/$nameWithoutExt.svg"
+            }
+            if (clean.contains("/Finds-media/")) {
+                val fileName = clean.substringAfterLast("/")
+                val nameWithoutExt = if (fileName.contains(".")) fileName.substringBeforeLast(".") else fileName
+                return "$MEDIA_BASE$modeFolder/$nameWithoutExt.svg"
+            }
+            return clean
+        }
+
+        val baseName = if (clean.contains(".")) clean.substringBeforeLast(".") else clean
+        return "$MEDIA_BASE$modeFolder/$baseName.svg"
+    }
+}
+
 private const val PAGE_SIZE = 20
 
 // ── Data models ───────────────────────────────────────────────────────────────
@@ -24,13 +53,12 @@ data class ApiCategory(
     val iconName: String? = null,
     val subCategories: List<ApiSubCategory> = emptyList()
 ) {
-    val iconUrl: String? get() = iconName?.let { name ->
-        val cleanName = name.trim()
-        if (cleanName.isEmpty()) return@let null
-        if (cleanName.startsWith("http")) return@let cleanName
-        val finalName = if (cleanName.lowercase().endsWith(".png")) cleanName else "$cleanName.png"
-        "$ICON_BASE$finalName"
+    fun iconUrl(isDark: Boolean): String? = MediaUrlHelper.getIconUrl(iconName, isDark)
+    fun iconUrl(context: Context): String? {
+        val isDark = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        return iconUrl(isDark)
     }
+    val iconUrl: String? get() = MediaUrlHelper.getIconUrl(iconName, false)
 }
 
 data class ApiSubCategory(
@@ -40,13 +68,12 @@ data class ApiSubCategory(
     val iconName: String? = null,
     val filterOptions: List<ApiFilterOption> = emptyList()
 ) {
-    val iconUrl: String? get() = iconName?.let { name ->
-        val cleanName = name.trim()
-        if (cleanName.isEmpty()) return@let null
-        if (cleanName.startsWith("http")) return@let cleanName
-        val finalName = if (cleanName.lowercase().endsWith(".png")) cleanName else "$cleanName.png"
-        "$ICON_BASE$finalName"
+    fun iconUrl(isDark: Boolean): String? = MediaUrlHelper.getIconUrl(iconName, isDark)
+    fun iconUrl(context: Context): String? {
+        val isDark = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        return iconUrl(isDark)
     }
+    val iconUrl: String? get() = MediaUrlHelper.getIconUrl(iconName, false)
 }
 
 data class ApiFilterOption(val id: Int, val nameAr: String, val nameEn: String? = null)
@@ -219,6 +246,17 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    private fun extractIconName(obj: JSONObject): String? {
+        val keys = listOf("icon", "icon_url", "image", "image_url")
+        for (k in keys) {
+            if (obj.has(k) && !obj.isNull(k)) {
+                val v = obj.optString(k).trim()
+                if (v.isNotEmpty()) return v
+            }
+        }
+        return null
+    }
+
     private fun parseCategoriesWithSubCategories(arr: JSONArray): List<ApiCategory> {
         val list = mutableListOf<ApiCategory>()
         for (i in 0 until arr.length()) {
@@ -240,7 +278,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                     id = s.getInt("id"),
                     nameAr = s.optString("name_ar", ""),
                     nameEn = s.optString("name_en", "").ifEmpty { null },
-                    iconName = if (s.isNull("icon")) null else s.optString("icon").ifEmpty { null },
+                    iconName = extractIconName(s),
                     filterOptions = opts
                 ))
             }
@@ -249,7 +287,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 id = o.getInt("id"),
                 nameAr = o.optString("name_ar", ""),
                 nameEn = o.optString("name_en", "").ifEmpty { null },
-                iconName = if (o.isNull("icon")) null else o.optString("icon").ifEmpty { null },
+                iconName = extractIconName(o),
                 subCategories = subs
             ))
         }

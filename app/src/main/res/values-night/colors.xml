@@ -14,7 +14,7 @@
     <!-- Chat / UI colors -->
     <color name="bg_screen">#FF121212</color>
     <color name="settings_bg">#FF121212</color>
-    <color name="settings_icon_holder_bg">#FF2A2000</color>
+    <color name="settings_icon_holder_bg">#FFF4CC40</color>
     <color name="divider">#FF2E2E2E</color>
     <color name="text_primary">#FFF0F0F0</color>
     <color name="text_secondary">#FFAAAAAA</color>
@@ -66,16 +66,16 @@
     <color name="nav_item_selected_bg">#FF2A2A2A</color>
     <color name="image_placeholder_bg">#FF3A3A3A</color>
     <color name="image_add_btn_bg">#FF333333</color>
-    <color name="menu_icon_yellow_bg">#FF2A2000</color>
-    <color name="add_ad_header_bg">#FF2A2000</color>
-    <color name="category_banner_bg">#FF2A2000</color>
+    <color name="menu_icon_yellow_bg">#FFF4CC40</color>
+    <color name="add_ad_header_bg">#FFF4CC40</color>
+    <color name="category_banner_bg">#FFF4CC40</color>
     <color name="plus_circle_stroke">#FFC8A96E</color>
     <color name="plus_circle_fill">#FF1E1E1E</color>
     <color name="menu_circle_stroke">#FFFFFFFF</color>
     <!-- Fill now comes from bg_bottom_nav_glass (dark design glass pill) -->
     <color name="bottom_nav_bg">#00000000</color>
     <color name="shadow_divider">#FF2A2A2A</color>
-    <color name="my_ads_icon_bg">#FF2A2000</color>
+    <color name="my_ads_icon_bg">#FFF4CC40</color>
     <color name="favorites_icon_bg">#FF2A0000</color>
 
     <!-- Icon tint dark overrides -->

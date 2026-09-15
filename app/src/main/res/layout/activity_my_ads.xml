@@ -59,13 +59,18 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
-                    <TextView
+                    <FrameLayout
                         android:layout_width="42dp"
                         android:layout_height="48dp"
-                        android:text="📢"
-                        android:textSize="24sp"
-                        android:gravity="center"
-                        android:background="@color/my_ads_icon_bg" />
+                        android:background="@drawable/bg_favorites_header_icon">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_menu_myads"
+                            app:tint="@color/text_primary" />
+                    </FrameLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -78,7 +83,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Filter tabs: عرض / طلب -->
+            <!-- Filter tabs: عروض / طلبات -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -93,35 +98,36 @@
                     android:layout_width="139dp"
                     android:layout_height="41dp"
                     android:layout_marginEnd="13dp"
-                    android:text="@string/filter_offer"
+                    android:text="@string/ios_listing_type_offer_label"
                     android:textSize="15sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_primary"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:paddingTop="0dp"
                     android:paddingBottom="0dp"
-                    app:strokeColor="@color/chats_chip_selected_border"
-                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/find_active_blue"
+                    app:strokeWidth="2dp"
                     app:cornerRadius="50dp"
                     app:backgroundTint="@color/bg_switcher"
-                    app:elevation="4dp" />
+                    app:elevation="2dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnFilterRequest"
                     android:layout_width="139dp"
                     android:layout_height="41dp"
                     android:layout_marginStart="13dp"
-                    android:text="@string/filter_request"
+                    android:text="@string/ios_listing_type_request_label"
                     android:textSize="15sp"
                     android:textColor="@color/tab_inactive_text"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:paddingTop="0dp"
                     android:paddingBottom="0dp"
-                    app:strokeWidth="0dp"
+                    app:strokeColor="@color/stroke_field"
+                    app:strokeWidth="1dp"
                     app:cornerRadius="50dp"
                     app:backgroundTint="@color/bg_switcher"
-                    app:elevation="4dp" />
+                    app:elevation="2dp" />
             </LinearLayout>
 
             <View
@@ -157,17 +163,21 @@
                         android:id="@+id/tvEmpty"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="50dp"
+                        android:layout_marginBottom="32dp"
+                        android:text="@string/ios_myAds_empty"
                         android:textSize="16sp"
                         android:textColor="@color/text_secondary" />
 
                     <ImageView
+                        android:id="@+id/ivEmptyAdd"
                         android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:src="@drawable/ic_nav_add"
+                        android:layout_height="39dp"
+                        android:src="@drawable/ic_adsempty"
+                        app:tint="@color/text_secondary"
                         android:contentDescription="add ad" />
 
                     <TextView
+                        android:id="@+id/btnEmptyAdd"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"

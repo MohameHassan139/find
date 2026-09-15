@@ -12,6 +12,7 @@ import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.MainActivity
+import com.example.myapplication.MenuActivity
 import com.example.myapplication.NavScreen
 import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.chat.api.RetrofitClient
@@ -52,6 +53,11 @@ class PhoneAuthActivity : BaseActivity() {
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
         BottomNavHelper.setup(this, NavScreen.NONE)
 
+        binding.btnBack.setOnClickListener { finish() }
+        binding.btnMenu.setOnClickListener {
+            startActivity(Intent(this, MenuActivity::class.java))
+        }
+
         showPhoneStep()
 
         binding.btnSendOtp.setOnClickListener { handleSendOtp() }
@@ -71,7 +77,7 @@ class PhoneAuthActivity : BaseActivity() {
     private fun showOtpStep() {
         binding.layoutPhone.visibility = View.GONE
         binding.layoutOtp.visibility = View.VISIBLE
-        binding.tvOtpHint.text = "أرسل رمز التحقق إلى $phoneNumber"
+        binding.tvOtpHint.text = "أرسل رمز التحقق إلى \u200E$phoneNumber\u200E"
         startResendTimer()
     }
 

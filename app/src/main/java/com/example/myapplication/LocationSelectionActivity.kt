@@ -105,7 +105,7 @@ class LocationSelectionActivity : BaseActivity() {
                 val resultIntent = Intent()
                 val regionLabel = LocaleHelper.localizedName(this, region.nameAr, region.nameEn)
                 val cityLabel = LocaleHelper.localizedName(this, city.nameAr, city.nameEn)
-                resultIntent.putExtra("selected_location", "$regionLabel - $cityLabel")
+                resultIntent.putExtra("selected_location", "$regionLabel / $cityLabel")
                 resultIntent.putExtra("selected_region_id", region.id)
                 resultIntent.putExtra("selected_city_id", city.id)
                 setResult(Activity.RESULT_OK, resultIntent)

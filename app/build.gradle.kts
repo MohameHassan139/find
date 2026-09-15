@@ -112,3 +112,13 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+
+tasks.register<Copy>("copyIosLogo") {
+    from(rootProject.file("ios code/find/find/Assets.xcassets/logo.imageset/Image.png"))
+    into(project.file("src/main/res/drawable"))
+    rename { "ic_app_logo_full.png" }
+}
+
+tasks.matching { it.name == "preBuild" }.configureEach {
+    dependsOn("copyIosLogo")
+}

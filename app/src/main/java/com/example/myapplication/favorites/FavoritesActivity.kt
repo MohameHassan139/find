@@ -57,9 +57,13 @@ class FavoritesActivity : BaseActivity() {
         adapter = ListingsAdapter(
             items = emptyList(),
             onClick = { listing ->
+                val allIds = ArrayList(adapter.getItems().map { it.id })
+                val index = allIds.indexOf(listing.id)
                 startWithPush(
                     Intent(this, ListingDetailActivity::class.java)
                         .putExtra(ListingDetailActivity.EXTRA_LISTING_ID, listing.id)
+                        .putStringArrayListExtra(ListingDetailActivity.EXTRA_SIBLING_IDS, allIds)
+                        .putExtra(ListingDetailActivity.EXTRA_CURRENT_INDEX, index)
                 )
             },
             onFavoriteClick = { listing, isFav ->
@@ -88,23 +92,25 @@ class FavoritesActivity : BaseActivity() {
 
     private fun updateFilterButtons() {
         val activeBlue = androidx.core.content.ContextCompat.getColor(this, R.color.chats_chip_selected_border)
-        val textPrimary = androidx.core.content.ContextCompat.getColor(this, R.color.black)
+        val textPrimary = androidx.core.content.ContextCompat.getColor(this, R.color.text_primary)
         val textInactive = androidx.core.content.ContextCompat.getColor(this, R.color.tab_inactive_text)
         val bgGrey = androidx.core.content.ContextCompat.getColor(this, R.color.bg_switcher)
+        val strokeField = androidx.core.content.ContextCompat.getColor(this, R.color.stroke_field)
         val density = resources.displayMetrics.density
-        val activeStrokePx = (1 * density).toInt()
+        val activeStrokePx = (2 * density).toInt()
+        val inactiveStrokePx = (1 * density).toInt()
 
         binding.btnFilterOffer.apply {
             val active = currentFilter == "offer"
-            strokeWidth = if (active) activeStrokePx else 0
-            strokeColor = if (active) android.content.res.ColorStateList.valueOf(activeBlue) else null
+            strokeWidth = if (active) activeStrokePx else inactiveStrokePx
+            strokeColor = android.content.res.ColorStateList.valueOf(if (active) activeBlue else strokeField)
             setTextColor(if (active) textPrimary else textInactive)
             backgroundTintList = android.content.res.ColorStateList.valueOf(bgGrey)
         }
         binding.btnFilterRequest.apply {
             val active = currentFilter == "request"
-            strokeWidth = if (active) activeStrokePx else 0
-            strokeColor = if (active) android.content.res.ColorStateList.valueOf(activeBlue) else null
+            strokeWidth = if (active) activeStrokePx else inactiveStrokePx
+            strokeColor = android.content.res.ColorStateList.valueOf(if (active) activeBlue else strokeField)
             setTextColor(if (active) textPrimary else textInactive)
             backgroundTintList = android.content.res.ColorStateList.valueOf(bgGrey)
         }

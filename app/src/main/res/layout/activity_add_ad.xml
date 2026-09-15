@@ -43,7 +43,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="12dp"
-            android:paddingTop="12dp">
+            android:paddingTop="12dp"
+            android:paddingBottom="140dp">
 
             <!-- "أضف إعلان" Header -->
             <TextView
@@ -207,13 +208,6 @@
                 android:clickable="true"
                 android:focusable="true">
 
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:src="@drawable/ic_location"
-                    android:layout_marginEnd="6dp"
-                    android:contentDescription="location" />
-
                 <TextView
                     android:id="@+id/tvLocationText"
                     android:layout_width="wrap_content"
@@ -287,13 +281,11 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="12dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="﷼"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary"
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_currency_sar"
+                    app:tint="@color/text_primary"
                     android:layout_marginEnd="6dp" />
 
                 <TextView
@@ -331,11 +323,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginTop="24dp"
-                android:background="@drawable/bg_field_box"
+                android:background="@drawable/bg_btn_publish"
                 android:gravity="center"
                 android:text="@string/publish_ad"
-                android:textColor="@color/find_active_blue"
-                android:textSize="14sp"
+                android:textColor="@color/text_primary"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
         </LinearLayout>

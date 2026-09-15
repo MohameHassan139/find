@@ -72,18 +72,26 @@ class MyAdsActivity : BaseActivity() {
         }
         binding.btnFilterOffer.setOnClickListener { setFilter("offer") }
         binding.btnFilterRequest.setOnClickListener { setFilter("request") }
+        binding.btnEmptyAdd.setOnClickListener {
+            startActivity(Intent(this, com.example.myapplication.AddAdActivity::class.java))
+        }
+        binding.ivEmptyAdd.setOnClickListener {
+            startActivity(Intent(this, com.example.myapplication.AddAdActivity::class.java))
+        }
         binding.rvAds.layoutManager = LinearLayoutManager(this)
         loadMyAds()
     }
 
     private fun setFilter(type: String) {
         currentFilter = type
-        val activeBlue = androidx.core.content.ContextCompat.getColor(this, R.color.chats_chip_selected_border)
-        val textPrimary = androidx.core.content.ContextCompat.getColor(this, R.color.black)
+        val activeBlue = androidx.core.content.ContextCompat.getColor(this, R.color.find_active_blue)
+        val textPrimary = androidx.core.content.ContextCompat.getColor(this, R.color.text_primary)
         val textInactive = androidx.core.content.ContextCompat.getColor(this, R.color.tab_inactive_text)
         val bgGrey = androidx.core.content.ContextCompat.getColor(this, R.color.bg_switcher)
+        val strokeField = androidx.core.content.ContextCompat.getColor(this, R.color.stroke_field)
         val density = resources.displayMetrics.density
-        val activeStrokePx = (1 * density).toInt()
+        val activeStrokePx = (2 * density).toInt()
+        val inactiveStrokePx = (1 * density).toInt()
 
         if (type == "offer") {
             binding.btnFilterOffer.apply {
@@ -93,8 +101,8 @@ class MyAdsActivity : BaseActivity() {
                 backgroundTintList = android.content.res.ColorStateList.valueOf(bgGrey)
             }
             binding.btnFilterRequest.apply {
-                strokeWidth = 0
-                strokeColor = null
+                strokeWidth = inactiveStrokePx
+                strokeColor = android.content.res.ColorStateList.valueOf(strokeField)
                 setTextColor(textInactive)
                 backgroundTintList = android.content.res.ColorStateList.valueOf(bgGrey)
             }
@@ -106,8 +114,8 @@ class MyAdsActivity : BaseActivity() {
                 backgroundTintList = android.content.res.ColorStateList.valueOf(bgGrey)
             }
             binding.btnFilterOffer.apply {
-                strokeWidth = 0
-                strokeColor = null
+                strokeWidth = inactiveStrokePx
+                strokeColor = android.content.res.ColorStateList.valueOf(strokeField)
                 setTextColor(textInactive)
                 backgroundTintList = android.content.res.ColorStateList.valueOf(bgGrey)
             }
@@ -337,8 +345,12 @@ class MyAdsAdapter(
         val context = holder.itemView.context
         
         holder.itemView.setOnClickListener {
+            val allIds = ArrayList(items.map { it.id })
+            val index = allIds.indexOf(item.id)
             val intent = Intent(context, ListingDetailActivity::class.java).apply {
                 putExtra(ListingDetailActivity.EXTRA_LISTING_ID, item.id)
+                putStringArrayListExtra(ListingDetailActivity.EXTRA_SIBLING_IDS, allIds)
+                putExtra(ListingDetailActivity.EXTRA_CURRENT_INDEX, index)
             }
             if (context is BaseActivity) {
                 context.startWithPush(intent)

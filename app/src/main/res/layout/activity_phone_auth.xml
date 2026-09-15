@@ -21,11 +21,10 @@
             android:id="@+id/btnBack"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_back"
+            android:src="@drawable/ic_back_nav"
             app:tint="@color/appbar_icon_tint"
-            android:background="@drawable/bg_menu_circle"
-            android:contentDescription="@string/cd_back"
-            android:onClick="finish" />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cd_back" />
 
         <ImageButton
             android:id="@+id/btnMenu"
