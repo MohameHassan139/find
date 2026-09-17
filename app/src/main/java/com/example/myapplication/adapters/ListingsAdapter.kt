@@ -13,6 +13,8 @@ import com.example.myapplication.ApiListing
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemListingCardBinding
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.auth.TokenManager
+import com.example.myapplication.utils.AuthGuard
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -167,15 +169,23 @@ class ListingsAdapter(
 
         b.root.setOnClickListener { onClick(item) }
         
-        // Favorite icon with red color when favorited
+        // Favorite icon handling matching iOS ListingCard
         val isFav = favoriteIds.contains(item.id)
+        b.ivFavorite.colorFilter = null
         b.ivFavorite.setImageResource(
             if (isFav) R.drawable.ic_favorite_bookmark_filled else R.drawable.ic_favorite_bookmark
         )
         b.ivFavorite.setOnClickListener {
+            val context = b.root.context
+            if (!TokenManager.isLoggedIn(context)) {
+                AuthGuard.requireLogin(context) {}
+                return@setOnClickListener
+            }
             val nowFav = !favoriteIds.contains(item.id)
             if (nowFav) favoriteIds.add(item.id) else favoriteIds.remove(item.id)
-            notifyItemChanged(holder.adapterPosition)
+            b.ivFavorite.setImageResource(
+                if (nowFav) R.drawable.ic_favorite_bookmark_filled else R.drawable.ic_favorite_bookmark
+            )
             onFavoriteClick?.invoke(item, nowFav)
         }
     }

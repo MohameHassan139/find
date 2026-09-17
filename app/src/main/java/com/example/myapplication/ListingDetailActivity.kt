@@ -185,6 +185,7 @@ class ListingDetailActivity : BaseActivity() {
         }
 
         // Chat always available
+        binding.ivChat.setColorFilter(androidx.core.content.ContextCompat.getColor(this, R.color.appbar_icon_tint))
         binding.btnChat.setOnClickListener {
             startConversation(l.id)
         }
@@ -269,13 +270,14 @@ class ListingDetailActivity : BaseActivity() {
     // ── Contact button state ──────────────────────────────────────────────────
 
     private fun setContactButtonState(icon: android.widget.ImageView, label: android.widget.TextView, available: Boolean) {
-        val color = if (available)
+        val iconColor = androidx.core.content.ContextCompat.getColor(this, R.color.appbar_icon_tint)
+        val labelColor = if (available)
             androidx.core.content.ContextCompat.getColor(this, R.color.text_primary)
         else
             androidx.core.content.ContextCompat.getColor(this, R.color.text_secondary)
-        icon.setColorFilter(color)
-        label.setTextColor(color)
-        icon.alpha = if (available) 1f else 0.5f
+        icon.setColorFilter(iconColor)
+        label.setTextColor(labelColor)
+        icon.alpha = 1f
     }
 
     // ── Moderation (report/block) ───────────────────────────────────────────

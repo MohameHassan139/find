@@ -49,14 +49,14 @@
                 android:textColor="@color/category_card_text"
                 android:fontFamily="sans-serif" />
 
-            <android.webkit.WebView
+            <ImageView
                 android:id="@+id/ivSubIcon"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:scrollbars="none"
-                android:overScrollMode="never" />
+                android:layout_margin="6dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="@null" />
 
         </LinearLayout>
 

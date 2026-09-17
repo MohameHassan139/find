@@ -68,10 +68,13 @@
                         android:layout_rowWeight="1"
                         android:layout_margin="2dp"
                         android:background="@drawable/bg_category_mini_cell">
-                        <android.webkit.WebView
+                        <ImageView
                             android:id="@+id/ivSubAll"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"
+                            android:scaleType="fitCenter"
+                            android:padding="4dp"
+                            android:contentDescription="@null" />
                     </FrameLayout>
 
                     <FrameLayout
@@ -81,10 +84,13 @@
                         android:layout_rowWeight="1"
                         android:layout_margin="2dp"
                         android:background="@drawable/bg_category_mini_cell">
-                        <android.webkit.WebView
+                        <ImageView
                             android:id="@+id/ivSub1"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"
+                            android:scaleType="fitCenter"
+                            android:padding="4dp"
+                            android:contentDescription="@null" />
                     </FrameLayout>
 
                     <FrameLayout
@@ -94,10 +100,13 @@
                         android:layout_rowWeight="1"
                         android:layout_margin="2dp"
                         android:background="@drawable/bg_category_mini_cell">
-                        <android.webkit.WebView
+                        <ImageView
                             android:id="@+id/ivSub2"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"
+                            android:scaleType="fitCenter"
+                            android:padding="4dp"
+                            android:contentDescription="@null" />
                     </FrameLayout>
 
                     <FrameLayout
@@ -107,10 +116,13 @@
                         android:layout_rowWeight="1"
                         android:layout_margin="2dp"
                         android:background="@drawable/bg_category_mini_cell">
-                        <android.webkit.WebView
+                        <ImageView
                             android:id="@+id/ivSub3"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"
+                            android:scaleType="fitCenter"
+                            android:padding="4dp"
+                            android:contentDescription="@null" />
                     </FrameLayout>
 
                     <FrameLayout
@@ -120,10 +132,13 @@
                         android:layout_rowWeight="1"
                         android:layout_margin="2dp"
                         android:background="@drawable/bg_category_mini_cell">
-                        <android.webkit.WebView
+                        <ImageView
                             android:id="@+id/ivSub4"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"
+                            android:scaleType="fitCenter"
+                            android:padding="4dp"
+                            android:contentDescription="@null" />
                     </FrameLayout>
 
                     <FrameLayout
@@ -146,10 +161,13 @@
 
                 </GridLayout>
 
-                <android.webkit.WebView
+                <ImageView
                     android:id="@+id/wvSingleIcon"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:padding="10dp"
+                    android:contentDescription="@null"
                     android:visibility="gone" />
 
                 <TextView

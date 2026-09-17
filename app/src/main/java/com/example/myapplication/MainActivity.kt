@@ -32,7 +32,6 @@ import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.push.PushTokenManager
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.utils.AuthGuard
-import com.example.myapplication.widgets.StrokeTextView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -271,12 +270,7 @@ class MainActivity : BaseActivity() {
     private fun updateChipStyles(active: String?) {
         fun style(tv: TextView, underline: View, isActive: Boolean) {
             tv.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
-            if (tv is StrokeTextView) {
-                tv.isStrokeEnabled = isActive
-                tv.setTextColor(if (isActive) android.graphics.Color.WHITE else getColor(R.color.tab_label_inactive))
-            } else {
-                tv.setTextColor(if (isActive) getColor(R.color.tab_label_active) else getColor(R.color.tab_label_inactive))
-            }
+            tv.setTextColor(if (isActive) getColor(R.color.tab_label_active) else getColor(R.color.tab_label_inactive))
             // Rounded blue indicator in dark mode, flat bar in light (see bg_tab_underline_active)
             if (isActive) underline.setBackgroundResource(R.drawable.bg_tab_underline_active)
             else underline.background = null

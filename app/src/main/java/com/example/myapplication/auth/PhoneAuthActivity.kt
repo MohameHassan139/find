@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
@@ -53,7 +54,16 @@ class PhoneAuthActivity : BaseActivity() {
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
         BottomNavHelper.setup(this, NavScreen.NONE)
 
-        binding.btnBack.setOnClickListener { finish() }
+        binding.btnBack.setOnClickListener { navigateToHome() }
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.layoutOtp.visibility == View.VISIBLE) {
+                    showPhoneStep()
+                } else {
+                    navigateToHome()
+                }
+            }
+        })
         binding.btnMenu.setOnClickListener {
             startActivity(Intent(this, MenuActivity::class.java))
         }
@@ -197,6 +207,15 @@ class PhoneAuthActivity : BaseActivity() {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             })
         }
+    }
+
+    private fun navigateToHome() {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+        startActivity(intent)
+        finish()
+        applyPopTransition()
     }
 
     override fun onDestroy() {

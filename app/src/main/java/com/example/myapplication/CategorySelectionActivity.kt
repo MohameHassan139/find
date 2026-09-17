@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.BaseActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.databinding.ActivityCategorySelectionBinding
+import com.example.myapplication.utils.CategoryIconHelper
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 
@@ -115,32 +116,12 @@ class CategorySelectionActivity : BaseActivity() {
             val ivIcon = item.findViewById<ImageView>(R.id.ivItemIcon)
             val wvIcon = item.findViewById<android.webkit.WebView>(R.id.wvItemIcon)
 
-            if (flHolder != null) {
+            if (flHolder != null && ivIcon != null) {
                 flHolder.visibility = View.VISIBLE
-                val url = sub.iconUrl(isDark)
-                if (!url.isNullOrEmpty()) {
-                    if (url.endsWith(".svg", ignoreCase = true) && wvIcon != null) {
-                        ivIcon?.visibility = View.GONE
-                        wvIcon.visibility = View.VISIBLE
-                        wvIcon.setBackgroundColor(0)
-                        wvIcon.isClickable = false
-                        wvIcon.isFocusable = false
-                        wvIcon.settings.javaScriptEnabled = true
-                        val html = "<html><head><meta name='viewport' content='width=device-width,initial-scale=1'><style>*{margin:0;padding:0;box-sizing:border-box;}html,body{width:100%;height:100%;background:transparent;display:flex;justify-content:center;align-items:center;} img{width:82%;height:82%;object-fit:contain;}</style></head><body><img src=\"$url\"/></body></html>"
-                        wvIcon.loadDataWithBaseURL(url, html, "text/html", "UTF-8", null)
-                    } else if (ivIcon != null) {
-                        wvIcon?.visibility = View.GONE
-                        ivIcon.visibility = View.VISIBLE
-                        Glide.with(this)
-                            .load(url)
-                            .placeholder(R.drawable.ic_category_placeholder)
-                            .into(ivIcon)
-                    }
-                } else if (ivIcon != null) {
-                    wvIcon?.visibility = View.GONE
-                    ivIcon.visibility = View.VISIBLE
-                    ivIcon.setImageResource(R.drawable.ic_category_placeholder)
-                }
+                wvIcon?.visibility = View.GONE
+                ivIcon.visibility = View.VISIBLE
+                val url = sub.iconUrl(isDark) ?: sub.iconName
+                CategoryIconHelper.loadSvg(ivIcon, url, isDark, R.drawable.ic_category_placeholder)
             }
 
             item.findViewById<TextView>(R.id.tvItemName).text =

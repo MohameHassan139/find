@@ -55,8 +55,7 @@
         android:background="@color/tab_bar_bg"
         android:orientation="horizontal"
         android:visibility="gone"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        xmlns:app="http://schemas.android.com/apk/res-auto" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <!-- Shimmer placeholder while categories load -->
     <LinearLayout

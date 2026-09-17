@@ -108,9 +108,21 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
 
+    // SVG loading (Coil + Coil SVG)
+    implementation("io.coil-kt:coil:2.6.0")
+    implementation("io.coil-kt:coil-svg:2.6.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+
+val iosLogoFile = rootProject.file("ios code/find/find/Assets.xcassets/logo.imageset/Image.png")
+val androidLogoFile = project.file("src/main/res/drawable/ic_app_logo_full.png")
+if (iosLogoFile.exists() && (!androidLogoFile.exists() || androidLogoFile.length() == 0L)) {
+    try {
+        iosLogoFile.copyTo(androidLogoFile, overwrite = true)
+    } catch (_: Exception) {}
 }
 
 tasks.register<Copy>("copyIosLogo") {

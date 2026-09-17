@@ -11,7 +11,6 @@ import com.example.myapplication.ApiCategory
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemTopTabBinding
 import com.example.myapplication.utils.LocaleHelper
-import com.example.myapplication.widgets.StrokeTextView
 
 class TopTabAdapter(
     private var items: List<ApiCategory>,
@@ -41,17 +40,12 @@ class TopTabAdapter(
         tvLabel.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
         tvLabel.textSize = if (isActive) 17f else 15f
         
-        if (tvLabel is StrokeTextView) {
-            tvLabel.isStrokeEnabled = isActive
-            tvLabel.setTextColor(if (isActive) Color.WHITE else androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.tab_label_inactive))
+        val textColor = if (isActive) {
+            androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.tab_label_active)
         } else {
-            val textColor = if (isActive) {
-                androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.tab_label_active)
-            } else {
-                androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.tab_label_inactive)
-            }
-            tvLabel.setTextColor(textColor)
+            androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.tab_label_inactive)
         }
+        tvLabel.setTextColor(textColor)
         // Active indicator: flat bar in light mode, rounded #007AFF pill in dark mode
         if (isActive) holder.b.underline.setBackgroundResource(R.drawable.bg_tab_underline_active)
         else holder.b.underline.background = null

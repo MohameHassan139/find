@@ -2,16 +2,13 @@ package com.example.myapplication.adapters
 
 import android.content.res.Configuration
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.example.myapplication.ApiCategory
-import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemCategoryGridBinding
+import com.example.myapplication.utils.CategoryIconHelper
 import com.example.myapplication.utils.LocaleHelper
 
 class CategoryGridAdapter(
@@ -21,41 +18,14 @@ class CategoryGridAdapter(
 
     class VH(val b: ItemCategoryGridBinding) : RecyclerView.ViewHolder(b.root)
 
-    // The 5 sub-icon WebViews in order
-    private fun iconSlots(b: ItemCategoryGridBinding): List<android.webkit.WebView> = listOf(
+    // The 5 sub-icon ImageViews in order
+    private fun iconSlots(b: ItemCategoryGridBinding): List<ImageView> = listOf(
         b.ivSubAll, b.ivSub1, b.ivSub2,
         b.ivSub3, b.ivSub4
     )
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val b = ItemCategoryGridBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        val slots = iconSlots(b)
-        slots.forEach { iv ->
-            iv.setBackgroundColor(0) // Transparent
-            iv.isClickable = false
-            iv.isFocusable = false
-            iv.isFocusableInTouchMode = false
-            iv.isVerticalScrollBarEnabled = false
-            iv.isHorizontalScrollBarEnabled = false
-            iv.settings.apply {
-                javaScriptEnabled = true
-                useWideViewPort = true
-                loadWithOverviewMode = true
-            }
-        }
-        
-        b.wvSingleIcon.setBackgroundColor(0) // Transparent
-        b.wvSingleIcon.isClickable = false
-        b.wvSingleIcon.isFocusable = false
-        b.wvSingleIcon.isFocusableInTouchMode = false
-        b.wvSingleIcon.isVerticalScrollBarEnabled = false
-        b.wvSingleIcon.isHorizontalScrollBarEnabled = false
-        b.wvSingleIcon.settings.apply {
-            javaScriptEnabled = true
-            useWideViewPort = true
-            loadWithOverviewMode = true
-        }
-
         return VH(b)
     }
 
@@ -73,8 +43,7 @@ class CategoryGridAdapter(
             if (!url.isNullOrEmpty()) {
                 holder.b.wvSingleIcon.visibility = android.view.View.VISIBLE
                 holder.b.tvSingleDots.visibility = android.view.View.GONE
-                val html = "<html><head><meta name='viewport' content='width=device-width,initial-scale=1'><style>*{margin:0;padding:0;box-sizing:border-box;}html,body{width:100%;height:100%;background:transparent;display:flex;justify-content:center;align-items:center;} img{width:70%;height:70%;object-fit:contain;}</style></head><body><img src=\"$url\"/></body></html>"
-                holder.b.wvSingleIcon.loadDataWithBaseURL(url, html, "text/html", "UTF-8", null)
+                CategoryIconHelper.loadSvg(holder.b.wvSingleIcon, url, isDark)
             } else {
                 holder.b.wvSingleIcon.visibility = android.view.View.GONE
                 holder.b.tvSingleDots.visibility = android.view.View.VISIBLE
@@ -100,11 +69,9 @@ class CategoryGridAdapter(
                 }
                 val url = sub?.iconUrl(isDark)
                 if (!url.isNullOrEmpty()) {
-                    val html = "<html><head><meta name='viewport' content='width=device-width,initial-scale=1'><style>*{margin:0;padding:0;box-sizing:border-box;}html,body{width:100%;height:100%;background:transparent;display:flex;justify-content:center;align-items:center;} img{width:78%;height:78%;object-fit:contain;}</style></head><body><img src=\"$url\"/></body></html>"
-                    iv.loadDataWithBaseURL(url, html, "text/html", "UTF-8", null)
+                    CategoryIconHelper.loadSvg(iv, url, isDark)
                 } else {
-                    val placeholderHtml = "<html><head><style>*{margin:0;padding:0;}html,body{width:100%;height:100%;background:transparent;}</style></head><body></body></html>"
-                    iv.loadDataWithBaseURL("about:blank", placeholderHtml, "text/html", "UTF-8", null)
+                    iv.setImageDrawable(null)
                 }
             }
         }

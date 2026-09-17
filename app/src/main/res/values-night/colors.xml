@@ -137,4 +137,8 @@
     <color name="nav_text_selected">#D9000000</color>
     <color name="nav_icon_unselected">#4D000000</color>
     <color name="nav_text_unselected">#41000000</color>
+    <!-- Ad card favorite button pill background in dark mode (iOS AppColor.cardBackground.opacity(0.1)) -->
+    <color name="bg_fav_container">#1A000000</color>
+    <!-- iOS AppColor.fullAppText (black in light mode, white in dark mode) -->
+    <color name="full_app_text">#FFFFFFFF</color>
 </resources>

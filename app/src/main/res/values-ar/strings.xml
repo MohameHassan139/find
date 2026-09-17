@@ -371,4 +371,7 @@
     <!-- Content descriptions for the listing-card image carousel arrows. -->
     <string name="cd_previous_image">الصورة السابقة</string>
     <string name="cd_next_image">الصورة التالية</string>
+
+    <string name="nafath_banner_desc">وثق حسابك عبر النفاذ الوطني</string>
+    <string name="nafath_verify_action">توثيق الحساب</string>
 </resources>

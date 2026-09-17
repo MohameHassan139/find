@@ -11,7 +11,6 @@ import com.example.myapplication.ApiSubCategory
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemTopTabBinding
 import com.example.myapplication.utils.LocaleHelper
-import com.example.myapplication.widgets.StrokeTextView
 
 class SubTabAdapter(
     private var items: List<ApiSubCategory>,
@@ -38,17 +37,12 @@ class SubTabAdapter(
         tvLabel.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
         tvLabel.textSize = 14f
         
-        if (tvLabel is StrokeTextView) {
-            tvLabel.isStrokeEnabled = isActive
-            tvLabel.setTextColor(if (isActive) Color.WHITE else holder.itemView.context.getColor(R.color.tab_label_inactive))
+        val textColor = if (isActive) {
+            holder.itemView.context.getColor(R.color.tab_label_active)
         } else {
-            val textColor = if (isActive) {
-                holder.itemView.context.getColor(R.color.tab_label_active)
-            } else {
-                holder.itemView.context.getColor(R.color.tab_label_inactive)
-            }
-            tvLabel.setTextColor(textColor)
+            holder.itemView.context.getColor(R.color.tab_label_inactive)
         }
+        tvLabel.setTextColor(textColor)
         // Active indicator: flat bar in light mode, rounded #007AFF pill in dark mode
         if (isActive) holder.b.underline.setBackgroundResource(R.drawable.bg_tab_underline_active)
         else holder.b.underline.background = null

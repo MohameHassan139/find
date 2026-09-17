@@ -24,23 +24,67 @@
             android:padding="16dp"
             android:layoutDirection="locale">
 
-            <!-- Nafath Verification Banner -->
-            <androidx.cardview.widget.CardView
+            <!-- Nafath Verification Banner (Exact iOS Parity) -->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardNafath"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
+                app:cardBackgroundColor="#9ED4D0"
+                app:strokeWidth="1.5dp"
+                app:strokeColor="#2D8E8B"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
-                    android:id="@+id/ivNafathBanner"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_nafath"
-                    android:scaleType="fitXY"
-                    android:contentDescription="Nafath" />
-            </androidx.cardview.widget.CardView>
+                    android:orientation="horizontal"
+                    android:layoutDirection="rtl"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp">
+
+                    <!-- Right: Nafath Icon (54dp x 54dp) -->
+                    <ImageView
+                        android:id="@+id/ivNafathIcon"
+                        android:layout_width="54dp"
+                        android:layout_height="54dp"
+                        android:src="@drawable/ic_nafath"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Nafath Logo" />
+
+                    <!-- Middle: Description text -->
+                    <TextView
+                        android:id="@+id/tvNafathDesc"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginHorizontal="8dp"
+                        android:gravity="center"
+                        android:text="@string/nafath_banner_desc"
+                        android:textColor="#0C3432"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:maxLines="2" />
+
+                    <!-- Left: Verify button -->
+                    <TextView
+                        android:id="@+id/btnNafathAction"
+                        android:layout_width="wrap_content"
+                        android:layout_height="34dp"
+                        android:background="@drawable/bg_nafath_button"
+                        android:gravity="center"
+                        android:paddingHorizontal="12dp"
+                        android:text="@string/nafath_verify_action"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Profile Image Container (iOS Parity: 120dp x 103dp, 16dp rounded box, 18% yellow fill) -->
             <androidx.cardview.widget.CardView
@@ -67,7 +111,7 @@
                         android:layout_height="match_parent"
                         android:src="@drawable/ic_person_avatar"
                         android:scaleType="centerCrop"
-                        app:tint="@color/text_primary" />
+                        app:tint="@color/full_app_text" />
 
                     <ImageView
                         android:layout_width="17dp"
@@ -75,7 +119,7 @@
                         android:layout_gravity="bottom|end"
                         android:layout_margin="8dp"
                         android:src="@drawable/ic_pen_edit"
-                        app:tint="@color/text_primary"
+                        app:tint="@color/full_app_text"
                         android:contentDescription="Edit" />
                 </FrameLayout>
             </androidx.cardview.widget.CardView>
@@ -87,11 +131,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="28dp"
                 android:text="@string/profile_name"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/full_app_text"
                 android:textSize="14sp"
                 android:drawableStart="@drawable/ic_person_id_card"
                 android:drawablePadding="8dp"
-                app:drawableTint="@color/text_primary"
+                android:drawableTint="@color/full_app_text"
+                app:drawableTint="@color/full_app_text"
                 android:gravity="center_vertical"
                 app:layout_constraintTop_toBottomOf="@id/profileContainer"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -107,8 +152,7 @@
                 android:paddingEnd="16dp"
                 android:gravity="start|center_vertical"
                 android:textSize="15sp"
-                android:textColor="@color/text_primary"
-                android:hint="@string/str_____"
+                android:textColor="@color/full_app_text"
                 android:layoutDirection="locale"
                 android:textDirection="locale"
                 app:layout_constraintTop_toBottomOf="@id/labelName" />
@@ -120,11 +164,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/profile_phone"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/full_app_text"
                 android:textSize="14sp"
                 android:drawableStart="@drawable/ic_phone"
                 android:drawablePadding="8dp"
-                app:drawableTint="@color/text_primary"
+                android:drawableTint="@color/full_app_text"
+                app:drawableTint="@color/full_app_text"
                 android:gravity="center_vertical"
                 app:layout_constraintTop_toBottomOf="@id/etName"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -140,7 +185,7 @@
                 android:paddingEnd="16dp"
                 android:gravity="start|center_vertical"
                 android:textSize="15sp"
-                android:textColor="@color/text_secondary"
+                android:textColor="@color/full_app_text"
                 android:layoutDirection="ltr"
                 android:textDirection="ltr"
                 app:layout_constraintTop_toBottomOf="@id/labelPhone" />
@@ -152,9 +197,9 @@
                 android:layout_height="52dp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/bg_btn_publish"
-                android:text="@string/save_changes"
+                android:text="@string/ios_profile_update"
                 android:textSize="17sp"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/full_app_text"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:clickable="true"

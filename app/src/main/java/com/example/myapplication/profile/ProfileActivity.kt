@@ -76,6 +76,7 @@ class ProfileActivity : BaseActivity() {
         
         binding.profileContainer.setOnClickListener { openGallery() }
         binding.cardNafath.setOnClickListener { handleNafathVerification() }
+        binding.btnNafathAction.setOnClickListener { handleNafathVerification() }
         binding.btnSave.setOnClickListener { saveProfile() }
         binding.btnSignOut.setOnClickListener { confirmSignOut() }
 

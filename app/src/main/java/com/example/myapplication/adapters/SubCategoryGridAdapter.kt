@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.ApiSubCategory
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemSubcategoryGridBinding
+import com.example.myapplication.utils.CategoryIconHelper
 import com.example.myapplication.utils.LocaleHelper
 
 /**
@@ -25,15 +26,6 @@ class SubCategoryGridAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val b = ItemSubcategoryGridBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        b.ivSubIcon.setBackgroundColor(0) // Transparent
-        b.ivSubIcon.isClickable = false
-        b.ivSubIcon.isFocusable = false
-        b.ivSubIcon.isFocusableInTouchMode = false
-        b.ivSubIcon.settings.apply {
-            javaScriptEnabled = true
-            useWideViewPort = true
-            loadWithOverviewMode = true
-        }
         return VH(b)
     }
 
@@ -42,37 +34,8 @@ class SubCategoryGridAdapter(
         val isDark = isNightMode(holder.itemView.context)
 
         holder.b.tvSubName.text = LocaleHelper.localizedName(holder.itemView.context, sub.nameAr, sub.nameEn)
-        val url = sub.iconUrl(isDark)
-        if (!url.isNullOrEmpty()) {
-            // Icon fills ~75% of the WebView area, centered — matches Figma proportions
-            val html = """
-                <html>
-                <head>
-                <meta name='viewport' content='width=device-width,initial-scale=1'>
-                <style>
-                  * { margin: 0; padding: 0; box-sizing: border-box; }
-                  html, body {
-                    width: 100%; height: 100%;
-                    background: transparent;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                  }
-                  img {
-                    width: 88%;
-                    height: 88%;
-                    object-fit: contain;
-                  }
-                </style>
-                </head>
-                <body><img src="$url"/></body>
-                </html>
-            """.trimIndent()
-            holder.b.ivSubIcon.loadDataWithBaseURL(url, html, "text/html", "UTF-8", null)
-        } else {
-            val emptyHtml = "<html><head><style>*{margin:0;padding:0;}html,body{width:100%;height:100%;background:transparent;}</style></head><body></body></html>"
-            holder.b.ivSubIcon.loadDataWithBaseURL("about:blank", emptyHtml, "text/html", "UTF-8", null)
-        }
+        val url = sub.iconUrl(isDark) ?: sub.iconName
+        CategoryIconHelper.loadSvg(holder.b.ivSubIcon, url, isDark)
 
         holder.b.clickOverlay.setOnClickListener { onClick(sub) }
     }

@@ -38,32 +38,6 @@ class StrokeTextView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
-        if (isStrokeEnabled) {
-            val originalColor = textColors
-
-            // 1. Draw outline with shadow
-            paint.style = Paint.Style.STROKE
-            paint.strokeWidth = strokeWidth
-            setTextColor(strokeColor)
-            
-            val density = resources.displayMetrics.density
-            // Design (light & dark): text-shadow 0 4px 4px rgba(0,0,0,0.25)
-            val shadowRadius = 2.6f * density
-            val shadowDx = 0f
-            val shadowDy = 4f * density
-            val shadowColor = 0x40000000
-            setShadowLayer(shadowRadius, shadowDx, shadowDy, shadowColor)
-            
-            super.onDraw(canvas)
-
-            // 2. Draw fill (without shadow)
-            paint.style = Paint.Style.FILL
-            setTextColor(originalColor)
-            setShadowLayer(0f, 0f, 0f, 0)
-            super.onDraw(canvas)
-        } else {
-            setShadowLayer(0f, 0f, 0f, 0)
-            super.onDraw(canvas)
-        }
+        super.onDraw(canvas)
     }
 }

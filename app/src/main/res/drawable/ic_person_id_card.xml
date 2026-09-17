@@ -6,7 +6,7 @@
     android:viewportHeight="20">
     <!-- ID Card border -->
     <path
-        android:strokeColor="#000000"
+        android:strokeColor="@color/full_app_text"
         android:strokeWidth="1.8"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
@@ -14,18 +14,18 @@
         android:pathData="M3,2 L21,2 C22.1,2 23,2.9 23,4 L23,16 C23,17.1 22.1,18 21,18 L3,18 C1.9,18 1,17.1 1,16 L1,4 C1,2.9 1.9,2 3,2 Z" />
     <!-- Person head -->
     <path
-        android:fillColor="#000000"
+        android:fillColor="@color/full_app_text"
         android:pathData="M7,8 A2,2 0 1,0 7,4 A2,2 0 1,0 7,8 Z" />
     <!-- Person body -->
     <path
-        android:strokeColor="#000000"
+        android:strokeColor="@color/full_app_text"
         android:strokeWidth="1.6"
         android:strokeLineCap="round"
         android:fillColor="#00000000"
         android:pathData="M4.5,14 C4.5,11.5 5.5,10.5 7,10.5 C8.5,10.5 9.5,11.5 9.5,14" />
     <!-- Text lines -->
     <path
-        android:strokeColor="#000000"
+        android:strokeColor="@color/full_app_text"
         android:strokeWidth="1.6"
         android:strokeLineCap="round"
         android:fillColor="#00000000"

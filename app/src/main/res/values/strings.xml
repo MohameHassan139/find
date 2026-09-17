@@ -363,4 +363,7 @@
 
     <string name="cd_previous_image">Previous image</string>
     <string name="cd_next_image">Next image</string>
+
+    <string name="nafath_banner_desc">وثق حسابك عبر النفاذ الوطني</string>
+    <string name="nafath_verify_action">توثيق الحساب</string>
 </resources>

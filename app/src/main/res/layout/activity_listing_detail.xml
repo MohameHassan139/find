@@ -49,6 +49,7 @@
                 android:layout_height="42dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_back_nav"
+                app:tint="@color/appbar_icon_tint"
                 android:contentDescription="@string/cd_back" />
 
             <!-- Menu button -->
@@ -60,7 +61,21 @@
                 android:background="@drawable/bg_menu_circle"
                 android:padding="10dp"
                 android:src="@drawable/ic_menu_black"
+                app:tint="@color/appbar_icon_tint"
                 android:contentDescription="@string/cd_menu" />
+
+            <!-- Moderation button (3 dots in circle matching iOS client note) -->
+            <ImageButton
+                android:id="@+id/btnModeration"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_menu_circle"
+                android:padding="9dp"
+                android:src="@drawable/ic_more_vert"
+                app:tint="@color/appbar_icon_tint"
+                android:contentDescription="@string/cd_more"
+                android:visibility="gone" />
 
             <!-- Spacer -->
             <View
@@ -68,45 +83,53 @@
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
-            <!-- Logo -->
+            <!-- Logo container matching Figma CSS:
+                 width: 104px, height: 54px; Vector (stroke 2px, mirrored); فايندز (20px, 400); finds (SF Pro Rounded 24px, 700) -->
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="54dp"
                 android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:layoutDirection="ltr">
 
+                <!-- Vector: Snowflake emblem (flipped horizontally scaleX=-1, stroke 2px, white in dark / black in light) -->
                 <ImageView
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:src="@drawable/ic_app_logo"
-                    android:contentDescription="Find"
-                    android:padding="2dp"
-                    android:layout_marginEnd="8dp" />
+                    app:tint="@color/appbar_logo_text"
+                    android:contentDescription="Finds"
+                    android:layout_marginEnd="6dp" />
 
+                <!-- Text stack: فايندز (top) and finds (bottom) -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:gravity="center_vertical">
 
+                    <!-- فايندز: weight 400, 20px (#FFFFFF in dark, #000000 in light) -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="فايندز"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
+                        android:textSize="17sp"
+                        android:fontFamily="sans-serif"
+                        android:textStyle="normal"
                         android:textColor="@color/appbar_logo_text"
-                        android:includeFontPadding="false"
-                        android:lineSpacingExtra="-3dp" />
+                        android:includeFontPadding="false" />
 
+                    <!-- finds: SF Pro Rounded / sans-serif-rounded, weight 700, 24px (#FFFFFF in dark, #000000 in light) -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="finds"
-                        android:textSize="16sp"
+                        android:textSize="20sp"
+                        android:fontFamily="sans-serif-rounded"
                         android:textStyle="bold"
                         android:textColor="@color/appbar_logo_text"
                         android:includeFontPadding="false"
-                        android:lineSpacingExtra="-3dp" />
+                        android:layout_marginTop="-4dp" />
                 </LinearLayout>
             </LinearLayout>
             </LinearLayout><!-- end bar content -->
@@ -230,8 +253,7 @@
                             android:id="@+id/tvTitle"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginEnd="8dp"
+                            android:layout_marginHorizontal="16dp"
                             android:layout_marginTop="16dp"
                             android:textAlignment="viewStart"
                             android:textColor="@color/text_primary"
@@ -242,21 +264,6 @@
                             android:ellipsize="end"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toStartOf="@id/btnModeration" />
-
-                        <!-- Report/block overflow — next to title -->
-                        <ImageButton
-                            android:id="@+id/btnModeration"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_marginTop="12dp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:src="@drawable/ic_more_vert"
-                            app:tint="@color/text_primary"
-                            android:contentDescription="@string/cd_more"
-                            android:visibility="gone"
-                            app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintEnd_toEndOf="parent" />
 
                         <!-- Avatar (Seller logo, size 24x24, top 82dp, left 186.5dp) -->
@@ -398,11 +405,11 @@
 
                                 <ImageView
                                     android:id="@+id/ivCall"
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
+                                    android:layout_width="28dp"
+                                    android:layout_height="28dp"
                                     android:src="@drawable/ic_channel_call"
                                     android:contentDescription="@string/cd_call"
-                                    app:tint="@color/text_primary" />
+                                    app:tint="@color/appbar_icon_tint" />
 
                                 <TextView
                                     android:id="@+id/tvCall"
@@ -425,11 +432,11 @@
 
                                 <ImageView
                                     android:id="@+id/ivWhatsapp"
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
+                                    android:layout_width="28dp"
+                                    android:layout_height="28dp"
                                     android:src="@drawable/ic_channel_whatsapp"
                                     android:contentDescription="@string/cd_whatsapp"
-                                    app:tint="@color/text_primary" />
+                                    app:tint="@color/appbar_icon_tint" />
 
                                 <TextView
                                     android:id="@+id/tvWhatsapp"
@@ -452,11 +459,11 @@
 
                                 <ImageView
                                     android:id="@+id/ivChat"
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
+                                    android:layout_width="28dp"
+                                    android:layout_height="28dp"
                                     android:contentDescription="@string/cd_chat"
                                     android:src="@drawable/ic_nav_chat"
-                                    app:tint="@color/text_primary" />
+                                    app:tint="@color/appbar_icon_tint" />
 
                                 <TextView
                                     android:id="@+id/tvChat"
@@ -479,9 +486,9 @@
                             android:background="@color/surface_primary"
                             android:layoutDirection="ltr">
 
-                            <!-- Prev button (left chevron) -->
+                            <!-- Next button (left chevron in Arabic, advances to next ad) -->
                             <ImageButton
-                                android:id="@+id/btnPrev"
+                                android:id="@+id/btnNext"
                                 android:layout_width="20dp"
                                 android:layout_height="35dp"
                                 android:background="?attr/selectableItemBackgroundBorderless"
@@ -493,11 +500,11 @@
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 android:layout_marginStart="9dp"
-                                android:contentDescription="Previous" />
+                                android:contentDescription="Next" />
 
-                            <!-- Next button (right chevron) -->
+                            <!-- Prev button (right chevron in Arabic, returns to previous ad) -->
                             <ImageButton
-                                android:id="@+id/btnNext"
+                                android:id="@+id/btnPrev"
                                 android:layout_width="20dp"
                                 android:layout_height="35dp"
                                 android:background="?attr/selectableItemBackgroundBorderless"
@@ -509,7 +516,7 @@
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 android:layout_marginStart="72dp"
-                                android:contentDescription="Next" />
+                                android:contentDescription="Previous" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <!-- Hidden favorite view to keep compatibility with Kotlin logic -->
