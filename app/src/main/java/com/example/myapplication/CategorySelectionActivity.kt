@@ -172,8 +172,8 @@ class CategorySelectionActivity : BaseActivity() {
         binding.llListContainer.removeAllViews()
 
         val types = listOf(
-            LocaleHelper.localizedName(this, "العرض", "Offer") to "offer",
-            LocaleHelper.localizedName(this, "الطلب", "Request") to "request"
+            LocaleHelper.localizedName(this, "عرض", "Offer") to "offer",
+            LocaleHelper.localizedName(this, "طلب", "Request") to "request"
         )
 
         for ((label, value) in types) {
@@ -197,11 +197,11 @@ class CategorySelectionActivity : BaseActivity() {
         val subLabel = sub?.let { LocaleHelper.localizedName(this, it.nameAr, it.nameEn) }
         val filterLabel = filter?.let { LocaleHelper.localizedName(this, it.nameAr, it.nameEn) }
         val typeLabel = if (selectedType == "offer")
-            LocaleHelper.localizedName(this, "العرض", "Offer")
+            LocaleHelper.localizedName(this, "عرض", "Offer")
         else
-            LocaleHelper.localizedName(this, "الطلب", "Request")
+            LocaleHelper.localizedName(this, "طلب", "Request")
 
-        val displayText = listOfNotNull(typeLabel, catLabel, subLabel, filterLabel).joinToString(" / ")
+        val displayText = listOfNotNull(catLabel, subLabel, filterLabel, typeLabel).joinToString(" / ")
 
         val resultIntent = Intent()
         resultIntent.putExtra("selected_category", displayText)

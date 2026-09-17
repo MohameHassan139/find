@@ -117,20 +117,63 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
-val iosLogoFile = rootProject.file("ios code/find/find/Assets.xcassets/logo.imageset/Image.png")
-val androidLogoFile = project.file("src/main/res/drawable/ic_app_logo_full.png")
-if (iosLogoFile.exists() && (!androidLogoFile.exists() || androidLogoFile.length() == 0L)) {
+// Copy logo images: "logo find light.png" -> drawable/ic_app_logo_full.png
+//                   "logo find dark.png"  -> drawable-night/ic_app_logo_full.png
+val logoLightFile = rootProject.file("ios code/logo find light.png")
+val logoDarkFile = rootProject.file("ios code/logo find dark.png")
+val androidLogoLight = project.file("src/main/res/drawable/ic_app_logo_full.png")
+val androidLogoDark = project.file("src/main/res/drawable-night/ic_app_logo_full.png")
+
+if (logoLightFile.exists()) {
     try {
-        iosLogoFile.copyTo(androidLogoFile, overwrite = true)
+        logoLightFile.copyTo(androidLogoLight, overwrite = true)
+    } catch (_: Exception) {}
+}
+if (logoDarkFile.exists()) {
+    try {
+        androidLogoDark.parentFile.mkdirs()
+        logoDarkFile.copyTo(androidLogoDark, overwrite = true)
     } catch (_: Exception) {}
 }
 
-tasks.register<Copy>("copyIosLogo") {
-    from(rootProject.file("ios code/find/find/Assets.xcassets/logo.imageset/Image.png"))
-    into(project.file("src/main/res/drawable"))
-    rename { "ic_app_logo_full.png" }
+tasks.register("copyAppLogos") {
+    doLast {
+        if (logoLightFile.exists()) {
+            logoLightFile.copyTo(androidLogoLight, overwrite = true)
+        }
+        if (logoDarkFile.exists()) {
+            androidLogoDark.parentFile.mkdirs()
+            logoDarkFile.copyTo(androidLogoDark, overwrite = true)
+        }
+    }
+}
+
+val newIconResDir = rootProject.file("ios code/new icon/android/res")
+if (newIconResDir.exists()) {
+    try {
+        newIconResDir.copyRecursively(project.file("src/main/res"), overwrite = true)
+    } catch (_: Exception) {}
+}
+
+val playStoreFile = rootProject.file("ios code/new icon/android/play_store_512.png")
+if (playStoreFile.exists()) {
+    try {
+        playStoreFile.copyTo(project.file("play_store_512.png"), overwrite = true)
+    } catch (_: Exception) {}
+}
+
+tasks.register<Copy>("copyNewAppIcons") {
+    from(rootProject.file("ios code/new icon/android/res"))
+    into(project.file("src/main/res"))
+    doLast {
+        val playStoreSrc = rootProject.file("ios code/new icon/android/play_store_512.png")
+        if (playStoreSrc.exists()) {
+            playStoreSrc.copyTo(project.file("play_store_512.png"), overwrite = true)
+        }
+    }
 }
 
 tasks.matching { it.name == "preBuild" }.configureEach {
-    dependsOn("copyIosLogo")
+    dependsOn("copyAppLogos")
+    dependsOn("copyNewAppIcons")
 }

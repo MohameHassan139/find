@@ -72,12 +72,12 @@ class MyAdsActivity : BaseActivity() {
         }
         binding.btnFilterOffer.setOnClickListener { setFilter("offer") }
         binding.btnFilterRequest.setOnClickListener { setFilter("request") }
-        binding.btnEmptyAdd.setOnClickListener {
-            startActivity(Intent(this, com.example.myapplication.AddAdActivity::class.java))
+        val openAddAd = {
+            startWithPush(Intent(this, com.example.myapplication.AddAdActivity::class.java))
         }
-        binding.ivEmptyAdd.setOnClickListener {
-            startActivity(Intent(this, com.example.myapplication.AddAdActivity::class.java))
-        }
+        binding.llEmptyAddAction.setOnClickListener { openAddAd() }
+        binding.btnEmptyAdd.setOnClickListener { openAddAd() }
+        binding.ivEmptyAdd.setOnClickListener { openAddAd() }
         binding.rvAds.layoutManager = LinearLayoutManager(this)
         loadMyAds()
     }

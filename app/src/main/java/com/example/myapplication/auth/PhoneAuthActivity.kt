@@ -43,30 +43,30 @@ class PhoneAuthActivity : BaseActivity() {
 
         binding = ActivityPhoneAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // Apply status bar inset to root since this screen has a custom top bar
-        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val statusBar = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.statusBars())
-            v.setPadding(v.paddingLeft, statusBar.top, v.paddingRight, v.paddingBottom)
-            insets
-        }
+        applyWindowInsets()
 
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
         BottomNavHelper.setup(this, NavScreen.NONE)
 
-        binding.btnBack.setOnClickListener { navigateToHome() }
+        val handleBack = {
+            if (binding.layoutOtp.visibility == View.VISIBLE) {
+                showPhoneStep()
+            } else if (!isTaskRoot) {
+                finishWithPop()
+            } else {
+                navigateToHome()
+            }
+        }
+
+        findViewById<android.widget.ImageButton>(R.id.btnBack)?.setOnClickListener { handleBack() }
+        findViewById<android.widget.ImageButton>(R.id.btnMenu)?.setOnClickListener {
+            startMenuActivity()
+        }
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (binding.layoutOtp.visibility == View.VISIBLE) {
-                    showPhoneStep()
-                } else {
-                    navigateToHome()
-                }
+                handleBack()
             }
         })
-        binding.btnMenu.setOnClickListener {
-            startActivity(Intent(this, MenuActivity::class.java))
-        }
 
         showPhoneStep()
 

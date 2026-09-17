@@ -33,7 +33,7 @@ class FavoritesActivity : BaseActivity() {
     private val favoriteIds = mutableSetOf<String>()
     private val sharedVm: SharedCategoriesViewModel by viewModels()
     private var allFavorites: List<ApiListing> = emptyList()
-    private var currentFilter: String? = null // null = show all
+    private var currentFilter: String = "offer" // default to offer (عرض)
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.wrap(newBase))
@@ -75,14 +75,18 @@ class FavoritesActivity : BaseActivity() {
         binding.rvFavorites.adapter = adapter
 
         binding.btnFilterOffer.setOnClickListener {
-            currentFilter = if (currentFilter == "offer") null else "offer"
-            updateFilterButtons()
-            applyFilter()
+            if (currentFilter != "offer") {
+                currentFilter = "offer"
+                updateFilterButtons()
+                applyFilter()
+            }
         }
         binding.btnFilterRequest.setOnClickListener {
-            currentFilter = if (currentFilter == "request") null else "request"
-            updateFilterButtons()
-            applyFilter()
+            if (currentFilter != "request") {
+                currentFilter = "request"
+                updateFilterButtons()
+                applyFilter()
+            }
         }
 
         updateFilterButtons()
@@ -117,8 +121,7 @@ class FavoritesActivity : BaseActivity() {
     }
 
     private fun applyFilter() {
-        val filtered = if (currentFilter == null) allFavorites
-                       else allFavorites.filter { it.listingType == currentFilter }
+        val filtered = allFavorites.filter { it.listingType == currentFilter }
         if (filtered.isEmpty()) {
             binding.rvFavorites.visibility = View.GONE
             binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
@@ -173,12 +176,7 @@ class FavoritesActivity : BaseActivity() {
                 allFavorites = loaded
                 favoriteIds.clear()
                 allFavorites.forEach { favoriteIds.add(it.id) }
-
-                if (allFavorites.isEmpty()) {
-                    binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
-                } else {
-                    applyFilter()
-                }
+                applyFilter()
             } catch (_: Exception) {
                 binding.progressBar.visibility = View.GONE
                 showError()

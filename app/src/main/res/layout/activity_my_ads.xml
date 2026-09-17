@@ -168,22 +168,44 @@
                         android:textSize="16sp"
                         android:textColor="@color/text_secondary" />
 
-                    <ImageView
-                        android:id="@+id/ivEmptyAdd"
-                        android:layout_width="50dp"
-                        android:layout_height="39dp"
-                        android:src="@drawable/ic_adsempty"
-                        app:tint="@color/text_secondary"
-                        android:contentDescription="add ad" />
-
-                    <TextView
-                        android:id="@+id/btnEmptyAdd"
+                    <LinearLayout
+                        android:id="@+id/llEmptyAddAction"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/add_ad"
-                        android:textSize="14sp"
-                        android:textColor="@color/find_active_blue" />
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"
+                        android:paddingHorizontal="24dp"
+                        android:paddingVertical="12dp">
+
+                        <ImageView
+                            android:id="@+id/ivEmptyAdd"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:src="@drawable/ic_adsempty"
+                            app:tint="@color/text_primary"
+                            android:contentDescription="add ad"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackgroundBorderless" />
+
+                        <TextView
+                            android:id="@+id/btnEmptyAdd"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/add_ad"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackground"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <!-- List -->
