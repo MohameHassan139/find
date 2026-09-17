@@ -419,6 +419,10 @@ class MainActivity : BaseActivity() {
         binding.llFilterBar.visibility = View.VISIBLE
         binding.llRegionRow.visibility = View.VISIBLE
         updateChipStyles(vm.catType)
+        if (vm.catRegId == null) {
+            resetRegionPill()
+            resetCityFilter()
+        }
         applyBodyState(BodyState.LOADING)
         vm.fetchListings()
     }
@@ -504,7 +508,7 @@ class MainActivity : BaseActivity() {
                     vm.selectCity(null)
                 } else {
                     setCityPillActive(LocaleHelper.localizedName(this, city.nameAr, city.nameEn))
-                    vm.selectCity(city.id)
+                    vm.selectCity(city)
                 }
                 true
             }

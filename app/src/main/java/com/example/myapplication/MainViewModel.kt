@@ -84,28 +84,39 @@ data class ApiFilterOption(val id: Int, val nameAr: String, val nameEn: String? 
  * (see MainViewModel.fetchListings) and should never be offered as a choice when
  * actually creating a listing (see CategorySelectionActivity) — a listing can't
  * itself be tagged "All". */
-fun ApiFilterOption?.isAllOption(): Boolean =
-    this != null && (nameAr.trim() == "الكل" || nameEn?.trim().equals("All", ignoreCase = true))
+fun ApiFilterOption?.isAllOption(): Boolean {
+    if (this == null) return false
+    val a = nameAr.trim()
+    val e = nameEn?.trim()?.lowercase() ?: ""
+    return a == "الكل" || a.startsWith("الكل ") || a.startsWith("كل ") || e == "all" || e.startsWith("all ")
+}
 
 /** Same guard applied to sub-categories — the API sometimes includes a catch-all
- * "الكل" sub-category that has no meaning for a specific listing being created. */
-fun ApiSubCategory.isAllOption(): Boolean =
-    nameAr.trim() == "الكل" || nameEn?.trim().equals("All", ignoreCase = true) == true
+ * "الكل" sub-category that has no meaning for a specific listing being created, and
+ * selecting it when browsing means showing all listings across the entire category. */
+fun ApiSubCategory?.isAllOption(): Boolean {
+    if (this == null) return false
+    val a = nameAr.trim()
+    val e = nameEn?.trim()?.lowercase() ?: ""
+    return a == "الكل" || a.startsWith("الكل ") || a.startsWith("كل ") || e == "all" || e.startsWith("all ")
+}
 
 data class RegionItem(val id: Int, val nameAr: String, val nameEn: String? = null)
 data class CityItem(val id: Int, val nameAr: String, val nameEn: String? = null, val regionId: Int)
 
 /** Mirrors ApiFilterOption.isAllOption — the API sends a synthetic "all regions"
  * or "all cities" entry that must not be offered when creating an ad. */
-fun RegionItem.isAllOption(): Boolean =
-    nameAr.trim().let { it == "الكل" || it == "كل المناطق" } ||
-    nameEn?.trim().equals("All", ignoreCase = true) == true ||
-    nameEn?.trim().equals("All Regions", ignoreCase = true) == true
+fun RegionItem.isAllOption(): Boolean {
+    val a = nameAr.trim()
+    val e = nameEn?.trim()?.lowercase() ?: ""
+    return a == "الكل" || a == "كل المناطق" || a.startsWith("الكل ") || a.startsWith("كل ") || e == "all" || e.startsWith("all ")
+}
 
-fun CityItem.isAllOption(): Boolean =
-    nameAr.trim().let { it == "الكل" || it == "كل المدن" } ||
-    nameEn?.trim().equals("All", ignoreCase = true) == true ||
-    nameEn?.trim().equals("All Cities", ignoreCase = true) == true
+fun CityItem.isAllOption(): Boolean {
+    val a = nameAr.trim()
+    val e = nameEn?.trim()?.lowercase() ?: ""
+    return a == "الكل" || a == "كل المدن" || a.startsWith("الكل ") || a.startsWith("كل ") || e == "all" || e.startsWith("all ")
+}
 
 data class ApiListing(
     val id: String,
@@ -172,6 +183,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     var catType: String? = null
     var catRegId: Int? = null
     var catCityId: Int? = null
+    var catCityItem: CityItem? = null
+        private set
 
     // ── Pagination state ──────────────────────────────────────────────────────
 
@@ -302,6 +315,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         catExtraIdx = null
         catRegId = null
         catCityId = null
+        catCityItem = null
     }
 
     fun selectSubCategory(subIdx: Int?) {
@@ -310,8 +324,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         // when the sub-category provides one, so it shows selected out of the box
         // instead of nothing being highlighted.
         catExtraIdx = defaultExtraIndex(subIdx)
+        catType = null
         catRegId = null
         catCityId = null
+        catCityItem = null
         fetchListings(reset = true)
     }
 
@@ -335,12 +351,21 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun selectRegion(regionId: Int?) {
         catRegId = regionId
         catCityId = null
+        catCityItem = null
         if (catIdx > 0) fetchListings(reset = true)
     }
 
-    fun selectCity(cityId: Int?) {
-        catCityId = cityId
+    fun selectCity(city: CityItem?) {
+        catCityId = city?.id
+        catCityItem = city
         if (catIdx > 0) fetchListings(reset = true)
+    }
+
+    fun selectCityById(cityId: Int?) {
+        val city = if (cityId != null) {
+            _allCities.value?.find { (catRegId == null || it.regionId == catRegId) && it.id == cityId }
+        } else null
+        selectCity(city)
     }
 
     fun hasMorePages() = currentPage < lastPage
@@ -353,6 +378,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val cat = cats[catIdx - 1]
         val subs = cat.subCategories
         val ss = catSubIdx?.let { subs.getOrNull(it) }
+        // "All" means show every ad under this category, not "match this literal synthetic id" —
+        // see ApiSubCategory.isAllOption(). Matches iOS resolvedSubCategoryId behavior.
+        val subCategoryId = ss?.takeUnless { it.isAllOption() }?.id
         val extras = ss?.filterOptions ?: emptyList()
         val se = catExtraIdx?.let { extras.getOrNull(it) }
         // "All" means show every tag on this row, not "match this literal id" — see
@@ -372,16 +400,16 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         isFetching = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val cityId = catCityId
-                val cityName = if (cityId != null) {
-                    _allCities.value?.find { it.id == cityId }?.nameAr
-                } else null
+                val targetCity = catCityItem ?: catCityId?.let { id ->
+                    _allCities.value?.find { (catRegId == null || it.regionId == catRegId) && it.id == id }
+                }
+                val cityName = targetCity?.nameAr
 
                 val res = apiPublic.getListingsCombined(
                     page = currentPage,
                     perPage = PAGE_SIZE,
                     categoryId = cat.id,
-                    subCategoryId = ss?.id,
+                    subCategoryId = subCategoryId,
                     filterOptionId = filterOptionId,
                     regionId = catRegId,
                     city = cityName,
@@ -397,7 +425,18 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                     val arr = data?.optJSONArray("items") ?: JSONArray()
                     val pagination = data?.optJSONObject("pagination")
                     val fetchedLast = pagination?.optInt("last_page", 1) ?: 1
-                    val result = parseListings(arr)
+                    val rawListings = parseListings(arr)
+
+                    // Match iOS ListingsService.applyFilter: strictly verify the listing matches the
+                    // selected city, preventing combined location strings (e.g. "الرياض / الخرج") or
+                    // loose backend LIKE queries from leaking an ad into multiple cities.
+                    val result = if (targetCity != null) {
+                        rawListings.filter { listing ->
+                            matchesCity(listing.city, targetCity)
+                        }
+                    } else {
+                        rawListings
+                    }
 
                     withContext(Dispatchers.Main) {
                         lastPage = fetchedLast
@@ -423,6 +462,21 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 isFetching = false
             }
         }
+    }
+
+    private fun matchesCity(listingCity: String?, targetCity: CityItem): Boolean {
+        if (listingCity.isNullOrBlank()) return false
+        val trimmed = listingCity.trim()
+        val actualCity = when {
+            trimmed.contains("/") -> trimmed.substringAfterLast("/").trim()
+            trimmed.contains("-") -> trimmed.substringAfterLast("-").trim()
+            trimmed.contains(",") -> trimmed.substringAfterLast(",").trim()
+            else -> trimmed
+        }
+        val ar = targetCity.nameAr.trim()
+        val en = targetCity.nameEn?.trim()
+        return actualCity.equals(ar, ignoreCase = true) ||
+               (!en.isNullOrEmpty() && actualCity.equals(en, ignoreCase = true))
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

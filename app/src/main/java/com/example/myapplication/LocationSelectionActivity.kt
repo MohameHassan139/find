@@ -108,6 +108,7 @@ class LocationSelectionActivity : BaseActivity() {
                 resultIntent.putExtra("selected_location", "$regionLabel / $cityLabel")
                 resultIntent.putExtra("selected_region_id", region.id)
                 resultIntent.putExtra("selected_city_id", city.id)
+                resultIntent.putExtra("selected_city_name", city.nameAr)
                 setResult(Activity.RESULT_OK, resultIntent)
                 finishWithPop()
             }

@@ -53,6 +53,7 @@ class AddAdActivity : BaseActivity() {
     private val existingImageUrls: MutableList<String> = mutableListOf()
     private val newImageUris: MutableList<Uri> = mutableListOf()
     private var selectedLocation = ""
+    private var selectedCityName = ""
     private var selectedCategory = ""
     private var adType = "offer"
     private var selectedCategoryId: Int = 1
@@ -74,6 +75,7 @@ class AddAdActivity : BaseActivity() {
             val data = result.data
             selectedLocation = data?.getStringExtra("selected_location") ?: ""
             selectedRegionId = data?.getIntExtra("selected_region_id", 1) ?: 1
+            selectedCityName = data?.getStringExtra("selected_city_name") ?: ""
             binding.tvLocationText.text = selectedLocation.ifEmpty { getString(R.string.location_label) }
             updatePublishButtonState()
         }
@@ -300,9 +302,14 @@ class AddAdActivity : BaseActivity() {
 
     private suspend fun createListing(title: String, desc: String, price: String): String? =
         withContext(Dispatchers.IO) {
+            val cityToSend = when {
+                selectedCityName.isNotEmpty() -> selectedCityName
+                selectedLocation.contains("/") -> selectedLocation.substringAfterLast("/").trim()
+                else -> selectedLocation
+            }
             val body = JSONObject().apply {
                 put("title", title); put("description", desc)
-                put("listing_type", adType); put("city", selectedLocation)
+                put("listing_type", adType); put("city", cityToSend)
                 put("price", price.toDoubleOrNull() ?: 0.0)
                 put("category_id", selectedCategoryId)
                 put("region_id", selectedRegionId)
@@ -320,9 +327,14 @@ class AddAdActivity : BaseActivity() {
 
     private suspend fun patchListing(id: String, title: String, desc: String, price: String, images: List<String>) =
         withContext(Dispatchers.IO) {
+            val cityToSend = when {
+                selectedCityName.isNotEmpty() -> selectedCityName
+                selectedLocation.contains("/") -> selectedLocation.substringAfterLast("/").trim()
+                else -> selectedLocation
+            }
             val body = JSONObject().apply {
                 put("title", title); put("description", desc)
-                put("listing_type", adType); put("city", selectedLocation.ifEmpty { null })
+                put("listing_type", adType); put("city", cityToSend.ifEmpty { null })
                 put("price", price.toDoubleOrNull() ?: 0.0)
                 put("images", JSONArray().apply { images.forEach { put(it) } })
             }
