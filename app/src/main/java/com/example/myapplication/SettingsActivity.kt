@@ -58,7 +58,6 @@ class SettingsActivity : BaseActivity() {
         LocaleHelper.applyLocale(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        applyWindowInsets()
 
         HomeHeaderHelper.attach(this, findViewById(android.R.id.content), sharedVm.categories)
         BottomNavHelper.setup(this, NavScreen.NONE)

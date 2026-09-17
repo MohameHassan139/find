@@ -53,7 +53,7 @@ class ListingConversationsActivity : BaseActivity() {
         val listingTitle = intent.getStringExtra(EXTRA_LISTING_TITLE) ?: "رسائل الإعلان"
 
         binding.tvTitle.text = listingTitle
-        binding.btnBack.setOnClickListener { finish() }
+        binding.btnBack.setOnClickListener { finishWithPop() }
         binding.swipeRefresh.setOnRefreshListener { loadConversations(listingId) }
 
         binding.rvConversations.layoutManager = LinearLayoutManager(this)

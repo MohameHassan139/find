@@ -12,12 +12,6 @@
         android:id="@+id/appBarBack"
         layout="@layout/layout_appbar_back" />
 
-    <View 
-        android:id="@+id/vTopBarShadow"
-        android:layout_width="match_parent" 
-        android:layout_height="1dp" 
-        android:background="@color/shadow_divider" />
-
     <!-- Reusable home header: search + category tabs -->
     <include
         android:id="@+id/homeHeader"

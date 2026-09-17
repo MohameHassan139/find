@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="6dp"
-            android:paddingTop="21dp"
+            android:paddingTop="12dp"
             android:paddingBottom="14dp">
 
             <!-- Big white card matching Figma: 378dp wide, shadow, 5dp radius -->
