@@ -9,4 +9,5 @@
     <!-- Dark design: 5dp #2C2C2E gap under each yellow tab row, blue indicator sits on the yellow -->
     <dimen name="tab_row_strip">5dp</dimen>
     <dimen name="tab_row_gap">5dp</dimen>
+    <dimen name="ad_details_card_elevation">0dp</dimen>
 </resources>

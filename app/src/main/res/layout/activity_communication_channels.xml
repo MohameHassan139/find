@@ -128,13 +128,16 @@
 
                     <!-- ── Row 2: WhatsApp ── -->
                     <LinearLayout
+                        android:id="@+id/rowWhatsapp"
                         android:layout_width="match_parent"
                         android:layout_height="42dp"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:layoutDirection="locale"
                         android:paddingHorizontal="20dp"
-                        android:layout_marginBottom="13dp">
+                        android:layout_marginBottom="13dp"
+                        android:clickable="true"
+                        android:focusable="true">
 
                         <!-- WhatsApp icon at START (tinted to match Figma monochrome) -->
                         <ImageView
@@ -170,12 +173,15 @@
 
                     <!-- ── Row 3: Call ── -->
                     <LinearLayout
+                        android:id="@+id/rowCall"
                         android:layout_width="match_parent"
                         android:layout_height="42dp"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:layoutDirection="locale"
-                        android:paddingHorizontal="20dp">
+                        android:paddingHorizontal="20dp"
+                        android:clickable="true"
+                        android:focusable="true">
 
                         <!-- Call icon at START -->
                         <ImageView

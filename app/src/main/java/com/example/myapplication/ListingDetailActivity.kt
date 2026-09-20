@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
@@ -23,10 +24,8 @@ import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityListingDetailBinding
 import com.example.myapplication.favorites.AddFavoriteRequest
 import com.example.myapplication.chat.model.CreateConversationRequest
-import com.example.myapplication.chat.model.ReportTargetType
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
-import com.example.myapplication.utils.ModerationDialogs
 import com.example.myapplication.utils.ModerationState
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.NavScreen
@@ -45,11 +44,71 @@ class ListingDetailActivity : BaseActivity() {
     private var siblingIds: ArrayList<String> = arrayListOf()
     private var currentIndex: Int = -1
     private val sharedVm: SharedCategoriesViewModel by viewModels()
+    private var currentListing: DetailListing? = null
 
     companion object {
         const val EXTRA_LISTING_ID = "listing_id"
         const val EXTRA_CURRENT_INDEX = "current_index"
         const val EXTRA_SIBLING_IDS = "sibling_ids"
+
+        /**
+         * Extracts a listing ID from Intent extras or Uri deep link data.
+         * Supports:
+         * - Extras: EXTRA_LISTING_ID, "id", "listingId"
+         * - Web URLs: https://finds.sa/listing/{id}, https://www.finds.sa/listings/{id}, etc.
+         * - Custom schemes: finds://listing/{id}, finds://listings/{id}, find://listing/{id}
+         * - Query parameters: ?id={id}, ?listing_id={id}, ?listingId={id}
+         */
+        fun extractListingId(intent: Intent?): String? {
+            if (intent == null) return null
+
+            // 1. Direct extras
+            val extraId = intent.getStringExtra(EXTRA_LISTING_ID)
+                ?: intent.getStringExtra("id")
+                ?: intent.getStringExtra("listingId")
+            if (!extraId.isNullOrBlank()) return extraId.trim()
+
+            val extraIntId = intent.getIntExtra(EXTRA_LISTING_ID, -1).takeIf { it > 0 }
+                ?: intent.getIntExtra("id", -1).takeIf { it > 0 }
+            if (extraIntId != null) return extraIntId.toString()
+
+            // 2. Intent data Uri
+            val data: Uri = intent.data ?: return null
+
+            // 2a. Query parameter: ?id=123 or ?listing_id=123
+            val paramId = data.getQueryParameter("id")
+                ?: data.getQueryParameter("listing_id")
+                ?: data.getQueryParameter("listingId")
+            if (!paramId.isNullOrBlank()) return paramId.trim()
+
+            // 2b. Path segments: /listing/123 or /listings/123
+            val segments = data.pathSegments
+            val listingIdx = segments.indexOfFirst {
+                it.equals("listing", ignoreCase = true) || it.equals("listings", ignoreCase = true)
+            }
+            if (listingIdx != -1 && listingIdx + 1 < segments.size) {
+                val segmentId = segments[listingIdx + 1].trim()
+                if (segmentId.isNotEmpty()) return segmentId
+            }
+
+            // 2c. Custom scheme where host is "listing" or "listings": e.g. finds://listing/123
+            val host = data.host
+            if (host != null && (host.equals("listing", ignoreCase = true) || host.equals("listings", ignoreCase = true))) {
+                val firstSeg = segments.firstOrNull()?.trim()
+                if (!firstSeg.isNullOrEmpty()) return firstSeg
+            }
+
+            // 2d. Fallback: last segment if it's not a generic word
+            val last = segments.lastOrNull()?.trim()
+            if (!last.isNullOrEmpty() &&
+                !last.equals("listing", ignoreCase = true) &&
+                !last.equals("listings", ignoreCase = true)
+            ) {
+                return last
+            }
+
+            return null
+        }
     }
 
     override fun attachBaseContext(newBase: Context) {
@@ -72,11 +131,24 @@ class ListingDetailActivity : BaseActivity() {
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
         BottomNavHelper.setup(this, NavScreen.NONE)
 
-        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finishWithPop() }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener {
+            handleBackNavigation()
+        }
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                handleBackNavigation()
+            }
+        })
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
             startMenuActivity()
         }
-        val listingId = intent.getStringExtra(EXTRA_LISTING_ID) ?: run { finish(); return }
+        val listingId = extractListingId(intent) ?: run {
+            if (isTaskRoot) {
+                startActivity(Intent(this, MainActivity::class.java))
+            }
+            finish()
+            return
+        }
         currentListingId = listingId
         siblingIds = intent.getStringArrayListExtra(EXTRA_SIBLING_IDS) ?: arrayListOf()
         currentIndex = intent.getIntExtra(EXTRA_CURRENT_INDEX, -1)
@@ -90,15 +162,20 @@ class ListingDetailActivity : BaseActivity() {
             lifecycleScope.launch { ModerationState.refresh(RetrofitClient.build(this@ListingDetailActivity)) }
         }
 
-        binding.ivFavoriteDetail.setOnClickListener {
+        val toggleFavorite: (View) -> Unit = {
             if (!TokenManager.isLoggedIn(this)) {
                 startActivity(Intent(this, PhoneAuthActivity::class.java))
-                return@setOnClickListener
+            } else {
+                val newState = !isFavorited
+                isFavorited = newState
+                updateFavoriteIcon()
+                syncFavorite(currentListingId, newState)
             }
-            val newState = !isFavorited
-            isFavorited = newState
-            updateFavoriteIcon()
-            syncFavorite(currentListingId, newState)
+        }
+        binding.btnFavoriteDetail.setOnClickListener(toggleFavorite)
+        binding.ivFavoriteDetail.setOnClickListener(toggleFavorite)
+        binding.btnShareDetail.setOnClickListener {
+            shareListing()
         }
     }
 
@@ -117,13 +194,13 @@ class ListingDetailActivity : BaseActivity() {
                 } else {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@ListingDetailActivity, getString(R.string.kt_str_21a15161), Toast.LENGTH_SHORT).show()
-                        finish()
+                        finishOrGoHome()
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@ListingDetailActivity, getString(R.string.kt_str_338558d2), Toast.LENGTH_SHORT).show()
-                    finish()
+                    finishOrGoHome()
                 }
             }
         }
@@ -132,7 +209,7 @@ class ListingDetailActivity : BaseActivity() {
     // ── Bind ──────────────────────────────────────────────────────────────────
 
     private fun bindListing(l: DetailListing) {
-        setupModerationMenu(l)
+        currentListing = l
         binding.tvTitle.text = l.title ?: ""
 
         binding.tvPrice.text = l.price?.let {
@@ -158,7 +235,8 @@ class ListingDetailActivity : BaseActivity() {
         }
 
         binding.tvDescription.text = l.description ?: ""
-        binding.tvDescription.visibility = if (l.description.isNullOrEmpty()) View.GONE else View.VISIBLE
+        val hasDesc = !l.description.isNullOrEmpty()
+        binding.cvDescription.visibility = if (hasDesc) View.VISIBLE else View.GONE
 
         val phone = l.sellerPhone
         // Call button — grey out if no phone or call disabled
@@ -192,26 +270,7 @@ class ListingDetailActivity : BaseActivity() {
 
         updateNavigationArrows()
 
-        binding.llImages.removeAllViews()
-        val gap = (8 * resources.displayMetrics.density).toInt()
-        val sidePadding = (32 * resources.displayMetrics.density).toInt()
-        val imageSize = resources.displayMetrics.widthPixels - sidePadding
-        l.images.forEach { url ->
-            val iv = ImageView(this)
-            val lp = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                imageSize
-            )
-            lp.bottomMargin = gap
-            iv.layoutParams = lp
-            iv.scaleType = ImageView.ScaleType.CENTER_CROP
-            Glide.with(iv.context).load(url)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.ic_photo_placeholder)
-                .transition(withCrossFade(300))
-                .into(iv)
-            binding.llImages.addView(iv)
-        }
+        setupImageCarousel(l.images)
 
         if (intent.getBooleanExtra("EXTRA_AUTO_START_CONVERSATION", false)) {
             intent.removeExtra("EXTRA_AUTO_START_CONVERSATION")
@@ -256,7 +315,8 @@ class ListingDetailActivity : BaseActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        val listingId = intent.getStringExtra(EXTRA_LISTING_ID) ?: currentListingId
+        val listingId = extractListingId(intent) ?: currentListingId
+        val isDifferent = listingId != currentListingId
         currentListingId = listingId
         siblingIds = intent.getStringArrayListExtra(EXTRA_SIBLING_IDS) ?: siblingIds
         currentIndex = intent.getIntExtra(EXTRA_CURRENT_INDEX, currentIndex)
@@ -265,6 +325,29 @@ class ListingDetailActivity : BaseActivity() {
         }
         updateNavigationArrows()
         loadListing(listingId)
+        if (TokenManager.isLoggedIn(this)) {
+            checkIsFavorited(listingId)
+        }
+        if (isDifferent) {
+            binding.nsvContent.smoothScrollTo(0, 0)
+        }
+    }
+
+    private fun handleBackNavigation() {
+        finishOrGoHome()
+    }
+
+    private fun finishOrGoHome() {
+        if (isTaskRoot) {
+            val homeIntent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            startActivity(homeIntent)
+            finish()
+            applyPopTransition()
+        } else {
+            finishWithPop()
+        }
     }
 
     // ── Contact button state ──────────────────────────────────────────────────
@@ -277,53 +360,12 @@ class ListingDetailActivity : BaseActivity() {
             androidx.core.content.ContextCompat.getColor(this, R.color.text_secondary)
         icon.setColorFilter(iconColor)
         label.setTextColor(labelColor)
-        icon.alpha = 1f
+        val targetAlpha = if (available) 1.0f else 0.40f
+        icon.alpha = targetAlpha
+        label.alpha = targetAlpha
     }
 
-    // ── Moderation (report/block) ───────────────────────────────────────────
 
-    private fun setupModerationMenu(l: DetailListing) {
-        val btn = binding.btnModeration
-        val myId = TokenManager.getUserId(this)
-        val isOwnListing = l.sellerId != null && myId.isNotEmpty() && l.sellerId.toString() == myId
-        if (l.sellerId == null || isOwnListing) {
-            btn.visibility = View.GONE
-            return
-        }
-        btn.visibility = View.VISIBLE
-        btn.setOnClickListener {
-            if (!TokenManager.isLoggedIn(this)) {
-                startActivity(Intent(this, PhoneAuthActivity::class.java))
-                return@setOnClickListener
-            }
-            showModerationMenu(btn, l)
-        }
-    }
-
-    private fun showModerationMenu(anchor: View, l: DetailListing) {
-        val sellerId = l.sellerId ?: return
-        val api = RetrofitClient.build(this)
-        val popup = android.widget.PopupMenu(this, anchor)
-        popup.menu.add(0, 1, 0, "الإبلاغ عن الإعلان")
-        popup.menu.add(0, 2, 1, "الإبلاغ عن البائع")
-        if (ModerationState.isBlocked(sellerId)) {
-            popup.menu.add(0, 3, 2, "إلغاء حظر البائع")
-        } else {
-            popup.menu.add(0, 4, 2, "حظر البائع")
-        }
-        popup.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                1 -> ModerationDialogs.showReportDialog(
-                    this, api, ReportTargetType.LISTING, l.id, l.title ?: l.id)
-                2 -> ModerationDialogs.showReportDialog(
-                    this, api, ReportTargetType.USER, sellerId.toString(), l.sellerName ?: "البائع")
-                3 -> ModerationDialogs.unblock(this, api, sellerId)
-                4 -> ModerationDialogs.showBlockConfirm(this, api, sellerId, l.sellerName, l.sellerAvatar)
-            }
-            true
-        }
-        popup.show()
-    }
 
     // ── Start conversation ────────────────────────────────────────────────────
 
@@ -396,12 +438,109 @@ class ListingDetailActivity : BaseActivity() {
 
     private fun updateFavoriteIcon() {
         binding.ivFavoriteDetail.setImageResource(
-            if (isFavorited) R.drawable.ic_favorite_filled else R.drawable.ic_favorites
+            if (isFavorited) R.drawable.ic_favorite_bookmark_selected
+            else R.drawable.ic_favorite_bookmark_unselected
         )
-        binding.ivFavoriteDetail.setColorFilter(
-            if (isFavorited) android.graphics.Color.parseColor("#E53935")
-            else android.graphics.Color.parseColor("#333333")
-        )
+        binding.ivFavoriteDetail.clearColorFilter()
+    }
+
+    private fun shareListing() {
+        val l = currentListing ?: return
+        val title = l.title ?: ""
+        val price = l.price?.let {
+            val fmt = if (it % 1 == 0.0) it.toLong().toString() else it.toString()
+            "$fmt ﷼"
+        } ?: ""
+        val shareText = buildString {
+            if (title.isNotEmpty()) append(title)
+            if (price.isNotEmpty()) {
+                if (isNotEmpty()) append("\n")
+                append(price)
+            }
+            if (isNotEmpty()) append("\n")
+            append("https://finds.sa/listing/${l.id}")
+        }
+        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, title)
+            putExtra(Intent.EXTRA_TEXT, shareText)
+        }
+        startActivity(Intent.createChooser(sendIntent, title.ifEmpty { getString(R.string.menu_share_app) }))
+    }
+
+    // ── Image carousel & dots indicator ──────────────────────────────────────
+
+    private fun setupImageCarousel(images: List<String>) {
+        if (images.isEmpty()) {
+            binding.vpImages.visibility = View.GONE
+            binding.ivNoImagePlaceholder.visibility = View.VISIBLE
+            binding.llDotsIndicator.visibility = View.GONE
+            return
+        }
+
+        binding.vpImages.visibility = View.VISIBLE
+        binding.vpImages.layoutDirection = View.LAYOUT_DIRECTION_LTR
+        binding.ivNoImagePlaceholder.visibility = View.GONE
+        binding.vpImages.adapter = DetailImageAdapter(images) { clickedPosition ->
+            com.example.myapplication.utils.FullScreenImageViewerDialog(this, images, clickedPosition).show()
+        }
+
+        setupDotsIndicator(images.size, 0)
+
+        binding.vpImages.registerOnPageChangeCallback(object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                updateDotsIndicator(position)
+            }
+        })
+    }
+
+    private fun setupDotsIndicator(count: Int, activePosition: Int = 0) {
+        binding.llDotsIndicator.removeAllViews()
+        if (count <= 1) {
+            binding.llDotsIndicator.visibility = View.GONE
+            return
+        }
+        binding.llDotsIndicator.visibility = View.VISIBLE
+        val dotSize = (7 * resources.displayMetrics.density).toInt()
+        val dotMargin = (3 * resources.displayMetrics.density).toInt()
+
+        for (i in 0 until count) {
+            val dot = View(this).apply {
+                val lp = LinearLayout.LayoutParams(dotSize, dotSize).apply {
+                    marginStart = dotMargin
+                    marginEnd = dotMargin
+                }
+                layoutParams = lp
+                setBackgroundResource(
+                    if (i == activePosition) R.drawable.bg_carousel_dot_active
+                    else R.drawable.bg_carousel_dot_inactive
+                )
+                scaleX = if (i == activePosition) 1.25f else 1.0f
+                scaleY = if (i == activePosition) 1.25f else 1.0f
+                setOnClickListener {
+                    binding.vpImages.setCurrentItem(i, true)
+                }
+            }
+            binding.llDotsIndicator.addView(dot)
+        }
+    }
+
+    private fun updateDotsIndicator(activePosition: Int) {
+        val childCount = binding.llDotsIndicator.childCount
+        for (i in 0 until childCount) {
+            val dot = binding.llDotsIndicator.getChildAt(i)
+            val isActive = (i == activePosition)
+            dot.setBackgroundResource(
+                if (isActive) R.drawable.bg_carousel_dot_active
+                else R.drawable.bg_carousel_dot_inactive
+            )
+            dot.animate()
+                .scaleX(if (isActive) 1.25f else 1.0f)
+                .scaleY(if (isActive) 1.25f else 1.0f)
+                .setDuration(200)
+                .start()
+        }
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
@@ -466,3 +605,34 @@ data class DetailListing(
     val regionNameAr: String?,
     val city: String?
 )
+
+class DetailImageAdapter(
+    private val images: List<String>,
+    private val onImageClick: ((Int) -> Unit)? = null
+) : androidx.recyclerview.widget.RecyclerView.Adapter<DetailImageAdapter.ImageViewHolder>() {
+
+    class ImageViewHolder(val imageView: ImageView) : androidx.recyclerview.widget.RecyclerView.ViewHolder(imageView)
+
+    override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int): ImageViewHolder {
+        val view = android.view.LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_detail_image, parent, false) as ImageView
+        return ImageViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
+        val url = images[position]
+        Glide.with(holder.imageView.context)
+            .load(url)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .placeholder(R.drawable.ic_photo_placeholder)
+            .transition(withCrossFade(200))
+            .into(holder.imageView)
+
+        holder.itemView.setOnClickListener {
+            onImageClick?.invoke(position)
+        }
+    }
+
+    override fun getItemCount(): Int = images.size
+}
+

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/flFullscreenContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FF000000">
+
+    <!-- ViewPager for swiping through full-res images -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vpFullscreenImages"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layoutDirection="ltr" />
+
+    <!-- Top bar: Close button + page counter capsule -->
+    <LinearLayout
+        android:id="@+id/llFullscreenTopBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="44dp"
+        android:paddingBottom="12dp">
+
+        <ImageButton
+            android:id="@+id/btnFullscreenClose"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_fullscreen_btn_circle"
+            android:src="@drawable/ic_close"
+            app:tint="#FFFFFFFF"
+            android:scaleType="centerInside"
+            android:contentDescription="@string/close" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tvFullscreenCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_fullscreen_counter_capsule"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="7dp"
+            android:textColor="#FFFFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:text="1 / 1" />
+    </LinearLayout>
+
+    <!-- Bottom: Swipe indicator dots -->
+    <LinearLayout
+        android:id="@+id/llFullscreenDots"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="36dp"
+        android:background="@drawable/bg_dots_indicator_pill"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:visibility="gone" />
+
+</FrameLayout>

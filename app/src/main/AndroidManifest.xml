@@ -20,10 +20,31 @@
         <!-- Main -->
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Web domain deep links for home / general -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="finds.sa" />
+                <data android:scheme="http" android:host="finds.sa" />
+                <data android:scheme="https" android:host="www.finds.sa" />
+                <data android:scheme="http" android:host="www.finds.sa" />
+            </intent-filter>
+
+            <!-- Custom URI schemes for home -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="finds" />
+                <data android:scheme="find" />
             </intent-filter>
         </activity>
 
@@ -33,7 +54,47 @@
         <activity android:name=".AddAdActivity" android:exported="false" />
         <activity android:name=".LocationSelectionActivity" android:exported="false" />
         <activity android:name=".CategorySelectionActivity" android:exported="false" />
-        <activity android:name=".ListingDetailActivity" android:exported="false" />
+        <activity
+            android:name=".ListingDetailActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+
+            <!-- Web domain deep links for listings: https://finds.sa/listing/* and /listings/* -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="finds.sa" android:pathPrefix="/listing" />
+                <data android:scheme="http" android:host="finds.sa" android:pathPrefix="/listing" />
+                <data android:scheme="https" android:host="www.finds.sa" android:pathPrefix="/listing" />
+                <data android:scheme="http" android:host="www.finds.sa" android:pathPrefix="/listing" />
+                <data android:scheme="https" android:host="api.finds.sa" android:pathPrefix="/listing" />
+                <data android:scheme="http" android:host="api.finds.sa" android:pathPrefix="/listing" />
+                <data android:scheme="https" android:host="finds.sa" android:pathPrefix="/listings" />
+                <data android:scheme="http" android:host="finds.sa" android:pathPrefix="/listings" />
+                <data android:scheme="https" android:host="www.finds.sa" android:pathPrefix="/listings" />
+                <data android:scheme="http" android:host="www.finds.sa" android:pathPrefix="/listings" />
+            </intent-filter>
+
+            <!-- Custom URI schemes: finds://listing/* and find://listing/* -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="finds" android:host="listing" />
+                <data android:scheme="finds" android:host="listings" />
+                <data android:scheme="find" android:host="listing" />
+                <data android:scheme="find" android:host="listings" />
+                <data android:scheme="finds" android:host="finds.sa" android:pathPrefix="/listing" />
+                <data android:scheme="finds" android:host="finds.sa" android:pathPrefix="/listings" />
+                <data android:scheme="finds" android:host="www.finds.sa" android:pathPrefix="/listing" />
+                <data android:scheme="finds" android:host="www.finds.sa" android:pathPrefix="/listings" />
+                <data android:scheme="find" android:host="finds.sa" android:pathPrefix="/listing" />
+                <data android:scheme="find" android:host="finds.sa" android:pathPrefix="/listings" />
+                <data android:scheme="find" android:host="www.finds.sa" android:pathPrefix="/listing" />
+                <data android:scheme="find" android:host="www.finds.sa" android:pathPrefix="/listings" />
+            </intent-filter>
+        </activity>
         <activity android:name=".SearchActivity" android:exported="false"
             android:windowSoftInputMode="stateVisible" />
 

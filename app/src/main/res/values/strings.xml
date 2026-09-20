@@ -159,6 +159,8 @@
     <string name="cd_call">Call</string>
     <string name="cd_whatsapp">WhatsApp</string>
     <string name="cd_chat">Chat</string>
+    <string name="cd_favorite">Favorite</string>
+    <string name="cd_image">Ad Image</string>
     <string name="time_now">Just now</string>
     <string name="time_minutes">%d minutes</string>
     <string name="time_hours">%d hours</string>
@@ -366,4 +368,6 @@
 
     <string name="nafath_banner_desc">وثق حسابك عبر النفاذ الوطني</string>
     <string name="nafath_verify_action">توثيق الحساب</string>
+    <string name="close">Close</string>
+    <string name="cd_close">Close</string>
 </resources>

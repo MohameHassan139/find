@@ -133,4 +133,14 @@
     <color name="bg_fav_container">#1AFFFFFF</color>
     <!-- iOS AppColor.fullAppText (black in light mode, white in dark mode) -->
     <color name="full_app_text">#FF000000</color>
+
+    <!-- Detail screen tokens (Figma Frame 42 / 43, Light Mode) -->
+    <color name="ad_details_screen_bg">@color/find_gray_bg</color>
+    <color name="ad_details_card_bg">#FFFFFFFF</color>
+    <color name="frame_43_bg">#FFEEEEEE</color>
+    <color name="favorite_btn_bg">#40FFFFFF</color>
+    <color name="favorite_btn_stroke">#B3000000</color>
+    <color name="dot_indicator_active">#FF2C2C2E</color>
+    <color name="dot_indicator_inactive">#FF2C2C2E</color>
+    <color name="share_btn_bg">#D9000000</color>
 </resources>

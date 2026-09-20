@@ -159,6 +159,8 @@
     <string name="cd_call">إتصال</string>
     <string name="cd_whatsapp">واتساب</string>
     <string name="cd_chat">محادثة</string>
+    <string name="cd_favorite">المفضلة</string>
+    <string name="cd_image">صورة الإعلان</string>
     <string name="time_now">الآن</string>
     <string name="time_minutes">%d دقيقة</string>
     <string name="time_hours">%d ساعة</string>
@@ -374,4 +376,6 @@
 
     <string name="nafath_banner_desc">وثق حسابك عبر النفاذ الوطني</string>
     <string name="nafath_verify_action">توثيق الحساب</string>
+    <string name="close">إغلاق</string>
+    <string name="cd_close">إغلاق</string>
 </resources>

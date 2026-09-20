@@ -80,6 +80,9 @@ class MainActivity : BaseActivity() {
         refreshUserProfile()
         requestNotificationPermissionIfNeeded()
         lifecycleScope.launch { PushTokenManager.refreshAndUploadIfNeeded(this@MainActivity) }
+        if (savedInstanceState == null) {
+            handleDeepLink(intent)
+        }
         handleIncomingCategoryIntent(intent)
         handleNavigationIntent(intent)
     }
@@ -577,8 +580,23 @@ class MainActivity : BaseActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        handleDeepLink(intent)
         handleIncomingCategoryIntent(intent)
         handleNavigationIntent(intent)
+    }
+
+    private fun handleDeepLink(intent: Intent?) {
+        if (intent == null) return
+        val listingId = ListingDetailActivity.extractListingId(intent)
+        if (!listingId.isNullOrBlank()) {
+            intent.data = null
+            intent.removeExtra(ListingDetailActivity.EXTRA_LISTING_ID)
+            intent.removeExtra("id")
+            val detailIntent = Intent(this, ListingDetailActivity::class.java).apply {
+                putExtra(ListingDetailActivity.EXTRA_LISTING_ID, listingId)
+            }
+            startWithPush(detailIntent)
+        }
     }
 
     private fun handleNavigationIntent(intent: Intent) {

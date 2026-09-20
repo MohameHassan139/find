@@ -53,7 +53,7 @@
     <!-- Surface colors (used in place of hardcoded whites) -->
     <color name="surface_primary">#FF252525</color>
     <color name="surface_secondary">#FF252525</color>
-    <color name="ad_details_header_bg">#FF252525</color>
+    <color name="ad_details_header_bg">@color/frame_43_bg</color>
     <color name="ad_details_chevron_tint">#FFFFFFFF</color>
     <color name="notif_unread_bg">#FF2A2000</color>
     <color name="notif_read_bg">#FF1E1E1E</color>
@@ -141,4 +141,14 @@
     <color name="bg_fav_container">#1A000000</color>
     <!-- iOS AppColor.fullAppText (black in light mode, white in dark mode) -->
     <color name="full_app_text">#FFFFFFFF</color>
+
+    <!-- Detail screen tokens (Figma Frame 42 / 43, Dark Mode) -->
+    <color name="ad_details_screen_bg">#FF000000</color>
+    <color name="ad_details_card_bg">#FF000000</color>
+    <color name="frame_43_bg">#FF262628</color>
+    <color name="favorite_btn_bg">#26FFFFFF</color>
+    <color name="favorite_btn_stroke">#80FFFFFF</color>
+    <color name="dot_indicator_active">#FFFFFFFF</color>
+    <color name="dot_indicator_inactive">#FF8E8E93</color>
+    <color name="share_btn_bg">#FF3A3A3C</color>
 </resources>
