@@ -145,4 +145,6 @@
     <color name="dot_indicator_active">#FF2C2C2E</color>
     <color name="dot_indicator_inactive">#FF2C2C2E</color>
     <color name="share_btn_bg">#D9000000</color>
+    <!-- Ad details share icon (circle with cut-out arrow): black 85% on the light frame -->
+    <color name="share_icon_fill">#D9000000</color>
 </resources>

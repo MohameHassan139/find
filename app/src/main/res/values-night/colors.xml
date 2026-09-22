@@ -153,4 +153,6 @@
     <color name="dot_indicator_active">#FFFFFFFF</color>
     <color name="dot_indicator_inactive">#FF8E8E93</color>
     <color name="share_btn_bg">#FF3A3A3C</color>
+    <!-- Ad details share icon in dark mode: white 85% circle, arrow cut out shows the dark frame -->
+    <color name="share_icon_fill">#D9FFFFFF</color>
 </resources>
