@@ -46,7 +46,19 @@ class ListingDetailActivity : BaseActivity() {
     private val sharedVm: SharedCategoriesViewModel by viewModels()
     private var currentListing: DetailListing? = null
 
+    // Auto-scrolling image carousel
+    private val autoScrollHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    private var autoScrollRunnable: Runnable? = null
+    private var carouselImageCount = 0
+    private var carouselAnimator: android.animation.ValueAnimator? = null
+
     companion object {
+        /** Seconds between photos on the ad details carousel. */
+        private const val AUTO_SCROLL_DELAY_MS = 3500L
+
+        /** How long one slide takes; longer than ViewPager2's own ~250ms animation. */
+        private const val AUTO_SCROLL_ANIM_MS = 700L
+
         const val EXTRA_LISTING_ID = "listing_id"
         const val EXTRA_CURRENT_INDEX = "current_index"
         const val EXTRA_SIBLING_IDS = "sibling_ids"
@@ -472,6 +484,8 @@ class ListingDetailActivity : BaseActivity() {
 
     private fun setupImageCarousel(images: List<String>) {
         if (images.isEmpty()) {
+            carouselImageCount = 0
+            stopAutoScroll()
             binding.vpImages.visibility = View.GONE
             binding.ivNoImagePlaceholder.visibility = View.VISIBLE
             binding.llDotsIndicator.visibility = View.GONE
@@ -485,6 +499,17 @@ class ListingDetailActivity : BaseActivity() {
             com.example.myapplication.utils.FullScreenImageViewerDialog(this, images, clickedPosition).show()
         }
 
+        // Gentle fade + zoom while a photo slides in or out
+        binding.vpImages.setPageTransformer { page, position ->
+            val closeness = (1f - kotlin.math.abs(position)).coerceIn(0f, 1f)
+            page.alpha = 0.45f + closeness * 0.55f
+            val scale = 0.90f + closeness * 0.10f
+            page.scaleX = scale
+            page.scaleY = scale
+        }
+        // Keep neighbouring photos ready so the slide never stutters
+        binding.vpImages.offscreenPageLimit = 1
+
         setupDotsIndicator(images.size, 0)
 
         binding.vpImages.registerOnPageChangeCallback(object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
@@ -492,7 +517,99 @@ class ListingDetailActivity : BaseActivity() {
                 super.onPageSelected(position)
                 updateDotsIndicator(position)
             }
+
+            override fun onPageScrollStateChanged(state: Int) {
+                super.onPageScrollStateChanged(state)
+                // While the user is swiping, stop auto-scrolling; resume once they let go
+                if (state == androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_DRAGGING) {
+                    stopAutoScroll()
+                } else if (state == androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_IDLE) {
+                    startAutoScroll()
+                }
+            }
         })
+
+        carouselImageCount = images.size
+        startAutoScroll()
+    }
+
+    // ── Auto-scroll ──────────────────────────────────────────────────────────
+
+    /** Advances to the next photo every few seconds, looping back to the first. */
+    private fun startAutoScroll() {
+        stopAutoScroll()
+        if (carouselImageCount <= 1) return
+        val runnable = object : Runnable {
+            override fun run() {
+                advanceCarousel()
+                autoScrollHandler.postDelayed(this, AUTO_SCROLL_DELAY_MS)
+            }
+        }
+        autoScrollRunnable = runnable
+        autoScrollHandler.postDelayed(runnable, AUTO_SCROLL_DELAY_MS)
+    }
+
+    /**
+     * Slides to the next photo by hand instead of [ViewPager2.setCurrentItem], whose
+     * built-in animation is short and abrupt. Dragging the pager ourselves over
+     * [AUTO_SCROLL_ANIM_MS] with an ease-in-out curve gives a slow, smooth glide.
+     */
+    private fun advanceCarousel() {
+        val pager = binding.vpImages
+        val count = pager.adapter?.itemCount ?: 0
+        if (count <= 1) return
+
+        val width = pager.width
+        // Wrapping back to the first photo, or before layout: fall back to a plain scroll
+        if (width == 0 || pager.currentItem == count - 1) {
+            pager.setCurrentItem(0.takeIf { pager.currentItem == count - 1 } ?: (pager.currentItem + 1), true)
+            return
+        }
+        if (!pager.beginFakeDrag()) return
+
+        val animator = android.animation.ValueAnimator.ofInt(0, width).apply {
+            duration = AUTO_SCROLL_ANIM_MS
+            interpolator = android.view.animation.AccelerateDecelerateInterpolator()
+            var dragged = 0
+            addUpdateListener { anim ->
+                val value = anim.animatedValue as Int
+                if (pager.isFakeDragging) pager.fakeDragBy(-(value - dragged).toFloat())
+                dragged = value
+            }
+            addListener(object : android.animation.AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: android.animation.Animator) {
+                    if (pager.isFakeDragging) pager.endFakeDrag()
+                }
+
+                override fun onAnimationCancel(animation: android.animation.Animator) {
+                    if (pager.isFakeDragging) pager.endFakeDrag()
+                }
+            })
+        }
+        carouselAnimator = animator
+        animator.start()
+    }
+
+    private fun stopAutoScroll() {
+        autoScrollRunnable?.let { autoScrollHandler.removeCallbacks(it) }
+        autoScrollRunnable = null
+        carouselAnimator?.cancel()
+        carouselAnimator = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        startAutoScroll()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopAutoScroll()
+    }
+
+    override fun onDestroy() {
+        stopAutoScroll()
+        super.onDestroy()
     }
 
     private fun setupDotsIndicator(count: Int, activePosition: Int = 0) {

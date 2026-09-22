@@ -75,10 +75,10 @@
             <ImageView
                 android:id="@+id/ivAppLogo"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="48dp"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_app_logo_full"
+                android:src="@drawable/ic_app_logo_lockup"
                 android:contentDescription="Finds" />
             </LinearLayout><!-- end bar content -->
         </LinearLayout><!-- end llAppBar -->
@@ -348,6 +348,7 @@
                                     android:id="@+id/ivCall"
                                     android:layout_width="28dp"
                                     android:layout_height="28dp"
+                                    android:layout_marginTop="5dp"
                                     android:src="@drawable/ic_channel_call"
                                     android:contentDescription="@string/cd_call"
                                     app:tint="@color/appbar_icon_tint" />
@@ -375,6 +376,7 @@
                                     android:id="@+id/ivWhatsapp"
                                     android:layout_width="28dp"
                                     android:layout_height="28dp"
+                                    android:layout_marginTop="5dp"
                                     android:src="@drawable/ic_channel_whatsapp"
                                     android:contentDescription="@string/cd_whatsapp"
                                     app:tint="@color/appbar_icon_tint" />
@@ -402,6 +404,7 @@
                                     android:id="@+id/ivChat"
                                     android:layout_width="28dp"
                                     android:layout_height="28dp"
+                                    android:layout_marginTop="5dp"
                                     android:contentDescription="@string/cd_chat"
                                     android:src="@drawable/ic_nav_chat"
                                     app:tint="@color/appbar_icon_tint" />
@@ -489,7 +492,7 @@
                             android:id="@+id/ivNoImagePlaceholder"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:scaleType="center"
+                            android:scaleType="centerCrop"
                             android:src="@drawable/ic_photo_placeholder"
                             android:visibility="gone"
                             android:contentDescription="@string/cd_image" />

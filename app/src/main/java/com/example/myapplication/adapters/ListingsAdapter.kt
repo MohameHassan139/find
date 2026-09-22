@@ -4,8 +4,10 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.MotionEvent
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.annotation.SuppressLint
+import androidx.viewpager2.widget.ViewPager2
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -29,6 +31,7 @@ class ListingsAdapter(
     inner class ItemVH(val b: ItemListingCardBinding) : RecyclerView.ViewHolder(b.root) {
         var currentImageIndex = 0
         var imageUrls: List<String> = emptyList()
+        var pageCallback: ViewPager2.OnPageChangeCallback? = null
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemVH =
@@ -84,88 +87,8 @@ class ListingsAdapter(
             holder.currentImageIndex = 0
         }
         
-        // Show/hide navigation arrows
-        if (item.images.size > 1) {
-            b.ivPrevImage.visibility = View.VISIBLE
-            b.ivNextImage.visibility = View.VISIBLE
-        } else {
-            b.ivPrevImage.visibility = View.GONE
-            b.ivNextImage.visibility = View.GONE
-        }
-
-        // Load current image
-        loadImage(b, holder.imageUrls, holder.currentImageIndex)
-
-        // Previous image button
-        b.ivPrevImage.setOnClickListener {
-            if (holder.imageUrls.isNotEmpty()) {
-                holder.currentImageIndex = if (holder.currentImageIndex > 0) {
-                    holder.currentImageIndex - 1
-                } else {
-                    holder.imageUrls.size - 1
-                }
-                loadImage(b, holder.imageUrls, holder.currentImageIndex)
-            }
-        }
-
-        // Next image button
-        b.ivNextImage.setOnClickListener {
-            if (holder.imageUrls.isNotEmpty()) {
-                holder.currentImageIndex = (holder.currentImageIndex + 1) % holder.imageUrls.size
-                loadImage(b, holder.imageUrls, holder.currentImageIndex)
-            }
-        }
-
-        // Add swipe gesture support on the main image
-        var downX = 0f
-        var downY = 0f
-        b.ivImage.setOnTouchListener { v, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    downX = event.x
-                    downY = event.y
-                    v.parent.requestDisallowInterceptTouchEvent(true)
-                    true
-                }
-                MotionEvent.ACTION_UP -> {
-                    val upX = event.x
-                    val upY = event.y
-                    val diffX = upX - downX
-                    val diffY = upY - downY
-                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 100) {
-                        if (holder.imageUrls.isNotEmpty()) {
-                            val isRtl = LocaleHelper.isArabic(v.context)
-                            if (diffX > 0) {
-                                // Swipe right
-                                if (isRtl) {
-                                    holder.currentImageIndex = (holder.currentImageIndex + 1) % holder.imageUrls.size
-                                } else {
-                                    holder.currentImageIndex = if (holder.currentImageIndex > 0) holder.currentImageIndex - 1 else holder.imageUrls.size - 1
-                                }
-                            } else {
-                                // Swipe left
-                                if (isRtl) {
-                                    holder.currentImageIndex = if (holder.currentImageIndex > 0) holder.currentImageIndex - 1 else holder.imageUrls.size - 1
-                                } else {
-                                    holder.currentImageIndex = (holder.currentImageIndex + 1) % holder.imageUrls.size
-                                }
-                            }
-                            loadImage(b, holder.imageUrls, holder.currentImageIndex)
-                        }
-                    } else if (Math.abs(diffX) < 10 && Math.abs(diffY) < 10) {
-                        v.performClick()
-                        onClick(item)
-                    }
-                    v.parent.requestDisallowInterceptTouchEvent(false)
-                    true
-                }
-                MotionEvent.ACTION_CANCEL -> {
-                    v.parent.requestDisallowInterceptTouchEvent(false)
-                    false
-                }
-                else -> false
-            }
-        }
+        // Swipeable image gallery + dots indicator (same as the ad details screen)
+        setupCardGallery(holder, item)
 
         b.root.setOnClickListener { onClick(item) }
         
@@ -190,20 +113,130 @@ class ListingsAdapter(
         }
     }
 
-    private fun loadImage(binding: ItemListingCardBinding, images: List<String>, index: Int) {
-        val imageUrl = images.getOrNull(index)
-        if (!imageUrl.isNullOrEmpty()) {
-            Glide.with(binding.ivImage.context)
-                .load(imageUrl)
+    // ── Image gallery ────────────────────────────────────────────────────────
+
+    private fun setupCardGallery(holder: ItemVH, item: ApiListing) {
+        val b = holder.b
+        val images = holder.imageUrls
+
+        // Round the photo corners the same way the old ShapeableImageView did
+        b.flCardImage.clipToOutline = true
+
+        // The old chevrons are gone — swiping replaces them
+        b.ivPrevImage.visibility = View.GONE
+        b.ivNextImage.visibility = View.GONE
+
+        holder.pageCallback?.let { b.vpCardImages.unregisterOnPageChangeCallback(it) }
+        holder.pageCallback = null
+
+        if (images.isEmpty()) {
+            b.vpCardImages.adapter = null
+            b.vpCardImages.visibility = View.GONE
+            b.llCardDots.visibility = View.GONE
+            b.ivImage.visibility = View.VISIBLE
+            b.ivImage.setImageResource(R.drawable.ic_photo_placeholder)
+            return
+        }
+
+        b.ivImage.visibility = View.GONE
+        b.vpCardImages.visibility = View.VISIBLE
+        b.vpCardImages.layoutDirection = View.LAYOUT_DIRECTION_LTR
+        // Dots follow the pager, not the locale: page 1 is always the first dot
+        b.llCardDots.layoutDirection = View.LAYOUT_DIRECTION_LTR
+        b.vpCardImages.isUserInputEnabled = images.size > 1
+        b.vpCardImages.adapter = CardImageAdapter(images) { onClick(item) }
+
+        val startIndex = holder.currentImageIndex.coerceIn(0, images.size - 1)
+        holder.currentImageIndex = startIndex
+        b.vpCardImages.setCurrentItem(startIndex, false)
+
+        buildDots(b.llCardDots, images.size, startIndex, b.vpCardImages)
+
+        val callback = object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                holder.currentImageIndex = position
+                updateDots(b.llCardDots, position)
+            }
+        }
+        b.vpCardImages.registerOnPageChangeCallback(callback)
+        holder.pageCallback = callback
+    }
+
+    private fun buildDots(container: LinearLayout, count: Int, activePosition: Int, pager: ViewPager2) {
+        container.removeAllViews()
+        if (count <= 1) {
+            container.visibility = View.GONE
+            return
+        }
+        container.visibility = View.VISIBLE
+        val density = container.resources.displayMetrics.density
+        val dotSize = (6 * density).toInt()
+        val dotMargin = (2 * density).toInt()
+
+        for (i in 0 until count) {
+            val dot = View(container.context).apply {
+                layoutParams = LinearLayout.LayoutParams(dotSize, dotSize).apply {
+                    marginStart = dotMargin
+                    marginEnd = dotMargin
+                }
+                setBackgroundResource(
+                    if (i == activePosition) R.drawable.bg_carousel_dot_active
+                    else R.drawable.bg_carousel_dot_inactive
+                )
+                scaleX = if (i == activePosition) 1.25f else 1.0f
+                scaleY = if (i == activePosition) 1.25f else 1.0f
+                setOnClickListener { pager.setCurrentItem(i, true) }
+            }
+            container.addView(dot)
+        }
+    }
+
+    private fun updateDots(container: LinearLayout, activePosition: Int) {
+        for (i in 0 until container.childCount) {
+            val dot = container.getChildAt(i)
+            val isActive = (i == activePosition)
+            dot.setBackgroundResource(
+                if (isActive) R.drawable.bg_carousel_dot_active
+                else R.drawable.bg_carousel_dot_inactive
+            )
+            dot.animate()
+                .scaleX(if (isActive) 1.25f else 1.0f)
+                .scaleY(if (isActive) 1.25f else 1.0f)
+                .setDuration(200)
+                .start()
+        }
+    }
+
+    /** One photo per page; a tap opens the ad, exactly like tapping the card. */
+    private class CardImageAdapter(
+        private val images: List<String>,
+        private val onImageClick: () -> Unit
+    ) : RecyclerView.Adapter<CardImageAdapter.ImageVH>() {
+
+        class ImageVH(val imageView: ImageView) : RecyclerView.ViewHolder(imageView)
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageVH {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_detail_image, parent, false) as ImageView
+            view.scaleType = ImageView.ScaleType.CENTER_CROP
+            return ImageVH(view)
+        }
+
+        override fun onBindViewHolder(holder: ImageVH, position: Int) {
+            Glide.with(holder.imageView.context)
+                .load(images[position])
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.ic_photo_placeholder)
                 .error(R.drawable.ic_photo_placeholder)
-                .transition(com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade(300))
+                .transition(com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade(200))
                 .centerCrop()
-                .into(binding.ivImage)
-        } else {
-            binding.ivImage.setImageResource(R.drawable.ic_photo_placeholder)
+                .into(holder.imageView)
+
+            holder.itemView.setOnClickListener { onImageClick() }
         }
+
+        override fun getItemCount() = images.size
     }
 
     override fun getItemCount() = items.size

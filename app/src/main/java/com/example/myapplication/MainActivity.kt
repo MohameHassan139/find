@@ -286,6 +286,9 @@ class MainActivity : BaseActivity() {
 
     private fun updateChipStyles(active: String?) {
         fun style(tv: TextView, underline: View, isActive: Boolean) {
+            // Same two sizes as the category / sub-category / option rows
+            tv.textSize = if (isActive) com.example.myapplication.adapters.TAB_TEXT_SIZE_ACTIVE
+                          else com.example.myapplication.adapters.TAB_TEXT_SIZE_INACTIVE
             if (tv is StrokeTextView) {
                 tv.applyTabState(isActive)
             } else {

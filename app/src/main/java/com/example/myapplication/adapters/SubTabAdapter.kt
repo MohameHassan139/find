@@ -34,7 +34,7 @@ class SubTabAdapter(
 
         val tvLabel = holder.b.tvLabel
         tvLabel.text = label
-        tvLabel.textSize = 14f
+        tvLabel.textSize = if (isActive) TAB_TEXT_SIZE_ACTIVE else TAB_TEXT_SIZE_INACTIVE
         tvLabel.applyTabState(isActive)
         // Active indicator: flat bar in light mode, rounded #007AFF pill in dark mode
         holder.b.underline.visibility = if (isActive) View.VISIBLE else View.INVISIBLE

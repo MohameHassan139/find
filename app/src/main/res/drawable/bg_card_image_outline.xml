@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Outline used to clip the card's photo gallery: rounded on the outer side only,
+     matching the card's 10dp corner radius (LTR: right side). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@android:color/transparent" />
+    <corners
+        android:topRightRadius="10dp"
+        android:bottomRightRadius="10dp"
+        android:topLeftRadius="0dp"
+        android:bottomLeftRadius="0dp" />
+</shape>

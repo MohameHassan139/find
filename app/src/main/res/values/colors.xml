@@ -25,6 +25,8 @@
     <color name="app_background">#FFFFFF</color>
     <color name="settings_bg">#F4F4F4</color>
     <color name="settings_icon_holder_bg">#FFF4CC</color>
+    <!-- Glyphs on the yellow tiles (menu + settings) stay black in both themes -->
+    <color name="tile_icon_tint">#FF000000</color>
     <color name="divider">#E8E8E8</color>
     <color name="text_primary">#1A1A1A</color>
     <color name="text_secondary">#888888</color>
@@ -127,6 +129,11 @@
     <color name="nav_glass_rim">#40000000</color>
     <color name="nav_glass_highlight">#CCFFFFFF</color>
     <!-- Selected: black icon, 85% black label. Others: whole item at 30% opacity -->
+    <!-- Selected nav item: frosted glass chip on the nav pill -->
+    <color name="nav_item_glass_top">#B3FFFFFF</color>
+    <color name="nav_item_glass_bottom">#8CFFFFFF</color>
+    <color name="nav_item_glass_rim">#33000000</color>
+    <color name="nav_item_glass_highlight">#CCFFFFFF</color>
     <color name="nav_icon_selected">#FF000000</color>
     <color name="nav_text_selected">#D9000000</color>
     <color name="nav_icon_unselected">#4D000000</color>
@@ -147,4 +154,7 @@
     <color name="share_btn_bg">#D9000000</color>
     <!-- Ad details share icon (circle with cut-out arrow): black 85% on the light frame -->
     <color name="share_icon_fill">#D9000000</color>
+    <!-- "No image" placeholder (Figma no-imge.svg): grey card + photo glyph -->
+    <color name="placeholder_bg">#FFD9D9D9</color>
+    <color name="placeholder_icon">#FF909090</color>
 </resources>

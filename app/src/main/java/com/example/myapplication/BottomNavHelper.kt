@@ -1,7 +1,9 @@
 package com.example.myapplication
 
 import android.content.Intent
+import android.graphics.Paint
 import android.graphics.PorterDuff
+import android.graphics.Typeface
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -62,11 +64,33 @@ object BottomNavHelper {
         }
     }
 
+    /** Normal / bold icon for each nav item. */
+    private fun iconRes(ivId: Int, selected: Boolean): Int? = when (ivId) {
+        R.id.ivNavHome -> if (selected) R.drawable.ic_nav_home_bold else R.drawable.ic_nav_home
+        R.id.ivNavAdd -> if (selected) R.drawable.ic_nav_add_bold else R.drawable.ic_nav_add
+        R.id.ivNavChat -> if (selected) R.drawable.ic_nav_chat_bold else R.drawable.ic_nav_chat
+        else -> null
+    }
+
     private fun applyItem(activity: AppCompatActivity, containerId: Int, ivId: Int, tvId: Int, selected: Boolean) {
         val iconColor = activity.getColor(if (selected) R.color.nav_icon_selected else R.color.nav_icon_unselected)
         val textColor = activity.getColor(if (selected) R.color.nav_text_selected else R.color.nav_text_unselected)
-        activity.findViewById<ImageView>(ivId)?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
-        activity.findViewById<TextView>(tvId)?.setTextColor(textColor)
+        activity.findViewById<ImageView>(ivId)?.let { iv ->
+            // The selected item also gets the heavier version of its icon
+            iconRes(ivId, selected)?.let { iv.setImageResource(it) }
+            iv.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
+        }
+        activity.findViewById<TextView>(tvId)?.let { tv ->
+            tv.setTextColor(textColor)
+            // Client note: the selected item is bold — and noticeably so. The app font
+            // ships in Regular only, so synthetic bold alone stays thin; outlining the
+            // glyphs with a hairline stroke gives it real weight.
+            tv.setTypeface(FindFonts.typeface(activity), if (selected) Typeface.BOLD else Typeface.NORMAL)
+            tv.paint.isFakeBoldText = selected
+            tv.paint.style = if (selected) Paint.Style.FILL_AND_STROKE else Paint.Style.FILL
+            tv.paint.strokeWidth = if (selected) 0.9f else 0f
+            tv.invalidate()
+        }
         activity.findViewById<android.view.View>(containerId)?.setBackgroundResource(
             if (selected) R.drawable.bg_nav_item_selected else 0
         )

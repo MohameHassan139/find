@@ -54,7 +54,6 @@
 
             <EditText
                 android:id="@+id/etSearch"
-                style="@style/Find.Text.SearchPlaceholder"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
@@ -66,6 +65,8 @@
                 android:inputType="text"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="0dp"
+                android:includeFontPadding="false"
+                android:textSize="14sp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/search_hint_text" />
 
@@ -134,12 +135,12 @@
 
                 <com.example.myapplication.widgets.StrokeTextView
                     android:id="@+id/chipAll"
-                    style="@style/Find.Text.Tabs"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:translationY="-2dp"
                     android:text="@string/filter_all"
+                    android:textSize="16sp"
                     android:textColor="@color/tab_label_active" />
 
                 <View
@@ -151,6 +152,7 @@
                     android:id="@+id/underlineAll"
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
+                    android:layout_marginBottom="@dimen/tab_row_strip"
                     android:background="@drawable/bg_tab_underline_active" />
             </LinearLayout>
 
@@ -173,12 +175,12 @@
 
                 <com.example.myapplication.widgets.StrokeTextView
                     android:id="@+id/chipOffer"
-                    style="@style/Find.Text.Tabs"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:translationY="-2dp"
                     android:text="@string/filter_offer"
+                    android:textSize="16sp"
                     android:textColor="@color/tab_label_inactive" />
 
                 <View
@@ -190,6 +192,7 @@
                     android:id="@+id/underlineOffer"
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
+                    android:layout_marginBottom="@dimen/tab_row_strip"
                     android:background="@android:color/transparent" />
             </LinearLayout>
 
@@ -212,12 +215,12 @@
 
                 <com.example.myapplication.widgets.StrokeTextView
                     android:id="@+id/chipRequest"
-                    style="@style/Find.Text.Tabs"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:translationY="-2dp"
                     android:text="@string/filter_request"
+                    android:textSize="16sp"
                     android:textColor="@color/tab_label_inactive" />
 
                 <View
@@ -229,6 +232,7 @@
                     android:id="@+id/underlineRequest"
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
+                    android:layout_marginBottom="@dimen/tab_row_strip"
                     android:background="@android:color/transparent" />
             </LinearLayout>
 
@@ -257,7 +261,7 @@
                 <LinearLayout
                     android:id="@+id/spinnerRegion"
                     android:layout_width="182dp"
-                    android:layout_height="30dp"
+                    android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:background="@drawable/bg_spinner_pill"
@@ -271,7 +275,7 @@
                         android:layout_height="wrap_content"
                         android:translationY="-2dp"
                         android:text="@string/all_regions"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:textColor="@color/tab_row_text" />
 
                     <View
@@ -291,7 +295,7 @@
                 <LinearLayout
                     android:id="@+id/spinnerCity"
                     android:layout_width="182dp"
-                    android:layout_height="30dp"
+                    android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:background="@drawable/bg_spinner_pill"
@@ -307,7 +311,7 @@
                         android:layout_height="wrap_content"
                         android:translationY="-2dp"
                         android:text="@string/all_cities"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:textColor="@color/tab_row_text" />
 
                     <View

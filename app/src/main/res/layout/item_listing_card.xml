@@ -185,9 +185,20 @@
 
         <!-- Image side (147dp width, matches Figma 147px) -->
         <FrameLayout
+            android:id="@+id/flCardImage"
             android:layout_width="147dp"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_card_image_outline">
 
+            <!-- Swipeable gallery (same behaviour as the ad details screen) -->
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/vpCardImages"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layoutDirection="ltr"
+                android:visibility="gone" />
+
+            <!-- Shown when the ad has no images -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivImage"
                 android:layout_width="match_parent"
@@ -196,6 +207,20 @@
                 android:src="@drawable/ic_photo_placeholder"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Card.ImageSide"
                 android:importantForAccessibility="no" />
+
+            <!-- Dots indicator, over the image (as on the ad details screen) -->
+            <LinearLayout
+                android:id="@+id/llCardDots"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_dots_indicator_pill"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:visibility="gone" />
 
             <!-- Previous arrow — start edge, vertically centred, 6dp inset
                  (iOS: HStack { prev; Spacer(); next }.padding(.horizontal, 6)).

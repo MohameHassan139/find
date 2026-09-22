@@ -44,9 +44,9 @@
                 android:orientation="horizontal">
 
                 <FrameLayout
-                    android:layout_width="48dp"
+                    android:layout_width="42dp"
                     android:layout_height="42dp"
-                    android:background="@drawable/bg_favorites_header_icon"
+                    android:background="@drawable/bg_menu_icon_yellow"
                     android:layout_marginEnd="12dp">
 
                     <ImageView

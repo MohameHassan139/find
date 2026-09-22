@@ -61,15 +61,15 @@
 
                     <FrameLayout
                         android:layout_width="42dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/bg_favorites_header_icon">
+                        android:layout_height="42dp"
+                        android:background="@drawable/bg_menu_icon_yellow">
 
                         <ImageView
                             android:layout_width="26dp"
                             android:layout_height="26dp"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_menu_myads"
-                            app:tint="@color/text_primary" />
+                            app:tint="@color/tile_icon_tint" />
                     </FrameLayout>
 
                     <TextView

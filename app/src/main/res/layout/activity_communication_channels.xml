@@ -64,7 +64,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:src="@drawable/ic_settings_channels_vector"
-                                app:tint="@color/text_primary"
+                                app:tint="@color/tile_icon_tint"
                                 android:scaleType="fitCenter"
                                 android:contentDescription="Channels" />
                         </FrameLayout>

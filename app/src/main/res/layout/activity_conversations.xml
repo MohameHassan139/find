@@ -42,15 +42,17 @@
             android:layout_marginTop="6dp"
             android:background="@color/chats_header_border" />
 
+
         <!-- Filter Chips Container -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:orientation="horizontal"
             android:layoutDirection="locale"
             android:gravity="center"
-            android:paddingHorizontal="12dp"
-            android:paddingTop="8dp"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="5dp"
             android:paddingBottom="8dp">
 
             <TextView
@@ -58,8 +60,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="26dp"
                 android:background="@drawable/bg_chip_selected"
-                android:gravity="center"
-                android:paddingHorizontal="16dp"
+                android:gravity="bottom|center_horizontal"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="14dp"
                 android:text="@string/filter_all"
                 android:textColor="@color/chats_chip_text"
                 android:textSize="15sp" />
@@ -70,7 +73,8 @@
                 android:layout_height="26dp"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/bg_chip_unselected"
-                android:gravity="center"
+                android:gravity="bottom|center_horizontal"
+                android:includeFontPadding="false"
                 android:paddingHorizontal="14dp"
                 android:text="@string/filter_unread"
                 android:textColor="@color/chats_chip_text"
@@ -82,7 +86,8 @@
                 android:layout_height="26dp"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/bg_chip_unselected"
-                android:gravity="center"
+                android:gravity="bottom|center_horizontal"
+                android:includeFontPadding="false"
                 android:paddingHorizontal="14dp"
                 android:text="@string/favorites_tab"
                 android:textColor="@color/chats_chip_text"

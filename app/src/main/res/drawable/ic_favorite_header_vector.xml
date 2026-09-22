@@ -11,6 +11,6 @@
     
     <!-- White filled heart -->
     <path
-        android:fillColor="#FFFFFF"
+        android:fillColor="#FFFF3B30"
         android:pathData="M15,11.884 C18.679,7.881 27.876,14.89 15,23.899 C2.124,14.89 11.321,7.884 15,11.89 L15,11.884 Z"/>
 </vector>

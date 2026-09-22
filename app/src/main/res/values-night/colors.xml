@@ -9,7 +9,8 @@
     <color name="find_gray_bg">#FF121212</color>
     <color name="find_gray_text">#FFAAAAAA</color>
     <color name="find_search_bg">#FF2A2A2A</color>
-    <color name="category_icon_bg">@color/surface_field</color>
+    <!-- Client note: the icon box interior is black in dark mode -->
+    <color name="category_icon_bg">#FF000000</color>
     <color name="category_icon_border">@color/stroke_field</color>
     <color name="find_accent_yellow">#FF2A2400</color>
 
@@ -17,6 +18,8 @@
     <color name="bg_screen">#FF121212</color>
     <color name="settings_bg">#FF121212</color>
     <color name="settings_icon_holder_bg">#FFF4CC40</color>
+    <!-- Glyphs on the yellow tiles stay black in dark mode too (client note) -->
+    <color name="tile_icon_tint">#FF000000</color>
     <color name="divider">#FF2E2E2E</color>
     <color name="text_primary">#FFF0F0F0</color>
     <color name="text_secondary">#FFAAAAAA</color>
@@ -135,6 +138,11 @@
     <color name="nav_glass_bottom">#78FFFFFF</color>
     <color name="nav_glass_rim">#52FFFFFF</color>
     <!-- Selected: black icon, 85% black label. Others: whole item at 30% opacity -->
+    <!-- Selected nav item: frosted glass chip, brighter than the pill behind it -->
+    <color name="nav_item_glass_top">#66FFFFFF</color>
+    <color name="nav_item_glass_bottom">#45FFFFFF</color>
+    <color name="nav_item_glass_rim">#59FFFFFF</color>
+    <color name="nav_item_glass_highlight">#73FFFFFF</color>
     <color name="nav_icon_selected">#FF000000</color>
     <color name="nav_text_selected">#D9000000</color>
     <color name="nav_icon_unselected">#4D000000</color>
@@ -155,4 +163,7 @@
     <color name="share_btn_bg">#FF3A3A3C</color>
     <!-- Ad details share icon in dark mode: white 85% circle, arrow cut out shows the dark frame -->
     <color name="share_icon_fill">#D9FFFFFF</color>
+    <!-- "No image" placeholder in dark mode -->
+    <color name="placeholder_bg">#FF3A3A3C</color>
+    <color name="placeholder_icon">#FF8E8E93</color>
 </resources>

@@ -12,6 +12,10 @@ import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemTopTabBinding
 import com.example.myapplication.utils.LocaleHelper
 
+/** Every filter row uses these two sizes: one for the selected tab, one for the rest. */
+const val TAB_TEXT_SIZE_ACTIVE = 17f
+const val TAB_TEXT_SIZE_INACTIVE = 15f
+
 class TopTabAdapter(
     private var items: List<ApiCategory>,
     private var selectedId: Int,
@@ -37,7 +41,7 @@ class TopTabAdapter(
 
         val tvLabel = holder.b.tvLabel
         tvLabel.text = label
-        tvLabel.textSize = if (isActive) 17f else 15f
+        tvLabel.textSize = if (isActive) TAB_TEXT_SIZE_ACTIVE else TAB_TEXT_SIZE_INACTIVE
         tvLabel.applyTabState(isActive)
         // Active indicator: flat bar in light mode, rounded #007AFF pill in dark mode
         holder.b.underline.visibility = if (isActive) View.VISIBLE else View.INVISIBLE
