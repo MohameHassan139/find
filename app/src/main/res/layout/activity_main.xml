@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/find_gray_bg"
+    android:background="@color/category_grid_bg"
     android:layoutDirection="locale">
 
     <!-- ── Top App Bar (Sticky) ── -->
@@ -26,6 +26,7 @@
         android:fillViewport="true"
         android:clipToPadding="false"
         android:paddingBottom="80dp"
+        android:background="@color/category_grid_bg"
         app:layout_constraintTop_toBottomOf="@id/llAppBar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -351,7 +352,8 @@
         <FrameLayout
             android:id="@+id/flContent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:minHeight="400dp"
             android:background="@color/category_grid_bg"
             android:clipChildren="false"
