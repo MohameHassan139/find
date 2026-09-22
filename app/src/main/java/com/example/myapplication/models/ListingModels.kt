@@ -27,7 +27,8 @@ data class Listing(
     val city: String?,
     @SerializedName("category_id") val categoryId: Int?,
     @SerializedName("sub_category_id") val subCategoryId: Int?,
-    @SerializedName("region_id") val regionId: Int?
+    @SerializedName("region_id") val regionId: Int?,
+    @SerializedName("filter_option_id") val filterOptionId: Int? = null
 )
 
 data class ListingSeller(
@@ -52,6 +53,11 @@ fun Listing.toApiListing(): com.example.myapplication.ApiListing {
         sellerName = seller?.name,
         sellerAvatar = seller?.avatar,
         regionNameAr = region?.nameAr,
-        city = city
+        city = city,
+        categoryId = categoryId,
+        subCategoryId = subCategoryId,
+        filterOptionId = filterOptionId,
+        regionId = regionId,
+        description = description
     )
 }

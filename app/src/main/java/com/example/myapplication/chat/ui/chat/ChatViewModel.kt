@@ -151,4 +151,26 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
             }
         }
     }
+
+    suspend fun setFavorite(isFavorite: Boolean): Boolean {
+        return try {
+            val response = if (isFavorite) {
+                api.favoriteConversation(conversationId)
+            } else {
+                api.unfavoriteConversation(conversationId)
+            }
+            response.isSuccessful
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    suspend fun deleteConversation(): Boolean {
+        return try {
+            val response = api.deleteConversation(conversationId)
+            response.isSuccessful
+        } catch (_: Exception) {
+            false
+        }
+    }
 }

@@ -63,7 +63,7 @@
                             <ImageView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:src="@drawable/ic_settings_channels"
+                                android:src="@drawable/ic_settings_channels_vector"
                                 app:tint="@color/text_primary"
                                 android:scaleType="fitCenter"
                                 android:contentDescription="Channels" />

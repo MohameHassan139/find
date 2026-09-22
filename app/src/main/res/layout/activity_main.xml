@@ -8,18 +8,34 @@
     android:background="@color/find_gray_bg"
     android:layoutDirection="locale">
 
-    <!-- ── Sticky Header ── -->
-    <LinearLayout
-        android:id="@+id/llStickyHeader"
+    <!-- ── Top App Bar (Sticky) ── -->
+    <include
+        android:id="@+id/llAppBar"
+        layout="@layout/layout_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/header_bg"
-        android:elevation="@dimen/header_elevation"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Top bar -->
-        <include layout="@layout/layout_appbar" />
+    <!-- ── Unified Screen Scroll View ── -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nsvMain"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp"
+        app:layout_constraintTop_toBottomOf="@id/llAppBar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/header_bg">
 
         <!-- Search bar -->
         <LinearLayout
@@ -66,7 +82,6 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/home_tab_height"
             android:background="@drawable/bg_tab_row"
-            android:paddingBottom="@dimen/tab_row_gap"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
@@ -74,9 +89,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvSubTabs"
             android:layout_width="match_parent"
-            android:layout_height="44dp"
+            android:layout_height="@dimen/home_tab_height"
             android:background="@drawable/bg_tab_row"
-            android:paddingBottom="@dimen/tab_row_gap"
             android:visibility="gone"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -85,9 +99,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvExtraTabs"
             android:layout_width="match_parent"
-            android:layout_height="44dp"
+            android:layout_height="@dimen/home_tab_height"
             android:background="@drawable/bg_tab_row"
-            android:paddingBottom="@dimen/tab_row_gap"
             android:visibility="gone"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -96,11 +109,10 @@
         <LinearLayout
             android:id="@+id/llFilterBar"
             android:layout_width="match_parent"
-            android:layout_height="44dp"
+            android:layout_height="@dimen/home_tab_height"
             android:orientation="horizontal"
             android:gravity="start"
             android:background="@drawable/bg_tab_row"
-            android:paddingBottom="@dimen/tab_row_gap"
             android:visibility="gone">
 
             <!-- الكل Tab -->
@@ -114,15 +126,26 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?attr/selectableItemBackground">
-                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
-                <TextView
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <com.example.myapplication.widgets.StrokeTextView
                     android:id="@+id/chipAll"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/filter_all"
                     android:textSize="14sp"
                     android:textColor="@color/tab_label_active" />
-                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
                 <View
                     android:id="@+id/underlineAll"
                     android:layout_width="match_parent"
@@ -141,15 +164,26 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?attr/selectableItemBackground">
-                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
-                <TextView
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <com.example.myapplication.widgets.StrokeTextView
                     android:id="@+id/chipOffer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/filter_offer"
                     android:textSize="14sp"
                     android:textColor="@color/tab_label_inactive" />
-                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
                 <View
                     android:id="@+id/underlineOffer"
                     android:layout_width="match_parent"
@@ -168,15 +202,26 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?attr/selectableItemBackground">
-                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
-                <TextView
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <com.example.myapplication.widgets.StrokeTextView
                     android:id="@+id/chipRequest"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/filter_request"
                     android:textSize="14sp"
                     android:textColor="@color/tab_label_inactive" />
-                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
                 <View
                     android:id="@+id/underlineRequest"
                     android:layout_width="match_parent"
@@ -298,29 +343,27 @@
                 android:background="@drawable/bg_category_shimmer" />
         </LinearLayout>
 
-    </LinearLayout>
-
-    <!-- ── Content area — fills full screen, nav floats above it ── -->
-    <FrameLayout
-        android:id="@+id/flContent"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@color/category_grid_bg"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/llStickyHeader"
-        app:layout_constraintBottom_toBottomOf="parent">
+        <!-- ── Content area ── -->
+        <FrameLayout
+            android:id="@+id/flContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="400dp"
+            android:background="@color/category_grid_bg"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
             <!-- Case A-1: Top-level category grid (home, no selection) -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCategoryGrid"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
                 android:background="@color/category_grid_bg"
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:paddingTop="8dp"
-                android:paddingBottom="80dp"
+                android:paddingBottom="24dp"
                 android:paddingHorizontal="8dp"
                 android:visibility="gone" />
 
@@ -328,12 +371,13 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvSubCategoryGrid"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
                 android:background="@color/category_grid_bg"
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:paddingTop="8dp"
-                android:paddingBottom="80dp"
+                android:paddingBottom="24dp"
                 android:paddingHorizontal="8dp"
                 android:visibility="gone" />
 
@@ -350,17 +394,18 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvListings"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
                 android:clipToPadding="false"
                 android:paddingTop="8dp"
-                android:paddingBottom="8dp"
+                android:paddingBottom="30dp"
                 android:visibility="gone" />
 
             <!-- Listings shimmer (first page loading) -->
             <LinearLayout
                 android:id="@+id/llListingsShimmer"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingTop="8dp"
                 android:visibility="gone">
@@ -375,9 +420,12 @@
             <LinearLayout
                 android:id="@+id/llEmptyState"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="300dp"
                 android:gravity="center"
                 android:orientation="vertical"
+                android:paddingTop="40dp"
+                android:paddingBottom="30dp"
                 android:visibility="gone">
 
                 <TextView
@@ -421,6 +469,10 @@
             </LinearLayout>
 
         </FrameLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <!-- ── Bottom Nav ── -->
     <include

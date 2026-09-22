@@ -9,6 +9,8 @@
     <color name="find_gray_bg">#FF121212</color>
     <color name="find_gray_text">#FFAAAAAA</color>
     <color name="find_search_bg">#FF2A2A2A</color>
+    <color name="category_icon_bg">@color/surface_field</color>
+    <color name="category_icon_border">@color/stroke_field</color>
     <color name="find_accent_yellow">#FF2A2400</color>
 
     <!-- Chat / UI colors -->

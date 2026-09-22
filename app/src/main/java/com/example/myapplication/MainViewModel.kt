@@ -128,7 +128,12 @@ data class ApiListing(
     val sellerName: String?,
     val sellerAvatar: String?,
     val regionNameAr: String?,
-    val city: String?
+    val city: String?,
+    val categoryId: Int? = null,
+    val subCategoryId: Int? = null,
+    val filterOptionId: Int? = null,
+    val regionId: Int? = null,
+    val description: String? = null
 )
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
@@ -201,6 +206,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         _errorEvent.value = msg
     }
 
+    private var allListingsPool: List<ApiListing> = emptyList()
+
     private fun boot() {
         _isBootLoading.value = true
         android.util.Log.d("MainVM", "Booting via Retrofit")
@@ -215,6 +222,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
                     val root = JSONObject(bodyText)
                     val data = root.optJSONObject("data") ?: root
+
+                    val listingsArr = data.optJSONArray("listings") ?: JSONArray()
+                    allListingsPool = parseListings(listingsArr)
 
                     val catArr = data.optJSONArray("categories") ?: JSONArray()
                     val parsed = parseCategoriesWithSubCategories(catArr)
@@ -339,7 +349,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun selectExtra(extraIdx: Int?) {
-        catExtraIdx = if (catExtraIdx == extraIdx) null else extraIdx
+        catExtraIdx = extraIdx
         fetchListings(reset = true)
     }
 
@@ -383,9 +393,12 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val subCategoryId = ss?.takeUnless { it.isAllOption() }?.id
         val extras = ss?.filterOptions ?: emptyList()
         val se = catExtraIdx?.let { extras.getOrNull(it) }
-        // "All" means show every tag on this row, not "match this literal id" — see
-        // ApiFilterOption.isAllOption().
-        val filterOptionId = se?.takeUnless { it.isAllOption() }?.id
+        val isExtraAll = se == null || se.isAllOption()
+
+        // When sub-category is "All" (null), filter_option_id belongs to the synthetic
+        // "All" sub-category (e.g. 104) which no database listing has; so pass null to
+        // fetch all category listings and filter them client-side.
+        val apiFilterOptionId = if (subCategoryId != null && !isExtraAll) se?.id else null
 
         if (reset) {
             currentPage = 1
@@ -410,7 +423,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                     perPage = PAGE_SIZE,
                     categoryId = cat.id,
                     subCategoryId = subCategoryId,
-                    filterOptionId = filterOptionId,
+                    filterOptionId = apiFilterOptionId,
                     regionId = catRegId,
                     city = cityName,
                     listingType = catType
@@ -427,21 +440,41 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                     val fetchedLast = pagination?.optInt("last_page", 1) ?: 1
                     val rawListings = parseListings(arr)
 
-                    // Match iOS ListingsService.applyFilter: strictly verify the listing matches the
-                    // selected city, preventing combined location strings (e.g. "الرياض / الخرج") or
-                    // loose backend LIKE queries from leaking an ad into multiple cities.
-                    val result = if (targetCity != null) {
-                        rawListings.filter { listing ->
-                            matchesCity(listing.city, targetCity)
-                        }
-                    } else {
-                        rawListings
+                    // Merge into pool
+                    val knownIds = allListingsPool.map { it.id }.toSet()
+                    val toAdd = rawListings.filter { it.id !in knownIds }
+                    if (toAdd.isNotEmpty()) {
+                        allListingsPool = allListingsPool + toAdd
                     }
+
+                    var sourceList = rawListings
+                    // Fallback to local pool if server returned empty due to unpopulated filter_option_id
+                    if (sourceList.isEmpty() && !isExtraAll && reset) {
+                        sourceList = allListingsPool.filter {
+                            it.categoryId == cat.id && (subCategoryId == null || it.subCategoryId == subCategoryId)
+                        }
+                    }
+
+                    // Match iOS ListingsService.applyFilter: strictly verify city, listingType, and filterOption,
+                    // preventing loose backend LIKE queries or mixed types from leaking into results.
+                    var filtered = sourceList
+                    if (targetCity != null) {
+                        filtered = filtered.filter { matchesCity(it.city, targetCity) }
+                    }
+                    if (!catType.isNullOrBlank()) {
+                        filtered = filtered.filter { it.listingType?.equals(catType, ignoreCase = true) == true }
+                    }
+                    if (!isExtraAll && se != null) {
+                        filtered = filtered.filter { matchesFilterOption(it, se, cat) }
+                    }
+                    val result = filtered
 
                     withContext(Dispatchers.Main) {
                         lastPage = fetchedLast
                         val current = if (reset) emptyList() else (_listings.value ?: emptyList())
-                        _listings.value = current + result
+                        val total = current + result
+                        _listings.value = total
+                        _isEmptyState.value = total.isEmpty()
                     }
                 } else if (!reset) {
                     // The request completed but wasn't 2xx. Roll the page counter
@@ -452,9 +485,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             } catch (_: Exception) {
                 if (!reset) withContext(Dispatchers.Main) { currentPage-- }
             } finally {
-                // Always clear the loading flags, on every exit path. These used
-                // to be cleared only inside the success branch and the catch, so
-                // a non-2xx response (500/404) left the spinner running forever.
+                // Always clear the loading flags, on every exit path.
                 withContext(Dispatchers.Main) {
                     _isFirstPageLoading.value = false
                     _isPagingLoading.value = false
@@ -462,6 +493,59 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 isFetching = false
             }
         }
+    }
+
+    private fun matchesFilterOption(
+        listing: ApiListing,
+        opt: ApiFilterOption?,
+        cat: ApiCategory
+    ): Boolean {
+        if (opt == null || opt.isAllOption()) return true
+
+        // 1. Direct ID match if present
+        if (listing.filterOptionId != null && listing.filterOptionId == opt.id) return true
+
+        val optNameAr = opt.nameAr.trim()
+        val optNameEn = opt.nameEn?.trim()?.lowercase() ?: ""
+
+        // 2. Real estate (عقارات) special handling for "للبيع" and "للإيجار"
+        val isSale = optNameAr.contains("بيع") || optNameEn.contains("sale")
+        val isRent = optNameAr.contains("إيجار") || optNameAr.contains("ايجار") || optNameEn.contains("rent")
+
+        if (isSale || isRent) {
+            val allMatchingIds = cat.subCategories.flatMap { it.filterOptions }
+                .filter {
+                    if (isSale) (it.nameAr.contains("بيع") || it.nameEn?.contains("sale", ignoreCase = true) == true)
+                    else (it.nameAr.contains("إيجار") || it.nameAr.contains("ايجار") || it.nameEn?.contains("rent", ignoreCase = true) == true)
+                }
+                .map { it.id }
+                .toSet()
+
+            if (listing.filterOptionId != null && listing.filterOptionId in allMatchingIds) {
+                return true
+            }
+
+            val text = "${listing.title.orEmpty()} ${listing.description.orEmpty()}"
+            val subName = cat.subCategories.find { it.id == listing.subCategoryId }?.nameAr ?: ""
+            val fullText = "$text $subName"
+
+            val hasSaleKeyword = fullText.contains("للبيع") || fullText.contains("البيع") || fullText.contains("بيع")
+            val hasRentKeyword = fullText.contains("للإيجار") || fullText.contains("للايجار") || fullText.contains("إيجار") || fullText.contains("ايجار")
+
+            if (isSale) {
+                if (hasRentKeyword && !hasSaleKeyword) return false
+                return hasSaleKeyword || (!hasRentKeyword && listing.price != null && listing.price > 50000)
+            } else {
+                return hasRentKeyword
+            }
+        }
+
+        // 3. For any other category (e.g. car brand names like "تويوتا")
+        val text = "${listing.title.orEmpty()} ${listing.description.orEmpty()}".lowercase()
+        if (optNameAr.isNotEmpty() && text.contains(optNameAr.lowercase())) return true
+        if (optNameEn.isNotEmpty() && text.contains(optNameEn)) return true
+
+        return false
     }
 
     private fun matchesCity(listingCity: String?, targetCity: CityItem): Boolean {
@@ -517,13 +601,18 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 id = o.optString("id", ""),
                 title = o.optString("title", ""),
                 price = o.optDouble("price", 0.0),
-                listingType = o.optString("listing_type", ""),
+                listingType = if (o.has("listing_type")) o.optString("listing_type", "") else o.optString("type", ""),
                 createdAt = o.optString("created_at", ""),
                 images = imgs,
                 sellerName = seller?.optString("name", ""),
                 sellerAvatar = seller?.optString("avatar", ""),
                 regionNameAr = reg?.optString("name_ar", ""),
-                city = o.optString("city", "")
+                city = o.optString("city", ""),
+                categoryId = if (o.has("category_id") && !o.isNull("category_id")) o.optInt("category_id") else null,
+                subCategoryId = if (o.has("sub_category_id") && !o.isNull("sub_category_id")) o.optInt("sub_category_id") else null,
+                filterOptionId = if (o.has("filter_option_id") && !o.isNull("filter_option_id")) o.optInt("filter_option_id") else null,
+                regionId = if (o.has("region_id") && !o.isNull("region_id")) o.optInt("region_id") else null,
+                description = o.optString("description", "")
             ))
         }
         return list

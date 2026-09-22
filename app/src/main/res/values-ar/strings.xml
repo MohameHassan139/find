@@ -378,4 +378,14 @@
     <string name="nafath_verify_action">توثيق الحساب</string>
     <string name="close">إغلاق</string>
     <string name="cd_close">إغلاق</string>
+
+    <!-- Chat Favorite & Delete -->
+    <string name="chat_favorite_add">إضافة للمفضلة</string>
+    <string name="chat_favorite_remove">إزالة من المفضلة</string>
+    <string name="chat_delete">حذف المحادثة</string>
+    <string name="chat_delete_confirm_title">حذف المحادثة؟</string>
+    <string name="chat_delete_confirm_body">سيتم حذف المحادثة وجميع رسائلها من جهازك نهائياً. لن يتأثر الطرف الآخر.</string>
+    <string name="chat_favorites_empty">لا توجد محادثات مفضلة</string>
+    <string name="chat_deleted_success">تم حذف المحادثة</string>
+    <string name="chat_delete_failed">تعذر حذف المحادثة</string>
 </resources>

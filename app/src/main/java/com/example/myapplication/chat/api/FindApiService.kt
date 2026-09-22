@@ -96,6 +96,19 @@ interface FindApiService {
     @PATCH("conversations/{id}/read")
     suspend fun markRead(@Path("id") conversationId: String): Response<Unit>
 
+    @DELETE("conversations/{id}")
+    suspend fun deleteConversation(@Path("id") conversationId: String): Response<Unit>
+
+    @GET("conversations/favorites")
+    suspend fun getFavoriteConversations(): Response<ConversationsResponse>
+
+    @POST("conversations/{id}/favorite")
+    suspend fun favoriteConversation(@Path("id") conversationId: String): Response<SingleConversationResponse>
+
+    @DELETE("conversations/{id}/favorite")
+    suspend fun unfavoriteConversation(@Path("id") conversationId: String): Response<SingleConversationResponse>
+
+
     // GET /notifications has no route server-side — notifications + their
     // unread count are served from this single bootstrap call instead.
     @GET("user-data")

@@ -58,21 +58,81 @@ class ConversationsViewModel(app: Application) : AndroidViewModel(app) {
         applyFilter(filter)
     }
 
+    fun getCurrentFilter(): Filter = currentFilter
+
+    fun toggleFavorite(conversationId: String) {
+        val original = allConversations.find { it.id == conversationId } ?: return
+        val nextFav = !original.isFavorite
+
+        // Optimistic update
+        allConversations = allConversations.map {
+            if (it.id == conversationId) it.copy(isFavorite = nextFav) else it
+        }
+        applyFilter(currentFilter)
+
+        viewModelScope.launch {
+            try {
+                val response = if (nextFav) {
+                    api.favoriteConversation(conversationId)
+                } else {
+                    api.unfavoriteConversation(conversationId)
+                }
+                if (response.isSuccessful) {
+                    val serverConv = response.body()?.data
+                    if (serverConv != null) {
+                        allConversations = allConversations.map {
+                            if (it.id == conversationId) serverConv else it
+                        }
+                        applyFilter(currentFilter)
+                    }
+                } else {
+                    // Revert
+                    allConversations = allConversations.map {
+                        if (it.id == conversationId) original else it
+                    }
+                    applyFilter(currentFilter)
+                }
+            } catch (_: Exception) {
+                // Revert
+                allConversations = allConversations.map {
+                    if (it.id == conversationId) original else it
+                }
+                applyFilter(currentFilter)
+            }
+        }
+    }
+
+    fun deleteConversation(conversationId: String, onResult: ((Boolean) -> Unit)? = null) {
+        viewModelScope.launch {
+            try {
+                val response = api.deleteConversation(conversationId)
+                if (response.isSuccessful) {
+                    allConversations = allConversations.filter { it.id != conversationId }
+                    applyFilter(currentFilter)
+                    onResult?.invoke(true)
+                } else {
+                    onResult?.invoke(false)
+                }
+            } catch (_: Exception) {
+                onResult?.invoke(false)
+            }
+        }
+    }
+
     private fun applyFilter(filter: Filter) {
         val filtered = when (filter) {
             Filter.ALL -> allConversations
             Filter.UNREAD -> allConversations.filter { it.myUnread > 0 }
-            Filter.FAVORITE -> allConversations // no favorites concept in API yet
+            Filter.FAVORITE -> allConversations.filter { it.isFavorite }
         }
         _conversations.value = Result.Success(filtered)
     }
 
     /**
      * Polls GET /conversations/updates every 30s so unread badges/previews
-     * stay fresh without a full re-fetch. Falls back to a full
-     * loadConversations() only when a conversation id we don't know about
-     * yet shows up (a brand-new conversation). viewModelScope is cancelled
-     * automatically when this ViewModel is cleared, so the loop stops itself.
+     * stay fresh without a full re-fetch. Drops conversations missing from
+     * updates (deleted on another device) and syncs is_favorite.
+     * Falls back to a full loadConversations() when a brand-new conversation shows up.
      */
     private fun startPolling() {
         if (pollingStarted) return
@@ -84,6 +144,7 @@ class ConversationsViewModel(app: Application) : AndroidViewModel(app) {
                     val response = api.getConversationUpdates()
                     if (!response.isSuccessful) continue
                     val updates = response.body()?.data ?: continue
+                    val liveIds = updates.map { it.id }.toSet()
                     val knownIds = allConversations.map { it.id }.toSet()
                     val hasNew = updates.any { it.id !in knownIds }
                     if (hasNew) {
@@ -91,13 +152,16 @@ class ConversationsViewModel(app: Application) : AndroidViewModel(app) {
                         continue
                     }
                     val byId = updates.associateBy { it.id }
-                    allConversations = allConversations.map { conv ->
-                        val update = byId[conv.id] ?: return@map conv
-                        conv.copy(
-                            lastMessageAt = update.lastMessageAt ?: conv.lastMessageAt,
-                            myUnread = update.myUnread ?: conv.myUnread
-                        )
-                    }
+                    allConversations = allConversations
+                        .filter { liveIds.contains(it.id) }
+                        .map { conv ->
+                            val update = byId[conv.id] ?: return@map conv
+                            conv.copy(
+                                lastMessageAt = update.lastMessageAt ?: conv.lastMessageAt,
+                                myUnread = update.myUnread ?: conv.myUnread,
+                                isFavorite = update.isFavorite ?: conv.isFavorite
+                            )
+                        }
                     applyFilter(currentFilter)
                 } catch (_: Exception) {
                     // Offline/transient — next tick retries.

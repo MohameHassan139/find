@@ -34,15 +34,8 @@ class SubTabAdapter(
 
         val tvLabel = holder.b.tvLabel
         tvLabel.text = label
-        tvLabel.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
         tvLabel.textSize = 14f
-        
-        val textColor = if (isActive) {
-            holder.itemView.context.getColor(R.color.tab_label_active)
-        } else {
-            holder.itemView.context.getColor(R.color.tab_label_inactive)
-        }
-        tvLabel.setTextColor(textColor)
+        tvLabel.applyTabState(isActive)
         // Active indicator: flat bar in light mode, rounded #007AFF pill in dark mode
         if (isActive) holder.b.underline.setBackgroundResource(R.drawable.bg_tab_underline_active)
         else holder.b.underline.background = null

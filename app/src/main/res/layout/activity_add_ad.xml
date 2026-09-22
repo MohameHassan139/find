@@ -41,12 +41,12 @@
             <!-- "أضف إعلان" Header -->
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="44dp"
                 android:background="@drawable/bg_add_ad_header"
                 android:gravity="center"
                 android:text="@string/add_ad_title"
-                android:textColor="@color/tab_label_active"
-                android:textSize="14sp"
+                android:textColor="@color/chats_header_text"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <!-- Images Box -->

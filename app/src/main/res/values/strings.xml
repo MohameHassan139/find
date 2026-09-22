@@ -370,4 +370,14 @@
     <string name="nafath_verify_action">توثيق الحساب</string>
     <string name="close">Close</string>
     <string name="cd_close">Close</string>
+
+    <!-- Chat Favorite & Delete -->
+    <string name="chat_favorite_add">Add to favorites</string>
+    <string name="chat_favorite_remove">Remove from favorites</string>
+    <string name="chat_delete">Delete chat</string>
+    <string name="chat_delete_confirm_title">Delete chat?</string>
+    <string name="chat_delete_confirm_body">This chat and all its messages will be permanently removed for you. The other person is not affected.</string>
+    <string name="chat_favorites_empty">No favorite chats yet</string>
+    <string name="chat_deleted_success">Chat deleted</string>
+    <string name="chat_delete_failed">Failed to delete chat</string>
 </resources>

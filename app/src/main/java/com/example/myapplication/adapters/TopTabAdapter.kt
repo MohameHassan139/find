@@ -37,15 +37,8 @@ class TopTabAdapter(
 
         val tvLabel = holder.b.tvLabel
         tvLabel.text = label
-        tvLabel.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
         tvLabel.textSize = if (isActive) 17f else 15f
-        
-        val textColor = if (isActive) {
-            androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.tab_label_active)
-        } else {
-            androidx.core.content.ContextCompat.getColor(holder.itemView.context, R.color.tab_label_inactive)
-        }
-        tvLabel.setTextColor(textColor)
+        tvLabel.applyTabState(isActive)
         // Active indicator: flat bar in light mode, rounded #007AFF pill in dark mode
         if (isActive) holder.b.underline.setBackgroundResource(R.drawable.bg_tab_underline_active)
         else holder.b.underline.background = null

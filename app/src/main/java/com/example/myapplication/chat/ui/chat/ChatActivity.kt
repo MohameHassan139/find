@@ -21,6 +21,10 @@ import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.utils.ModerationDialogs
 import com.example.myapplication.utils.ModerationState
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -120,36 +124,118 @@ class ChatActivity : BaseActivity() {
             startMenuActivity()
         }
 
-        val otherId = conversation.otherUser?.id
-        if (otherId != null && otherId != 0) {
-            binding.btnChatModeration.visibility = View.VISIBLE
-            binding.btnChatModeration.setOnClickListener { showModerationMenu(otherId) }
-        } else {
-            binding.btnChatModeration.visibility = View.GONE
-        }
+        binding.btnChatModeration.visibility = View.VISIBLE
+        binding.btnChatModeration.setOnClickListener { showChatOptionsMenu() }
     }
 
-    private fun showModerationMenu(otherUserId: Int) {
-        val api = RetrofitClient.build(this)
-        val otherName = conversation.otherUser?.name
+    private fun showChatOptionsMenu() {
         val popup = android.widget.PopupMenu(this, binding.btnChatModeration)
-        popup.menu.add(0, 1, 0, "الإبلاغ عن المستخدم")
-        if (ModerationState.isBlocked(otherUserId)) {
-            popup.menu.add(0, 2, 1, "إلغاء حظر المستخدم")
+        val favTitle = if (conversation.isFavorite) {
+            getString(R.string.chat_favorite_remove)
         } else {
-            popup.menu.add(0, 3, 1, "حظر المستخدم")
+            getString(R.string.chat_favorite_add)
         }
+        popup.menu.add(0, 1, 0, favTitle)
+
+        val deleteItem = popup.menu.add(0, 2, 1, getString(R.string.chat_delete))
+        val redTitle = SpannableString(deleteItem.title)
+        redTitle.setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(this, R.color.error_red)),
+            0,
+            redTitle.length,
+            android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        deleteItem.title = redTitle
+
+        val otherUserId = conversation.otherUser?.id
+        val hasOtherUser = otherUserId != null && otherUserId != 0
+        if (hasOtherUser) {
+            popup.menu.add(0, 3, 2, "الإبلاغ عن المستخدم")
+            if (ModerationState.isBlocked(otherUserId!!)) {
+                popup.menu.add(0, 4, 3, "إلغاء حظر المستخدم")
+            } else {
+                popup.menu.add(0, 5, 3, "حظر المستخدم")
+            }
+        }
+
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                1 -> ModerationDialogs.showReportDialog(
-                    this, api, ReportTargetType.USER, otherUserId.toString(), otherName ?: "المستخدم")
-                2 -> ModerationDialogs.unblock(this, api, otherUserId)
-                3 -> ModerationDialogs.showBlockConfirm(
-                    this, api, otherUserId, otherName, conversation.otherUser?.avatar)
+                1 -> {
+                    val next = !conversation.isFavorite
+                    lifecycleScope.launch {
+                        val ok = viewModel.setFavorite(next)
+                        if (ok) {
+                            conversation = conversation.copy(isFavorite = next)
+                            val msgRes = if (next) R.string.chat_favorite_add else R.string.chat_favorite_remove
+                            Toast.makeText(this@ChatActivity, msgRes, Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this@ChatActivity, R.string.error_generic, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    true
+                }
+                2 -> {
+                    confirmDeleteConversation()
+                    true
+                }
+                3 -> {
+                    if (otherUserId != null) {
+                        val api = RetrofitClient.build(this)
+                        val otherName = conversation.otherUser?.name
+                        ModerationDialogs.showReportDialog(
+                            this, api, ReportTargetType.USER, otherUserId.toString(), otherName ?: "المستخدم"
+                        )
+                    }
+                    true
+                }
+                4 -> {
+                    if (otherUserId != null) {
+                        val api = RetrofitClient.build(this)
+                        ModerationDialogs.unblock(this, api, otherUserId)
+                    }
+                    true
+                }
+                5 -> {
+                    if (otherUserId != null) {
+                        val api = RetrofitClient.build(this)
+                        val otherName = conversation.otherUser?.name
+                        ModerationDialogs.showBlockConfirm(
+                            this, api, otherUserId, otherName, conversation.otherUser?.avatar
+                        )
+                    }
+                    true
+                }
+                else -> false
             }
-            true
         }
         popup.show()
+    }
+
+    private fun confirmDeleteConversation() {
+        val dialog = AlertDialog.Builder(this)
+            .setTitle(getString(R.string.chat_delete_confirm_title))
+            .setMessage(getString(R.string.chat_delete_confirm_body))
+            .setPositiveButton(getString(R.string.chat_delete)) { _, _ ->
+                lifecycleScope.launch {
+                    val ok = viewModel.deleteConversation()
+                    if (ok) {
+                        Toast.makeText(this@ChatActivity, R.string.chat_deleted_success, Toast.LENGTH_SHORT).show()
+                        setResult(RESULT_OK)
+                        finishWithPop()
+                    } else {
+                        Toast.makeText(this@ChatActivity, R.string.chat_delete_failed, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .setNegativeButton(getString(R.string.logout_confirm_no), null)
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(
+                ContextCompat.getColor(this, R.color.error_red)
+            )
+        }
+        dialog.show()
     }
 
     @Suppress("DEPRECATION")

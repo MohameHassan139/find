@@ -11,6 +11,11 @@ data class ConversationsResponse(
     val message: String?
 )
 
+data class SingleConversationResponse(
+    val data: Conversation?,
+    val message: String? = null
+)
+
 // `other_user` is always relative to the caller (never separate buyer/seller
 // fields — see docs/API_REFERENCE.md § GET /conversations).
 data class Conversation(
@@ -20,7 +25,9 @@ data class Conversation(
     @SerializedName("other_user") val otherUser: OtherUser?,
     @SerializedName("last_message") val lastMessage: String?,
     @SerializedName("last_message_at") val lastMessageAt: String?,
-    @SerializedName("my_unread") val myUnread: Int = 0
+    @SerializedName("my_unread") val myUnread: Int = 0,
+    @SerializedName("is_favorite") val isFavorite: Boolean = false,
+    @SerializedName("favorited_at") val favoritedAt: String? = null
 ) : Parcelable {
     @Suppress("DEPRECATION")
     constructor(parcel: Parcel) : this(
@@ -30,7 +37,9 @@ data class Conversation(
         parcel.readParcelable(OtherUser::class.java.classLoader),
         parcel.readString(),
         parcel.readString(),
-        parcel.readInt()
+        parcel.readInt(),
+        parcel.readByte() != 0.toByte(),
+        parcel.readString()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -41,6 +50,8 @@ data class Conversation(
         parcel.writeString(lastMessage)
         parcel.writeString(lastMessageAt)
         parcel.writeInt(myUnread)
+        parcel.writeByte(if (isFavorite) 1 else 0)
+        parcel.writeString(favoritedAt)
     }
 
     override fun describeContents() = 0
@@ -84,7 +95,8 @@ data class ConversationUpdate(
     val id: String,
     @SerializedName("last_message_at") val lastMessageAt: String?,
     @SerializedName("my_unread") val myUnread: Int? = null,
-    @SerializedName("other_user_last_seen_at") val otherUserLastSeenAt: String? = null
+    @SerializedName("other_user_last_seen_at") val otherUserLastSeenAt: String? = null,
+    @SerializedName("is_favorite") val isFavorite: Boolean? = false
 )
 
 // ─── Messages ─────────────────────────────────────────────────────────────────

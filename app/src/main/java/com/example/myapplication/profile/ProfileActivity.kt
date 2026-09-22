@@ -75,8 +75,6 @@ class ProfileActivity : BaseActivity() {
         }
         
         binding.profileContainer.setOnClickListener { openGallery() }
-        binding.cardNafath.setOnClickListener { handleNafathVerification() }
-        binding.btnNafathAction.setOnClickListener { handleNafathVerification() }
         binding.btnSave.setOnClickListener { saveProfile() }
         binding.btnSignOut.setOnClickListener { confirmSignOut() }
 
@@ -140,19 +138,6 @@ class ProfileActivity : BaseActivity() {
             }
         }
     }
-
-    private fun handleNafathVerification() {
-        // TODO: Integrate with National Single Sign-On (Nafath/IAM) SDK or WebView
-        Toast.makeText(this, "Redirecting to Nafath...", Toast.LENGTH_SHORT).show()
-        
-        // Placeholder for Nafath integration
-        // You would typically:
-        // 1. Launch Nafath SDK or WebView
-        // 2. Handle the callback with verification token
-        // 3. Send token to your backend for verification
-        // 4. Update user verification status
-    }
-
 
     private fun formatPhoneNumber(raw: String?): String {
         if (raw.isNullOrBlank()) return ""

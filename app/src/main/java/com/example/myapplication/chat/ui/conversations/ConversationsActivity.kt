@@ -57,15 +57,116 @@ class ConversationsActivity : BaseActivity() {
     ) { viewModel.loadConversations() }
 
     private fun setupRecyclerView() {
-        adapter = ConversationsAdapter { conv ->
-            val intent = Intent(this, ChatActivity::class.java).apply {
-                putExtra(ChatActivity.EXTRA_CONVERSATION, conv)
+        adapter = ConversationsAdapter(
+            onClick = { conv ->
+                val intent = Intent(this, ChatActivity::class.java).apply {
+                    putExtra(ChatActivity.EXTRA_CONVERSATION, conv)
+                }
+                chatLauncher.launch(intent)
+                applyPushTransition()
+            },
+            onLongClick = { anchorView, conv ->
+                val pos = adapter.currentList.indexOf(conv)
+                showConversationOptions(anchorView, conv, pos)
+                true
             }
-            chatLauncher.launch(intent)
-            applyPushTransition()
-        }
+        )
         binding.rvConversations.layoutManager = LinearLayoutManager(this)
         binding.rvConversations.adapter = adapter
+        setupSwipeToDelete()
+    }
+
+    private fun showConversationOptions(anchorView: View, conv: com.example.myapplication.chat.model.Conversation, position: Int) {
+        val popup = android.widget.PopupMenu(this, anchorView)
+        val favTitle = if (conv.isFavorite) {
+            getString(R.string.chat_favorite_remove)
+        } else {
+            getString(R.string.chat_favorite_add)
+        }
+        popup.menu.add(0, 1, 0, favTitle)
+
+        val deleteItem = popup.menu.add(0, 2, 1, getString(R.string.chat_delete))
+        val redTitle = android.text.SpannableString(deleteItem.title)
+        redTitle.setSpan(
+            android.text.style.ForegroundColorSpan(
+                androidx.core.content.ContextCompat.getColor(this, R.color.error_red)
+            ),
+            0,
+            redTitle.length,
+            android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        deleteItem.title = redTitle
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                1 -> {
+                    viewModel.toggleFavorite(conv.id)
+                    true
+                }
+                2 -> {
+                    confirmDeleteConversation(conv, if (position >= 0) position else null)
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
+    }
+
+    private fun setupSwipeToDelete() {
+        val swipeHandler = object : androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(
+            0,
+            androidx.recyclerview.widget.ItemTouchHelper.LEFT or androidx.recyclerview.widget.ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: androidx.recyclerview.widget.RecyclerView,
+                viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
+                target: androidx.recyclerview.widget.RecyclerView.ViewHolder
+            ): Boolean = false
+
+            override fun onSwiped(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, direction: Int) {
+                val pos = viewHolder.bindingAdapterPosition
+                val conv = adapter.getItemAt(pos)
+                if (conv != null) {
+                    confirmDeleteConversation(conv, pos)
+                }
+            }
+        }
+        androidx.recyclerview.widget.ItemTouchHelper(swipeHandler).attachToRecyclerView(binding.rvConversations)
+    }
+
+    private fun confirmDeleteConversation(conv: com.example.myapplication.chat.model.Conversation, position: Int? = null) {
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle(getString(R.string.chat_delete_confirm_title))
+            .setMessage(getString(R.string.chat_delete_confirm_body))
+            .setPositiveButton(getString(R.string.chat_delete)) { _, _ ->
+                viewModel.deleteConversation(conv.id) { success ->
+                    if (!success) {
+                        android.widget.Toast.makeText(this, R.string.chat_delete_failed, android.widget.Toast.LENGTH_SHORT).show()
+                        if (position != null) {
+                            adapter.notifyItemChanged(position)
+                        }
+                    }
+                }
+            }
+            .setNegativeButton(getString(R.string.logout_confirm_no)) { _, _ ->
+                if (position != null) {
+                    adapter.notifyItemChanged(position)
+                }
+            }
+            .setOnCancelListener {
+                if (position != null) {
+                    adapter.notifyItemChanged(position)
+                }
+            }
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)?.setTextColor(
+                androidx.core.content.ContextCompat.getColor(this, R.color.error_red)
+            )
+        }
+        dialog.show()
     }
 
     private fun setupFilterChips() {
@@ -158,6 +259,11 @@ class ConversationsActivity : BaseActivity() {
         binding.rvConversations.visibility = View.GONE
         binding.layoutEmpty.visibility = View.VISIBLE
         binding.layoutError.visibility = View.GONE
+        if (viewModel.getCurrentFilter() == ConversationsViewModel.Filter.FAVORITE) {
+            binding.tvEmptyMessage.setText(R.string.chat_favorites_empty)
+        } else {
+            binding.tvEmptyMessage.text = "لا توجد محادثات"
+        }
     }
 
     private fun showError(message: String) {

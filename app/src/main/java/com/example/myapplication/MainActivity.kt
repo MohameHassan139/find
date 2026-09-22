@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
+import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,6 +33,7 @@ import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.push.PushTokenManager
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.utils.AuthGuard
+import com.example.myapplication.widgets.StrokeTextView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -161,6 +163,7 @@ class MainActivity : BaseActivity() {
         }
         binding.rvCategoryGrid.layoutManager = GridLayoutManager(this, 3)
         binding.rvCategoryGrid.adapter = categoryAdapter
+        binding.rvCategoryGrid.isNestedScrollingEnabled = false
 
         subCategoryAdapter = SubCategoryGridAdapter(emptyList()) { sub ->
             val cats = vm.categories.value ?: return@SubCategoryGridAdapter
@@ -183,6 +186,7 @@ class MainActivity : BaseActivity() {
         }
         binding.rvSubCategoryGrid.layoutManager = GridLayoutManager(this, 3)
         binding.rvSubCategoryGrid.adapter = subCategoryAdapter
+        binding.rvSubCategoryGrid.isNestedScrollingEnabled = false
 
         listingsAdapter = ListingsAdapter(
             items = emptyList(),
@@ -201,9 +205,11 @@ class MainActivity : BaseActivity() {
         )
         binding.rvListings.layoutManager = LinearLayoutManager(this)
         binding.rvListings.adapter = listingsAdapter
-        binding.rvListings.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
-                if (!rv.canScrollVertically(1)) vm.fetchListings(false)
+        binding.rvListings.isNestedScrollingEnabled = false
+
+        binding.nsvMain.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
+            if (!v.canScrollVertically(1)) {
+                vm.fetchListings(false)
             }
         })
 
@@ -231,9 +237,11 @@ class MainActivity : BaseActivity() {
             val cat = vm.categories.value?.getOrNull(vm.catIdx - 1) ?: return@ExtraTabAdapter
             val ss = vm.catSubIdx?.let { cat.subCategories.getOrNull(it) } ?: return@ExtraTabAdapter
             val pos = ss.filterOptions.indexOf(opt)
-            vm.selectExtra(pos)
-            showListingsMode()
-            buildExtraTabs(ss)
+            if (pos >= 0) {
+                vm.selectExtra(pos)
+                extraTabAdapter.update(ss.filterOptions, pos)
+                applyBodyState(BodyState.LOADING)
+            }
         }
         binding.rvExtraTabs.adapter = extraTabAdapter
     }
@@ -242,20 +250,17 @@ class MainActivity : BaseActivity() {
         binding.llChipAll.setOnClickListener {
             vm.selectType(null)
             updateChipStyles(null)
-            resetCityFilter()
-            showRegionRow()
+            applyBodyState(BodyState.LOADING)
         }
         binding.llChipOffer.setOnClickListener {
             vm.selectType("offer")
             updateChipStyles("offer")
-            resetCityFilter()
-            showRegionRow()
+            applyBodyState(BodyState.LOADING)
         }
         binding.llChipRequest.setOnClickListener {
             vm.selectType("request")
             updateChipStyles("request")
-            resetCityFilter()
-            showRegionRow()
+            applyBodyState(BodyState.LOADING)
         }
     }
 
@@ -272,8 +277,12 @@ class MainActivity : BaseActivity() {
 
     private fun updateChipStyles(active: String?) {
         fun style(tv: TextView, underline: View, isActive: Boolean) {
-            tv.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
-            tv.setTextColor(if (isActive) getColor(R.color.tab_label_active) else getColor(R.color.tab_label_inactive))
+            if (tv is StrokeTextView) {
+                tv.applyTabState(isActive)
+            } else {
+                tv.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
+                tv.setTextColor(if (isActive) getColor(R.color.tab_label_active) else getColor(R.color.tab_label_inactive))
+            }
             // Rounded blue indicator in dark mode, flat bar in light (see bg_tab_underline_active)
             if (isActive) underline.setBackgroundResource(R.drawable.bg_tab_underline_active)
             else underline.background = null
@@ -390,6 +399,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun openCategory(cat: ApiCategory) {
+        binding.nsvMain.scrollTo(0, 0)
         val cats = vm.categories.value ?: return
         val pos = cats.indexOf(cat)
         vm.selectTopCategory(pos + 1)
@@ -402,6 +412,7 @@ class MainActivity : BaseActivity() {
     }
 
     fun resetToHome() {
+        binding.nsvMain.scrollTo(0, 0)
         val cats = vm.categories.value ?: emptyList()
         vm.selectTopCategory(0)
         categoryAdapter.updateData(cats)
@@ -415,6 +426,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun showListingsMode() {
+        binding.nsvMain.scrollTo(0, 0)
         isShowingSubGrid = false
         // Every row here (type chips, extras, region) already has a default value
         // selected — "All" — so show them all immediately instead of gating the
@@ -476,10 +488,12 @@ class MainActivity : BaseActivity() {
                 val region = regions[item.itemId]
                 if (region.isAllOption()) {
                     resetRegionPill()
+                    applyBodyState(BodyState.LOADING)
                     vm.selectRegion(null)
                     buildCityDropdown(null)
                 } else {
                     setRegionPillActive(LocaleHelper.localizedName(this, region.nameAr, region.nameEn))
+                    applyBodyState(BodyState.LOADING)
                     vm.selectRegion(region.id)
                     buildCityDropdown(region.id)
                 }
@@ -497,7 +511,6 @@ class MainActivity : BaseActivity() {
         }
         binding.spinnerCity.visibility = View.VISIBLE
         resetCityPill()
-        vm.selectCity(null)
 
         binding.spinnerCity.setOnClickListener {
             val popup = android.widget.PopupMenu(this, binding.spinnerCity)
@@ -508,9 +521,11 @@ class MainActivity : BaseActivity() {
                 val city = cities[item.itemId]
                 if (city.isAllOption()) {
                     resetCityPill()
+                    applyBodyState(BodyState.LOADING)
                     vm.selectCity(null)
                 } else {
                     setCityPillActive(LocaleHelper.localizedName(this, city.nameAr, city.nameEn))
+                    applyBodyState(BodyState.LOADING)
                     vm.selectCity(city)
                 }
                 true

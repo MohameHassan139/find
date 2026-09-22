@@ -13,8 +13,12 @@ import com.example.myapplication.chat.utils.DateUtils
 import com.example.myapplication.databinding.ItemConversationBinding
 
 class ConversationsAdapter(
-    private val onClick: (Conversation) -> Unit
+    private val onClick: (Conversation) -> Unit,
+    private val onLongClick: (View, Conversation) -> Boolean = { _, _ -> false }
 ) : ListAdapter<Conversation, ConversationsAdapter.VH>(DIFF) {
+
+    fun getItemAt(position: Int): Conversation? =
+        if (position in 0 until itemCount) getItem(position) else null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding = ItemConversationBinding.inflate(
@@ -90,7 +94,10 @@ class ConversationsAdapter(
                 b.ivAvatar.setImageResource(R.drawable.ic_avatar_placeholder)
             }
 
+            b.ivFavoriteStar.visibility = if (conv.isFavorite) View.VISIBLE else View.GONE
+
             b.root.setOnClickListener { onClick(conv) }
+            b.root.setOnLongClickListener { onLongClick(it, conv) }
         }
     }
 
