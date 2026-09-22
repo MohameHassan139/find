@@ -3,6 +3,7 @@ package com.example.myapplication.adapters
 import android.graphics.Color
 import android.graphics.Typeface
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
@@ -36,6 +37,7 @@ class ExtraTabAdapter(
         tvLabel.textSize = 13f
         tvLabel.applyTabState(isActive)
         // Active indicator: flat bar in light mode, rounded #007AFF pill in dark mode
+        holder.b.underline.visibility = if (isActive) View.VISIBLE else View.INVISIBLE
         if (isActive) holder.b.underline.setBackgroundResource(R.drawable.bg_tab_underline_active)
         else holder.b.underline.background = null
         

@@ -51,7 +51,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvHomeTopTabs"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="@dimen/home_tab_height"
         android:background="@color/tab_bar_bg"
         android:orientation="horizontal"
         android:visibility="gone"
@@ -61,7 +61,7 @@
     <LinearLayout
         android:id="@+id/llHomeTabShimmer"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="@dimen/home_tab_height"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingHorizontal="16dp"

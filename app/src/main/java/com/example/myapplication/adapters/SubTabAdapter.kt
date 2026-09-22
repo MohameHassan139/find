@@ -37,6 +37,7 @@ class SubTabAdapter(
         tvLabel.textSize = 14f
         tvLabel.applyTabState(isActive)
         // Active indicator: flat bar in light mode, rounded #007AFF pill in dark mode
+        holder.b.underline.visibility = if (isActive) View.VISIBLE else View.INVISIBLE
         if (isActive) holder.b.underline.setBackgroundResource(R.drawable.bg_tab_underline_active)
         else holder.b.underline.background = null
 

@@ -53,6 +53,8 @@ class MainActivity : BaseActivity() {
     private var suppressSpinner = false
     private var lastRegionList: List<RegionItem> = emptyList()
     private var regionItems: List<RegionItem> = emptyList()
+    private var pendingCategoryId: Int? = null
+    private var isShowingSubGrid = false
 
     private val gray = "#888888".toColorInt()
     override fun attachBaseContext(newBase: Context) {
@@ -73,6 +75,13 @@ class MainActivity : BaseActivity() {
             appBarId = R.id.llAppBar,
             bottomNavId = R.id.cvBottomNav
         )
+
+        if (savedInstanceState != null) {
+            isShowingSubGrid = savedInstanceState.getBoolean(KEY_IS_SHOWING_SUB_GRID, false)
+        } else if (vm.catIdx > 0 && vm.catSubIdx == null) {
+            val cat = vm.categories.value?.getOrNull(vm.catIdx - 1)
+            isShowingSubGrid = (cat != null && cat.subCategories.isNotEmpty())
+        }
 
         setupAdapters()
         setupTypeChips()
@@ -284,6 +293,7 @@ class MainActivity : BaseActivity() {
                 tv.setTextColor(if (isActive) getColor(R.color.tab_label_active) else getColor(R.color.tab_label_inactive))
             }
             // Rounded blue indicator in dark mode, flat bar in light (see bg_tab_underline_active)
+            underline.visibility = if (isActive) View.VISIBLE else View.INVISIBLE
             if (isActive) underline.setBackgroundResource(R.drawable.bg_tab_underline_active)
             else underline.background = null
         }
@@ -333,12 +343,22 @@ class MainActivity : BaseActivity() {
                 categoryAdapter.updateData(cats)
                 applyBodyState(BodyState.CATEGORIES)
             } else {
-                // If we are inside a category, and data just arrived/updated, refresh sub-grid
+                // If we are inside a category, and data just arrived/updated, refresh sub-grid or listings
                 val currentCat = cats.getOrNull(vm.catIdx - 1)
                 if (currentCat != null) {
                     subCategoryAdapter.updateData(currentCat.subCategories)
                     buildSubTabs(currentCat)
-                    applyBodyState(BodyState.SUBCATEGORIES) // Ensure it's visible!
+                    if (isShowingSubGrid) {
+                        applyBodyState(BodyState.SUBCATEGORIES)
+                    } else {
+                        binding.llFilterBar.visibility = View.VISIBLE
+                        binding.llRegionRow.visibility = View.VISIBLE
+                        updateChipStyles(vm.catType)
+                        val listings = vm.listings.value ?: emptyList()
+                        if (listings.isNotEmpty()) applyBodyState(BodyState.ADS)
+                        else if (vm.isFirstPageLoading.value == true) applyBodyState(BodyState.LOADING)
+                        else if (vm.isEmptyState.value == true) applyBodyState(BodyState.EMPTY)
+                    }
                 }
             }
         }
@@ -450,11 +470,18 @@ class MainActivity : BaseActivity() {
             // No sub-list → show chips immediately
             binding.llFilterBar.visibility  = View.VISIBLE
             binding.llRegionRow.visibility  = View.VISIBLE
+            updateChipStyles(vm.catType)
             return
         }
         binding.rvSubTabs.visibility   = View.VISIBLE
-        binding.llFilterBar.visibility  = View.GONE   // hide chips while sub-grid is showing
-        binding.llRegionRow.visibility  = View.GONE
+        if (isShowingSubGrid) {
+            binding.llFilterBar.visibility  = View.GONE   // hide chips while sub-grid is showing
+            binding.llRegionRow.visibility  = View.GONE
+        } else {
+            binding.llFilterBar.visibility  = View.VISIBLE
+            binding.llRegionRow.visibility  = View.VISIBLE
+            updateChipStyles(vm.catType)
+        }
         subTabAdapter.update(subs, vm.catSubIdx)
 
         val selectedSub = vm.catSubIdx?.let { subs.getOrNull(it) }
@@ -475,9 +502,28 @@ class MainActivity : BaseActivity() {
         if (regions == lastRegionList) return
         lastRegionList = regions
         regionItems = regions
-        resetRegionPill()
-        vm.selectRegion(null)
-        binding.spinnerCity.visibility = View.GONE
+
+        val currentRegId = vm.catRegId
+        if (currentRegId != null) {
+            val selectedRegion = regions.find { it.id == currentRegId }
+            if (selectedRegion != null && !selectedRegion.isAllOption()) {
+                setRegionPillActive(LocaleHelper.localizedName(this, selectedRegion.nameAr, selectedRegion.nameEn))
+                buildCityDropdown(selectedRegion.id)
+                val currentCityId = vm.catCityId
+                if (currentCityId != null) {
+                    val selectedCity = vm.citiesForRegion(selectedRegion.id).find { it.id == currentCityId }
+                    if (selectedCity != null && !selectedCity.isAllOption()) {
+                        setCityPillActive(LocaleHelper.localizedName(this, selectedCity.nameAr, selectedCity.nameEn))
+                    }
+                }
+            } else {
+                resetRegionPill()
+                binding.spinnerCity.visibility = View.GONE
+            }
+        } else {
+            resetRegionPill()
+            binding.spinnerCity.visibility = View.GONE
+        }
 
         binding.spinnerRegion.setOnClickListener {
             val popup = android.widget.PopupMenu(this, binding.spinnerRegion)
@@ -564,11 +610,14 @@ class MainActivity : BaseActivity() {
         binding.ivCityChevron.imageTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.tab_row_text))
     }
 
-    private var pendingCategoryId: Int? = null
-    private var isShowingSubGrid = false
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(KEY_IS_SHOWING_SUB_GRID, isShowingSubGrid)
+    }
 
     companion object {
         const val EXTRA_CATEGORY_IDX = "extra_category_idx"
+        private const val KEY_IS_SHOWING_SUB_GRID = "key_is_showing_sub_grid"
     }
 
     private fun animateShimmer(view: View) {
