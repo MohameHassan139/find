@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Find type scale — mirrors the Figma design (Inter Regular, Arabic falls back to
+    Noto Sans Arabic). Sizes / line heights are in sp, weight is always Regular 400,
+    no letter spacing.
+
+    The typeface itself is NOT set here: XML font-family resources can't express a
+    per-glyph fallback chain. FindTypefaceInflater (Type.kt) applies the
+    Inter → Noto Sans Arabic typeface to every TextView/EditText at inflation time.
+
+    TextAppearance.Find.*  = size + default colour (usable in android:textAppearance / spans)
+    Find.Text.*            = view styles: appearance + line height + no font padding
+                             (use with style="@style/Find.Text.X")
+    Colours here use theme-aware tokens so dark mode keeps working; a colour set
+    directly on a view still wins.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- ── TextAppearance (size / colour) ─────────────────────────────── -->
+    <style name="TextAppearance.Find" parent="">
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <!-- adTitle 24 / 29, #000000 (white in dark mode via @color/black override) -->
+    <style name="TextAppearance.Find.AdTitle">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <!-- adBody 16 / 22 -->
+    <style name="TextAppearance.Find.AdBody">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- tabs 16 / 19 (inactive tabs use @color/tab_label_inactive = black 40%) -->
+    <style name="TextAppearance.Find.Tabs">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- searchPlaceholder 16 / 19, #505050 -->
+    <style name="TextAppearance.Find.SearchPlaceholder">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColorHint">@color/search_hint_text</item>
+    </style>
+
+    <!-- actionLabel 15 / 18 (Call / WhatsApp / Chat) -->
+    <style name="TextAppearance.Find.ActionLabel">
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <!-- tabBarLabel 11 / 13, black 85% -->
+    <style name="TextAppearance.Find.TabBarLabel">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/nav_text_selected</item>
+    </style>
+
+    <!-- caption 10 / 12 (location, time, price, advertiser) -->
+    <style name="TextAppearance.Find.Caption">
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <!-- ── View styles (appearance + line height + no font padding) ───── -->
+    <style name="Find.Text" parent="">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="Find.Text.AdTitle">
+        <item name="android:textAppearance">@style/TextAppearance.Find.AdTitle</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:lineHeight" tools:targetApi="28">29sp</item>
+        <item name="lineHeight">29sp</item>
+    </style>
+
+    <style name="Find.Text.AdBody">
+        <item name="android:textAppearance">@style/TextAppearance.Find.AdBody</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineHeight" tools:targetApi="28">22sp</item>
+        <item name="lineHeight">22sp</item>
+    </style>
+
+    <style name="Find.Text.Tabs">
+        <item name="android:textAppearance">@style/TextAppearance.Find.Tabs</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineHeight" tools:targetApi="28">19sp</item>
+        <item name="lineHeight">19sp</item>
+    </style>
+
+    <style name="Find.Text.SearchPlaceholder">
+        <item name="android:textAppearance">@style/TextAppearance.Find.SearchPlaceholder</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineHeight" tools:targetApi="28">19sp</item>
+        <item name="lineHeight">19sp</item>
+    </style>
+
+    <style name="Find.Text.ActionLabel">
+        <item name="android:textAppearance">@style/TextAppearance.Find.ActionLabel</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:lineHeight" tools:targetApi="28">18sp</item>
+        <item name="lineHeight">18sp</item>
+    </style>
+
+    <style name="Find.Text.TabBarLabel">
+        <item name="android:textAppearance">@style/TextAppearance.Find.TabBarLabel</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:lineHeight" tools:targetApi="28">13sp</item>
+        <item name="lineHeight">13sp</item>
+    </style>
+
+    <style name="Find.Text.Caption">
+        <item name="android:textAppearance">@style/TextAppearance.Find.Caption</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:lineHeight" tools:targetApi="28">12sp</item>
+        <item name="lineHeight">12sp</item>
+    </style>
+</resources>

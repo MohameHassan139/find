@@ -74,10 +74,10 @@
 
                     <TextView
                         android:id="@+id/tvSeller"
+                        style="@style/Find.Text.Caption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
-                        android:textSize="10sp"
                         android:textColor="@color/text_primary"
                         android:maxLines="1"
                         android:ellipsize="end" />
@@ -106,9 +106,9 @@
 
                     <TextView
                         android:id="@+id/tvPrice"
+                        style="@style/Find.Text.Caption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="10sp"
                         android:textColor="@color/text_primary" />
                 </LinearLayout>
             </LinearLayout>
@@ -142,9 +142,9 @@
 
                     <TextView
                         android:id="@+id/tvLocation"
+                        style="@style/Find.Text.Caption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="10sp"
                         android:textColor="@color/text_primary"
                         android:maxLines="1"
                         android:ellipsize="end" />
@@ -173,9 +173,9 @@
 
                     <TextView
                         android:id="@+id/tvTime"
+                        style="@style/Find.Text.Caption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="10sp"
                         android:textColor="@color/text_primary"
                         android:maxLines="1"
                         android:ellipsize="end" />

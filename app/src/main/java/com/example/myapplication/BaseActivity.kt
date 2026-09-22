@@ -68,6 +68,8 @@ open class BaseActivity : AppCompatActivity() {
     private var origBottomNavMargin: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Inter + Noto Sans Arabic on every TextView (see Type.kt). Must run before super.onCreate.
+        FindTypefaceInflater.install(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)

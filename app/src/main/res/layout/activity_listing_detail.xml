@@ -100,13 +100,13 @@
 
             <TextView
                 android:id="@+id/tvSearchHint"
+                style="@style/Find.Text.SearchPlaceholder"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:layoutDirection="locale"
                 android:gravity="start|center_vertical"
                 android:paddingHorizontal="8dp"
-                android:textSize="14sp"
                 android:text="@string/search_hint"
                 android:textColor="@color/search_hint_text" />
 
@@ -194,15 +194,13 @@
                         <!-- Title -->
                         <TextView
                             android:id="@+id/tvTitle"
+                            style="@style/Find.Text.AdTitle"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="16dp"
                             android:layout_marginTop="16dp"
                             android:textAlignment="viewStart"
                             android:textColor="@color/text_primary"
-                            android:textSize="19sp"
-                            android:fontFamily="sans-serif-medium"
-                            android:textStyle="bold"
                             android:maxLines="2"
                             android:ellipsize="end"
                             app:layout_constraintTop_toTopOf="parent"
@@ -226,13 +224,13 @@
                         <!-- Seller Name (To the end/left of Avatar in RTL, 10sp, Regular) -->
                         <TextView
                             android:id="@+id/tvSellerName"
+                            style="@style/Find.Text.Caption"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="8dp"
                             android:ellipsize="end"
                             android:maxLines="1"
                             android:textColor="@color/text_primary"
-                            android:textSize="10sp"
                             android:textAlignment="viewStart"
                             app:layout_constraintTop_toTopOf="@id/ivAvatar"
                             app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
@@ -242,9 +240,9 @@
                         <!-- Price (Left side in RTL, 10sp, Regular) -->
                         <TextView
                             android:id="@+id/tvPrice"
+                            style="@style/Find.Text.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="10sp"
                             android:textColor="@color/text_primary"
                             app:layout_constraintTop_toTopOf="@id/ivAvatar"
                             app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
@@ -278,13 +276,13 @@
                         <!-- Location Text (To the end/left of Pin Icon in RTL, 10sp, Regular) -->
                         <TextView
                             android:id="@+id/tvLocation"
+                            style="@style/Find.Text.Caption"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="8dp"
                             android:ellipsize="end"
                             android:maxLines="1"
                             android:textColor="@color/find_gray_text"
-                            android:textSize="10sp"
                             android:textAlignment="viewStart"
                             app:layout_constraintTop_toTopOf="@id/ivLocationIcon"
                             app:layout_constraintBottom_toBottomOf="@id/ivLocationIcon"
@@ -294,9 +292,9 @@
                         <!-- Time Text (Left side in RTL, 10sp, Regular) -->
                         <TextView
                             android:id="@+id/tvTime"
+                            style="@style/Find.Text.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="10sp"
                             android:textColor="@color/find_gray_text"
                             app:layout_constraintTop_toTopOf="@id/ivLocationIcon"
                             app:layout_constraintBottom_toBottomOf="@id/ivLocationIcon"
@@ -356,10 +354,10 @@
 
                                 <TextView
                                     android:id="@+id/tvCall"
+                                    style="@style/Find.Text.ActionLabel"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/btn_call"
-                                    android:textSize="11sp"
                                     android:textColor="@color/text_primary" />
                             </LinearLayout>
 
@@ -383,10 +381,10 @@
 
                                 <TextView
                                     android:id="@+id/tvWhatsapp"
+                                    style="@style/Find.Text.ActionLabel"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/btn_whatsapp"
-                                    android:textSize="11sp"
                                     android:textColor="@color/text_primary" />
                             </LinearLayout>
 
@@ -410,10 +408,10 @@
 
                                 <TextView
                                     android:id="@+id/tvChat"
+                                    style="@style/Find.Text.ActionLabel"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/btn_chat"
-                                    android:textSize="11sp"
                                     android:textColor="@color/text_primary" />
                             </LinearLayout>
                         </LinearLayout>
@@ -587,15 +585,14 @@
 
                         <TextView
                             android:id="@+id/tvDescription"
+                            style="@style/Find.Text.AdBody"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:minHeight="302dp"
                             android:paddingHorizontal="16dp"
                             android:paddingTop="19dp"
                             android:paddingBottom="24dp"
-                            android:textSize="16sp"
                             android:textColor="@color/text_primary"
-                            android:lineSpacingMultiplier="1.2"
                             android:textAlignment="viewStart"
                             android:gravity="top|start" />
                     </com.google.android.material.card.MaterialCardView>

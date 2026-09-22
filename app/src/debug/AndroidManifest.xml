@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Debug-only additions (merged into the debug APK, never into release). -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- Font specimen. Open with:
+             adb shell am start -n com.finds.app/com.example.myapplication.FontDebugActivity -->
+        <activity
+            android:name="com.example.myapplication.FontDebugActivity"
+            android:exported="true"
+            android:label="Font debug" />
+    </application>
+</manifest>

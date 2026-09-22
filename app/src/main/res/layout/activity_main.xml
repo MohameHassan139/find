@@ -54,6 +54,7 @@
 
             <EditText
                 android:id="@+id/etSearch"
+                style="@style/Find.Text.SearchPlaceholder"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
@@ -65,8 +66,6 @@
                 android:inputType="text"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="0dp"
-                android:includeFontPadding="false"
-                android:textSize="14sp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/search_hint_text" />
 
@@ -135,12 +134,12 @@
 
                 <com.example.myapplication.widgets.StrokeTextView
                     android:id="@+id/chipAll"
+                    style="@style/Find.Text.Tabs"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:translationY="-2dp"
                     android:text="@string/filter_all"
-                    android:textSize="14sp"
                     android:textColor="@color/tab_label_active" />
 
                 <View
@@ -174,12 +173,12 @@
 
                 <com.example.myapplication.widgets.StrokeTextView
                     android:id="@+id/chipOffer"
+                    style="@style/Find.Text.Tabs"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:translationY="-2dp"
                     android:text="@string/filter_offer"
-                    android:textSize="14sp"
                     android:textColor="@color/tab_label_inactive" />
 
                 <View
@@ -213,12 +212,12 @@
 
                 <com.example.myapplication.widgets.StrokeTextView
                     android:id="@+id/chipRequest"
+                    style="@style/Find.Text.Tabs"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:translationY="-2dp"
                     android:text="@string/filter_request"
-                    android:textSize="14sp"
                     android:textColor="@color/tab_label_inactive" />
 
                 <View

@@ -18,6 +18,8 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        // Figma typography: Inter + Noto Sans Arabic on every screen (see Type.kt)
+        FindTypefaceInflater.install(this)
         // Apply saved theme before any activity is created
         SettingsActivity.applyTheme(this)
         FcmService.ensureChannel(this)

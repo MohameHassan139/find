@@ -40,11 +40,11 @@
 
             <TextView
                 android:id="@+id/tvNavHome"
+                style="@style/Find.Text.TabBarLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="@string/nav_home"
-                android:textSize="10sp"
                 android:textColor="@color/nav_text_unselected" />
         </LinearLayout>
 
@@ -69,11 +69,11 @@
 
             <TextView
                 android:id="@+id/tvNavAdd"
+                style="@style/Find.Text.TabBarLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="@string/nav_add_ad"
-                android:textSize="10sp"
                 android:textColor="@color/nav_text_unselected" />
         </LinearLayout>
 
@@ -98,11 +98,11 @@
 
             <TextView
                 android:id="@+id/tvNavChat"
+                style="@style/Find.Text.TabBarLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="@string/nav_chats"
-                android:textSize="10sp"
                 android:textColor="@color/nav_text_unselected" />
         </LinearLayout>
 

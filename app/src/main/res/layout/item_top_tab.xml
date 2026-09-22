@@ -17,13 +17,13 @@
 
     <com.example.myapplication.widgets.StrokeTextView
         android:id="@+id/tvLabel"
+        style="@style/Find.Text.Tabs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:translationY="-2dp"
         android:text="@string/str_label"
-        android:textColor="@color/tab_label_inactive"
-        android:textSize="15sp" />
+        android:textColor="@color/tab_label_inactive" />
 
     <View
         android:layout_width="0dp"
