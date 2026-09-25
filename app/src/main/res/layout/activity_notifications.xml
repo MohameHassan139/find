@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Notifications — matches the iOS screen:
+     app bar → search + category tabs → white rounded card with a
+     yellow bell tile + "الإشعارات:" header, list / centered empty state inside. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/bg_screen"
+    android:background="@color/find_gray_bg"
     android:layoutDirection="locale">
 
     <!-- Top Bar -->
@@ -12,72 +16,130 @@
     <!-- Reusable home header: search + category tabs -->
     <include layout="@layout/layout_home_header" />
 
-    <!-- Mark all read bar -->
+    <!-- Kept for NotificationsActivity (ids referenced in code) but hidden: the
+         iOS design has no "mark all read" strip. -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="44dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:background="@color/surface_primary">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/tvUnreadCount"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:textColor="@color/find_primary"
             android:visibility="gone" />
 
         <TextView
             android:id="@+id/btnMarkAllRead"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/filter_all"
-            android:textSize="12sp"
-            android:textColor="@color/find_primary"
-            android:padding="8dp" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefresh"
+    <!-- Main card -->
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="10dp"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="3dp"
+        app:cardBackgroundColor="@color/surface_primary">
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvNotifications"
+            <!-- Header: yellow bell tile + title -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="16dp"
                 android:paddingTop="8dp"
-                android:clipToPadding="false"
-                android:visibility="gone" />
+                android:paddingBottom="4dp">
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone" />
+                <FrameLayout
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_menu_icon_yellow">
 
-            <TextView
-                android:id="@+id/tvEmpty"
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_menu_notifications"
+                        android:importantForAccessibility="no" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/notifications_title_colon"
+                    android:textAlignment="viewStart"
+                    android:textSize="17sp"
+                    android:textColor="@color/text_primary"
+                    android:fontFamily="@font/app_font" />
+            </LinearLayout>
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefresh"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:padding="48dp"
-                android:textSize="15sp"
-                android:textColor="@color/text_secondary"
-                android:visibility="gone" />
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
-        </FrameLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvNotifications"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="16dp"
+                        android:clipToPadding="false"
+                        android:scrollbars="none"
+                        android:visibility="gone" />
+
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:indeterminateTint="@color/text_secondary"
+                        android:visibility="gone" />
+
+                    <!-- Empty state: text with the big bell under it (compound
+                         drawable, so it shows/hides together with tvEmpty) -->
+                    <TextView
+                        android:id="@+id/tvEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="40dp"
+                        android:gravity="center"
+                        android:paddingHorizontal="24dp"
+                        android:text="@string/kt_str_e9867f64"
+                        android:textSize="18sp"
+                        android:textColor="@color/find_gray_text"
+                        android:drawableBottom="@drawable/ic_notifications_empty"
+                        android:drawablePadding="14dp"
+                        android:visibility="gone" />
+
+                </FrameLayout>
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <!-- Bottom Nav -->
     <include

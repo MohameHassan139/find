@@ -123,7 +123,7 @@
             android:id="@+id/rvHomeTopTabs"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="@color/tab_bar_bg"
+            android:background="@drawable/bg_tab_row"
             android:orientation="horizontal"
             android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -164,13 +164,15 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <!-- Main card (Figma Frame: left 6px, border-radius 5px, box-shadow) -->
+            <!-- Main card (Figma Frame: left 6px, border-radius 5px, box-shadow).
+                 match_parent + fillViewport: on short ads (e.g. no photos) the card
+                 still reaches the bottom instead of ending mid-screen. -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginHorizontal="6dp"
                 android:layout_marginTop="10dp"
                 android:clipToOutline="true"
@@ -181,7 +183,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="vertical">
 
                     <!-- Shaded Top Section -->
@@ -470,7 +472,8 @@
                         android:layout_height="1dp"
                         android:background="@color/divider" />
 
-                    <!-- Image Carousel Container -->
+                    <!-- Image Carousel Container — GONE for ads without photos, so the
+                         favorite/share row sits directly under the contact bar -->
                     <androidx.cardview.widget.CardView
                         android:id="@+id/cvImageContainer"
                         android:layout_width="match_parent"
@@ -578,6 +581,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="0dp"
+                        android:layout_weight="1"
                         android:minHeight="302dp"
                         app:cardCornerRadius="0dp"
                         app:cardElevation="0dp"

@@ -101,7 +101,8 @@
     <string name="kt_str_c0f5269a">حسابي</string>
     <string name="kt_str_17c3b29d">تم تحديد الكل كمقروء</string>
     <string name="kt_str_e066498f">تعذر التحديث</string>
-    <string name="kt_str_e9867f64">لا توجد إشعارات</string>
+    <string name="kt_str_e9867f64">لا يوجد إشعارات</string>
+    <string name="notifications_title_colon">الإشعارات:</string>
     <string name="kt_str_3569a87c">تم الحذف</string>
     <string name="kt_str_eb88417b">فشل الحذف</string>
     <string name="kt_str_a0139053">أدخل الاسم</string>
@@ -135,6 +136,7 @@
     <string name="settings_blocked_users">المستخدمون المحظورون</string>
     <string name="blocked_unblock">إلغاء الحظر</string>
     <string name="blocked_empty">لا يوجد مستخدمون محظورون</string>
+    <string name="blocked_title_short">المحظورون</string>
     <string name="blocked_unknown_user">مستخدم غير معروف</string>
     <string name="settings_night_mode">الوضع الليلي</string>
     <string name="settings_delete_account">حذف الحساب</string>

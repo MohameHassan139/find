@@ -470,14 +470,25 @@ class ListingDetailActivity : BaseActivity() {
 
     // ── Image carousel & dots indicator ──────────────────────────────────────
 
+    private var pageChangeCallback: androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback? = null
+
     private fun setupImageCarousel(images: List<String>) {
+        // Drop the previous ad's pager state (sibling navigation reuses this screen)
+        pageChangeCallback?.let { binding.vpImages.unregisterOnPageChangeCallback(it) }
+        pageChangeCallback = null
+
         if (images.isEmpty()) {
-            binding.vpImages.visibility = View.GONE
-            binding.ivNoImagePlaceholder.visibility = View.VISIBLE
+            // Ad without photos: remove the whole image block (no placeholder
+            // picture) — favorite/share row + description move right up under
+            // the contact bar, same as iOS.
+            binding.vpImages.adapter = null
+            binding.cvImageContainer.visibility = View.GONE
+            binding.ivNoImagePlaceholder.visibility = View.GONE
             binding.llDotsIndicator.visibility = View.GONE
             return
         }
 
+        binding.cvImageContainer.visibility = View.VISIBLE
         binding.vpImages.visibility = View.VISIBLE
         binding.vpImages.layoutDirection = View.LAYOUT_DIRECTION_LTR
         binding.ivNoImagePlaceholder.visibility = View.GONE
@@ -498,12 +509,14 @@ class ListingDetailActivity : BaseActivity() {
 
         setupDotsIndicator(images.size, 0)
 
-        binding.vpImages.registerOnPageChangeCallback(object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+        val callback = object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 updateDotsIndicator(position)
             }
-        })
+        }
+        pageChangeCallback = callback
+        binding.vpImages.registerOnPageChangeCallback(callback)
     }
 
     private fun setupDotsIndicator(count: Int, activePosition: Int = 0) {

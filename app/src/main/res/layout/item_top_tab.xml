@@ -10,6 +10,12 @@
     android:focusable="true"
     android:background="?attr/selectableItemBackground">
 
+    <!-- Mirrors the underline height so the label stays exactly centered in the
+         yellow bar whether the tab is selected or not -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="3dp" />
+
     <View
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -30,10 +36,12 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <!-- Highlighter sits ON the yellow bar (above the row's bottom strip) -->
     <View
         android:id="@+id/underline"
         android:layout_width="match_parent"
         android:layout_height="3dp"
+        android:layout_marginBottom="@dimen/tab_row_strip"
         android:background="@android:color/transparent" />
 
 </LinearLayout>

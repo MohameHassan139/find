@@ -52,7 +52,7 @@
         android:id="@+id/rvHomeTopTabs"
         android:layout_width="match_parent"
         android:layout_height="@dimen/home_tab_height"
-        android:background="@color/tab_bar_bg"
+        android:background="@drawable/bg_tab_row"
         android:orientation="horizontal"
         android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />

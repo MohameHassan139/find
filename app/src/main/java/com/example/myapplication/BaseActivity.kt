@@ -87,6 +87,7 @@ open class BaseActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setupAppBarDirection()
         applyWindowInsets()
+        attachHomeHeaderIfNeeded()
     }
 
     override fun setContentView(view: View?) {
@@ -94,6 +95,37 @@ open class BaseActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setupAppBarDirection()
         applyWindowInsets()
+        attachHomeHeaderIfNeeded()
+    }
+
+    private var homeHeaderAttached = false
+
+    /**
+     * Screens whose layout includes layout_home_header (search + category tabs)
+     * but whose Activity may not wire it. Runs after onCreate has finished
+     * (posted); if the Activity already wired the header itself (the search
+     * box has a click listener), nothing is done, so it never double-attaches.
+     */
+    private fun attachHomeHeaderIfNeeded() {
+        if (homeHeaderAttached) return
+        val eligible = this is com.example.myapplication.moderation.BlockedUsersActivity ||
+            this is com.example.myapplication.notifications.NotificationsActivity
+        if (!eligible) return
+        val search = findViewById<View>(R.id.llHomeSearchContainer) ?: return
+        if (findViewById<View>(R.id.rvHomeTopTabs) == null) return
+        homeHeaderAttached = true
+        search.post {
+            if (isFinishing || isDestroyed || search.hasOnClickListeners()) return@post
+            val sharedVm = androidx.lifecycle.ViewModelProvider(this)[SharedCategoriesViewModel::class.java]
+            com.example.myapplication.utils.HomeHeaderHelper.attach(
+                this, findViewById(android.R.id.content), sharedVm.categories
+            )
+            if (!search.hasOnClickListeners()) {
+                search.setOnClickListener {
+                    startWithPush(Intent(this, SearchActivity::class.java))
+                }
+            }
+        }
     }
 
     override fun setContentView(view: View?, params: ViewGroup.LayoutParams?) {

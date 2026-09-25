@@ -1,129 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Blocked users — matches the iOS screen:
+     app bar → search + category tabs → yellow "المحظورون" title bar →
+     gray page with the list / empty state, floating bottom nav on top. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/surface_secondary"
+    android:background="@color/find_gray_bg"
     android:layoutDirection="locale">
 
-    <!-- Shared app bar (back + menu + logo) -->
-    <include layout="@layout/layout_appbar_back" />
-
-    <!-- Main card container — same pattern as favorites / my-ads -->
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginHorizontal="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="4dp"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="3dp"
-        app:cardBackgroundColor="@color/surface_primary">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <!-- Shared app bar (back + menu + logo) -->
+        <include layout="@layout/layout_appbar_back" />
+
+        <!-- Search + category tabs (wired by HomeHeaderHelper) -->
+        <include
+            android:id="@+id/homeHeader"
+            layout="@layout/layout_home_header"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content" />
 
-            <!-- Section header -->
-            <LinearLayout
+        <!-- Title bar: full-width yellow strip, centered bold title -->
+        <TextView
+            android:id="@+id/tvBlockedTitle"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/tab_bar_bg"
+            android:gravity="center"
+            android:text="@string/blocked_title_short"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/tab_row_text"
+            android:fontFamily="@font/app_font" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="16dp"
-                android:paddingTop="16dp"
-                android:paddingBottom="12dp"
-                android:orientation="horizontal">
+                android:layout_height="match_parent">
 
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:layout_marginEnd="10dp"
-                    android:src="@drawable/ic_person"
-                    app:tint="@color/text_primary"
-                    android:importantForAccessibility="no" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/settings_blocked_users"
-                    android:textSize="15sp"
-                    android:textColor="@color/text_primary"
-                    android:fontFamily="@font/app_font" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginHorizontal="16dp"
-                android:background="@color/switcher_divider" />
-
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/swipeRefresh"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-
-                <FrameLayout
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvBlockedUsers"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="110dp"
+                    android:clipToPadding="false"
+                    android:scrollbars="none"
+                    android:visibility="gone" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvBlockedUsers"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:clipToPadding="false"
-                        android:visibility="gone" />
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="80dp"
+                    android:indeterminateTint="@color/text_secondary"
+                    android:visibility="gone" />
 
-                    <ProgressBar
-                        android:id="@+id/progressBar"
+                <!-- Empty state: sits near the top, not vertically centered -->
+                <LinearLayout
+                    android:id="@+id/emptyView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="64dp"
+                    android:paddingHorizontal="24dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="58dp"
+                        android:layout_height="58dp"
+                        android:src="@drawable/ic_blocked_users_empty"
+                        android:alpha="0.7"
+                        app:tint="@color/text_secondary"
+                        android:importantForAccessibility="no" />
+
+                    <TextView
+                        android:id="@+id/tvEmpty"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:visibility="gone" />
+                        android:layout_marginTop="28dp"
+                        android:text="@string/blocked_empty"
+                        android:textSize="17sp"
+                        android:textColor="@color/find_gray_text"
+                        android:gravity="center" />
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/emptyView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:visibility="gone">
+            </FrameLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-                        <ImageView
-                            android:layout_width="64dp"
-                            android:layout_height="64dp"
-                            android:src="@drawable/ic_blocked_users_empty"
-                            app:tint="@color/error_red" />
+    </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/tvEmpty"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:textSize="15sp"
-                            android:textColor="@color/text_secondary"
-                            android:gravity="center" />
-                    </LinearLayout>
-
-                </FrameLayout>
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- Bottom Nav -->
+    <!-- Floating bottom nav over the page -->
     <include
         android:id="@+id/cvBottomNav"
         layout="@layout/layout_bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:layout_marginHorizontal="24dp"
         android:layout_marginBottom="16dp" />
 
-</LinearLayout>
+</FrameLayout>

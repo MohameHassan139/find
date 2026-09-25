@@ -102,6 +102,7 @@
     <string name="kt_str_17c3b29d">Marked all as read</string>
     <string name="kt_str_e066498f">Could not update</string>
     <string name="kt_str_e9867f64">No notifications</string>
+    <string name="notifications_title_colon">Notifications:</string>
     <string name="kt_str_3569a87c">Deleted</string>
     <string name="kt_str_eb88417b">Delete failed</string>
     <string name="kt_str_a0139053">Enter name</string>
@@ -135,6 +136,7 @@
     <string name="settings_blocked_users">Blocked Users</string>
     <string name="blocked_unblock">Unblock</string>
     <string name="blocked_empty">No blocked users</string>
+    <string name="blocked_title_short">Blocked</string>
     <string name="blocked_unknown_user">Unknown user</string>
     <string name="settings_night_mode">Night Mode</string>
     <string name="settings_delete_account">Delete Account</string>

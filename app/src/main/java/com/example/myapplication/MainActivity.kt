@@ -16,11 +16,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
-import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.myapplication.adapters.CategoryGridAdapter
 import com.example.myapplication.adapters.ListingsAdapter
 import com.example.myapplication.adapters.SubCategoryGridAdapter
@@ -166,7 +166,7 @@ class MainActivity : BaseActivity() {
         }
         binding.rvCategoryGrid.layoutManager = GridLayoutManager(this, 3)
         binding.rvCategoryGrid.adapter = categoryAdapter
-        binding.rvCategoryGrid.isNestedScrollingEnabled = false
+        binding.rvCategoryGrid.tuneForSmoothScrolling()
 
         subCategoryAdapter = SubCategoryGridAdapter(emptyList()) { sub ->
             val cats = vm.categories.value ?: return@SubCategoryGridAdapter
@@ -189,7 +189,7 @@ class MainActivity : BaseActivity() {
         }
         binding.rvSubCategoryGrid.layoutManager = GridLayoutManager(this, 3)
         binding.rvSubCategoryGrid.adapter = subCategoryAdapter
-        binding.rvSubCategoryGrid.isNestedScrollingEnabled = false
+        binding.rvSubCategoryGrid.tuneForSmoothScrolling()
 
         listingsAdapter = ListingsAdapter(
             items = emptyList(),
@@ -208,13 +208,17 @@ class MainActivity : BaseActivity() {
         )
         binding.rvListings.layoutManager = LinearLayoutManager(this)
         binding.rvListings.adapter = listingsAdapter
-        binding.rvListings.isNestedScrollingEnabled = false
+        binding.rvListings.tuneForSmoothScrolling()
 
-        binding.nsvMain.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, _, _, _ ->
-            if (!v.canScrollVertically(1)) {
-                vm.fetchListings(false)
+        // Infinite scroll: prefetch the next page a few rows *before* the end so
+        // new cards are already there when the user reaches them (no stall at the bottom).
+        binding.rvListings.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0) maybeLoadNextPage()
             }
         })
+
+        applyContentBottomInset()
 
         topTabAdapter = TopTabAdapter(emptyList(), 0) { cat ->
             val cats = vm.categories.value ?: emptyList()
@@ -251,6 +255,54 @@ class MainActivity : BaseActivity() {
 
     private fun resetFilterStripsScrollState() {
         binding.appBarFilters.setExpanded(true, false)
+    }
+
+    /** Native, recycling, jank-free scrolling for the content lists. */
+    private fun RecyclerView.tuneForSmoothScrolling() {
+        isNestedScrollingEnabled = true          // drives the collapsing filter strips
+        setHasFixedSize(true)                    // size is fixed by the parent, not the items
+        setItemViewCacheSize(12)                 // keep recently-scrolled-off rows bound
+        // No cross-fade "blink" when an item is re-bound (favorite toggle, page append)
+        (itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
+    }
+
+    /** Jump every content list back to the top and re-reveal the filter strips. */
+    private fun scrollContentToTop() {
+        binding.rvListings.stopScroll()
+        binding.rvListings.scrollToPosition(0)
+        binding.rvCategoryGrid.scrollToPosition(0)
+        binding.rvSubCategoryGrid.scrollToPosition(0)
+        resetFilterStripsScrollState()
+    }
+
+    private fun maybeLoadNextPage() {
+        if (binding.rvListings.visibility != View.VISIBLE) return
+        if (!vm.hasMorePages()) return
+        val lm = binding.rvListings.layoutManager as? LinearLayoutManager ?: return
+        val total = lm.itemCount
+        if (total == 0) return
+        if (lm.findLastVisibleItemPosition() >= total - PREFETCH_DISTANCE) {
+            vm.fetchListings(false)
+        }
+    }
+
+    /**
+     * Lists scroll *under* the floating bottom nav. Pad their bottom by the nav's
+     * real footprint (height + margin, which already includes the system nav-bar
+     * inset) so the last card can always be scrolled fully into view.
+     */
+    private fun applyContentBottomInset() {
+        val nav = binding.cvBottomNav.root
+        val extra = (16 * resources.displayMetrics.density).toInt()
+        nav.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
+            val margin = (v.layoutParams as? android.view.ViewGroup.MarginLayoutParams)?.bottomMargin ?: 0
+            val bottom = v.height + margin + extra
+            listOf(binding.rvListings, binding.rvCategoryGrid, binding.rvSubCategoryGrid).forEach { rv ->
+                if (rv.paddingBottom != bottom) {
+                    rv.setPadding(rv.paddingLeft, rv.paddingTop, rv.paddingRight, bottom)
+                }
+            }
+        }
     }
 
     private fun setupTypeChips() {
@@ -312,7 +364,14 @@ class MainActivity : BaseActivity() {
         binding.llListingsShimmer.visibility = if (state == BodyState.LOADING)       View.VISIBLE else View.GONE
         binding.rvListings.visibility        = if (state == BodyState.ADS)           View.VISIBLE else View.GONE
         binding.llEmptyState.visibility      = if (state == BodyState.EMPTY)         View.VISIBLE else View.GONE
-        if (state == BodyState.LOADING) animateShimmer(binding.llListingsShimmer)
+        if (state == BodyState.LOADING) {
+            // A new query is loading — its results must start from the top.
+            binding.rvListings.stopScroll()
+            binding.rvListings.scrollToPosition(0)
+            startShimmer()
+        } else {
+            stopShimmer()
+        }
 
         val showBackToParent = (state == BodyState.EMPTY) && (vm.catIdx > 0) && (vm.catSubIdx != null)
         binding.btnBackToParent.visibility = if (showBackToParent) View.VISIBLE else View.GONE
@@ -384,6 +443,11 @@ class MainActivity : BaseActivity() {
         // No paging spinner under the list — pages append silently as you scroll.
         vm.listings.observe(this) { listings ->
             listingsAdapter.updateData(listings)
+            // If a short page doesn't fill the screen the user can't scroll to
+            // trigger the next one — keep filling until it does (or pages run out).
+            binding.rvListings.post {
+                if (!binding.rvListings.canScrollVertically(1)) maybeLoadNextPage()
+            }
             if (!isShowingSubGrid && vm.catIdx == 0) {
                 if (listings.isNotEmpty()) applyBodyState(BodyState.ADS)
                 else applyBodyState(BodyState.EMPTY)
@@ -423,8 +487,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun openCategory(cat: ApiCategory) {
-        binding.nsvMain.scrollTo(0, 0)
-        resetFilterStripsScrollState()
+        scrollContentToTop()
         val cats = vm.categories.value ?: return
         val pos = cats.indexOf(cat)
         vm.selectTopCategory(pos + 1)
@@ -437,8 +500,7 @@ class MainActivity : BaseActivity() {
     }
 
     fun resetToHome() {
-        binding.nsvMain.scrollTo(0, 0)
-        resetFilterStripsScrollState()
+        scrollContentToTop()
         val cats = vm.categories.value ?: emptyList()
         vm.selectTopCategory(0)
         topTabAdapter.update(cats, 0)
@@ -469,8 +531,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun showListingsMode() {
-        binding.nsvMain.scrollTo(0, 0)
-        resetFilterStripsScrollState()
+        scrollContentToTop()
         isShowingSubGrid = false
         // Every row here (type chips, extras, region) already has a default value
         // selected — "All" — so show them all immediately instead of gating the
@@ -642,14 +703,34 @@ class MainActivity : BaseActivity() {
     companion object {
         const val EXTRA_CATEGORY_IDX = "extra_category_idx"
         private const val KEY_IS_SHOWING_SUB_GRID = "key_is_showing_sub_grid"
+        /** Start loading the next page when this many rows remain below the viewport. */
+        private const val PREFETCH_DISTANCE = 5
     }
 
-    private fun animateShimmer(view: View) {
-        android.animation.ObjectAnimator.ofFloat(view, "alpha", 0.4f, 1f, 0.4f).apply {
-            duration = 1200
-            repeatCount = android.animation.ValueAnimator.INFINITE
-            start()
-        }
+    // One shared shimmer animator. Previously a new infinite animator was started
+    // on every LOADING state and never cancelled, so they piled up and kept
+    // running (off-screen too), stealing frames from scrolling.
+    private var shimmerAnimator: android.animation.ObjectAnimator? = null
+
+    private fun startShimmer() {
+        if (shimmerAnimator?.isRunning == true) return
+        shimmerAnimator = android.animation.ObjectAnimator
+            .ofFloat(binding.llListingsShimmer, View.ALPHA, 0.4f, 1f, 0.4f).apply {
+                duration = 1200
+                repeatCount = android.animation.ValueAnimator.INFINITE
+                start()
+            }
+    }
+
+    private fun stopShimmer() {
+        shimmerAnimator?.cancel()
+        shimmerAnimator = null
+        binding.llListingsShimmer.alpha = 1f
+    }
+
+    override fun onDestroy() {
+        stopShimmer()
+        super.onDestroy()
     }
 
     private fun setupNavigation() {
