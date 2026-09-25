@@ -18,6 +18,8 @@
 
     <!-- ── TextAppearance (size / colour) ─────────────────────────────── -->
     <style name="TextAppearance.Find" parent="">
+        <item name="android:fontFamily">@font/app_font</item>
+        <item name="fontFamily">@font/app_font</item>
         <item name="android:textStyle">normal</item>
         <item name="android:letterSpacing">0</item>
     </style>
@@ -62,6 +64,8 @@
 
     <!-- ── View styles (appearance + line height + no font padding) ───── -->
     <style name="Find.Text" parent="">
+        <item name="android:fontFamily">@font/app_font</item>
+        <item name="fontFamily">@font/app_font</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:letterSpacing">0</item>
         <item name="android:textStyle">normal</item>

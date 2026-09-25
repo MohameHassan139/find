@@ -10,25 +10,8 @@
         <item name="android:colorBackground">@color/bg_screen</item>
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
-        <!-- NOTE: do NOT point this at @font/inter or @font/cairo until Inter is
-             bundled as real .ttf files in res/font/.
-
-             Both of those are *downloadable* fonts served by Google Play
-             services, and both resolve their signatures through
-             @array/com_google_android_gms_fonts_certs in res/values/font_certs.xml.
-             That certs file is not the real Google one — its base-64 is
-             fabricated (the dev cert had a stray "." at offset 1460; the prod
-             cert ends in the repeating filler "0Ae7X0ZeXGy0+..." and is 965
-             chars, not a multiple of 4). Android's Base64 decoder rejects it
-             with "bad base-64", which made FontResourcesParserCompat blow up
-             inside every TextView's constructor — so setting the font on the
-             theme crashed every single Activity on inflate.
-
-             iOS bundles Inter-Regular/Medium/SemiBold/Bold .ttf in the app
-             (see App/AppFont.swift). Android should do the same: drop the four
-             .ttf files into res/font/, replace inter.xml with a static
-             font-family listing the four weights, delete font_certs.xml, then
-             re-add the two lines below. -->
+        <item name="android:fontFamily">@font/app_font</item>
+        <item name="fontFamily">@font/app_font</item>
     </style>
 
     <style name="Theme.MyApplication" parent="Base.Theme.MyApplication" />

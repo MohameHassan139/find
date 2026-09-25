@@ -9,6 +9,7 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
+import com.example.myapplication.FindFonts
 import com.example.myapplication.R
 
 class StrokeTextView @JvmOverloads constructor(
@@ -103,8 +104,9 @@ class StrokeTextView @JvmOverloads constructor(
      */
     fun applyTabState(isActive: Boolean) {
         val isDark = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        val tf = FindFonts.typeface(context)
         if (isActive) {
-            setTypeface(null, Typeface.BOLD)
+            setTypeface(tf, Typeface.BOLD)
             if (!isDark) {
                 isStrokeEnabled = true
                 strokeColor = Color.BLACK
@@ -115,7 +117,7 @@ class StrokeTextView @JvmOverloads constructor(
             }
         } else {
             isStrokeEnabled = false
-            setTypeface(null, Typeface.NORMAL)
+            setTypeface(tf, Typeface.NORMAL)
             setTextColor(ContextCompat.getColor(context, R.color.tab_label_inactive))
         }
     }

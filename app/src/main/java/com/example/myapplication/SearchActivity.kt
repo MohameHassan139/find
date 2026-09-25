@@ -160,7 +160,7 @@ class SearchActivity : BaseActivity() {
         fun style(tv: TextView, isActive: Boolean) {
             tv.setBackgroundResource(if (isActive) R.drawable.bg_chip_selected else R.drawable.bg_chip_unselected)
             tv.setTextColor(if (isActive) Color.BLACK else gray)
-            tv.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
+            tv.setTypeface(FindFonts.typeface(tv.context), if (isActive) Typeface.BOLD else Typeface.NORMAL)
         }
         style(binding.chipAll, active == null)
         style(binding.chipOffer, active == "offer")

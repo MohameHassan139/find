@@ -31,6 +31,7 @@ import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityMyAdsBinding
 import com.example.myapplication.utils.HomeHeaderHelper
+import com.example.myapplication.utils.ListingLocationFormatter
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.NavScreen
@@ -294,7 +295,7 @@ class MyAdsAdapter(
             formatted
         } else "—"
         holder.tvSellerName.text = item.seller?.name ?: ""
-        holder.tvLocation.text = item.region?.nameAr ?: item.city ?: ""
+        holder.tvLocation.text = ListingLocationFormatter.cityOnly(item.city)
         holder.tvTime.text = formatTime(item.createdAt)
 
         // Image navigation

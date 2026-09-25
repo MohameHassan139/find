@@ -46,7 +46,7 @@
                 android:ellipsize="end"
                 android:textSize="12sp"
                 android:textColor="@color/category_card_text"
-                android:fontFamily="sans-serif" />
+                android:fontFamily="@font/app_font" />
 
             <FrameLayout
                 android:layout_width="match_parent"

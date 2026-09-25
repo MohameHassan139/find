@@ -243,6 +243,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                         _regions.value = regions
                         _allCities.value = cities
                         _isBootLoading.value = false
+                        if (catIdx == 0) fetchListings(reset = true)
                     }
                 } else {
                     withContext(Dispatchers.Main) {
@@ -355,20 +356,20 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     fun selectType(type: String?) {
         catType = type
-        if (catIdx > 0) fetchListings(reset = true)
+        fetchListings(reset = true)
     }
 
     fun selectRegion(regionId: Int?) {
         catRegId = regionId
         catCityId = null
         catCityItem = null
-        if (catIdx > 0) fetchListings(reset = true)
+        fetchListings(reset = true)
     }
 
     fun selectCity(city: CityItem?) {
         catCityId = city?.id
         catCityItem = city
-        if (catIdx > 0) fetchListings(reset = true)
+        fetchListings(reset = true)
     }
 
     fun selectCityById(cityId: Int?) {
@@ -381,19 +382,23 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun hasMorePages() = currentPage < lastPage
 
     fun fetchListings(reset: Boolean = true) {
-        val cats = _categories.value ?: return
-        if (catIdx == 0 || catIdx > cats.size) return
         if (isFetching) return
 
-        val cat = cats[catIdx - 1]
-        val subs = cat.subCategories
+        val isHomeFeed = catIdx == 0
+        val cats = _categories.value
+        if (!isHomeFeed) {
+            if (cats == null || catIdx > cats.size) return
+        }
+
+        val cat = if (!isHomeFeed && cats != null) cats[catIdx - 1] else null
+        val subs = cat?.subCategories ?: emptyList()
         val ss = catSubIdx?.let { subs.getOrNull(it) }
         // "All" means show every ad under this category, not "match this literal synthetic id" —
         // see ApiSubCategory.isAllOption(). Matches iOS resolvedSubCategoryId behavior.
-        val subCategoryId = ss?.takeUnless { it.isAllOption() }?.id
+        val subCategoryId = if (isHomeFeed) null else ss?.takeUnless { it.isAllOption() }?.id
         val extras = ss?.filterOptions ?: emptyList()
         val se = catExtraIdx?.let { extras.getOrNull(it) }
-        val isExtraAll = se == null || se.isAllOption()
+        val isExtraAll = isHomeFeed || se == null || se.isAllOption()
 
         // When sub-category is "All" (null), filter_option_id belongs to the synthetic
         // "All" sub-category (e.g. 104) which no database listing has; so pass null to
@@ -421,7 +426,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 val res = apiPublic.getListingsCombined(
                     page = currentPage,
                     perPage = PAGE_SIZE,
-                    categoryId = cat.id,
+                    categoryId = cat?.id,
                     subCategoryId = subCategoryId,
                     filterOptionId = apiFilterOptionId,
                     regionId = catRegId,
@@ -449,10 +454,12 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
                     var sourceList = rawListings
                     // Fallback to local pool if server returned empty due to unpopulated filter_option_id
-                    if (sourceList.isEmpty() && !isExtraAll && reset) {
+                    if (sourceList.isEmpty() && !isExtraAll && reset && cat != null) {
                         sourceList = allListingsPool.filter {
                             it.categoryId == cat.id && (subCategoryId == null || it.subCategoryId == subCategoryId)
                         }
+                    } else if (sourceList.isEmpty() && isHomeFeed && reset) {
+                        sourceList = allListingsPool
                     }
 
                     // Match iOS ListingsService.applyFilter: strictly verify city, listingType, and filterOption,
@@ -464,7 +471,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                     if (!catType.isNullOrBlank()) {
                         filtered = filtered.filter { it.listingType?.equals(catType, ignoreCase = true) == true }
                     }
-                    if (!isExtraAll && se != null) {
+                    if (!isExtraAll && se != null && cat != null) {
                         filtered = filtered.filter { matchesFilterOption(it, se, cat) }
                     }
                     val result = filtered
@@ -607,7 +614,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 sellerName = seller?.optString("name", ""),
                 sellerAvatar = seller?.optString("avatar", ""),
                 regionNameAr = reg?.optString("name_ar", ""),
-                city = o.optString("city", ""),
+                city = if (o.has("city") && !o.isNull("city")) {
+                    val cObj = o.optJSONObject("city")
+                    if (cObj != null) cObj.optString("name_ar").ifEmpty { cObj.optString("name") }
+                    else o.optString("city", "")
+                } else "",
                 categoryId = if (o.has("category_id") && !o.isNull("category_id")) o.optInt("category_id") else null,
                 subCategoryId = if (o.has("sub_category_id") && !o.isNull("sub_category_id")) o.optInt("sub_category_id") else null,
                 filterOptionId = if (o.has("filter_option_id") && !o.isNull("filter_option_id")) o.optInt("filter_option_id") else null,

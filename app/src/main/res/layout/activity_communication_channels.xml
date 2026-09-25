@@ -96,7 +96,7 @@
                         <ImageView
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:src="@drawable/ic_nav_chat"
+                            android:src="@drawable/ic_channel_chat"
                             app:tint="@color/text_secondary"
                             android:scaleType="fitCenter"
                             android:contentDescription="In-app chat" />

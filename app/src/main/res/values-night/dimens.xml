@@ -6,8 +6,8 @@
     <dimen name="category_card_elevation">0dp</dimen>
     <!-- Dark design: the glass nav pill has no drop shadow -->
     <dimen name="bottom_nav_elevation">0dp</dimen>
-    <!-- Dark design: 5dp #2C2C2E gap under each yellow tab row, blue indicator sits on the yellow -->
-    <dimen name="tab_row_strip">5dp</dimen>
-    <dimen name="tab_row_gap">5dp</dimen>
+    <!-- Dark design: 3dp divider under each yellow tab row, active indicator overlays it -->
+    <dimen name="tab_row_strip">3dp</dimen>
+    <dimen name="tab_row_gap">3dp</dimen>
     <dimen name="ad_details_card_elevation">0dp</dimen>
 </resources>

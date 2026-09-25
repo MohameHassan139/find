@@ -185,7 +185,11 @@ class SearchViewModel : ViewModel() {
                 sellerName = seller?.optString("name")?.ifEmpty { null },
                 sellerAvatar = seller?.optString("avatar")?.ifEmpty { null },
                 regionNameAr = region?.optString("name_ar")?.ifEmpty { null },
-                city = o.optString("city").ifEmpty { null }
+                city = if (o.has("city") && !o.isNull("city")) {
+                    val cObj = o.optJSONObject("city")
+                    if (cObj != null) cObj.optString("name_ar").ifEmpty { cObj.optString("name") }.ifEmpty { null }
+                    else o.optString("city").ifEmpty { null }
+                } else null
             ))
         }
         return list

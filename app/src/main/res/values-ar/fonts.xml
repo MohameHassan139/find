@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Arabic font is Noto Sans Arabic -->
+    <item name="app_font" type="font">@font/noto_sans_arabic</item>
+</resources>

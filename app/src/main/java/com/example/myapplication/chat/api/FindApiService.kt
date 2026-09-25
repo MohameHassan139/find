@@ -121,7 +121,7 @@ interface FindApiService {
     suspend fun getListingsCombined(
         @Query("page") page: Int,
         @Query("limit") perPage: Int,
-        @Query("category_id") categoryId: Int,
+        @Query("category_id") categoryId: Int? = null,
         @Query("sub_category_id") subCategoryId: Int? = null,
         @Query("filter_option_id") filterOptionId: Int? = null,
         @Query("region_id") regionId: Int? = null,

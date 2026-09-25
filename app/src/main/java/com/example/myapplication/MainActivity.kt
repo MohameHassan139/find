@@ -34,6 +34,7 @@ import com.example.myapplication.push.PushTokenManager
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.utils.AuthGuard
 import com.example.myapplication.widgets.StrokeTextView
+import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -127,14 +128,7 @@ class MainActivity : BaseActivity() {
         if (catIdx < 0) return
         val cats = vm.categories.value ?: return
         if (catIdx == 0) {
-            vm.selectTopCategory(0)
-            topTabAdapter.update(cats, 0)
-            categoryAdapter.updateData(cats)
-            binding.rvSubTabs.visibility    = View.GONE
-            binding.rvExtraTabs.visibility  = View.GONE
-            binding.llFilterBar.visibility  = View.GONE
-            binding.llRegionRow.visibility  = View.GONE
-            applyBodyState(BodyState.CATEGORIES)
+            resetToHome()
         } else {
             val cat = cats.getOrNull(catIdx - 1) ?: return
             openCategory(cat)
@@ -255,6 +249,10 @@ class MainActivity : BaseActivity() {
         binding.rvExtraTabs.adapter = extraTabAdapter
     }
 
+    private fun resetFilterStripsScrollState() {
+        binding.appBarFilters.setExpanded(true, false)
+    }
+
     private fun setupTypeChips() {
         binding.llChipAll.setOnClickListener {
             vm.selectType(null)
@@ -292,7 +290,7 @@ class MainActivity : BaseActivity() {
             if (tv is StrokeTextView) {
                 tv.applyTabState(isActive)
             } else {
-                tv.setTypeface(null, if (isActive) Typeface.BOLD else Typeface.NORMAL)
+                tv.setTypeface(FindFonts.typeface(tv.context), if (isActive) Typeface.BOLD else Typeface.NORMAL)
                 tv.setTextColor(if (isActive) getColor(R.color.tab_label_active) else getColor(R.color.tab_label_inactive))
             }
             // Rounded blue indicator in dark mode, flat bar in light (see bg_tab_underline_active)
@@ -343,8 +341,7 @@ class MainActivity : BaseActivity() {
                 }
             }
             if (vm.catIdx == 0) {
-                categoryAdapter.updateData(cats)
-                applyBodyState(BodyState.CATEGORIES)
+                applyHomeFeedUi()
             } else {
                 // If we are inside a category, and data just arrived/updated, refresh sub-grid or listings
                 val currentCat = cats.getOrNull(vm.catIdx - 1)
@@ -371,10 +368,7 @@ class MainActivity : BaseActivity() {
 
         vm.homeSubCategories.observe(this) { subs ->
             if (subs.isEmpty()) {
-                if (vm.catIdx == 0) {
-                   categoryAdapter.updateData(vm.categories.value ?: emptyList())
-                   applyBodyState(BodyState.CATEGORIES)
-                }
+                if (vm.catIdx == 0) applyHomeFeedUi()
             } else {
                 subCategoryAdapter.updateData(subs)
                 applyBodyState(BodyState.SUBCATEGORIES)
@@ -382,20 +376,27 @@ class MainActivity : BaseActivity() {
         }
 
         vm.isFirstPageLoading.observe(this) { loading ->
-            if (loading && pendingCategoryId == null && !isShowingSubGrid && vm.catIdx > 0) applyBodyState(BodyState.LOADING)
+            if (loading && pendingCategoryId == null && !isShowingSubGrid && vm.catIdx >= 0) {
+                applyBodyState(BodyState.LOADING)
+            }
         }
 
         // No paging spinner under the list — pages append silently as you scroll.
         vm.listings.observe(this) { listings ->
             listingsAdapter.updateData(listings)
-            if (!isShowingSubGrid && vm.catIdx > 0) {
+            if (!isShowingSubGrid && vm.catIdx == 0) {
+                if (listings.isNotEmpty()) applyBodyState(BodyState.ADS)
+                else applyBodyState(BodyState.EMPTY)
+            } else if (!isShowingSubGrid && vm.catIdx > 0) {
                 if (listings.isNotEmpty()) applyBodyState(BodyState.ADS)
                 else applyBodyState(BodyState.EMPTY)
             }
         }
 
         vm.isEmptyState.observe(this) { empty ->
-            if (empty && pendingCategoryId == null && !isShowingSubGrid && vm.catIdx > 0) applyBodyState(BodyState.EMPTY)
+            if (empty && pendingCategoryId == null && !isShowingSubGrid && vm.catIdx >= 0) {
+                applyBodyState(BodyState.EMPTY)
+            }
         }
 
         vm.errorEvent.observe(this) { msg ->
@@ -423,6 +424,7 @@ class MainActivity : BaseActivity() {
 
     private fun openCategory(cat: ApiCategory) {
         binding.nsvMain.scrollTo(0, 0)
+        resetFilterStripsScrollState()
         val cats = vm.categories.value ?: return
         val pos = cats.indexOf(cat)
         vm.selectTopCategory(pos + 1)
@@ -436,20 +438,39 @@ class MainActivity : BaseActivity() {
 
     fun resetToHome() {
         binding.nsvMain.scrollTo(0, 0)
+        resetFilterStripsScrollState()
         val cats = vm.categories.value ?: emptyList()
         vm.selectTopCategory(0)
-        categoryAdapter.updateData(cats)
-        binding.rvSubTabs.visibility    = View.GONE
-        binding.rvExtraTabs.visibility  = View.GONE
-        binding.llFilterBar.visibility  = View.GONE
-        binding.llRegionRow.visibility  = View.GONE
         topTabAdapter.update(cats, 0)
         isShowingSubGrid = false
-        applyBodyState(BodyState.CATEGORIES)
+        applyHomeFeedUi()
+        applyBodyState(BodyState.LOADING)
+        vm.fetchListings(reset = true)
+    }
+
+    /** Home tab: all ads feed (no category grid). */
+    private fun applyHomeFeedUi() {
+        binding.rvSubTabs.visibility   = View.GONE
+        binding.rvExtraTabs.visibility = View.GONE
+        binding.llFilterBar.visibility = View.VISIBLE
+        binding.llRegionRow.visibility = View.VISIBLE
+        updateChipStyles(vm.catType)
+        if (vm.catRegId == null) {
+            resetRegionPill()
+            resetCityFilter()
+        }
+        val listings = vm.listings.value ?: emptyList()
+        when {
+            listings.isNotEmpty() -> applyBodyState(BodyState.ADS)
+            vm.isEmptyState.value == true -> applyBodyState(BodyState.EMPTY)
+            vm.isFirstPageLoading.value == true -> applyBodyState(BodyState.LOADING)
+            else -> applyBodyState(BodyState.LOADING)
+        }
     }
 
     private fun showListingsMode() {
         binding.nsvMain.scrollTo(0, 0)
+        resetFilterStripsScrollState()
         isShowingSubGrid = false
         // Every row here (type chips, extras, region) already has a default value
         // selected — "All" — so show them all immediately instead of gating the

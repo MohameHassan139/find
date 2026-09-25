@@ -3,6 +3,7 @@ package com.example.myapplication
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import com.example.myapplication.utils.LocaleHelper
 import android.graphics.Typeface
 import android.graphics.fonts.Font
 import android.graphics.fonts.FontStyle
@@ -59,17 +60,15 @@ import java.util.concurrent.ConcurrentHashMap
  * ════════════════════════════════════════════════════════════════════════════
  *  Find typography — single source of truth.
  *
- *  The Figma design sets every text layer to "Inter Regular". Inter has no
- *  Arabic glyphs, so Figma draws Arabic with "Noto Sans Arabic" while Latin
- *  letters, digits ("3,000,000"), spaces and punctuation stay in Inter.
- *  FindFonts reproduces exactly that, per glyph:
+ *  - English mode: Inter primary → Noto Sans Arabic fallback
+ *  - Arabic mode:  Noto Sans Arabic primary → Inter fallback
  *
- *    API 29+  Typeface.CustomFallbackBuilder: Inter primary → Noto Sans Arabic
- *             fallback → system sans-serif (only for glyphs neither font has).
- *             The fonts are bundled, so Samsung/OEM system-font replacement
- *             can't change them.
- *    API <29  Noto Sans Arabic alone (Arabic stays correct; Latin/digits come
- *             from Noto's own Latin set and look slightly different).
+ *  API 29+  Typeface.CustomFallbackBuilder:
+ *           Arabic:  Noto Sans Arabic primary → Inter fallback → system sans-serif
+ *           English: Inter primary → Noto Sans Arabic fallback → system sans-serif
+ *  API <29  Direct bundled font via ResourcesCompat:
+ *           Arabic:  Noto Sans Arabic
+ *           English: Inter
  *
  *  Files: res/font/inter_regular.ttf, res/font/noto_sans_arabic_regular.ttf
  *  XML styles: res/values/styles_text.xml (Find.Text.* / TextAppearance.Find.*)
@@ -84,46 +83,66 @@ object FindFonts {
     val usesPerGlyphFallback: Boolean
         get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
-    @Volatile private var cached: Typeface? = null
+    @Volatile private var cachedArabic: Typeface? = null
+    @Volatile private var cachedEnglish: Typeface? = null
 
-    /** Inter + Noto Sans Arabic typeface (Regular 400). Built once, then cached. */
-    fun typeface(context: Context): Typeface =
-        cached ?: synchronized(this) {
-            cached ?: build(context.applicationContext ?: context).also { cached = it }
+    /**
+     * Resolves the appropriate typeface based on the current locale:
+     * - Arabic mode: Noto Sans Arabic primary (with Inter fallback on API 29+)
+     * - English mode: Inter primary (with Noto Sans Arabic fallback on API 29+)
+     */
+    fun typeface(context: Context): Typeface {
+        val isArabic = LocaleHelper.isArabic(context)
+        return if (isArabic) {
+            cachedArabic ?: synchronized(this) {
+                cachedArabic ?: build(context.applicationContext ?: context, isArabic = true).also { cachedArabic = it }
+            }
+        } else {
+            cachedEnglish ?: synchronized(this) {
+                cachedEnglish ?: build(context.applicationContext ?: context, isArabic = false).also { cachedEnglish = it }
+            }
         }
+    }
 
-    /** Compose wrapper around the same Typeface. */
+    /** Compose wrapper around the active Typeface. */
     fun composeFamily(context: Context): FontFamily = FontFamily(typeface(context))
 
-    private fun build(ctx: Context): Typeface = try {
-        if (usesPerGlyphFallback) buildWithFallback(ctx)
-        else ResourcesCompat.getFont(ctx, R.font.noto_sans_arabic_regular) ?: Typeface.DEFAULT
+    private fun build(ctx: Context, isArabic: Boolean): Typeface = try {
+        if (usesPerGlyphFallback) {
+            buildWithFallback(ctx, isArabic)
+        } else {
+            val fontRes = if (isArabic) R.font.noto_sans_arabic_regular else R.font.inter_regular
+            ResourcesCompat.getFont(ctx, fontRes) ?: Typeface.DEFAULT
+        }
     } catch (t: Throwable) {
         // Never crash inflation because of a font; fall back to the system font.
         Typeface.DEFAULT
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    private fun buildWithFallback(ctx: Context): Typeface {
+    private fun buildWithFallback(ctx: Context, isArabic: Boolean): Typeface {
         val res = ctx.resources
         val regular = FontStyle(FontStyle.FONT_WEIGHT_NORMAL, FontStyle.FONT_SLANT_UPRIGHT)
 
-        val inter = android.graphics.fonts.FontFamily.Builder(
-            Font.Builder(res, R.font.inter_regular)
+        val primaryRes = if (isArabic) R.font.noto_sans_arabic_regular else R.font.inter_regular
+        val fallbackRes = if (isArabic) R.font.inter_regular else R.font.noto_sans_arabic_regular
+
+        val primaryFamily = android.graphics.fonts.FontFamily.Builder(
+            Font.Builder(res, primaryRes)
                 .setWeight(FontStyle.FONT_WEIGHT_NORMAL)
                 .setSlant(FontStyle.FONT_SLANT_UPRIGHT)
                 .build()
         ).build()
 
-        val notoArabic = android.graphics.fonts.FontFamily.Builder(
-            Font.Builder(res, R.font.noto_sans_arabic_regular)
+        val fallbackFamily = android.graphics.fonts.FontFamily.Builder(
+            Font.Builder(res, fallbackRes)
                 .setWeight(FontStyle.FONT_WEIGHT_NORMAL)
                 .setSlant(FontStyle.FONT_SLANT_UPRIGHT)
                 .build()
         ).build()
 
-        return Typeface.CustomFallbackBuilder(inter)
-            .addCustomFallback(notoArabic)
+        return Typeface.CustomFallbackBuilder(primaryFamily)
+            .addCustomFallback(fallbackFamily)
             .setSystemFallback("sans-serif")
             .setStyle(regular)
             .build()
@@ -164,9 +183,15 @@ object FindTypefaceInflater {
         LayoutInflaterCompat.setFactory2(inflater, Factory(activity))
     }
 
-    /** Apply the Find typeface (Regular) to a TextView created in code. */
+    /** Apply the Find typeface to a TextView created in code, preserving bold/italic if set. */
     fun apply(view: TextView) {
-        view.typeface = FindFonts.typeface(view.context)
+        val tf = FindFonts.typeface(view.context)
+        val style = view.typeface?.style ?: Typeface.NORMAL
+        if (style != Typeface.NORMAL) {
+            view.setTypeface(tf, style)
+        } else {
+            view.typeface = tf
+        }
     }
 
     private class Factory(private val activity: AppCompatActivity) : LayoutInflater.Factory2 {
@@ -308,7 +333,8 @@ val LocalFindTextStyles = staticCompositionLocalOf {
 fun FindTheme(content: @Composable () -> Unit) {
     val context = LocalContext.current
     val dark = isSystemInDarkTheme()
-    val family = remember { FindFonts.composeFamily(context) }
+    val isAr = LocaleHelper.isArabic(context)
+    val family = remember(isAr) { FindFonts.composeFamily(context) }
     val styles = remember(family, dark) { FindTextStyles.create(family, dark) }
     val typography = remember(family, styles) { findMaterialTypography(family, styles) }
     MaterialTheme(typography = typography) {
@@ -333,6 +359,7 @@ internal const val PREVIEW_BODY = "يوجد مزرعة للبيع في المز�
  */
 @Composable
 fun FindTypeSpecimen(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
     val s = FindType.styles
     val rows = listOf(
         Triple("adTitle 24/29", s.adTitle, R.style.Find_Text_AdTitle),
@@ -344,12 +371,21 @@ fun FindTypeSpecimen(modifier: Modifier = Modifier) {
         Triple("tabBarLabel 11/13", s.tabBarLabel, R.style.Find_Text_TabBarLabel),
         Triple("caption 10/12", s.caption, R.style.Find_Text_Caption),
     )
-    val mode = if (FindFonts.usesPerGlyphFallback)
-        "API ${Build.VERSION.SDK_INT}: Inter + Noto Sans Arabic per-glyph fallback"
-    else
-        "API ${Build.VERSION.SDK_INT}: Noto Sans Arabic only (below API 29)"
+    val isAr = LocaleHelper.isArabic(context)
+    val mode = if (FindFonts.usesPerGlyphFallback) {
+        if (isAr)
+            "API ${Build.VERSION.SDK_INT}: Arabic mode (Noto Sans Arabic primary, Inter fallback)"
+        else
+            "API ${Build.VERSION.SDK_INT}: English mode (Inter primary, Noto Sans Arabic fallback)"
+    } else {
+        if (isAr)
+            "API ${Build.VERSION.SDK_INT}: Arabic mode (Noto Sans Arabic)"
+        else
+            "API ${Build.VERSION.SDK_INT}: English mode (Inter)"
+    }
 
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+    val direction = if (isAr) LayoutDirection.Rtl else LayoutDirection.Ltr
+    CompositionLocalProvider(LocalLayoutDirection provides direction) {
         Column(
             modifier
                 .background(Color.White)
@@ -391,7 +427,7 @@ private val xmlLineHeightsSp = mapOf(
 private fun xmlSpecimen(ctx: Context, @StyleRes style: Int, inactive: Boolean): View =
     LinearLayout(ctx).apply {
         orientation = LinearLayout.VERTICAL
-        layoutDirection = View.LAYOUT_DIRECTION_RTL
+        layoutDirection = if (LocaleHelper.isArabic(ctx)) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
         listOf(PREVIEW_TITLE, PREVIEW_BODY).forEach { line ->
             addView(TextView(ctx, null, 0, style).apply {
                 text = line

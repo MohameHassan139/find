@@ -406,7 +406,7 @@
                                     android:layout_height="28dp"
                                     android:layout_marginTop="5dp"
                                     android:contentDescription="@string/cd_chat"
-                                    android:src="@drawable/ic_nav_chat"
+                                    android:src="@drawable/ic_channel_chat"
                                     app:tint="@color/appbar_icon_tint" />
 
                                 <TextView

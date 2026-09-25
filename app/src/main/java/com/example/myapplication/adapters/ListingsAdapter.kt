@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.myapplication.ApiListing
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemListingCardBinding
+import com.example.myapplication.utils.ListingLocationFormatter
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.utils.AuthGuard
@@ -53,7 +54,7 @@ class ListingsAdapter(
             fmt
         } ?: "—"
 
-        b.tvLocation.text = item.regionNameAr ?: item.city ?: ""
+        b.tvLocation.text = ListingLocationFormatter.cityOnly(item.city)
         b.tvTime.text = formatTime(item.createdAt, holder.itemView.context)
 
         // Type badge color

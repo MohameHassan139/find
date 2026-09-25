@@ -1,19 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Google Play services Downloadable Fonts certificates.
-
-         The "dev" certificate that used to be listed here was corrupt (a stray
-         "." at offset 1460 of the base-64 string), which made
-         FontResourcesParserCompat.readCerts() throw
-         "java.lang.IllegalArgumentException: bad base-64" the moment any
-         TextView tried to resolve @font/inter — crashing every Activity on
-         inflate. The dev certificate is only used by pre-release builds of
-         Play services, so the production certificate below is all a shipping
-         app needs. -->
-    <array name="com_google_android_gms_fonts_certs">
-        <item>@array/com_google_android_gms_fonts_certs_prod</item>
-    </array>
-    <string-array name="com_google_android_gms_fonts_certs_prod">
-        <item>MIIEQzCCAyugAwIBAgIJAMLgh0ZkSjCNMA0GCSqGSIb3DQEBBAUAMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDAeFw0wODA4MjEyMzEzMzRaFw0zNjAxMDcyMzEzMzRaMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAt7vHx0MjV0SUp0Tc2458oMZR/gaF0tr/XHy3uBoYXTpSt4lin84nLDgmkaU1AdiGBev0KFpM7bac7iT3dYq66wDc1j1sCY+sY+10w5myCkVu/EjF8Br2hhZHM4VQ/Ji0KqT0M0TZ0J/d5tZAX/0Si7YeQg/IDIV8m0M8/ZW1F0Aa4IDAQABo2AwXjELMAkGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgEGMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAdBgNVHQ4EFgQUQ5e1tITe0bYzJ2/TOu/xn7UwaTEwHwYDVR0jBBgwFoAUQ5e1tITe0bYzJ2/TOu/xn7UwaTEwDQYJKoZIhvcNAQEEBQADggEBAHN5lFUMEi0iBk6+2usIyOLY8a0B3s+5U/isGT5D+W/Ji5UYP/5wHD5+1G8c+a+4G+iowu0O1yDkpp0QMY/rd0H0+8/Q0+0d0de0Ae7X0ZeXGy0+0Ae7X0ZeXGy0+0Ae7X0ZeXGy0=</item>
-    </string-array>
+    <!-- Bundled fonts (Inter and Noto Sans Arabic) are used directly in res/font/.
+         Downloadable font certificates are not required. -->
 </resources>

@@ -4,8 +4,8 @@
     <font
         android:fontStyle="normal"
         android:fontWeight="400"
-        android:font="@font/inter_regular"
+        android:font="@font/noto_sans_arabic_regular"
         app:fontStyle="normal"
         app:fontWeight="400"
-        app:font="@font/inter_regular" />
+        app:font="@font/noto_sans_arabic_regular" />
 </font-family>

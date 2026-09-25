@@ -24,11 +24,13 @@ class FontDebugActivity : AppCompatActivity() {
         logGlyphSources()
     }
 
-    /** Proves the per-glyph fallback: Arabic → Noto Sans Arabic, digits → Inter. */
+    /** Proves the per-glyph fallback: Arabic mode uses Noto Sans Arabic primary; English mode uses Inter primary. */
     @android.annotation.SuppressLint("NewApi")
     private fun logGlyphSources() {
+        val isAr = com.example.myapplication.utils.LocaleHelper.isArabic(this)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            Log.i(TAG, "API ${Build.VERSION.SDK_INT} < 29: whole text uses Noto Sans Arabic (expected)")
+            val fontName = if (isAr) "Noto Sans Arabic" else "Inter"
+            Log.i(TAG, "API ${Build.VERSION.SDK_INT} < 29: whole text uses $fontName (expected)")
             return
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
@@ -39,7 +41,7 @@ class FontDebugActivity : AppCompatActivity() {
         val paint = android.graphics.Paint().apply { this.typeface = typeface; textSize = 48f }
         for (text in listOf(PREVIEW_TITLE, PREVIEW_BODY)) {
             val glyphs = android.graphics.text.TextRunShaper.shapeTextRun(
-                text, 0, text.length, 0, text.length, 0f, 0f, /* isRtl = */ true, paint
+                text, 0, text.length, 0, text.length, 0f, 0f, /* isRtl = */ isAr, paint
             )
             val used = (0 until glyphs.glyphCount()).map { glyphs.getFont(it).file?.name ?: "?" }.distinct()
             Log.i(TAG, "\"$text\" drawn with: $used")
