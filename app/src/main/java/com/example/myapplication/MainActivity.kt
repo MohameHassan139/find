@@ -31,6 +31,7 @@ import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.push.PushTokenManager
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.utils.AuthGuard
+import com.example.myapplication.utils.SwipeRefreshHelper
 import com.example.myapplication.widgets.StrokeTextView
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.launch
@@ -231,6 +232,10 @@ class MainActivity : BaseActivity() {
         binding.rvExtraTabs.adapter = extraTabAdapter
 
         setupProgressiveFilterStrips()
+
+        SwipeRefreshHelper.setup(binding.swipeRefreshListings) {
+            vm.fetchListings(reset = true)
+        }
     }
 
     /**
@@ -242,6 +247,7 @@ class MainActivity : BaseActivity() {
         val strips = binding.llHomeFilterStrips
         binding.appBarFilters.addOnOffsetChangedListener(
             com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
+            binding.swipeRefreshListings.isEnabled = (verticalOffset == 0)
             val scrolledAway = -verticalOffset
             for (i in 0 until strips.childCount) {
                 val row = strips.getChildAt(i)
@@ -360,6 +366,7 @@ class MainActivity : BaseActivity() {
         binding.rvSubCategoryGrid.visibility = if (state == BodyState.SUBCATEGORIES) View.VISIBLE else View.GONE
         binding.pbHomeGrid.visibility        = if (state == BodyState.GRID_LOADING)  View.VISIBLE else View.GONE
         binding.llListingsShimmer.visibility = if (state == BodyState.LOADING)       View.VISIBLE else View.GONE
+        binding.swipeRefreshListings.visibility = if (state == BodyState.ADS)        View.VISIBLE else View.GONE
         binding.rvListings.visibility        = if (state == BodyState.ADS)           View.VISIBLE else View.GONE
         binding.llEmptyState.visibility      = if (state == BodyState.EMPTY)         View.VISIBLE else View.GONE
         if (state == BodyState.LOADING) {
@@ -440,6 +447,7 @@ class MainActivity : BaseActivity() {
 
         // No paging spinner under the list — pages append silently as you scroll.
         vm.listings.observe(this) { listings ->
+            binding.swipeRefreshListings.isRefreshing = false
             listingsAdapter.updateData(listings)
             // If a short page doesn't fill the screen the user can't scroll to
             // trigger the next one — keep filling until it does (or pages run out).
@@ -456,12 +464,14 @@ class MainActivity : BaseActivity() {
         }
 
         vm.isEmptyState.observe(this) { empty ->
+            binding.swipeRefreshListings.isRefreshing = false
             if (empty && pendingCategoryId == null && !isShowingSubGrid && vm.catIdx >= 0) {
                 applyBodyState(BodyState.EMPTY)
             }
         }
 
         vm.errorEvent.observe(this) { msg ->
+            binding.swipeRefreshListings.isRefreshing = false
             if (msg != null) {
                 androidx.appcompat.app.AlertDialog.Builder(this)
                     .setTitle("خطأ في البيانات")

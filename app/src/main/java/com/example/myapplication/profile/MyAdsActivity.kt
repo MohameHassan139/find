@@ -28,6 +28,7 @@ import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.databinding.ActivityMyAdsBinding
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.ListingLocationFormatter
+import com.example.myapplication.utils.SwipeRefreshHelper
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.NavScreen
@@ -79,6 +80,9 @@ class MyAdsActivity : BaseActivity() {
         binding.btnEmptyAdd.setOnClickListener { openAddAd() }
         binding.ivEmptyAdd.setOnClickListener { openAddAd() }
         binding.rvAds.layoutManager = LinearLayoutManager(this)
+        SwipeRefreshHelper.setup(binding.swipeRefresh) {
+            loadMyAds()
+        }
         loadMyAds()
     }
 
@@ -126,9 +130,13 @@ class MyAdsActivity : BaseActivity() {
     private fun applyFilter() {
         val filtered = allAds.filter { it.listingType == currentFilter }
         if (filtered.isEmpty()) {
+            binding.swipeRefresh.isRefreshing = false
+            binding.swipeRefresh.visibility = View.GONE
             showEmpty(getString(R.string.empty_no_ads))
         } else {
             binding.root.findViewById<View>(R.id.emptyView).visibility = View.GONE
+            binding.swipeRefresh.isRefreshing = false
+            binding.swipeRefresh.visibility = View.VISIBLE
             binding.rvAds.visibility = View.VISIBLE
             binding.rvAds.adapter = MyAdsAdapter(filtered.toMutableList(),
                 onDelete = { item -> confirmDelete(item) },
@@ -142,18 +150,29 @@ class MyAdsActivity : BaseActivity() {
     }
 
     private fun loadMyAds() {
-        if (TokenManager.getToken(this) == null) { showEmpty("سجّل دخولك أولاً"); return }
+        if (TokenManager.getToken(this) == null) { 
+            binding.swipeRefresh.isRefreshing = false
+            showEmpty("سجّل دخولك أولاً")
+            return 
+        }
         showLoading()
         lifecycleScope.launch {
             when (val result = AppContainer.listings.myListings()) {
                 is ApiResult.Success -> {
                     allAds = result.data
                     binding.progressBar.visibility = View.GONE
+                    binding.swipeRefresh.isRefreshing = false
                     if (allAds.isEmpty()) showEmpty(getString(R.string.empty_no_ads))
                     else applyFilter()
                 }
-                is ApiResult.HttpError -> showEmpty("تعذر التحميل: ${result.code}")
-                is ApiResult.NetworkError -> showEmpty("تعذر الاتصال بالخادم")
+                is ApiResult.HttpError -> {
+                    binding.swipeRefresh.isRefreshing = false
+                    showEmpty("تعذر التحميل: ${result.code}")
+                }
+                is ApiResult.NetworkError -> {
+                    binding.swipeRefresh.isRefreshing = false
+                    showEmpty("تعذر الاتصال بالخادم")
+                }
             }
         }
     }
@@ -216,12 +235,15 @@ class MyAdsActivity : BaseActivity() {
     }
 
     private fun showLoading() {
-        binding.progressBar.visibility = View.VISIBLE
+        if (!binding.swipeRefresh.isRefreshing) {
+            binding.progressBar.visibility = View.VISIBLE
+        }
         binding.root.findViewById<View>(R.id.emptyView).visibility = View.GONE
-        binding.rvAds.visibility = View.GONE
     }
 
     private fun showEmpty(msg: String) {
+        binding.swipeRefresh.isRefreshing = false
+        binding.swipeRefresh.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
         binding.rvAds.visibility = View.GONE
         binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE

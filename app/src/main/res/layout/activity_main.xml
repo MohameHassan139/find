@@ -437,15 +437,22 @@
                 android:visibility="gone" />
 
             <!-- Case B: Listings list -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvListings"
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshListings"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:scrollbars="none"
-                android:paddingTop="8dp"
-                android:paddingBottom="110dp"
-                android:visibility="gone" />
+                android:visibility="gone">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvListings"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:scrollbars="none"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="110dp" />
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
             <!-- Listings shimmer (first page loading) -->
             <LinearLayout

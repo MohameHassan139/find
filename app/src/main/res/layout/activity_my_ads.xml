@@ -204,15 +204,21 @@
                 </LinearLayout>
 
                 <!-- List -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvAds"
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/swipeRefresh"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingTop="14dp"
-                    android:paddingBottom="110dp"
-                    android:paddingHorizontal="16dp"
-                    android:clipToPadding="false"
-                    android:visibility="gone" />
+                    android:visibility="gone">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvAds"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="110dp"
+                        android:paddingHorizontal="16dp"
+                        android:clipToPadding="false" />
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
             </FrameLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

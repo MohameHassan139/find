@@ -16,6 +16,7 @@ import com.example.myapplication.adapters.ListingsAdapter
 import com.example.myapplication.databinding.ActivityFavoritesBinding
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.utils.SwipeRefreshHelper
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.NavScreen
 import kotlinx.coroutines.launch
@@ -70,6 +71,10 @@ class FavoritesActivity : BaseActivity() {
         binding.rvFavorites.layoutManager = LinearLayoutManager(this)
         binding.rvFavorites.adapter = adapter
 
+        SwipeRefreshHelper.setup(binding.swipeRefresh) {
+            loadFavorites()
+        }
+
         binding.btnFilterOffer.setOnClickListener {
             if (currentFilter != "offer") {
                 currentFilter = "offer"
@@ -119,10 +124,14 @@ class FavoritesActivity : BaseActivity() {
     private fun applyFilter() {
         val filtered = allFavorites.filter { it.listingType == currentFilter }
         if (filtered.isEmpty()) {
+            binding.swipeRefresh.isRefreshing = false
+            binding.swipeRefresh.visibility = View.GONE
             binding.rvFavorites.visibility = View.GONE
             binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
         } else {
             binding.root.findViewById<View>(R.id.emptyView).visibility = View.GONE
+            binding.swipeRefresh.isRefreshing = false
+            binding.swipeRefresh.visibility = View.VISIBLE
             binding.rvFavorites.visibility = View.VISIBLE
             adapter.updateData(filtered)
             adapter.setFavoriteIds(favoriteIds)
@@ -130,13 +139,15 @@ class FavoritesActivity : BaseActivity() {
     }
 
     private fun loadFavorites() {
-        binding.progressBar.visibility = View.VISIBLE
+        if (!binding.swipeRefresh.isRefreshing) {
+            binding.progressBar.visibility = View.VISIBLE
+        }
         binding.root.findViewById<View>(R.id.emptyView).visibility = View.GONE
-        binding.rvFavorites.visibility = View.GONE
 
         lifecycleScope.launch {
             val loaded = AppContainer.favorites.all().getOrNull()
             binding.progressBar.visibility = View.GONE
+            binding.swipeRefresh.isRefreshing = false
             if (loaded == null) {
                 showError()
                 return@launch
@@ -158,6 +169,7 @@ class FavoritesActivity : BaseActivity() {
                 allFavorites = allFavorites.filter { it.id != listingId }
                 applyFilter()
                 if (allFavorites.isEmpty()) {
+                    binding.swipeRefresh.visibility = View.GONE
                     binding.rvFavorites.visibility = View.GONE
                     binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
                 }
@@ -166,6 +178,8 @@ class FavoritesActivity : BaseActivity() {
     }
 
     private fun showError() {
+        binding.swipeRefresh.isRefreshing = false
+        binding.swipeRefresh.visibility = View.GONE
         binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
         binding.tvEmpty.text = getString(R.string.error_connection_failed)
     }

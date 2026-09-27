@@ -21,6 +21,7 @@ import com.example.myapplication.adapters.ListingsAdapter
 import com.example.myapplication.databinding.ActivitySearchBinding
 import com.example.myapplication.utils.AuthGuard
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.utils.SwipeRefreshHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -61,6 +62,7 @@ class SearchActivity : BaseActivity() {
         setupSearchInput()
         setupChips()
         setupRegionSpinner()
+        setupSwipeRefresh()
         observeViewModel()
         setupNavigation()
 
@@ -197,12 +199,27 @@ class SearchActivity : BaseActivity() {
         }
     }
 
+    // ── SwipeRefresh ─────────────────────────────────────────────────────────
+
+    private fun setupSwipeRefresh() {
+        SwipeRefreshHelper.setup(binding.swipeRefresh) {
+            val q = binding.etSearchQuery.text?.toString()?.trim() ?: ""
+            if (q.isNotBlank()) {
+                vm.search(q)
+            } else {
+                binding.swipeRefresh.isRefreshing = false
+            }
+        }
+    }
+
     // ── Observers ─────────────────────────────────────────────────────────────
 
     private fun observeViewModel() {
         vm.bodyState.observe(this) { state ->
+            binding.swipeRefresh.isRefreshing   = false
             binding.llIdleState.visibility       = if (state == SearchViewModel.State.IDLE)    View.VISIBLE else View.GONE
             binding.llListingsShimmer.visibility = if (state == SearchViewModel.State.LOADING) View.VISIBLE else View.GONE
+            binding.swipeRefresh.visibility      = if (state == SearchViewModel.State.RESULTS) View.VISIBLE else View.GONE
             binding.rvResults.visibility         = if (state == SearchViewModel.State.RESULTS) View.VISIBLE else View.GONE
             binding.llEmptyState.visibility      = if (state == SearchViewModel.State.EMPTY)   View.VISIBLE else View.GONE
             if (state == SearchViewModel.State.LOADING) animateShimmer(binding.llListingsShimmer)
@@ -221,6 +238,7 @@ class SearchActivity : BaseActivity() {
         }
 
         vm.errorEvent.observe(this) { msg ->
+            binding.swipeRefresh.isRefreshing = false
             if (!msg.isNullOrEmpty())
                 toast(msg)
         }
