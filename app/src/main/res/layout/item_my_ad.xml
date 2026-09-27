@@ -86,28 +86,27 @@
                             android:layout_marginStart="8dp" />
                     </LinearLayout>
 
-                    <!-- Price — number on Left, symbol on Right -->
+                    <!-- Price Group -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layoutDirection="ltr">
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:id="@+id/ivRiyalSymbol"
+                            android:layout_width="10dp"
+                            android:layout_height="11dp"
+                            android:src="@drawable/ic_currency_sar"
+                            app:tint="@color/text_primary"
+                            android:layout_marginEnd="3dp" />
 
                         <TextView
                             android:id="@+id/tvPrice"
+                            style="@style/Find.Text.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="10sp"
-                            android:textColor="@color/black" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=" ﷼"
-                            android:textSize="10sp"
-                            android:textColor="@color/black"
-                            android:layout_marginStart="4dp" />
+                            android:textColor="@color/text_primary" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -129,21 +128,21 @@
                         android:layoutDirection="locale">
 
                         <ImageView
-                            android:layout_width="11dp"
-                            android:layout_height="13dp"
-                            android:src="@drawable/ic_location"
-                            app:tint="@color/black"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_map_pin"
+                            app:tint="@color/text_primary"
+                            android:layout_marginEnd="4dp"
                             android:contentDescription="@string/location" />
 
                         <TextView
                             android:id="@+id/tvLocation"
+                            style="@style/Find.Text.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="12sp"
-                            android:textColor="@color/black"
+                            android:textColor="@color/text_primary"
                             android:maxLines="1"
-                            android:ellipsize="end"
-                            android:layout_marginStart="3dp" />
+                            android:ellipsize="end" />
                     </LinearLayout>
 
                     <!-- Time -->
@@ -158,24 +157,35 @@
                             android:layout_width="12dp"
                             android:layout_height="12dp"
                             android:src="@drawable/ic_time"
-                            app:tint="@color/black"
+                            app:tint="@color/text_primary"
+                            android:layout_marginEnd="4dp"
                             android:contentDescription="@string/time" />
 
                         <TextView
                             android:id="@+id/tvTime"
+                            style="@style/Find.Text.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="12sp"
-                            android:textColor="@color/black"
-                            android:layout_marginStart="3dp" />
+                            android:textColor="@color/text_primary"
+                            android:maxLines="1"
+                            android:ellipsize="end" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
             <!-- Left Image Viewport Box (renders on Left in RTL) -->
             <FrameLayout
+                android:id="@+id/flCardImage"
                 android:layout_width="130dp"
                 android:layout_height="match_parent">
+
+                <!-- Swipeable gallery (same behaviour as the ad details and home feed) -->
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/vpCardImages"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layoutDirection="ltr"
+                    android:visibility="gone" />
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/ivImage"
@@ -186,24 +196,18 @@
                     android:background="@color/image_placeholder_bg"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Card.ImageSide" />
 
-                <!-- Prev arrow. Same style as the home/favorites card so every
-                     ad item shares one arrow definition; iOS centres these
-                     vertically rather than pinning them to the bottom. -->
-                <ImageView
-                    android:id="@+id/btnPrev"
-                    style="@style/Widget.Find.CarouselArrow"
-                    android:layout_gravity="bottom|start"
-                    android:src="@drawable/ic_card_chevron_left"
-                    android:contentDescription="@string/cd_previous_image"
-                    android:visibility="gone" />
-
-                <!-- Next arrow. -->
-                <ImageView
-                    android:id="@+id/btnNext"
-                    style="@style/Widget.Find.CarouselArrow"
-                    android:layout_gravity="bottom|end"
-                    android:src="@drawable/ic_card_chevron_right"
-                    android:contentDescription="@string/cd_next_image"
+                <!-- Dots indicator, over the image (as on the home card and ad details) -->
+                <LinearLayout
+                    android:id="@+id/llCardDots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/bg_dots_indicator_pill"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
                     android:visibility="gone" />
             </FrameLayout>
         </LinearLayout>

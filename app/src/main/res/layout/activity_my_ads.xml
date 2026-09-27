@@ -157,39 +157,39 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:gravity="center"
+                    android:paddingTop="40dp"
+                    android:paddingBottom="30dp"
                     android:visibility="gone">
 
                     <TextView
                         android:id="@+id/tvEmpty"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="32dp"
-                        android:text="@string/my_ads_empty"
+                        android:text="@string/empty_no_ads"
                         android:textSize="16sp"
-                        android:textColor="@color/text_secondary" />
+                        android:textColor="@color/text_secondary"
+                        android:gravity="center" />
 
                     <LinearLayout
                         android:id="@+id/llEmptyAddAction"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
                         android:orientation="vertical"
                         android:gravity="center"
                         android:clickable="true"
                         android:focusable="true"
-                        android:background="?attr/selectableItemBackground"
-                        android:paddingHorizontal="24dp"
-                        android:paddingVertical="12dp">
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="12dp">
 
                         <ImageView
                             android:id="@+id/ivEmptyAdd"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
                             android:src="@drawable/ic_adsempty"
+                            android:scaleType="fitCenter"
                             app:tint="@color/text_primary"
-                            android:contentDescription="add ad"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:background="?attr/selectableItemBackgroundBorderless" />
+                            android:contentDescription="@string/add_ad" />
 
                         <TextView
                             android:id="@+id/btnEmptyAdd"
@@ -198,13 +198,8 @@
                             android:layout_marginTop="8dp"
                             android:text="@string/add_ad"
                             android:textSize="16sp"
-                            android:textStyle="bold"
                             android:textColor="@color/text_primary"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:background="?attr/selectableItemBackground"
-                            android:paddingHorizontal="8dp"
-                            android:paddingVertical="4dp" />
+                            android:gravity="center" />
                     </LinearLayout>
                 </LinearLayout>
 

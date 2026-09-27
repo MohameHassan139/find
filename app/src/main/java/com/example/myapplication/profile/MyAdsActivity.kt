@@ -126,7 +126,7 @@ class MyAdsActivity : BaseActivity() {
     private fun applyFilter() {
         val filtered = allAds.filter { it.listingType == currentFilter }
         if (filtered.isEmpty()) {
-            showEmpty("لا توجد إعلانات")
+            showEmpty(getString(R.string.empty_no_ads))
         } else {
             binding.root.findViewById<View>(R.id.emptyView).visibility = View.GONE
             binding.rvAds.visibility = View.VISIBLE
@@ -149,7 +149,7 @@ class MyAdsActivity : BaseActivity() {
                 is ApiResult.Success -> {
                     allAds = result.data
                     binding.progressBar.visibility = View.GONE
-                    if (allAds.isEmpty()) showEmpty("لا توجد إعلانات")
+                    if (allAds.isEmpty()) showEmpty(getString(R.string.empty_no_ads))
                     else applyFilter()
                 }
                 is ApiResult.HttpError -> showEmpty("تعذر التحميل: ${result.code}")
@@ -237,6 +237,9 @@ class MyAdsAdapter(
 ) : RecyclerView.Adapter<MyAdsAdapter.VH>() {
 
     inner class VH(view: View) : RecyclerView.ViewHolder(view) {
+        val flCardImage: View = view.findViewById(R.id.flCardImage)
+        val vpCardImages: androidx.viewpager2.widget.ViewPager2 = view.findViewById(R.id.vpCardImages)
+        val llCardDots: android.widget.LinearLayout = view.findViewById(R.id.llCardDots)
         val ivImage: ImageView = view.findViewById(R.id.ivImage)
         val tvTitle: TextView = view.findViewById(R.id.tvTitle)
         val tvPrice: TextView = view.findViewById(R.id.tvPrice)
@@ -248,54 +251,60 @@ class MyAdsAdapter(
         val btnDelete: View = view.findViewById(R.id.btnDelete)
         val switchActive: SwitchCompat = view.findViewById(R.id.switchActive)
         val tvActiveLabel: TextView = view.findViewById(R.id.tvActiveLabel)
-        val btnPrev: ImageView = view.findViewById(R.id.btnPrev)
-        val btnNext: ImageView = view.findViewById(R.id.btnNext)
-        var imageIndex = 0
+
+        var currentImageIndex = 0
+        var imageUrls: List<String> = emptyList()
+        var pageCallback: androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback? = null
+        val galleryAdapter = com.example.myapplication.adapters.ListingsAdapter.CardImageAdapter()
+        var galleryUrls: List<String>? = null
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = VH(
-        LayoutInflater.from(parent.context).inflate(R.layout.item_my_ad, parent, false)
-    )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.item_my_ad, parent, false)
+        val holder = VH(v)
+        holder.flCardImage.clipToOutline = true
+        holder.vpCardImages.layoutDirection = View.LAYOUT_DIRECTION_LTR
+        holder.llCardDots.layoutDirection = View.LAYOUT_DIRECTION_LTR
+        holder.vpCardImages.adapter = holder.galleryAdapter
+        (holder.vpCardImages.getChildAt(0) as? RecyclerView)?.apply {
+            isNestedScrollingEnabled = false
+            overScrollMode = View.OVER_SCROLL_NEVER
+        }
+        return holder
+    }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = items[position]
         val images = item.images ?: emptyList()
+        val context = holder.itemView.context
 
         holder.tvTitle.text = item.title ?: "—"
         holder.tvPrice.text = PriceFormatter.display(item.price)
         holder.tvSellerName.text = item.seller?.name ?: ""
         holder.tvLocation.text = ListingLocationFormatter.cityOnly(item.city)
-        holder.tvTime.text = RelativeTimeFormatter.format(holder.itemView.context, item.createdAt)
+        holder.tvTime.text = RelativeTimeFormatter.format(context, item.createdAt)
 
-        // Image navigation
-        holder.imageIndex = 0
-        fun loadImage() {
-            if (images.isEmpty()) {
-                holder.ivImage.setImageResource(R.drawable.ic_photo_placeholder)
-                holder.btnPrev.visibility = View.GONE
-                holder.btnNext.visibility = View.GONE
+        val openDetail = {
+            val allIds = ArrayList(items.map { it.id })
+            val index = allIds.indexOf(item.id)
+            val intent = Intent(context, ListingDetailActivity::class.java).apply {
+                putExtra(ListingDetailActivity.EXTRA_LISTING_ID, item.id)
+                putStringArrayListExtra(ListingDetailActivity.EXTRA_SIBLING_IDS, allIds)
+                putExtra(ListingDetailActivity.EXTRA_CURRENT_INDEX, index)
+            }
+            if (context is BaseActivity) {
+                context.startWithPush(intent)
             } else {
-                Glide.with(holder.ivImage.context).load(images[holder.imageIndex])
-                    .placeholder(R.drawable.ic_photo_placeholder).centerCrop().into(holder.ivImage)
-                val showArrows = images.size > 1
-                holder.btnPrev.visibility = if (showArrows) View.VISIBLE else View.GONE
-                holder.btnNext.visibility = if (showArrows) View.VISIBLE else View.GONE
+                context.startActivity(intent)
             }
         }
-        loadImage()
 
-        holder.btnPrev.setOnClickListener {
-            if (images.isNotEmpty()) {
-                holder.imageIndex = (holder.imageIndex - 1 + images.size) % images.size
-                loadImage()
-            }
+        // Swipeable gallery setup
+        if (holder.imageUrls != images) {
+            holder.imageUrls = images
+            holder.currentImageIndex = 0
         }
-        holder.btnNext.setOnClickListener {
-            if (images.isNotEmpty()) {
-                holder.imageIndex = (holder.imageIndex + 1) % images.size
-                loadImage()
-            }
-        }
+        setupCardGallery(holder, openDetail)
 
         // Seller avatar
         val avatar = item.seller?.avatar
@@ -312,22 +321,7 @@ class MyAdsAdapter(
         holder.switchActive.setOnCheckedChangeListener(null)
         holder.switchActive.isChecked = isCurrentlyActive
         
-        val context = holder.itemView.context
-        
-        holder.itemView.setOnClickListener {
-            val allIds = ArrayList(items.map { it.id })
-            val index = allIds.indexOf(item.id)
-            val intent = Intent(context, ListingDetailActivity::class.java).apply {
-                putExtra(ListingDetailActivity.EXTRA_LISTING_ID, item.id)
-                putStringArrayListExtra(ListingDetailActivity.EXTRA_SIBLING_IDS, allIds)
-                putExtra(ListingDetailActivity.EXTRA_CURRENT_INDEX, index)
-            }
-            if (context is BaseActivity) {
-                context.startWithPush(intent)
-            } else {
-                context.startActivity(intent)
-            }
-        }
+        holder.itemView.setOnClickListener { openDetail() }
         
         val greenColor = androidx.core.content.ContextCompat.getColor(context, R.color.toggle_active_green)
         val greyColor = androidx.core.content.ContextCompat.getColor(context, R.color.switch_inactive_track)
@@ -371,6 +365,92 @@ class MyAdsAdapter(
                 putStringArrayListExtra(AddAdActivity.EXTRA_IMAGES, ArrayList(item.images ?: emptyList()))
             }
             onEdit(intent)
+        }
+    }
+
+    private fun setupCardGallery(holder: VH, onImageClick: () -> Unit) {
+        val images = holder.imageUrls
+        holder.galleryAdapter.onImageClick = onImageClick
+
+        if (holder.galleryUrls == images) return
+        holder.galleryUrls = images
+
+        holder.pageCallback?.let { holder.vpCardImages.unregisterOnPageChangeCallback(it) }
+        holder.pageCallback = null
+
+        if (images.isEmpty()) {
+            holder.galleryAdapter.submit(emptyList())
+            holder.vpCardImages.visibility = View.GONE
+            holder.llCardDots.visibility = View.GONE
+            holder.ivImage.visibility = View.VISIBLE
+            holder.ivImage.setImageResource(R.drawable.ic_photo_placeholder)
+            return
+        }
+
+        holder.ivImage.visibility = View.GONE
+        holder.vpCardImages.visibility = View.VISIBLE
+        holder.vpCardImages.isUserInputEnabled = images.size > 1
+        holder.galleryAdapter.submit(images)
+
+        val startIndex = holder.currentImageIndex.coerceIn(0, images.size - 1)
+        holder.currentImageIndex = startIndex
+        holder.vpCardImages.setCurrentItem(startIndex, false)
+
+        buildDots(holder.llCardDots, images.size, startIndex, holder.vpCardImages)
+
+        val callback = object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                holder.currentImageIndex = position
+                updateDots(holder.llCardDots, position)
+            }
+        }
+        holder.vpCardImages.registerOnPageChangeCallback(callback)
+        holder.pageCallback = callback
+    }
+
+    private fun buildDots(container: android.widget.LinearLayout, count: Int, activePosition: Int, pager: androidx.viewpager2.widget.ViewPager2) {
+        container.removeAllViews()
+        if (count <= 1) {
+            container.visibility = View.GONE
+            return
+        }
+        container.visibility = View.VISIBLE
+        val density = container.resources.displayMetrics.density
+        val dotSize = (6 * density).toInt()
+        val dotMargin = (2 * density).toInt()
+
+        for (i in 0 until count) {
+            val dot = View(container.context).apply {
+                layoutParams = android.widget.LinearLayout.LayoutParams(dotSize, dotSize).apply {
+                    marginStart = dotMargin
+                    marginEnd = dotMargin
+                }
+                setBackgroundResource(
+                    if (i == activePosition) R.drawable.bg_carousel_dot_active
+                    else R.drawable.bg_carousel_dot_inactive
+                )
+                scaleX = if (i == activePosition) 1.25f else 1.0f
+                scaleY = if (i == activePosition) 1.25f else 1.0f
+                setOnClickListener { pager.setCurrentItem(i, true) }
+            }
+            container.addView(dot)
+        }
+    }
+
+    private fun updateDots(container: android.widget.LinearLayout, activePosition: Int) {
+        for (i in 0 until container.childCount) {
+            val dot = container.getChildAt(i)
+            val isActive = (i == activePosition)
+            dot.setBackgroundResource(
+                if (isActive) R.drawable.bg_carousel_dot_active
+                else R.drawable.bg_carousel_dot_inactive
+            )
+            dot.animate()
+                .scaleX(if (isActive) 1.25f else 1.0f)
+                .scaleY(if (isActive) 1.25f else 1.0f)
+                .setDuration(200)
+                .start()
         }
     }
 

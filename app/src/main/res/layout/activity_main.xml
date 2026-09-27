@@ -498,9 +498,10 @@
                     <ImageView
                         android:layout_width="56dp"
                         android:layout_height="56dp"
-                        android:src="@drawable/add"
+                        android:src="@drawable/ic_adsempty"
                         android:scaleType="fitCenter"
-                        app:tint="@color/text_primary" />
+                        app:tint="@color/text_primary"
+                        android:contentDescription="@string/add_ad" />
 
                     <TextView
                         android:layout_width="wrap_content"

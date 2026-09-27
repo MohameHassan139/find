@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.adapters.ListingsAdapter
 import com.example.myapplication.databinding.ActivitySearchBinding
+import com.example.myapplication.utils.AuthGuard
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -62,6 +63,12 @@ class SearchActivity : BaseActivity() {
         setupRegionSpinner()
         observeViewModel()
         setupNavigation()
+
+        binding.btnAddAdEmpty.setOnClickListener {
+            AuthGuard.requireLogin(this) {
+                startWithPush(Intent(this, AddAdActivity::class.java))
+            }
+        }
 
         // Pre-fill query if launched from MainActivity
         val initialQuery = intent.getStringExtra(EXTRA_QUERY)
@@ -208,7 +215,9 @@ class SearchActivity : BaseActivity() {
         // No paging spinner under the results — pages append silently as you scroll.
 
         vm.currentQuery.observe(this) { q ->
-            binding.tvEmptyQuery.text = if (!q.isNullOrBlank()) "لا توجد نتائج لـ \"$q\"" else ""
+            val hasQuery = !q.isNullOrBlank()
+            binding.tvEmptyQuery.visibility = if (hasQuery) View.VISIBLE else View.GONE
+            binding.tvEmptyQuery.text = if (hasQuery) "لا توجد نتائج لـ \"$q\"" else ""
         }
 
         vm.errorEvent.observe(this) { msg ->
