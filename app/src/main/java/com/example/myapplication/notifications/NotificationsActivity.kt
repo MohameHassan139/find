@@ -1,6 +1,7 @@
 package com.example.myapplication.notifications
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,13 +14,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myapplication.ListingDetailActivity
 import com.example.myapplication.R
 import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.chat.model.AppNotification
+import com.example.myapplication.chat.ui.conversations.ConversationsActivity
 import com.example.myapplication.chat.utils.DateUtils
 import com.example.myapplication.databinding.ActivityNotificationsBinding
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.utils.SwipeRefreshHelper
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.NavScreen
 import kotlinx.coroutines.launch
@@ -47,7 +51,22 @@ class NotificationsActivity : BaseActivity() {
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
         BottomNavHelper.setup(this, NavScreen.NONE)
 
-        adapter = NotificationsAdapter()
+        adapter = NotificationsAdapter { notification ->
+            when (notification.targetType?.lowercase()) {
+                "listing", "ad" -> {
+                    notification.targetId?.let { listingId ->
+                        val intent = Intent(this, ListingDetailActivity::class.java).apply {
+                            putExtra(ListingDetailActivity.EXTRA_LISTING_ID, listingId)
+                        }
+                        startWithPush(intent)
+                    }
+                }
+                "conversation", "chat" -> {
+                    val intent = Intent(this, ConversationsActivity::class.java)
+                    startWithPush(intent)
+                }
+            }
+        }
         binding.rvNotifications.layoutManager = LinearLayoutManager(this)
         binding.rvNotifications.adapter = adapter
 
@@ -58,17 +77,16 @@ class NotificationsActivity : BaseActivity() {
 
         binding.btnMarkAllRead.setOnClickListener {
             lifecycleScope.launch {
-                // As before: any server answer counts as done; only a network failure is reported.
                 if (AppContainer.notifications.markAllRead() is ApiResult.NetworkError) {
                     toast(R.string.error_update_failed)
                 } else {
-                    loadNotifications() // refresh the list after marking all read
+                    loadNotifications()
                     toast(R.string.notifications_marked_read)
                 }
             }
         }
 
-        binding.swipeRefresh.setOnRefreshListener { loadNotifications() }
+        SwipeRefreshHelper.setup(binding.swipeRefresh) { loadNotifications() }
 
         loadNotifications()
     }
@@ -76,15 +94,24 @@ class NotificationsActivity : BaseActivity() {
     private fun loadNotifications() {
         showLoading()
         lifecycleScope.launch {
+            // 1. Send request to server to mark all notifications as read
+            launch {
+                AppContainer.notifications.markAllRead()
+            }
+
+            // 2. Load notifications
             val result = AppContainer.notifications.userData()
             binding.swipeRefresh.isRefreshing = false
             when (result) {
                 is ApiResult.Success -> {
                     val payload = result.data
-                    val items = payload?.notifications.orEmpty()
-                    val unread = payload?.unreadNotifications ?: items.count { !it.isRead }
-                    binding.tvUnreadCount.text = if (unread > 0) "($unread غير مقروء)" else ""
-                    binding.tvUnreadCount.visibility = if (unread > 0) View.VISIBLE else View.GONE
+                    val rawItems = payload?.notifications.orEmpty()
+
+                    // 3. Handle locally: Mark all items as read and clear unread count
+                    val items = rawItems.map { it.copy(isRead = true) }
+                    binding.tvUnreadCount.text = ""
+                    binding.tvUnreadCount.visibility = View.GONE
+
                     if (items.isEmpty()) showEmpty() else showList(items)
                 }
                 is ApiResult.HttpError -> showError("تعذر التحميل: ${result.code}")
@@ -121,7 +148,9 @@ class NotificationsActivity : BaseActivity() {
     }
 }
 
-class NotificationsAdapter : ListAdapter<AppNotification, NotificationsAdapter.VH>(DIFF) {
+class NotificationsAdapter(
+    private val onItemClick: ((AppNotification) -> Unit)? = null
+) : ListAdapter<AppNotification, NotificationsAdapter.VH>(DIFF) {
 
     companion object {
         val DIFF = object : DiffUtil.ItemCallback<AppNotification>() {
@@ -155,6 +184,10 @@ class NotificationsAdapter : ListAdapter<AppNotification, NotificationsAdapter.V
             val unreadVisibility = if (!n.isRead) View.VISIBLE else View.INVISIBLE
             viewUnreadDot.visibility = unreadVisibility
             viewUnreadBar.visibility = unreadVisibility
+
+            itemView.setOnClickListener {
+                onItemClick?.invoke(n)
+            }
         }
     }
 }
