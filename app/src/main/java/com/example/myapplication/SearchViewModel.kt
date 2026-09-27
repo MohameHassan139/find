@@ -29,8 +29,8 @@ class SearchViewModel : ViewModel() {
     private val _regions = MutableLiveData<List<RegionItem>>()
     val regions: LiveData<List<RegionItem>> get() = _regions
 
-    private val _errorEvent = MutableLiveData<String?>()
-    val errorEvent: LiveData<String?> get() = _errorEvent
+    private val _errorEvent = MutableLiveData<Int?>()
+    val errorEvent: LiveData<Int?> get() = _errorEvent
 
     // Filter state
     private var activeQuery: String = ""
@@ -134,7 +134,7 @@ class SearchViewModel : ViewModel() {
                 // A plain HTTP error just shows "no results"; no answer / unreadable body
                 // also shows a message.
                 val silent = result is ApiResult.HttpError && result.code != ApiResult.UNREADABLE_BODY
-                if (!silent) _errorEvent.value = "تعذر البحث"
+                if (!silent) _errorEvent.value = R.string.error_search_failed
             }
             _isPagingLoading.value = false
             isFetching = false

@@ -47,7 +47,7 @@ class ListingConversationsActivity : BaseActivity() {
         applyWindowInsets()
 
         val listingId = intent.getStringExtra(EXTRA_LISTING_ID) ?: ""
-        val listingTitle = intent.getStringExtra(EXTRA_LISTING_TITLE) ?: "رسائل الإعلان"
+        val listingTitle = intent.getStringExtra(EXTRA_LISTING_TITLE) ?: getString(R.string.ad_messages_title)
 
         binding.tvTitle.text = listingTitle
         binding.btnBack.setOnClickListener { finishWithPop() }
@@ -67,8 +67,8 @@ class ListingConversationsActivity : BaseActivity() {
                     val filtered = result.data.filter { it.listingId == listingId }
                     if (filtered.isEmpty()) showEmpty() else showList(filtered)
                 }
-                is ApiResult.HttpError -> showError("تعذر التحميل: ${result.code}")
-                is ApiResult.NetworkError -> showError("تعذر الاتصال بالخادم")
+                is ApiResult.HttpError -> showError(getString(R.string.error_failed_to_load, result.code))
+                is ApiResult.NetworkError -> showError(getString(R.string.error_server_unreachable))
             }
         }
     }
@@ -127,7 +127,7 @@ class ListingConvAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val conv = items[position]
-        holder.tvName.text = conv.otherUser?.name ?: "مجهول"
+        holder.tvName.text = conv.otherUser?.name ?: holder.tvName.context.getString(R.string.blocked_unknown_user)
         holder.tvLastMessage.text = conv.lastMessage ?: ""
         holder.tvTime.text = DateUtils.formatConversationTime(
             conv.lastMessageAt,

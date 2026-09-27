@@ -41,7 +41,7 @@ class ConversationsAdapter(
             val otherAvatar = conv.otherUser?.avatar
             val unreadCount = conv.myUnread
 
-            b.tvName.text = otherName ?: "مجهول"
+            b.tvName.text = otherName ?: itemView.context.getString(R.string.user_default_name)
             b.tvLastMessage.text = conv.lastMessage ?: ""
             val timeStr = DateUtils.formatConversationTime(
                 conv.lastMessageAt,
@@ -55,13 +55,13 @@ class ConversationsAdapter(
             if (unreadCount > 0) {
                 b.tvTime.visibility = View.GONE
                 b.tvUnreadDay.visibility = View.VISIBLE
-                b.tvUnreadDay.text = if (timeStr.isNotEmpty()) timeStr else "الأحد"
+                b.tvUnreadDay.text = timeStr
                 b.tvUnreadBadge.text = unreadCount.toString()
                 b.tvUnreadBadge.visibility = View.VISIBLE
                 b.ivCheck.visibility = View.GONE
             } else {
                 b.tvTime.visibility = View.VISIBLE
-                b.tvTime.text = if (timeStr.isNotEmpty()) timeStr else "9:00 م"
+                b.tvTime.text = timeStr
                 b.tvTime.setTextColor(
                     androidx.core.content.ContextCompat.getColor(b.root.context, R.color.chats_item_time)
                 )

@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.myapplication.R
 import com.example.myapplication.chat.model.Message
 import com.example.myapplication.chat.utils.Result
 import kotlinx.coroutines.delay
@@ -50,12 +51,12 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
                 }
                 is ApiResult.HttpError -> _messages.value = Result.Error(
                     when (result.code) {
-                        401 -> "غير مصرح"
-                        404 -> "المحادثة غير موجودة"
-                        else -> "خطأ في تحميل الرسائل"
+                        401 -> getApplication<Application>().getString(R.string.error_unauthorized)
+                        404 -> getApplication<Application>().getString(R.string.chat_not_found)
+                        else -> getApplication<Application>().getString(R.string.chat_load_messages_failed)
                     }, result.code
                 )
-                is ApiResult.NetworkError -> _messages.value = Result.Error("تعذر الاتصال بالخادم")
+                is ApiResult.NetworkError -> _messages.value = Result.Error(getApplication<Application>().getString(R.string.error_network_check_connection))
             }
         }
     }
@@ -90,8 +91,8 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
                     _messages.value = Result.Success(messageList.toList())
                     _sendResult.value = Result.Success(msg)
                 }
-                is ApiResult.HttpError -> _sendResult.value = Result.Error("فشل إرسال الرسالة")
-                is ApiResult.NetworkError -> _sendResult.value = Result.Error("تعذر إرسال الرسالة. تحقق من الاتصال")
+                is ApiResult.HttpError -> _sendResult.value = Result.Error(getApplication<Application>().getString(R.string.chat_send_failed))
+                is ApiResult.NetworkError -> _sendResult.value = Result.Error(getApplication<Application>().getString(R.string.chat_send_network_failed))
             }
         }
     }

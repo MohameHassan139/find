@@ -235,12 +235,12 @@ class AddAdActivity : BaseActivity() {
         setPublishing(true)
         lifecycleScope.launch {
             try {
-                val creatingMsg = if (com.example.myapplication.utils.LocaleHelper.isArabic(this@AddAdActivity)) "جارٍ إنشاء الإعلان..." else "Creating ad..."
+                val creatingMsg = getString(R.string.creating_ad)
                 setProgress(creatingMsg)
                 val listingId = createListing(title, desc, price)
-                    ?: throw Exception(if (com.example.myapplication.utils.LocaleHelper.isArabic(this@AddAdActivity)) "فشل إنشاء الإعلان" else "Failed to create ad")
+                    ?: throw Exception(getString(R.string.error_publish_failed))
                 newImageUris.forEachIndexed { i, uri ->
-                    val uploadMsg = if (com.example.myapplication.utils.LocaleHelper.isArabic(this@AddAdActivity)) "جارٍ رفع الصورة ${i + 1} / ${newImageUris.size}..." else "Uploading image ${i + 1} / ${newImageUris.size}..."
+                    val uploadMsg = getString(R.string.uploading_image_progress, i + 1, newImageUris.size)
                     setProgress(uploadMsg)
                     uploadImage(uri, listingId)
                 }
@@ -250,7 +250,7 @@ class AddAdActivity : BaseActivity() {
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    this@AddAdActivity.toast(e.message ?: "خطأ في النشر", long = true)
+                    this@AddAdActivity.toast(e.message ?: getString(R.string.error_publish_failed), long = true)
                     setPublishing(false)
                 }
             }
@@ -274,11 +274,11 @@ class AddAdActivity : BaseActivity() {
             try {
                 val newUrls = mutableListOf<String>()
                 newImageUris.forEachIndexed { i, uri ->
-                    val uploadMsg = if (com.example.myapplication.utils.LocaleHelper.isArabic(this@AddAdActivity)) "جارٍ رفع الصورة ${i + 1} / ${newImageUris.size}..." else "Uploading image ${i + 1} / ${newImageUris.size}..."
+                    val uploadMsg = getString(R.string.uploading_image_progress, i + 1, newImageUris.size)
                     setProgress(uploadMsg)
                     uploadImage(uri, id)?.let { newUrls.add(it) }
                 }
-                val savingMsg = if (com.example.myapplication.utils.LocaleHelper.isArabic(this@AddAdActivity)) "جارٍ الحفظ..." else "Saving..."
+                val savingMsg = getString(R.string.saving)
                 setProgress(savingMsg)
                 patchListing(id, title, desc, price, existingImageUrls + newUrls)
                 withContext(Dispatchers.Main) {
@@ -288,7 +288,7 @@ class AddAdActivity : BaseActivity() {
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    this@AddAdActivity.toast(e.message ?: "خطأ في التحديث", long = true)
+                    this@AddAdActivity.toast(e.message ?: getString(R.string.error_update_failed), long = true)
                     setPublishing(false)
                 }
             }
@@ -317,8 +317,7 @@ class AddAdActivity : BaseActivity() {
         }
         return when (val result = AppContainer.listings.create(body)) {
             is ApiResult.Success -> result.data
-            is ApiResult.HttpError -> throw Exception(
-                if (com.example.myapplication.utils.LocaleHelper.isArabic(this)) "فشل إنشاء الإعلان (${result.code})" else "Failed to create ad (${result.code})")
+            is ApiResult.HttpError -> throw Exception(getString(R.string.error_create_failed_code, result.code))
             is ApiResult.NetworkError -> throw Exception(getString(R.string.error_connection_failed))
         }
     }
@@ -334,7 +333,7 @@ class AddAdActivity : BaseActivity() {
         }
         when (val result = AppContainer.listings.update(id, body)) {
             is ApiResult.Success -> Unit
-            is ApiResult.HttpError -> throw Exception("فشل التحديث (${result.code})")
+            is ApiResult.HttpError -> throw Exception(getString(R.string.error_update_failed_code, result.code))
             is ApiResult.NetworkError -> throw Exception(getString(R.string.error_connection_failed))
         }
     }
@@ -350,10 +349,9 @@ class AddAdActivity : BaseActivity() {
 
     private fun setPublishing(on: Boolean) {
         binding.btnPublish.isEnabled = !on
-        val isAr = com.example.myapplication.utils.LocaleHelper.isArabic(this)
         binding.btnPublish.text = when {
-            on -> if (isAr) "جارٍ الحفظ..." else "Saving..."
-            editingId != null -> if (isAr) "حفظ التعديلات" else "Save Changes"
+            on -> getString(R.string.saving)
+            editingId != null -> getString(R.string.save_changes)
             else -> getString(R.string.publish_ad)
         }
     }

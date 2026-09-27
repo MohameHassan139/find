@@ -124,14 +124,14 @@ class SettingsActivity : BaseActivity() {
 
     private fun deleteAccountFromServer() {
         if (TokenManager.getToken(this).isNullOrEmpty()) {
-            toast("Not logged in")
+            toast(R.string.login_required_first)
             return
         }
 
         lifecycleScope.launch {
             when (val result = AppContainer.auth.deleteAccount()) {
                 is ApiResult.Success -> {
-                    toast(result.data ?: "Account deleted successfully")
+                    toast(result.data ?: getString(R.string.account_deleted_success))
                     TokenManager.clear(this@SettingsActivity)
                     startActivity(Intent(this@SettingsActivity, MainActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK

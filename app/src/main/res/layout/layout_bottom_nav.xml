@@ -36,7 +36,7 @@
                 android:layout_height="28dp"
                 android:src="@drawable/ic_nav_home"
                 android:scaleType="fitCenter"
-                android:contentDescription="الرئيسية" />
+                android:contentDescription="@string/nav_home" />
 
             <TextView
                 android:id="@+id/tvNavHome"
@@ -65,7 +65,7 @@
                 android:layout_height="28dp"
                 android:src="@drawable/ic_nav_add"
                 android:scaleType="fitCenter"
-                android:contentDescription="أضف إعلان" />
+                android:contentDescription="@string/add_ad" />
 
             <TextView
                 android:id="@+id/tvNavAdd"
@@ -94,7 +94,7 @@
                 android:layout_height="28dp"
                 android:src="@drawable/ic_nav_chat"
                 android:scaleType="fitCenter"
-                android:contentDescription="المحادثات" />
+                android:contentDescription="@string/nav_chats" />
 
             <TextView
                 android:id="@+id/tvNavChat"

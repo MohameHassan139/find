@@ -58,40 +58,40 @@
             <TextView
                 android:id="@+id/chipAll"
                 android:layout_width="wrap_content"
-                android:layout_height="26dp"
+                android:layout_height="28dp"
                 android:background="@drawable/bg_chip_selected"
-                android:gravity="bottom|center_horizontal"
+                android:gravity="center"
                 android:includeFontPadding="false"
                 android:paddingHorizontal="14dp"
-                android:text="@string/filter_all"
+                android:text="@string/chat_chip_all"
                 android:textColor="@color/chats_chip_text"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/chipUnread"
                 android:layout_width="wrap_content"
-                android:layout_height="26dp"
+                android:layout_height="28dp"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/bg_chip_unselected"
-                android:gravity="bottom|center_horizontal"
+                android:gravity="center"
                 android:includeFontPadding="false"
                 android:paddingHorizontal="14dp"
-                android:text="@string/filter_unread"
+                android:text="@string/chat_chip_unread"
                 android:textColor="@color/chats_chip_text"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/chipFavorite"
                 android:layout_width="wrap_content"
-                android:layout_height="26dp"
+                android:layout_height="28dp"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/bg_chip_unselected"
-                android:gravity="bottom|center_horizontal"
+                android:gravity="center"
                 android:includeFontPadding="false"
                 android:paddingHorizontal="14dp"
-                android:text="@string/favorites_title"
+                android:text="@string/chat_chip_favorites"
                 android:textColor="@color/chats_chip_text"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <!-- Divider line below chips -->
@@ -160,7 +160,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="لا توجد محادثات"
+                android:text="@string/no_conversations"
                 android:textSize="16sp"
                 android:textColor="@color/text_secondary" />
         </LinearLayout>

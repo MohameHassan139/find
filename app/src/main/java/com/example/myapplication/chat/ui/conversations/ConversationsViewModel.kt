@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.myapplication.R
 import com.example.myapplication.chat.model.Conversation
 import com.example.myapplication.chat.utils.Result
 import kotlinx.coroutines.delay
@@ -40,14 +41,14 @@ class ConversationsViewModel(app: Application) : AndroidViewModel(app) {
                 }
                 is ApiResult.HttpError -> _conversations.value = Result.Error(
                     when (result.code) {
-                        401 -> "غير مصرح. يرجى تسجيل الدخول مجدداً"
-                        404 -> "لم يتم العثور على المحادثات"
-                        500 -> "خطأ في الخادم. حاول مرة أخرى"
-                        else -> "حدث خطأ: ${result.code}"
+                        401 -> getApplication<Application>().getString(R.string.error_unauthorized_relogin)
+                        404 -> getApplication<Application>().getString(R.string.chat_conversations_not_found)
+                        500 -> getApplication<Application>().getString(R.string.error_server_try_again)
+                        else -> getApplication<Application>().getString(R.string.error_failed_to_load, result.code)
                     }, result.code
                 )
                 is ApiResult.NetworkError ->
-                    _conversations.value = Result.Error("تعذر الاتصال بالخادم. تحقق من اتصالك بالإنترنت")
+                    _conversations.value = Result.Error(getApplication<Application>().getString(R.string.error_network_check_connection))
             }
         }
     }

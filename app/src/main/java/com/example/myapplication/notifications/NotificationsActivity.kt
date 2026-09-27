@@ -114,8 +114,8 @@ class NotificationsActivity : BaseActivity() {
 
                     if (items.isEmpty()) showEmpty() else showList(items)
                 }
-                is ApiResult.HttpError -> showError("تعذر التحميل: ${result.code}")
-                is ApiResult.NetworkError -> showError("تعذر الاتصال بالخادم")
+                is ApiResult.HttpError -> showError(getString(R.string.error_failed_to_load, result.code))
+                is ApiResult.NetworkError -> showError(getString(R.string.error_server_unreachable))
             }
         }
     }
@@ -175,8 +175,8 @@ class NotificationsAdapter(
         private val viewUnreadBar: View = view.findViewById(R.id.viewUnreadBar)
 
         fun bind(n: AppNotification) {
-            tvTitle.text = n.titleAr ?: ""
-            tvBody.text = n.bodyAr ?: ""
+            tvTitle.text = n.localizedTitle
+            tvBody.text = n.localizedBody
             tvTime.text = DateUtils.formatConversationTime(
                 n.createdAt,
                 tvTime.context.getString(R.string.yesterday)

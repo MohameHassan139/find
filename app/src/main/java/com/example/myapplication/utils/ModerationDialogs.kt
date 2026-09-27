@@ -8,6 +8,7 @@ import android.widget.RadioGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.myapplication.R
 import com.example.myapplication.chat.model.BlockedUserDto
 import com.example.myapplication.chat.model.ReportReason
 import com.example.myapplication.chat.model.ReportTargetType
@@ -23,12 +24,12 @@ import com.example.myapplication.data.ApiResult
  */
 object ModerationDialogs {
 
-    private fun reasonLabel(reason: ReportReason): String = when (reason) {
-        ReportReason.SPAM -> "رسائل مزعجة"
-        ReportReason.FRAUD -> "احتيال"
-        ReportReason.INAPPROPRIATE -> "محتوى غير لائق"
-        ReportReason.HARASSMENT -> "مضايقة"
-        ReportReason.OTHER -> "أخرى"
+    private fun reasonLabel(activity: Activity, reason: ReportReason): String = when (reason) {
+        ReportReason.SPAM -> activity.getString(R.string.report_reason_spam)
+        ReportReason.FRAUD -> activity.getString(R.string.report_reason_fraud)
+        ReportReason.INAPPROPRIATE -> activity.getString(R.string.report_reason_inappropriate)
+        ReportReason.HARASSMENT -> activity.getString(R.string.report_reason_harassment)
+        ReportReason.OTHER -> activity.getString(R.string.report_reason_other)
     }
 
     fun showReportDialog(
@@ -50,29 +51,29 @@ object ModerationDialogs {
         reasons.forEachIndexed { index, reason ->
             radioGroup.addView(RadioButton(activity).apply {
                 id = index
-                text = reasonLabel(reason)
+                text = reasonLabel(activity, reason)
             })
         }
         radioGroup.check(0)
         container.addView(radioGroup)
 
         val detailsInput = EditText(activity).apply {
-            hint = "تفاصيل إضافية (اختياري)"
+            hint = activity.getString(R.string.report_details_hint)
             maxLines = 4
             setPadding(0, pad, 0, 0)
         }
         container.addView(detailsInput)
 
         AlertDialog.Builder(activity)
-            .setTitle("إبلاغ عن: $targetLabel")
+            .setTitle(activity.getString(R.string.report_target_title, targetLabel))
             .setView(container)
-            .setPositiveButton("إرسال") { _, _ ->
+            .setPositiveButton(activity.getString(R.string.action_send)) { _, _ ->
                 val selected = radioGroup.checkedRadioButtonId
                 if (selected !in reasons.indices) return@setPositiveButton
                 val details = detailsInput.text.toString().trim().ifEmpty { null }
                 submitReport(activity, type, targetId, reasons[selected], details)
             }
-            .setNegativeButton("إلغاء", null)
+            .setNegativeButton(activity.getString(R.string.action_cancel), null)
             .show()
     }
 
@@ -86,9 +87,9 @@ object ModerationDialogs {
         val scope = (activity as? AppCompatActivity)?.lifecycleScope ?: return
         scope.launch {
             when (AppContainer.moderation.report(type, targetId, reason, details)) {
-                is ApiResult.Success -> activity.toast("تم إرسال البلاغ، شكراً لك")
-                is ApiResult.HttpError -> activity.toast("تعذر إرسال البلاغ")
-                is ApiResult.NetworkError -> activity.toast("تعذر الاتصال بالخادم")
+                is ApiResult.Success -> activity.toast(R.string.report_sent_success)
+                is ApiResult.HttpError -> activity.toast(R.string.report_failed)
+                is ApiResult.NetworkError -> activity.toast(R.string.error_server_unreachable)
             }
         }
     }
@@ -100,10 +101,11 @@ object ModerationDialogs {
         userAvatar: String? = null,
         onBlocked: (() -> Unit)? = null
     ) {
+        val displayName = userName ?: activity.getString(R.string.user_default_name)
         AlertDialog.Builder(activity)
-            .setTitle("حظر ${userName ?: "المستخدم"}")
-            .setMessage("لن تتمكنا من التواصل بعد الحظر. يمكنك إلغاء الحظر لاحقاً من الإعدادات.")
-            .setPositiveButton("حظر") { _, _ ->
+            .setTitle(activity.getString(R.string.block_confirm_title, displayName))
+            .setMessage(activity.getString(R.string.block_confirm_message))
+            .setPositiveButton(activity.getString(R.string.block_user)) { _, _ ->
                 val scope = (activity as? AppCompatActivity)?.lifecycleScope ?: return@setPositiveButton
                 scope.launch {
                     when (AppContainer.moderation.block(userId)) {
@@ -112,14 +114,14 @@ object ModerationDialogs {
                                 BlockedUserDto(id = userId, name = userName, avatar = userAvatar, blockedAt = null)
                             )
                             onBlocked?.invoke()
-                            activity.toast("تم الحظر")
+                            activity.toast(R.string.blocked_success)
                         }
-                        is ApiResult.HttpError -> activity.toast("تعذر الحظر")
-                        is ApiResult.NetworkError -> activity.toast("تعذر الاتصال بالخادم")
+                        is ApiResult.HttpError -> activity.toast(R.string.block_failed)
+                        is ApiResult.NetworkError -> activity.toast(R.string.error_server_unreachable)
                     }
                 }
             }
-            .setNegativeButton("إلغاء", null)
+            .setNegativeButton(activity.getString(R.string.action_cancel), null)
             .show()
     }
 
@@ -128,7 +130,7 @@ object ModerationDialogs {
         scope.launch {
             // As before: any server answer counts as done; only a network failure is reported.
             if (AppContainer.moderation.unblock(userId) is ApiResult.NetworkError) {
-                activity.toast("تعذر إلغاء الحظر")
+                activity.toast(R.string.unblock_failed)
                 return@launch
             }
             ModerationState.markUnblocked(userId)

@@ -61,7 +61,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_app_logo_lockup"
-            android:contentDescription="Finds" />
+            android:contentDescription="@string/app_name" />
     </LinearLayout>
 
 </LinearLayout>

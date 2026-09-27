@@ -198,9 +198,9 @@ class ProfileActivity : BaseActivity() {
 
     private fun confirmSignOut() {
         AlertDialog.Builder(this)
-            .setMessage("هل تريد تسجيل الخروج؟")
-            .setPositiveButton("خروج") { _, _ -> signOut() }
-            .setNegativeButton("إلغاء", null)
+            .setMessage(getString(R.string.logout_confirm_message))
+            .setPositiveButton(getString(R.string.logout)) { _, _ -> signOut() }
+            .setNegativeButton(getString(R.string.action_cancel), null)
             .show()
     }
 

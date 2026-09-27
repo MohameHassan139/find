@@ -102,7 +102,7 @@ class MenuActivity : BaseActivity() {
         binding.menuShareApp.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, "Check out the Find app!")
+                putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_text))
             }
             startActivity(Intent.createChooser(shareIntent, getString(R.string.menu_share_app)))
         }

@@ -87,7 +87,7 @@ class PhoneAuthActivity : BaseActivity() {
     private fun showOtpStep() {
         binding.layoutPhone.visibility = View.GONE
         binding.layoutOtp.visibility = View.VISIBLE
-        binding.tvOtpHint.text = "أرسل رمز التحقق إلى \u200E$phoneNumber\u200E"
+        binding.tvOtpHint.text = "${getString(R.string.send_otp_to)} \u200E$phoneNumber\u200E"
         startResendTimer()
     }
 
@@ -146,11 +146,11 @@ class PhoneAuthActivity : BaseActivity() {
                         PushTokenManager.refreshAndUploadIfNeededAsync(this@PhoneAuthActivity)
                         goToMain()
                     } else {
-                        toast(body?.message ?: "فشل التحقق")
+                        toast(body?.message ?: getString(R.string.verification_failed))
                     }
                 }
                 is ApiResult.HttpError ->
-                    toast(if (result.code == 422) "رمز التحقق غير صحيح" else "خطأ: ${result.code}")
+                    toast(if (result.code == 422) getString(R.string.invalid_verification_code) else getString(R.string.error_failed_to_load, result.code))
                 is ApiResult.NetworkError -> toast(R.string.error_server_unreachable)
             }
         }
@@ -161,7 +161,7 @@ class PhoneAuthActivity : BaseActivity() {
         resendTimer?.cancel()
         resendTimer = object : CountDownTimer(60_000, 1_000) {
             override fun onTick(ms: Long) {
-                binding.tvResend.text = "إعادة الإرسال بعد ${ms / 1000}s"
+                binding.tvResend.text = getString(R.string.resend_after_format, ms / 1000)
             }
             override fun onFinish() {
                 binding.tvResend.text = getString(R.string.resend_code)

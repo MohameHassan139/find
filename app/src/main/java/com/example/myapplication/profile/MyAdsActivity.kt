@@ -152,7 +152,7 @@ class MyAdsActivity : BaseActivity() {
     private fun loadMyAds() {
         if (TokenManager.getToken(this) == null) { 
             binding.swipeRefresh.isRefreshing = false
-            showEmpty("سجّل دخولك أولاً")
+            showEmpty(getString(R.string.login_required_first))
             return 
         }
         showLoading()
@@ -167,11 +167,11 @@ class MyAdsActivity : BaseActivity() {
                 }
                 is ApiResult.HttpError -> {
                     binding.swipeRefresh.isRefreshing = false
-                    showEmpty("تعذر التحميل: ${result.code}")
+                    showEmpty(getString(R.string.error_failed_to_load, result.code))
                 }
                 is ApiResult.NetworkError -> {
                     binding.swipeRefresh.isRefreshing = false
-                    showEmpty("تعذر الاتصال بالخادم")
+                    showEmpty(getString(R.string.error_server_unreachable))
                 }
             }
         }
@@ -179,9 +179,9 @@ class MyAdsActivity : BaseActivity() {
 
     private fun confirmDelete(item: ListingItem) {
         AlertDialog.Builder(this)
-            .setMessage("هل تريد حذف هذا الإعلان؟")
-            .setPositiveButton("حذف") { _, _ -> deleteAd(item) }
-            .setNegativeButton("إلغاء", null)
+            .setMessage(getString(R.string.delete_ad_confirm_message))
+            .setPositiveButton(getString(R.string.action_delete)) { _, _ -> deleteAd(item) }
+            .setNegativeButton(getString(R.string.action_cancel), null)
             .show()
     }
 

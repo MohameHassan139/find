@@ -167,8 +167,26 @@ data class AppNotification(
     val type: String?,
     @SerializedName("title_ar") val titleAr: String?,
     @SerializedName("body_ar") val bodyAr: String?,
+    @SerializedName("title_en") val titleEn: String? = null,
+    @SerializedName("body_en") val bodyEn: String? = null,
+    @SerializedName("title") val title: String? = null,
+    @SerializedName("body") val body: String? = null,
     @SerializedName("target_type") val targetType: String? = null,
     @SerializedName("target_id") val targetId: String? = null,
     @SerializedName("is_read") val isRead: Boolean = false,
     @SerializedName("created_at") val createdAt: String?
-)
+) {
+    val localizedTitle: String
+        get() {
+            val lang = java.util.Locale.getDefault().language
+            return if (lang == "en") (titleEn ?: title ?: titleAr.orEmpty())
+            else (titleAr ?: title ?: titleEn.orEmpty())
+        }
+
+    val localizedBody: String
+        get() {
+            val lang = java.util.Locale.getDefault().language
+            return if (lang == "en") (bodyEn ?: body ?: bodyAr.orEmpty())
+            else (bodyAr ?: body ?: bodyEn.orEmpty())
+        }
+}

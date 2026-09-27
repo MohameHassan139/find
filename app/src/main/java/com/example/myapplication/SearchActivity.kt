@@ -234,13 +234,13 @@ class SearchActivity : BaseActivity() {
         vm.currentQuery.observe(this) { q ->
             val hasQuery = !q.isNullOrBlank()
             binding.tvEmptyQuery.visibility = if (hasQuery) View.VISIBLE else View.GONE
-            binding.tvEmptyQuery.text = if (hasQuery) "لا توجد نتائج لـ \"$q\"" else ""
+            binding.tvEmptyQuery.text = if (hasQuery) getString(R.string.no_results_for_query, q) else ""
         }
 
-        vm.errorEvent.observe(this) { msg ->
+        vm.errorEvent.observe(this) { resId ->
             binding.swipeRefresh.isRefreshing = false
-            if (!msg.isNullOrEmpty())
-                toast(msg)
+            if (resId != null)
+                toast(resId)
         }
     }
 

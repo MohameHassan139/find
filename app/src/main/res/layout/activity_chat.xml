@@ -171,7 +171,7 @@
             android:src="@drawable/ic_send"
             android:background="@drawable/bg_send_button"
             android:padding="10dp"
-            android:contentDescription="send" />
+            android:contentDescription="@string/action_send" />
 
         <!-- Text input -->
         <EditText
@@ -181,7 +181,7 @@
             android:layout_weight="1"
             android:layout_marginHorizontal="8dp"
             android:background="@drawable/bg_message_input"
-            android:gravity="center_vertical|end"
+            android:gravity="center_vertical|start"
             android:hint="@string/chat_message_hint"
             android:textSize="14sp"
             android:textColor="@color/text_primary"

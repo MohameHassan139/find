@@ -474,9 +474,9 @@ class MainActivity : BaseActivity() {
             binding.swipeRefreshListings.isRefreshing = false
             if (msg != null) {
                 androidx.appcompat.app.AlertDialog.Builder(this)
-                    .setTitle("خطأ في البيانات")
+                    .setTitle(getString(R.string.error_data_title))
                     .setMessage(msg)
-                    .setPositiveButton("موافق") { d, _ -> d.dismiss() }
+                    .setPositiveButton(getString(R.string.action_ok)) { d, _ -> d.dismiss() }
                     .show()
             }
         }

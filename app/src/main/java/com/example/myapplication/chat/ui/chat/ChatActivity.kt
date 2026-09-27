@@ -106,7 +106,7 @@ class ChatActivity : BaseActivity() {
         val otherName = conversation.otherUser?.name
         val otherAvatar = conversation.otherUser?.avatar
 
-        binding.tvChatName.text = otherName ?: "محادثة"
+        binding.tvChatName.text = otherName ?: getString(R.string.chat_default_name)
         binding.tvChatStatus.text = getString(R.string.chat_status_placeholder)
 
         if (!otherAvatar.isNullOrEmpty()) {
@@ -145,11 +145,11 @@ class ChatActivity : BaseActivity() {
         val otherUserId = conversation.otherUser?.id
         val hasOtherUser = otherUserId != null && otherUserId != 0
         if (hasOtherUser) {
-            popup.menu.add(0, 3, 2, "الإبلاغ عن المستخدم")
+            popup.menu.add(0, 3, 2, getString(R.string.report_user))
             if (ModerationState.isBlocked(otherUserId!!)) {
-                popup.menu.add(0, 4, 3, "إلغاء حظر المستخدم")
+                popup.menu.add(0, 4, 3, getString(R.string.unblock_user))
             } else {
-                popup.menu.add(0, 5, 3, "حظر المستخدم")
+                popup.menu.add(0, 5, 3, getString(R.string.block_user))
             }
         }
 
@@ -177,7 +177,7 @@ class ChatActivity : BaseActivity() {
                     if (otherUserId != null) {
                         val otherName = conversation.otherUser?.name
                         ModerationDialogs.showReportDialog(
-                            this, ReportTargetType.USER, otherUserId.toString(), otherName ?: "المستخدم"
+                            this, ReportTargetType.USER, otherUserId.toString(), otherName ?: getString(R.string.user_default_name)
                         )
                     }
                     true

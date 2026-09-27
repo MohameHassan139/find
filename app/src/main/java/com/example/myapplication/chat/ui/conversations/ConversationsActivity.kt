@@ -170,6 +170,10 @@ class ConversationsActivity : BaseActivity() {
     }
 
     private fun setupFilterChips() {
+        binding.chipAll.setText(R.string.chat_chip_all)
+        binding.chipUnread.setText(R.string.chat_chip_unread)
+        binding.chipFavorite.setText(R.string.chat_chip_favorites)
+
         binding.chipAll.setOnClickListener {
             setChipSelected(ConversationsViewModel.Filter.ALL)
         }
@@ -189,11 +193,14 @@ class ConversationsActivity : BaseActivity() {
     }
 
     private fun setupChip(chip: android.widget.TextView, isSelected: Boolean) {
+        val padH = (14 * resources.displayMetrics.density).toInt()
         if (isSelected) {
             chip.setBackgroundResource(R.drawable.bg_chip_selected)
         } else {
             chip.setBackgroundResource(R.drawable.bg_chip_unselected)
         }
+        chip.setPadding(padH, 0, padH, 0)
+        chip.gravity = android.view.Gravity.CENTER
         chip.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.chats_chip_text))
     }
 
@@ -262,7 +269,7 @@ class ConversationsActivity : BaseActivity() {
         if (viewModel.getCurrentFilter() == ConversationsViewModel.Filter.FAVORITE) {
             binding.tvEmptyMessage.setText(R.string.chat_favorites_empty)
         } else {
-            binding.tvEmptyMessage.text = "لا توجد محادثات"
+            binding.tvEmptyMessage.setText(R.string.no_conversations)
         }
     }
 
