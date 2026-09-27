@@ -50,7 +50,12 @@ class SearchViewModel : ViewModel() {
             val arr = data.optJSONArray("regions") ?: return@launch
             _regions.value = (0 until arr.length()).mapNotNull { i ->
                 val r = arr.optJSONObject(i) ?: return@mapNotNull null
-                RegionItem(r.optInt("id"), r.optString("name_ar"))
+                val item = RegionItem(
+                    r.optInt("id"),
+                    r.optString("name_ar"),
+                    r.optString("name_en").ifEmpty { null }
+                )
+                if (item.isAllOption()) null else item
             }
         }
     }
@@ -114,7 +119,11 @@ class SearchViewModel : ViewModel() {
             if (result is ApiResult.Success) {
                 lastPage = result.data.lastPage
                 val current = if (reset) emptyList() else (_results.value ?: emptyList())
-                val combined = current + result.data.items
+                var newItems = result.data.items
+                if (activeRegionId != null) {
+                    newItems = newItems.filter { it.regionId == null || it.regionId == activeRegionId }
+                }
+                val combined = current + newItems
                 _results.value = combined
                 _bodyState.value = if (combined.isEmpty()) State.EMPTY else State.RESULTS
             } else {

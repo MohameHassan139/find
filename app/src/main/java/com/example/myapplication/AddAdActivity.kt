@@ -329,6 +329,7 @@ class AddAdActivity : BaseActivity() {
             put("title", title); put("description", desc)
             put("listing_type", adType); put("city", cityToSend().ifEmpty { null })
             put("price", price.toDoubleOrNull() ?: 0.0)
+            if (selectedRegionId > 0) put("region_id", selectedRegionId)
             put("images", JSONArray().apply { images.forEach { put(it) } })
         }
         when (val result = AppContainer.listings.update(id, body)) {

@@ -21,6 +21,7 @@ object ListingJson {
     /** GET /listings/{id} `data` → the ad-details model (adds seller contact fields). */
     fun parseDetail(o: JSONObject): DetailListing {
         val seller = o.optJSONObject("seller")
+        val regionObj = o.optJSONObject("region")
         return DetailListing(
             id = o.optString("id"),
             title = o.stringOrNull("title"),
@@ -35,13 +36,14 @@ object ListingJson {
             sellerId = seller?.optInt("id"),
             whatsappEnabled = seller?.optBoolean("whatsapp_enabled") ?: false,
             callEnabled = seller?.optBoolean("call_enabled") ?: false,
-            regionNameAr = o.optJSONObject("region")?.stringOrNull("name_ar"),
+            regionNameAr = regionObj?.stringOrNull("name_ar") ?: o.stringOrNull("region_name") ?: o.stringOrNull("region"),
             city = o.cityName()
         )
     }
 
     fun parse(o: JSONObject): ApiListing {
         val seller = o.optJSONObject("seller")
+        val regionObj = o.optJSONObject("region")
         return ApiListing(
             id = o.optString("id"),
             title = o.stringOrNull("title"),
@@ -51,12 +53,12 @@ object ListingJson {
             images = o.stringList("images"),
             sellerName = seller?.stringOrNull("name"),
             sellerAvatar = seller?.stringOrNull("avatar"),
-            regionNameAr = o.optJSONObject("region")?.stringOrNull("name_ar"),
+            regionNameAr = regionObj?.stringOrNull("name_ar") ?: o.stringOrNull("region_name") ?: o.stringOrNull("region"),
             city = o.cityName(),
             categoryId = o.intOrNull("category_id"),
             subCategoryId = o.intOrNull("sub_category_id"),
             filterOptionId = o.intOrNull("filter_option_id"),
-            regionId = o.intOrNull("region_id"),
+            regionId = o.intOrNull("region_id") ?: regionObj?.intOrNull("id"),
             description = o.stringOrNull("description")
         )
     }
@@ -73,5 +75,6 @@ fun ListingItem.toApiListing() = ApiListing(
     sellerName = seller?.name?.takeIf { it.isNotEmpty() },
     sellerAvatar = seller?.avatar?.takeIf { it.isNotEmpty() },
     regionNameAr = region?.nameAr?.takeIf { it.isNotEmpty() },
-    city = city?.takeIf { it.isNotEmpty() }
+    city = city?.takeIf { it.isNotEmpty() },
+    regionId = regionId ?: region?.id?.takeIf { it > 0 }
 )

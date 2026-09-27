@@ -398,7 +398,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 val targetCity = catCityItem ?: catCityId?.let { id ->
                     _allCities.value?.find { (catRegId == null || it.regionId == catRegId) && it.id == id }
                 }
-                val cityName = targetCity?.nameAr
+                val cityName = targetCity?.takeUnless { it.isAllOption() }?.nameAr
 
                 val res = AppContainer.catalog.listings(
                     page = currentPage,
@@ -428,14 +428,17 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                         sourceList = allListingsPool.filter {
                             it.categoryId == cat.id && (subCategoryId == null || it.subCategoryId == subCategoryId)
                         }
-                    } else if (sourceList.isEmpty() && isHomeFeed && reset) {
+                    } else if (sourceList.isEmpty() && isHomeFeed && reset && catRegId == null && catCityId == null && catType.isNullOrBlank()) {
                         sourceList = allListingsPool
                     }
 
-                    // Match iOS ListingsService.applyFilter: strictly verify city, listingType, and filterOption,
-                    // preventing loose backend LIKE queries or mixed types from leaking into results.
+                    // Strictly verify region, city, listingType, and filterOption,
+                    // preventing loose backend LIKE queries, cross-region leaks, or mixed types.
                     var filtered = sourceList
-                    if (targetCity != null) {
+                    if (catRegId != null) {
+                        filtered = filtered.filter { matchesRegion(it, catRegId!!) }
+                    }
+                    if (targetCity != null && !targetCity.isAllOption()) {
                         filtered = filtered.filter { matchesCity(it.city, targetCity) }
                     }
                     if (!catType.isNullOrBlank()) {
@@ -525,26 +528,85 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         return false
     }
 
+    private fun matchesRegion(listing: ApiListing, targetRegionId: Int): Boolean {
+        // 1. Direct regionId match if present
+        if (listing.regionId != null && listing.regionId > 0) {
+            return listing.regionId == targetRegionId
+        }
+
+        // 2. Check regionNameAr against the target region's names
+        val targetRegion = _regions.value?.find { it.id == targetRegionId }
+        if (targetRegion != null && !listing.regionNameAr.isNullOrBlank()) {
+            val regName = listing.regionNameAr.trim()
+            val targetAr = targetRegion.nameAr.trim()
+            val targetEn = targetRegion.nameEn?.trim() ?: ""
+            val cleanTargetAr = targetAr.removePrefix("منطقة ").trim()
+            val cleanRegName = regName.removePrefix("منطقة ").trim()
+            if (regName.equals(targetAr, ignoreCase = true) ||
+                cleanRegName.equals(cleanTargetAr, ignoreCase = true) ||
+                (targetEn.isNotEmpty() && regName.equals(targetEn, ignoreCase = true))) {
+                return true
+            }
+        }
+
+        // 3. Check if the listing's city belongs to the target region
+        if (!listing.city.isNullOrBlank()) {
+            val citiesInTargetRegion = citiesForRegion(targetRegionId)
+            val matchedCityInRegion = citiesInTargetRegion.any { cityItem ->
+                !cityItem.isAllOption() && matchesCity(listing.city, cityItem)
+            }
+            if (matchedCityInRegion) {
+                return true
+            }
+
+            // If the listing's city belongs to ANY other known region, it definitely does not match
+            val allOtherCities = _allCities.value?.filter { it.regionId != targetRegionId && !it.isAllOption() } ?: emptyList()
+            if (allOtherCities.any { matchesCity(listing.city, it) }) {
+                return false
+            }
+        }
+
+        return false
+    }
+
     private fun matchesCity(listingCity: String?, targetCity: CityItem): Boolean {
         if (listingCity.isNullOrBlank()) return false
         val trimmed = listingCity.trim()
-        val actualCity = when {
-            trimmed.contains("/") -> trimmed.substringAfterLast("/").trim()
-            trimmed.contains("-") -> trimmed.substringAfterLast("-").trim()
-            trimmed.contains(",") -> trimmed.substringAfterLast(",").trim()
-            else -> trimmed
-        }
         val ar = targetCity.nameAr.trim()
         val en = targetCity.nameEn?.trim()
-        return actualCity.equals(ar, ignoreCase = true) ||
-               (!en.isNullOrEmpty() && actualCity.equals(en, ignoreCase = true))
+
+        if (ar.isEmpty() || targetCity.isAllOption()) return true
+
+        // 1. Direct exact match
+        if (trimmed.equals(ar, ignoreCase = true) || (!en.isNullOrEmpty() && trimmed.equals(en, ignoreCase = true))) {
+            return true
+        }
+
+        // 2. Tokenized match (split by / - , or Arabic comma)
+        val parts = trimmed.split('/', '-', ',', '،').map { it.trim() }.filter { it.isNotEmpty() }
+        for (part in parts) {
+            if (part.equals(ar, ignoreCase = true) || (!en.isNullOrEmpty() && part.equals(en, ignoreCase = true))) {
+                return true
+            }
+        }
+
+        // 3. Substring match for combined strings like "منطقة مكة المكرمة مكة المكرمة"
+        if (trimmed.contains(ar, ignoreCase = true) || (!en.isNullOrEmpty() && trimmed.contains(en, ignoreCase = true))) {
+            return true
+        }
+
+        return false
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     fun citiesForRegion(regionId: Int?): List<CityItem> {
         if (regionId == null) return emptyList()
-        return _allCities.value?.filter { it.regionId == regionId } ?: emptyList()
+        val list = _allCities.value?.filter { it.regionId == regionId } ?: emptyList()
+        if (list.isNotEmpty() && list.none { it.isAllOption() }) {
+            return listOf(CityItem(0, "كل المدن", "All Cities", regionId)) + list
+        }
+        return list
     }
 
     private fun parseRegions(arr: JSONArray): Pair<List<RegionItem>, List<CityItem>> {
