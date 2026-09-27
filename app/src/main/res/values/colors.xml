@@ -157,4 +157,6 @@
     <!-- "No image" placeholder (Figma no-imge.svg): grey card + photo glyph -->
     <color name="placeholder_bg">#FFD9D9D9</color>
     <color name="placeholder_icon">#FF909090</color>
+    <!-- Required-field star (add ad screen) -->
+    <color name="required_star">#FF3B30</color>
 </resources>

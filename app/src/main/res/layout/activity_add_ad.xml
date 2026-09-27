@@ -127,13 +127,14 @@
                     android:textColor="@color/text_primary"
                     android:textSize="14sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="*"
-                    android:textColor="#FF2A2A"
-                    android:textSize="14sp" />
+                <!-- Small star tucked against the label's top edge (superscript style) -->
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="7dp"
+                    android:layout_marginStart="2dp"
+                    android:translationY="-5dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_required_star" />
 
                 <EditText
                     android:id="@+id/etAdTitle"
@@ -208,13 +209,14 @@
                     android:textColor="@color/text_primary"
                     android:textSize="14sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="*"
-                    android:textColor="#FF2A2A"
-                    android:textSize="14sp" />
+                <!-- Small star tucked against the label's top edge (superscript style) -->
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="7dp"
+                    android:layout_marginStart="2dp"
+                    android:translationY="-5dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_required_star" />
 
                 <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
 
@@ -246,13 +248,14 @@
                     android:textColor="@color/text_primary"
                     android:textSize="14sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="*"
-                    android:textColor="#FF2A2A"
-                    android:textSize="14sp" />
+                <!-- Small star tucked against the label's top edge (superscript style) -->
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="7dp"
+                    android:layout_marginStart="2dp"
+                    android:translationY="-5dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_required_star" />
 
                 <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
 
@@ -287,13 +290,14 @@
                     android:textColor="@color/text_primary"
                     android:textSize="14sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="*"
-                    android:textColor="#FF2A2A"
-                    android:textSize="14sp" />
+                <!-- Small star tucked against the label's top edge (superscript style) -->
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="7dp"
+                    android:layout_marginStart="2dp"
+                    android:translationY="-5dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_required_star" />
 
                 <EditText
                     android:id="@+id/etPrice"
