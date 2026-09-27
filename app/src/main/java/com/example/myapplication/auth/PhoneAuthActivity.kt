@@ -23,6 +23,7 @@ import com.example.myapplication.push.PushTokenManager
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 class PhoneAuthActivity : BaseActivity() {
 
@@ -109,6 +110,19 @@ class PhoneAuthActivity : BaseActivity() {
                 val response = RetrofitClient.build(this@PhoneAuthActivity).requestOtp(OtpRequest(phoneNumber))
                 if (response.isSuccessful) {
                     showOtpStep()
+                } else if (response.code() == 429) {
+                    // 429 = 60s resend cooldown or the silent daily safety cap.
+                    // The server's `message` is already localized (Accept-Language),
+                    // so show it as-is. There is no attempt limit / temporary block
+                    // any more, so no "attempts left" or "N days" text.
+                    val serverMessage = response.errorBody()?.string()?.let {
+                        runCatching {
+                            val json = JSONObject(it)
+                            if (json.isNull("message")) null else json.optString("message")
+                        }.getOrNull()
+                    }?.takeIf { it.isNotBlank() }
+                    Toast.makeText(this@PhoneAuthActivity,
+                        serverMessage ?: getString(R.string.error_generic), Toast.LENGTH_LONG).show()
                 } else {
                     Toast.makeText(this@PhoneAuthActivity,
                         getString(R.string.kt_str_4605bbeb), Toast.LENGTH_SHORT).show()

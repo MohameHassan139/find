@@ -197,7 +197,6 @@
     <string name="ios_auth_changeNumber">تغيير الرقم</string>
     <string name="ios_auth_resendOTP">إعادة إرسال الرمز</string>
     <string name="ios_auth_resendIn">إعادة الإرسال خلال</string>
-    <string name="ios_auth_attemptsLeftWarning">محاولات متبقية قبل الحظر المؤقت</string>
     <string name="ios_auth_gate_title">تسجيل الدخول مطلوب</string>
     <string name="ios_auth_gate_message">يجب تسجيل الدخول للوصول إلى هذه الميزة</string>
     <string name="ios_auth_gate_login">تسجيل الدخول</string>

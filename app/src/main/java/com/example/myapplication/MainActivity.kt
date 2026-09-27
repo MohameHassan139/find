@@ -251,6 +251,30 @@ class MainActivity : BaseActivity() {
             }
         }
         binding.rvExtraTabs.adapter = extraTabAdapter
+
+        setupProgressiveFilterStrips()
+    }
+
+    /**
+     * Fades each strip row (search bar, category tabs, filters, region) by how much
+     * of it has scrolled out of view, so the header hides and re-appears row by row
+     * instead of as one block.
+     */
+    private fun setupProgressiveFilterStrips() {
+        val strips = binding.llHomeFilterStrips
+        binding.appBarFilters.addOnOffsetChangedListener(
+            com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
+            val scrolledAway = -verticalOffset
+            for (i in 0 until strips.childCount) {
+                val row = strips.getChildAt(i)
+                if (row.visibility != View.VISIBLE || row.height == 0) {
+                    row.alpha = 1f          // never leave a hidden row faded for later
+                    continue
+                }
+                val covered = (scrolledAway - row.top).coerceIn(0, row.height)
+                row.alpha = 1f - covered.toFloat() / row.height
+            }
+        })
     }
 
     private fun resetFilterStripsScrollState() {

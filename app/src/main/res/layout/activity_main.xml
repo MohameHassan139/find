@@ -18,64 +18,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ── Search bar (pinned above the filter lists) ── -->
-    <FrameLayout
-        android:id="@+id/flSearchBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/header_bg"
-        android:paddingHorizontal="12dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        app:layout_constraintTop_toBottomOf="@id/llAppBar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <LinearLayout
-            android:id="@+id/llSearchContainer"
-            android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:background="@drawable/bg_search_bar"
-            android:foreground="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:layoutDirection="locale"
-            android:paddingHorizontal="12dp">
-
-            <EditText
-                android:id="@+id/etSearch"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:hint="@string/search_hint"
-                android:layoutDirection="locale"
-                android:gravity="start|center_vertical"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="0dp"
-                android:includeFontPadding="false"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:textColorHint="@color/search_hint_text" />
-
-            <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@drawable/ic_search"
-                app:tint="@color/search_icon_tint" />
-        </LinearLayout>
-    </FrameLayout>
-
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/homeScrollCoordinator"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/category_grid_bg"
-        app:layout_constraintTop_toBottomOf="@id/flSearchBar"
+        app:layout_constraintTop_toBottomOf="@id/llAppBar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -87,13 +35,65 @@
             android:background="@color/header_bg"
             app:elevation="0dp">
 
-        <!-- Tab / filter rows: collapse on scroll down, re-enter on any scroll up -->
+        <!-- Search bar + tab / filter rows: follow the finger 1:1 — they slide away
+             row by row on scroll down and come back row by row on scroll up
+             (no "snap", which used to hide / show the whole block at once). -->
         <LinearLayout
             android:id="@+id/llHomeFilterStrips"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_scrollFlags="scroll|enterAlways|snap">
+            app:layout_scrollFlags="scroll|enterAlways">
+
+        <!-- ── Search bar: first row of the collapsing strips, so it scrolls
+                 away / re-enters together with the filter lists ── -->
+        <FrameLayout
+            android:id="@+id/flSearchBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/header_bg"
+            android:paddingHorizontal="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+
+            <LinearLayout
+                android:id="@+id/llSearchContainer"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_search_bar"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layoutDirection="locale"
+                android:paddingHorizontal="12dp">
+
+                <EditText
+                    android:id="@+id/etSearch"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/search_hint"
+                    android:layoutDirection="locale"
+                    android:gravity="start|center_vertical"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="0dp"
+                    android:includeFontPadding="false"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/search_hint_text" />
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_search"
+                    app:tint="@color/search_icon_tint" />
+            </LinearLayout>
+        </FrameLayout>
 
         <!-- Top category tabs -->
         <androidx.recyclerview.widget.RecyclerView

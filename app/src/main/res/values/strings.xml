@@ -193,7 +193,6 @@
     <string name="ios_auth_changeNumber">Change Number</string>
     <string name="ios_auth_resendOTP">Resend Code</string>
     <string name="ios_auth_resendIn">Resend in</string>
-    <string name="ios_auth_attemptsLeftWarning">attempts remaining before temporary block</string>
     <string name="ios_auth_gate_title">Login Required</string>
     <string name="ios_auth_gate_message">You must log in to access this feature</string>
     <string name="ios_auth_gate_login">Log In</string>

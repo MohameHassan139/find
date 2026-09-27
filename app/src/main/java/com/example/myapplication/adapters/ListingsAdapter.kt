@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.annotation.SuppressLint
 import androidx.viewpager2.widget.ViewPager2
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -33,10 +34,40 @@ class ListingsAdapter(
         var currentImageIndex = 0
         var imageUrls: List<String> = emptyList()
         var pageCallback: ViewPager2.OnPageChangeCallback? = null
+        /** One gallery adapter per card, reused across binds (no re-inflating pages). */
+        val galleryAdapter = CardImageAdapter()
+        /** URLs the gallery is currently showing; skip the rebuild when unchanged. */
+        var galleryUrls: List<String>? = null
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemVH =
-        ItemVH(ItemListingCardBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemVH {
+        val holder = ItemVH(ItemListingCardBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        val b = holder.b
+        // One-time view setup (previously repeated on every bind)
+        b.flCardImage.clipToOutline = true
+        b.ivPrevImage.visibility = View.GONE
+        b.ivNextImage.visibility = View.GONE
+        b.vpCardImages.layoutDirection = View.LAYOUT_DIRECTION_LTR
+        b.llCardDots.layoutDirection = View.LAYOUT_DIRECTION_LTR
+        b.vpCardImages.adapter = holder.galleryAdapter
+        // ViewPager2's inner horizontal RecyclerView must not take part in the
+        // vertical nested scroll (it fights the list + collapsing filter strips),
+        // and its own overscroll glow flashes while flinging the feed.
+        (b.vpCardImages.getChildAt(0) as? RecyclerView)?.apply {
+            isNestedScrollingEnabled = false
+            overScrollMode = View.OVER_SCROLL_NEVER
+        }
+        return holder
+    }
+
+    override fun onBindViewHolder(holder: ItemVH, position: Int, payloads: MutableList<Any>) {
+        // Favorite toggles only touch the bookmark icon — no gallery/image rebind.
+        if (payloads.isNotEmpty() && payloads.all { it == PAYLOAD_FAVORITE }) {
+            bindFavorite(holder, items[position])
+            return
+        }
+        onBindViewHolder(holder, position)
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ItemVH, position: Int) {
@@ -46,12 +77,7 @@ class ListingsAdapter(
         b.tvTitle.text = item.title ?: "—"
 
         b.tvPrice.text = item.price?.let {
-            val fmt = if (it % 1 == 0.0) {
-                java.text.NumberFormat.getNumberInstance(java.util.Locale.US).format(it.toLong())
-            } else {
-                java.text.NumberFormat.getNumberInstance(java.util.Locale.US).format(it)
-            }
-            fmt
+            if (it % 1 == 0.0) priceFormat.format(it.toLong()) else priceFormat.format(it)
         } ?: "—"
 
         b.tvLocation.text = ListingLocationFormatter.cityOnly(item.city)
@@ -61,9 +87,7 @@ class ListingsAdapter(
         val ctx = holder.itemView.context
         val isOffer = item.listingType == "offer"
         b.tvType.text = if (isOffer) LocaleHelper.localizedName(ctx, "العرض", "Offer") else LocaleHelper.localizedName(ctx, "الطلب", "Request")
-        b.tvType.setBackgroundColor(
-            if (isOffer) Color.parseColor("#34C759") else Color.parseColor("#FF9500")
-        )
+        b.tvType.setBackgroundColor(if (isOffer) COLOR_OFFER else COLOR_REQUEST)
 
         // Seller name + avatar (right info panel)
         val sellerName = item.sellerName ?: ""
@@ -93,7 +117,12 @@ class ListingsAdapter(
 
         b.root.setOnClickListener { onClick(item) }
         
-        // Favorite icon handling matching iOS ListingCard
+        bindFavorite(holder, item)
+    }
+
+    /** Favorite icon handling matching iOS ListingCard. */
+    private fun bindFavorite(holder: ItemVH, item: ApiListing) {
+        val b = holder.b
         val isFav = favoriteIds.contains(item.id)
         b.ivFavorite.colorFilter = null
         b.ivFavorite.setImageResource(
@@ -119,19 +148,18 @@ class ListingsAdapter(
     private fun setupCardGallery(holder: ItemVH, item: ApiListing) {
         val b = holder.b
         val images = holder.imageUrls
+        holder.galleryAdapter.onImageClick = { onClick(item) }
 
-        // Round the photo corners the same way the old ShapeableImageView did
-        b.flCardImage.clipToOutline = true
-
-        // The old chevrons are gone — swiping replaces them
-        b.ivPrevImage.visibility = View.GONE
-        b.ivNextImage.visibility = View.GONE
+        // Same photos already on this card (re-bind, page append, favorite refresh):
+        // leave the pager, its pages and the dots exactly as they are.
+        if (holder.galleryUrls == images) return
+        holder.galleryUrls = images
 
         holder.pageCallback?.let { b.vpCardImages.unregisterOnPageChangeCallback(it) }
         holder.pageCallback = null
 
         if (images.isEmpty()) {
-            b.vpCardImages.adapter = null
+            holder.galleryAdapter.submit(emptyList())
             b.vpCardImages.visibility = View.GONE
             b.llCardDots.visibility = View.GONE
             b.ivImage.visibility = View.VISIBLE
@@ -141,11 +169,9 @@ class ListingsAdapter(
 
         b.ivImage.visibility = View.GONE
         b.vpCardImages.visibility = View.VISIBLE
-        b.vpCardImages.layoutDirection = View.LAYOUT_DIRECTION_LTR
         // Dots follow the pager, not the locale: page 1 is always the first dot
-        b.llCardDots.layoutDirection = View.LAYOUT_DIRECTION_LTR
         b.vpCardImages.isUserInputEnabled = images.size > 1
-        b.vpCardImages.adapter = CardImageAdapter(images) { onClick(item) }
+        holder.galleryAdapter.submit(images)
 
         val startIndex = holder.currentImageIndex.coerceIn(0, images.size - 1)
         holder.currentImageIndex = startIndex
@@ -210,10 +236,17 @@ class ListingsAdapter(
     }
 
     /** One photo per page; a tap opens the ad, exactly like tapping the card. */
-    private class CardImageAdapter(
-        private val images: List<String>,
-        private val onImageClick: () -> Unit
-    ) : RecyclerView.Adapter<CardImageAdapter.ImageVH>() {
+    class CardImageAdapter : RecyclerView.Adapter<CardImageAdapter.ImageVH>() {
+
+        private var images: List<String> = emptyList()
+        var onImageClick: () -> Unit = {}
+
+        @SuppressLint("NotifyDataSetChanged")
+        fun submit(newImages: List<String>) {
+            if (newImages == images) return
+            images = newImages
+            notifyDataSetChanged()
+        }
 
         class ImageVH(val imageView: ImageView) : RecyclerView.ViewHolder(imageView)
 
@@ -237,20 +270,46 @@ class ListingsAdapter(
             holder.itemView.setOnClickListener { onImageClick() }
         }
 
+        override fun onViewRecycled(holder: ImageVH) {
+            // Free the bitmap of pages that scrolled away
+            Glide.with(holder.imageView).clear(holder.imageView)
+        }
+
         override fun getItemCount() = images.size
     }
 
     override fun getItemCount() = items.size
 
+    /**
+     * Only animates/binds what actually changed. Loading the next page used to
+     * call notifyDataSetChanged(), which re-bound every visible card (galleries,
+     * dots, image requests) mid-fling — the main source of scroll stutter.
+     */
+    @SuppressLint("NotifyDataSetChanged")
     fun updateData(newItems: List<ApiListing>) {
+        val old = items
+        if (old === newItems) return
         items = newItems
-        notifyDataSetChanged()
+        when {
+            old.isEmpty() || newItems.isEmpty() -> notifyDataSetChanged()
+            // Pagination: same prefix, new rows at the end → pure insert
+            newItems.size > old.size && newItems.subList(0, old.size) == old ->
+                notifyItemRangeInserted(old.size, newItems.size - old.size)
+            else -> DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+                override fun getOldListSize() = old.size
+                override fun getNewListSize() = newItems.size
+                override fun areItemsTheSame(o: Int, n: Int) = old[o].id == newItems[n].id
+                override fun areContentsTheSame(o: Int, n: Int) = old[o] == newItems[n]
+            }).dispatchUpdatesTo(this)
+        }
     }
 
     fun setFavoriteIds(ids: Set<String>) {
+        if (favoriteIds == ids) return
         favoriteIds.clear()
         favoriteIds.addAll(ids)
-        notifyDataSetChanged()
+        // Refresh only the bookmark icons (see payload handling in onBindViewHolder)
+        notifyItemRangeChanged(0, items.size, PAYLOAD_FAVORITE)
     }
 
     fun getCurrentItems(): List<ApiListing> = items
@@ -260,17 +319,28 @@ class ListingsAdapter(
         if (dateStr.isNullOrEmpty()) return ""
         val isAr = ctx?.let { LocaleHelper.isArabic(it) } ?: true
         return try {
-            val fmt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.getDefault())
-            fmt.timeZone = TimeZone.getTimeZone("UTC")
-            val date = fmt.parse(dateStr) ?: return dateStr
+            val date = isoParser.parse(dateStr) ?: return dateStr
             val diff = (System.currentTimeMillis() - date.time) / 1000
             when {
                 diff < 60 -> if (isAr) "الآن" else "Now"
                 diff < 3600 -> if (isAr) "${diff / 60} دقيقة" else "${diff / 60}m ago"
                 diff < 86400 -> if (isAr) "${diff / 3600} ساعة" else "${diff / 3600}h ago"
                 diff < 2592000 -> if (isAr) "${diff / 86400} يوم" else "${diff / 86400}d ago"
-                else -> SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
+                else -> dayFormat.format(date)
             }
         } catch (_: Exception) { dateStr }
+    }
+
+    // Formatters are expensive to create; build them once instead of on every bind.
+    // Adapters only run on the main thread, so sharing them is safe.
+    private val priceFormat = java.text.NumberFormat.getNumberInstance(Locale.US)
+    private val isoParser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.getDefault())
+        .apply { timeZone = TimeZone.getTimeZone("UTC") }
+    private val dayFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+    private companion object {
+        const val PAYLOAD_FAVORITE = "favorite"
+        val COLOR_OFFER = Color.parseColor("#34C759")
+        val COLOR_REQUEST = Color.parseColor("#FF9500")
     }
 }
