@@ -1,4 +1,4 @@
-package com.example.myapplication.chat.api
+package com.example.myapplication.data.remote
 
 import com.example.myapplication.auth.AuthResponse
 import com.example.myapplication.auth.DeleteAccountResponse
@@ -19,8 +19,8 @@ import retrofit2.http.*
 
 interface FindApiService {
 
-    // ── Auth / profile (token auto-attached by RetrofitClient's interceptor,
-    // no manual Authorization header needed — see RetrofitClient.build) ───────
+    // ── Auth / profile (token auto-attached by ApiClient's interceptor,
+    // no manual Authorization header needed — see ApiClient) ───────
 
     @POST("auth/request-otp")
     suspend fun requestOtp(@Body request: OtpRequest): Response<OtpResponse>

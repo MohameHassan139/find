@@ -46,6 +46,27 @@ object TokenManager {
 
     fun isLoggedIn(context: Context) = getToken(context) != null
 
+    /**
+     * Refreshes the cached profile after a server call (me / update profile), keeping
+     * the token and any field the server didn't send.
+     */
+    fun updateUser(context: Context, user: AuthUser) {
+        val token = getToken(context) ?: return
+        save(
+            context, token,
+            name = user.name ?: getName(context),
+            phone = user.phone ?: getPhone(context),
+            avatar = user.avatar ?: getAvatar(context),
+            userId = user.id.takeIf { it != 0 }?.toString() ?: getUserId(context)
+        )
+    }
+
+    fun updateAvatar(context: Context, avatarUrl: String) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+            .putString(KEY_AVATAR, avatarUrl)
+            .apply()
+    }
+
     fun clear(context: Context) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().clear().apply()
         // Per-account state that must not leak into the next session on a

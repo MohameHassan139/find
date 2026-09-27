@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +15,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.SharedCategoriesViewModel
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.chat.model.AppNotification
 import com.example.myapplication.chat.utils.DateUtils
 import com.example.myapplication.databinding.ActivityNotificationsBinding
@@ -25,6 +23,9 @@ import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.NavScreen
 import kotlinx.coroutines.launch
+import com.example.myapplication.utils.toast
+import com.example.myapplication.data.AppContainer
+import com.example.myapplication.data.ApiResult
 
 class NotificationsActivity : BaseActivity() {
 
@@ -46,8 +47,6 @@ class NotificationsActivity : BaseActivity() {
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
         BottomNavHelper.setup(this, NavScreen.NONE)
 
-        val api = RetrofitClient.build(this)
-
         adapter = NotificationsAdapter()
         binding.rvNotifications.layoutManager = LinearLayoutManager(this)
         binding.rvNotifications.adapter = adapter
@@ -59,41 +58,37 @@ class NotificationsActivity : BaseActivity() {
 
         binding.btnMarkAllRead.setOnClickListener {
             lifecycleScope.launch {
-                try {
-                    api.markAllNotificationsRead()
-                    // Refresh list after marking all read
-                    loadNotifications(api)
-                    Toast.makeText(this@NotificationsActivity, getString(R.string.notifications_marked_read), Toast.LENGTH_SHORT).show()
-                } catch (e: Exception) {
-                    Toast.makeText(this@NotificationsActivity, getString(R.string.error_update_failed), Toast.LENGTH_SHORT).show()
+                // As before: any server answer counts as done; only a network failure is reported.
+                if (AppContainer.notifications.markAllRead() is ApiResult.NetworkError) {
+                    toast(R.string.error_update_failed)
+                } else {
+                    loadNotifications() // refresh the list after marking all read
+                    toast(R.string.notifications_marked_read)
                 }
             }
         }
 
-        binding.swipeRefresh.setOnRefreshListener { loadNotifications(api) }
+        binding.swipeRefresh.setOnRefreshListener { loadNotifications() }
 
-        loadNotifications(api)
+        loadNotifications()
     }
 
-    private fun loadNotifications(api: com.example.myapplication.chat.api.FindApiService) {
+    private fun loadNotifications() {
         showLoading()
         lifecycleScope.launch {
-            try {
-                val response = api.getUserData()
-                binding.swipeRefresh.isRefreshing = false
-                if (response.isSuccessful) {
-                    val payload = response.body()?.data
-                    val items = payload?.notifications ?: emptyList()
+            val result = AppContainer.notifications.userData()
+            binding.swipeRefresh.isRefreshing = false
+            when (result) {
+                is ApiResult.Success -> {
+                    val payload = result.data
+                    val items = payload?.notifications.orEmpty()
                     val unread = payload?.unreadNotifications ?: items.count { !it.isRead }
                     binding.tvUnreadCount.text = if (unread > 0) "($unread غير مقروء)" else ""
                     binding.tvUnreadCount.visibility = if (unread > 0) View.VISIBLE else View.GONE
                     if (items.isEmpty()) showEmpty() else showList(items)
-                } else {
-                    showError("تعذر التحميل: ${response.code()}")
                 }
-            } catch (e: Exception) {
-                binding.swipeRefresh.isRefreshing = false
-                showError("تعذر الاتصال بالخادم")
+                is ApiResult.HttpError -> showError("تعذر التحميل: ${result.code}")
+                is ApiResult.NetworkError -> showError("تعذر الاتصال بالخادم")
             }
         }
     }

@@ -3,20 +3,21 @@ package com.example.myapplication
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import com.example.myapplication.BaseActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.SharedCategoriesViewModel
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.NavScreen
 import kotlinx.coroutines.launch
+import com.example.myapplication.utils.toast
+import com.example.myapplication.data.AppContainer
+import com.example.myapplication.data.ApiResult
 
 class SettingsActivity : BaseActivity() {
 
@@ -123,36 +124,22 @@ class SettingsActivity : BaseActivity() {
 
     private fun deleteAccountFromServer() {
         if (TokenManager.getToken(this).isNullOrEmpty()) {
-            Toast.makeText(this, "Not logged in", Toast.LENGTH_SHORT).show()
+            toast("Not logged in")
             return
         }
 
         lifecycleScope.launch {
-            try {
-                val response = RetrofitClient.build(this@SettingsActivity).deleteAccount()
-                
-                if (response.isSuccessful) {
-                    val message = response.body()?.message ?: "Account deleted successfully"
-                    Toast.makeText(this@SettingsActivity, message, Toast.LENGTH_SHORT).show()
-                    
+            when (val result = AppContainer.auth.deleteAccount()) {
+                is ApiResult.Success -> {
+                    toast(result.data ?: "Account deleted successfully")
                     TokenManager.clear(this@SettingsActivity)
                     startActivity(Intent(this@SettingsActivity, MainActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                     })
                     finish()
-                } else {
-                    Toast.makeText(
-                        this@SettingsActivity,
-                        "Failed to delete account: ${response.message()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
                 }
-            } catch (e: Exception) {
-                Toast.makeText(
-                    this@SettingsActivity,
-                    "Error: ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                is ApiResult.HttpError -> toast(result.message ?: getString(R.string.error_generic))
+                is ApiResult.NetworkError -> toast(R.string.error_server_unreachable)
             }
         }
     }

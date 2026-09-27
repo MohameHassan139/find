@@ -19,8 +19,8 @@ import com.example.myapplication.utils.ListingLocationFormatter
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.utils.AuthGuard
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.myapplication.utils.PriceFormatter
+import com.example.myapplication.utils.RelativeTimeFormatter
 
 class ListingsAdapter(
     private var items: List<ApiListing>,
@@ -76,12 +76,10 @@ class ListingsAdapter(
 
         b.tvTitle.text = item.title ?: "—"
 
-        b.tvPrice.text = item.price?.let {
-            if (it % 1 == 0.0) priceFormat.format(it.toLong()) else priceFormat.format(it)
-        } ?: "—"
+        b.tvPrice.text = PriceFormatter.display(item.price)
 
         b.tvLocation.text = ListingLocationFormatter.cityOnly(item.city)
-        b.tvTime.text = formatTime(item.createdAt, holder.itemView.context)
+        b.tvTime.text = RelativeTimeFormatter.format(holder.itemView.context, item.createdAt)
 
         // Type badge color
         val ctx = holder.itemView.context
@@ -313,29 +311,6 @@ class ListingsAdapter(
     }
 
     fun getItems(): List<ApiListing> = items
-
-    private fun formatTime(dateStr: String?, ctx: android.content.Context? = null): String {
-        if (dateStr.isNullOrEmpty()) return ""
-        val isAr = ctx?.let { LocaleHelper.isArabic(it) } ?: true
-        return try {
-            val date = isoParser.parse(dateStr) ?: return dateStr
-            val diff = (System.currentTimeMillis() - date.time) / 1000
-            when {
-                diff < 60 -> if (isAr) "الآن" else "Now"
-                diff < 3600 -> if (isAr) "${diff / 60} دقيقة" else "${diff / 60}m ago"
-                diff < 86400 -> if (isAr) "${diff / 3600} ساعة" else "${diff / 3600}h ago"
-                diff < 2592000 -> if (isAr) "${diff / 86400} يوم" else "${diff / 86400}d ago"
-                else -> dayFormat.format(date)
-            }
-        } catch (_: Exception) { dateStr }
-    }
-
-    // Formatters are expensive to create; build them once instead of on every bind.
-    // Adapters only run on the main thread, so sharing them is safe.
-    private val priceFormat = java.text.NumberFormat.getNumberInstance(Locale.US)
-    private val isoParser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.getDefault())
-        .apply { timeZone = TimeZone.getTimeZone("UTC") }
-    private val dayFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
     private companion object {
         const val PAYLOAD_FAVORITE = "favorite"

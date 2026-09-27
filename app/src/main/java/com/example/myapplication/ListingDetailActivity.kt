@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import com.example.myapplication.BaseActivity
@@ -18,22 +17,20 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.auth.TokenManager
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityListingDetailBinding
-import com.example.myapplication.favorites.AddFavoriteRequest
-import com.example.myapplication.chat.model.CreateConversationRequest
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.ListingLocationFormatter
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.utils.ModerationState
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.NavScreen
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.myapplication.utils.PriceFormatter
+import com.example.myapplication.utils.RelativeTimeFormatter
+import com.example.myapplication.utils.toast
+import com.example.myapplication.data.AppContainer
+import com.example.myapplication.data.ApiResult
+import com.example.myapplication.chat.ui.chat.ChatActivity
 
 class ListingDetailActivity : BaseActivity() {
 
@@ -157,7 +154,7 @@ class ListingDetailActivity : BaseActivity() {
         loadListing(listingId)
         if (TokenManager.isLoggedIn(this)) {
             checkIsFavorited(listingId)
-            lifecycleScope.launch { ModerationState.refresh(RetrofitClient.build(this@ListingDetailActivity)) }
+            lifecycleScope.launch { ModerationState.refresh() }
         }
 
         val toggleFavorite: (View) -> Unit = {
@@ -180,24 +177,15 @@ class ListingDetailActivity : BaseActivity() {
     // ── Load listing ──────────────────────────────────────────────────────────
 
     private fun loadListing(id: String) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val api = RetrofitClient.build(this@ListingDetailActivity)
-                val response = api.getListingDetail(id)
-                if (response.isSuccessful) {
-                    val data = JSONObject(response.body()?.string() ?: "")
-                        .optJSONObject("data") ?: return@launch
-                    val listing = parseListing(data)
-                    withContext(Dispatchers.Main) { bindListing(listing) }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(this@ListingDetailActivity, getString(R.string.error_load_listing), Toast.LENGTH_SHORT).show()
-                        finishOrGoHome()
-                    }
+        lifecycleScope.launch {
+            when (val result = AppContainer.listings.detail(id)) {
+                is ApiResult.Success -> result.data?.let(::bindListing)
+                is ApiResult.HttpError -> {
+                    toast(R.string.error_load_listing)
+                    finishOrGoHome()
                 }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(this@ListingDetailActivity, getString(R.string.error_connection_failed), Toast.LENGTH_SHORT).show()
+                is ApiResult.NetworkError -> {
+                    toast(R.string.error_connection_failed)
                     finishOrGoHome()
                 }
             }
@@ -210,16 +198,13 @@ class ListingDetailActivity : BaseActivity() {
         currentListing = l
         binding.tvTitle.text = l.title ?: ""
 
-        binding.tvPrice.text = l.price?.let {
-            val fmt = if (it % 1 == 0.0) it.toLong().toString() else it.toString()
-            fmt
-        } ?: "—"
+        binding.tvPrice.text = PriceFormatter.display(l.price)
 
         val loc = ListingLocationFormatter.cityOnly(l.city)
         binding.tvLocation.text = loc.ifEmpty { "—" }
         binding.tvLocation.visibility = if (loc.isNotEmpty()) View.VISIBLE else View.GONE
 
-        val time = formatTime(l.createdAt)
+        val time = RelativeTimeFormatter.format(this, l.createdAt)
         binding.tvTime.text = time.ifEmpty { "—" }
         binding.tvTime.visibility = if (time.isNotEmpty()) View.VISIBLE else View.GONE
 
@@ -244,7 +229,7 @@ class ListingDetailActivity : BaseActivity() {
             if (callAvailable) {
                 startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")))
             } else {
-                Toast.makeText(this, getString(R.string.phone_not_available), Toast.LENGTH_SHORT).show()
+                toast(R.string.phone_not_available)
             }
         }
 
@@ -256,7 +241,7 @@ class ListingDetailActivity : BaseActivity() {
                 val num = phone!!.replace(Regex("[^\\d+]"), "")
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/$num")))
             } else {
-                Toast.makeText(this, getString(R.string.whatsapp_not_available), Toast.LENGTH_SHORT).show()
+                toast(R.string.whatsapp_not_available)
             }
         }
 
@@ -381,25 +366,20 @@ class ListingDetailActivity : BaseActivity() {
             return
         }
         lifecycleScope.launch {
-            try {
-                val api = RetrofitClient.build(this@ListingDetailActivity)
-                val response = withContext(Dispatchers.IO) {
-                    api.createConversation(CreateConversationRequest(listingId))
+            when (val result = AppContainer.chat.startConversation(listingId)) {
+                is ApiResult.Success -> {
+                    val conversation = result.data
+                    if (conversation == null) {
+                        toast(R.string.error_open_conversation)
+                        return@launch
+                    }
+                    startActivity(
+                        Intent(this@ListingDetailActivity, ChatActivity::class.java)
+                            .putExtra(ChatActivity.EXTRA_CONVERSATION, conversation)
+                    )
                 }
-                val conversation = response.body()?.data
-                if (!response.isSuccessful || conversation == null) {
-                    val msg = response.errorBody()?.string()?.let {
-                        runCatching { JSONObject(it).optString("message") }.getOrNull()
-                    }?.takeIf { it.isNotEmpty() } ?: getString(R.string.error_open_conversation)
-                    Toast.makeText(this@ListingDetailActivity, msg, Toast.LENGTH_SHORT).show()
-                    return@launch
-                }
-                startActivity(
-                    Intent(this@ListingDetailActivity, com.example.myapplication.chat.ui.chat.ChatActivity::class.java)
-                        .putExtra(com.example.myapplication.chat.ui.chat.ChatActivity.EXTRA_CONVERSATION, conversation)
-                )
-            } catch (e: Exception) {
-                Toast.makeText(this@ListingDetailActivity, getString(R.string.error_connection_failed), Toast.LENGTH_SHORT).show()
+                is ApiResult.HttpError -> toast(result.message ?: getString(R.string.error_open_conversation))
+                is ApiResult.NetworkError -> toast(R.string.error_connection_failed)
             }
         }
     }
@@ -408,29 +388,16 @@ class ListingDetailActivity : BaseActivity() {
 
     private fun checkIsFavorited(listingId: String) {
         lifecycleScope.launch {
-            try {
-                val api = RetrofitClient.build(this@ListingDetailActivity)
-                val response = withContext(Dispatchers.IO) { api.isFavorited(listingId) }
-                if (response.isSuccessful) {
-                    // The flag lives at data.is_favorited, not at the top level —
-                    // reading it off the root always yielded false, so the heart
-                    // opened unfilled even for favorited listings.
-                    isFavorited = response.body()?.isFavorited ?: false
-                    updateFavoriteIcon()
-                }
-            } catch (_: Exception) {}
+            AppContainer.favorites.isFavorited(listingId).getOrNull()?.let {
+                isFavorited = it
+                updateFavoriteIcon()
+            }
         }
     }
 
     private fun syncFavorite(listingId: String, add: Boolean) {
         lifecycleScope.launch {
-            try {
-                val api = RetrofitClient.build(this@ListingDetailActivity)
-                withContext(Dispatchers.IO) {
-                    if (add) api.addFavorite(AddFavoriteRequest(listingId))
-                    else api.removeFavorite(listingId)
-                }
-            } catch (_: Exception) {}
+            AppContainer.favorites.setFavorite(listingId, add)
         }
     }
 
@@ -445,10 +412,7 @@ class ListingDetailActivity : BaseActivity() {
     private fun shareListing() {
         val l = currentListing ?: return
         val title = l.title ?: ""
-        val price = l.price?.let {
-            val fmt = if (it % 1 == 0.0) it.toLong().toString() else it.toString()
-            "$fmt ﷼"
-        } ?: ""
+        val price = l.price?.let { "${PriceFormatter.display(it)} ﷼" } ?: ""
         val shareText = buildString {
             if (title.isNotEmpty()) append(title)
             if (price.isNotEmpty()) {
@@ -566,52 +530,6 @@ class ListingDetailActivity : BaseActivity() {
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private fun parseListing(o: JSONObject): DetailListing {
-        val images = mutableListOf<String>()
-        val imgArr = o.optJSONArray("images")
-        if (imgArr != null) for (i in 0 until imgArr.length()) images.add(imgArr.getString(i))
-        val seller = o.optJSONObject("seller")
-        val region = o.optJSONObject("region")
-        return DetailListing(
-            id = o.optString("id"),
-            title = o.optString("title").ifEmpty { null },
-            description = o.optString("description").ifEmpty { null },
-            price = if (!o.isNull("price")) o.optDouble("price") else null,
-            listingType = o.optString("listing_type").ifEmpty { null },
-            createdAt = o.optString("created_at").ifEmpty { null },
-            images = images,
-            sellerName = seller?.optString("name")?.ifEmpty { null },
-            sellerAvatar = seller?.optString("avatar")?.ifEmpty { null },
-            sellerPhone = seller?.optString("phone")?.ifEmpty { null },
-            sellerId = seller?.optInt("id"),
-            whatsappEnabled = seller?.optBoolean("whatsapp_enabled") ?: false,
-            callEnabled = seller?.optBoolean("call_enabled") ?: false,
-            regionNameAr = region?.optString("name_ar")?.ifEmpty { null },
-            city = if (o.has("city") && !o.isNull("city")) {
-                val cObj = o.optJSONObject("city")
-                if (cObj != null) cObj.optString("name_ar").ifEmpty { cObj.optString("name") }.ifEmpty { null }
-                else o.optString("city").ifEmpty { null }
-            } else null
-        )
-    }
-
-    private fun formatTime(dateStr: String?): String {
-        if (dateStr.isNullOrEmpty()) return ""
-        return try {
-            val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-            sdf.timeZone = TimeZone.getTimeZone("UTC")
-            val date = sdf.parse(dateStr.take(19)) ?: return ""
-            val diff = (System.currentTimeMillis() - date.time) / 1000
-            when {
-                diff < 60    -> getString(R.string.time_now)
-                diff < 3600  -> getString(R.string.time_minutes, diff / 60)
-                diff < 86400 -> getString(R.string.time_hours, diff / 3600)
-                diff < 2592000 -> getString(R.string.time_days, diff / 86400)
-                else -> SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
-            }
-        } catch (_: Exception) { "" }
-    }
 }
 
 data class DetailListing(

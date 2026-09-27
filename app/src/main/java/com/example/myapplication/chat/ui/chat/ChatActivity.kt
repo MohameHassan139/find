@@ -3,14 +3,12 @@ package com.example.myapplication.chat.ui.chat
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import com.example.myapplication.BaseActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.SharedCategoriesViewModel
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.chat.model.Conversation
 import com.example.myapplication.chat.model.ReportTargetType
 import com.example.myapplication.chat.utils.Result
@@ -27,6 +25,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kotlinx.coroutines.launch
+import com.example.myapplication.utils.toast
 
 class ChatActivity : BaseActivity() {
 
@@ -53,9 +52,7 @@ class ChatActivity : BaseActivity() {
 
         conversation = intent.getParcelableExtra(EXTRA_CONVERSATION)!!
 
-        lifecycleScope.launch {
-            ModerationState.refresh(RetrofitClient.build(this@ChatActivity))
-        }
+        lifecycleScope.launch { ModerationState.refresh() }
 
         setupToolbar()
         setupRecyclerView()
@@ -165,9 +162,9 @@ class ChatActivity : BaseActivity() {
                         if (ok) {
                             conversation = conversation.copy(isFavorite = next)
                             val msgRes = if (next) R.string.chat_favorite_add else R.string.chat_favorite_remove
-                            Toast.makeText(this@ChatActivity, msgRes, Toast.LENGTH_SHORT).show()
+                            this@ChatActivity.toast(msgRes)
                         } else {
-                            Toast.makeText(this@ChatActivity, R.string.error_generic, Toast.LENGTH_SHORT).show()
+                            this@ChatActivity.toast(R.string.error_generic)
                         }
                     }
                     true
@@ -178,27 +175,24 @@ class ChatActivity : BaseActivity() {
                 }
                 3 -> {
                     if (otherUserId != null) {
-                        val api = RetrofitClient.build(this)
                         val otherName = conversation.otherUser?.name
                         ModerationDialogs.showReportDialog(
-                            this, api, ReportTargetType.USER, otherUserId.toString(), otherName ?: "المستخدم"
+                            this, ReportTargetType.USER, otherUserId.toString(), otherName ?: "المستخدم"
                         )
                     }
                     true
                 }
                 4 -> {
                     if (otherUserId != null) {
-                        val api = RetrofitClient.build(this)
-                        ModerationDialogs.unblock(this, api, otherUserId)
+                        ModerationDialogs.unblock(this, otherUserId)
                     }
                     true
                 }
                 5 -> {
                     if (otherUserId != null) {
-                        val api = RetrofitClient.build(this)
                         val otherName = conversation.otherUser?.name
                         ModerationDialogs.showBlockConfirm(
-                            this, api, otherUserId, otherName, conversation.otherUser?.avatar
+                            this, otherUserId, otherName, conversation.otherUser?.avatar
                         )
                     }
                     true
@@ -217,11 +211,11 @@ class ChatActivity : BaseActivity() {
                 lifecycleScope.launch {
                     val ok = viewModel.deleteConversation()
                     if (ok) {
-                        Toast.makeText(this@ChatActivity, R.string.chat_deleted_success, Toast.LENGTH_SHORT).show()
+                        this@ChatActivity.toast(R.string.chat_deleted_success)
                         setResult(RESULT_OK)
                         finishWithPop()
                     } else {
-                        Toast.makeText(this@ChatActivity, R.string.chat_delete_failed, Toast.LENGTH_SHORT).show()
+                        this@ChatActivity.toast(R.string.chat_delete_failed)
                     }
                 }
             }
@@ -317,7 +311,7 @@ class ChatActivity : BaseActivity() {
                 is Result.Success -> binding.btnSend.isEnabled = true
                 is Result.Error -> {
                     binding.btnSend.isEnabled = true
-                    Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
+                    toast(result.message)
                 }
             }
         }

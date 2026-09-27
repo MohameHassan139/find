@@ -6,13 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import com.example.myapplication.BaseActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.auth.TokenManager
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.favorites.FavoritesActivity
 import com.example.myapplication.profile.MyAdsActivity
 import com.example.myapplication.profile.ProfileActivity
@@ -23,6 +21,8 @@ import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.SharedCategoriesViewModel
 import androidx.activity.viewModels
 import kotlinx.coroutines.launch
+import com.example.myapplication.utils.toast
+import com.example.myapplication.data.AppContainer
 
 class MenuActivity : BaseActivity() {
 
@@ -107,10 +107,10 @@ class MenuActivity : BaseActivity() {
             startActivity(Intent.createChooser(shareIntent, getString(R.string.menu_share_app)))
         }
         binding.menuAbout.setOnClickListener {
-            Toast.makeText(this, getString(R.string.menu_about), Toast.LENGTH_SHORT).show()
+            toast(R.string.menu_about)
         }
         binding.menuContact.setOnClickListener {
-            Toast.makeText(this, getString(R.string.menu_contact), Toast.LENGTH_SHORT).show()
+            toast(R.string.menu_contact)
         }
     }
 
@@ -126,21 +126,13 @@ class MenuActivity : BaseActivity() {
 
     private fun fetchNotifBadge() {
         lifecycleScope.launch {
-            try {
-                val response = RetrofitClient.build(this@MenuActivity).getUserData()
-                if (response.isSuccessful) {
-                    val payload = response.body()?.data
-                    val unread = payload?.unreadNotifications
-                        ?: payload?.notifications?.count { !it.isRead }
-                        ?: 0
-                    if (unread > 0) {
-                        binding.tvNotifBadge.text = if (unread > 99) "99+" else unread.toString()
-                        binding.tvNotifBadge.visibility = View.VISIBLE
-                    } else {
-                        binding.tvNotifBadge.visibility = View.GONE
-                    }
-                }
-            } catch (_: Exception) {}
+            val unread = AppContainer.notifications.unreadCount().getOrNull() ?: return@launch
+            if (unread > 0) {
+                binding.tvNotifBadge.text = if (unread > 99) "99+" else unread.toString()
+                binding.tvNotifBadge.visibility = View.VISIBLE
+            } else {
+                binding.tvNotifBadge.visibility = View.GONE
+            }
         }
     }
 }

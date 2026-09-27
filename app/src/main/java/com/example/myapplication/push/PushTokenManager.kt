@@ -1,15 +1,14 @@
 package com.example.myapplication.push
 
 import android.content.Context
-import com.example.myapplication.auth.DeviceTokenRequest
 import com.example.myapplication.auth.TokenManager
-import com.example.myapplication.chat.api.RetrofitClient
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import com.example.myapplication.data.AppContainer
 
 /**
  * Mirrors the iOS client's device-token flow (AuthService.saveDeviceToken /
@@ -57,10 +56,7 @@ object PushTokenManager {
     suspend fun uploadIfNeeded(context: Context) {
         if (!TokenManager.isLoggedIn(context)) return
         val token = getCachedToken(context) ?: return
-        try {
-            RetrofitClient.build(context).registerDeviceToken(DeviceTokenRequest(token))
-        } catch (e: Exception) {
-            // Non-critical — retried on next launch or token refresh.
-        }
+        // Non-critical — a failure is retried on the next launch or token refresh.
+        AppContainer.auth.registerDeviceToken(token)
     }
 }

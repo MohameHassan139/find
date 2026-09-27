@@ -5,17 +5,15 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.myapplication.chat.api.FindApiService
-import com.example.myapplication.chat.model.BlockUserRequest
 import com.example.myapplication.chat.model.BlockedUserDto
 import com.example.myapplication.chat.model.ReportReason
-import com.example.myapplication.chat.model.ReportRequest
 import com.example.myapplication.chat.model.ReportTargetType
 import kotlinx.coroutines.launch
+import com.example.myapplication.data.AppContainer
+import com.example.myapplication.data.ApiResult
 
 /**
  * Reusable Report/Block dialogs shared by ListingDetailActivity and
@@ -35,7 +33,6 @@ object ModerationDialogs {
 
     fun showReportDialog(
         activity: Activity,
-        api: FindApiService,
         type: ReportTargetType,
         targetId: String,
         targetLabel: String
@@ -73,7 +70,7 @@ object ModerationDialogs {
                 val selected = radioGroup.checkedRadioButtonId
                 if (selected !in reasons.indices) return@setPositiveButton
                 val details = detailsInput.text.toString().trim().ifEmpty { null }
-                submitReport(activity, api, type, targetId, reasons[selected], details)
+                submitReport(activity, type, targetId, reasons[selected], details)
             }
             .setNegativeButton("إلغاء", null)
             .show()
@@ -81,7 +78,6 @@ object ModerationDialogs {
 
     private fun submitReport(
         activity: Activity,
-        api: FindApiService,
         type: ReportTargetType,
         targetId: String,
         reason: ReportReason,
@@ -89,22 +85,16 @@ object ModerationDialogs {
     ) {
         val scope = (activity as? AppCompatActivity)?.lifecycleScope ?: return
         scope.launch {
-            try {
-                val response = api.report(ReportRequest(type.apiValue, targetId, reason.apiValue, details))
-                Toast.makeText(
-                    activity,
-                    if (response.isSuccessful) "تم إرسال البلاغ، شكراً لك" else "تعذر إرسال البلاغ",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } catch (e: Exception) {
-                Toast.makeText(activity, "تعذر الاتصال بالخادم", Toast.LENGTH_SHORT).show()
+            when (AppContainer.moderation.report(type, targetId, reason, details)) {
+                is ApiResult.Success -> activity.toast("تم إرسال البلاغ، شكراً لك")
+                is ApiResult.HttpError -> activity.toast("تعذر إرسال البلاغ")
+                is ApiResult.NetworkError -> activity.toast("تعذر الاتصال بالخادم")
             }
         }
     }
 
     fun showBlockConfirm(
         activity: Activity,
-        api: FindApiService,
         userId: Int,
         userName: String?,
         userAvatar: String? = null,
@@ -116,19 +106,16 @@ object ModerationDialogs {
             .setPositiveButton("حظر") { _, _ ->
                 val scope = (activity as? AppCompatActivity)?.lifecycleScope ?: return@setPositiveButton
                 scope.launch {
-                    try {
-                        val response = api.blockUser(BlockUserRequest(userId))
-                        if (response.isSuccessful) {
+                    when (AppContainer.moderation.block(userId)) {
+                        is ApiResult.Success -> {
                             ModerationState.markBlocked(
                                 BlockedUserDto(id = userId, name = userName, avatar = userAvatar, blockedAt = null)
                             )
                             onBlocked?.invoke()
-                            Toast.makeText(activity, "تم الحظر", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(activity, "تعذر الحظر", Toast.LENGTH_SHORT).show()
+                            activity.toast("تم الحظر")
                         }
-                    } catch (e: Exception) {
-                        Toast.makeText(activity, "تعذر الاتصال بالخادم", Toast.LENGTH_SHORT).show()
+                        is ApiResult.HttpError -> activity.toast("تعذر الحظر")
+                        is ApiResult.NetworkError -> activity.toast("تعذر الاتصال بالخادم")
                     }
                 }
             }
@@ -136,16 +123,16 @@ object ModerationDialogs {
             .show()
     }
 
-    fun unblock(activity: Activity, api: FindApiService, userId: Int, onDone: (() -> Unit)? = null) {
+    fun unblock(activity: Activity, userId: Int, onDone: (() -> Unit)? = null) {
         val scope = (activity as? AppCompatActivity)?.lifecycleScope ?: return
         scope.launch {
-            try {
-                api.unblockUser(userId)
-                ModerationState.markUnblocked(userId)
-                onDone?.invoke()
-            } catch (_: Exception) {
-                Toast.makeText(activity, "تعذر إلغاء الحظر", Toast.LENGTH_SHORT).show()
+            // As before: any server answer counts as done; only a network failure is reported.
+            if (AppContainer.moderation.unblock(userId) is ApiResult.NetworkError) {
+                activity.toast("تعذر إلغاء الحظر")
+                return@launch
             }
+            ModerationState.markUnblocked(userId)
+            onDone?.invoke()
         }
     }
 }

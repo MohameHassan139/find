@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -17,7 +16,6 @@ import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.auth.UpdateProfileRequest
 import com.example.myapplication.auth.PhoneAuthActivity
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityProfileBinding
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
@@ -29,6 +27,9 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import com.example.myapplication.utils.toast
+import com.example.myapplication.data.AppContainer
+import com.example.myapplication.data.ApiResult
 
 class ProfileActivity : BaseActivity() {
 
@@ -96,13 +97,14 @@ class ProfileActivity : BaseActivity() {
     }
 
     private fun uploadAvatar(uri: Uri) {
-        val token = TokenManager.getToken(this) ?: return
+        if (TokenManager.getToken(this) == null) return
         binding.profileContainer.isEnabled = false
         lifecycleScope.launch {
             try {
                 val part = withContext(Dispatchers.IO) {
-                    val bytes = contentResolver.openInputStream(uri)?.use { it.readBytes() }
-                        ?: return@withContext null
+                    // A revoked or missing file shouldn't crash — just report "save failed".
+                    val bytes = runCatching { contentResolver.openInputStream(uri)?.use { it.readBytes() } }
+                        .getOrNull() ?: return@withContext null
                     val mime = contentResolver.getType(uri) ?: "image/jpeg"
                     MultipartBody.Part.createFormData(
                         "image",
@@ -110,26 +112,17 @@ class ProfileActivity : BaseActivity() {
                         bytes.toRequestBody(mime.toMediaTypeOrNull())
                     )
                 } ?: run {
-                    Toast.makeText(this@ProfileActivity, getString(R.string.error_save_failed), Toast.LENGTH_SHORT).show()
+                    this@ProfileActivity.toast(R.string.error_save_failed)
                     return@launch
                 }
 
-                val response = RetrofitClient.build(this@ProfileActivity).uploadAvatar(part)
-                val url = response.body()?.data?.url
-                if (response.isSuccessful && !url.isNullOrEmpty()) {
-                    TokenManager.save(
-                        this@ProfileActivity, token,
-                        TokenManager.getName(this@ProfileActivity),
-                        TokenManager.getPhone(this@ProfileActivity),
-                        url,
-                        TokenManager.getUserId(this@ProfileActivity)
-                    )
-                    Toast.makeText(this@ProfileActivity, getString(R.string.saved), Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this@ProfileActivity, getString(R.string.error_save_failed), Toast.LENGTH_SHORT).show()
+                // uploadAvatar() also saves the new URL to the cached user.
+                val result = AppContainer.auth.uploadAvatar(part)
+                when {
+                    !result.getOrNull().isNullOrEmpty() -> this@ProfileActivity.toast(R.string.saved)
+                    result is ApiResult.NetworkError -> this@ProfileActivity.toast(R.string.error_connection_failed)
+                    else -> this@ProfileActivity.toast(R.string.error_save_failed)
                 }
-            } catch (e: Exception) {
-                Toast.makeText(this@ProfileActivity, getString(R.string.error_connection_failed), Toast.LENGTH_SHORT).show()
             } finally {
                 binding.profileContainer.isEnabled = true
             }
@@ -149,7 +142,7 @@ class ProfileActivity : BaseActivity() {
     }
 
     private fun loadProfile() {
-        val token = TokenManager.getToken(this) ?: return
+        if (TokenManager.getToken(this) == null) return
         val name = TokenManager.getName(this)
         val phone = TokenManager.getPhone(this)
         val avatar = TokenManager.getAvatar(this)
@@ -165,58 +158,41 @@ class ProfileActivity : BaseActivity() {
                 .into(binding.ivAvatar)
         }
 
-        // Refresh from server
+        // Refresh from server (fetchMe() also refreshes the cached user).
         lifecycleScope.launch {
-            try {
-                val response = RetrofitClient.build(this@ProfileActivity).getMe()
-                if (response.isSuccessful) {
-                    val user = response.body()?.user ?: return@launch
-                    binding.etName.setText(user.name ?: "")
-                    binding.tvPhone.text = formatPhoneNumber(user.phone)
-                    whatsappEnabled = user.whatsappEnabled
-                    callEnabled = user.callEnabled
-                    if (!user.avatar.isNullOrEmpty()) {
-                        binding.ivAvatar.imageTintList = null
-                        Glide.with(this@ProfileActivity).load(user.avatar)
-                            .placeholder(R.drawable.ic_person_avatar)
-                            .centerCrop()
-                            .into(binding.ivAvatar)
-                        TokenManager.save(this@ProfileActivity, token,
-                            user.name ?: "", user.phone ?: "", user.avatar)
-                    }
-                }
-            } catch (_: Exception) {}
+            val user = AppContainer.auth.fetchMe().getOrNull() ?: return@launch
+            binding.etName.setText(user.name ?: "")
+            binding.tvPhone.text = formatPhoneNumber(user.phone)
+            whatsappEnabled = user.whatsappEnabled
+            callEnabled = user.callEnabled
+            if (!user.avatar.isNullOrEmpty()) {
+                binding.ivAvatar.imageTintList = null
+                Glide.with(this@ProfileActivity).load(user.avatar)
+                    .placeholder(R.drawable.ic_person_avatar)
+                    .centerCrop()
+                    .into(binding.ivAvatar)
+            }
         }
     }
 
     private fun saveProfile() {
         val name = binding.etName.text.toString().trim()
         if (name.isEmpty()) {
-            Toast.makeText(this, getString(R.string.enter_name), Toast.LENGTH_SHORT).show()
+            toast(R.string.enter_name)
             return
         }
-        val token = TokenManager.getToken(this) ?: return
+        if (TokenManager.getToken(this) == null) return
         binding.btnSave.isEnabled = false
         binding.btnSave.alpha = 0.5f
         lifecycleScope.launch {
-            try {
-                val response = RetrofitClient.build(this@ProfileActivity).updateProfile(
-                    UpdateProfileRequest(name, whatsappEnabled, callEnabled)
-                )
-                if (response.isSuccessful) {
-                    val user = response.body()?.user
-                    TokenManager.save(this@ProfileActivity, token,
-                        user?.name ?: name, user?.phone ?: "", user?.avatar ?: "")
-                    Toast.makeText(this@ProfileActivity, getString(R.string.saved), Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this@ProfileActivity, getString(R.string.error_save_failed), Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                Toast.makeText(this@ProfileActivity, getString(R.string.error_connection_failed), Toast.LENGTH_SHORT).show()
-            } finally {
-                binding.btnSave.isEnabled = true
-                binding.btnSave.alpha = 1.0f
+            // updateProfile() also refreshes the cached user.
+            when (AppContainer.auth.updateProfile(UpdateProfileRequest(name, whatsappEnabled, callEnabled))) {
+                is ApiResult.Success -> this@ProfileActivity.toast(R.string.saved)
+                is ApiResult.HttpError -> this@ProfileActivity.toast(R.string.error_save_failed)
+                is ApiResult.NetworkError -> this@ProfileActivity.toast(R.string.error_connection_failed)
             }
+            binding.btnSave.isEnabled = true
+            binding.btnSave.alpha = 1.0f
         }
     }
 
@@ -231,10 +207,7 @@ class ProfileActivity : BaseActivity() {
     private fun signOut() {
         val isLoggedIn = TokenManager.getToken(this) != null
         lifecycleScope.launch {
-            try {
-                if (isLoggedIn)
-                    RetrofitClient.build(this@ProfileActivity).signOut()
-            } catch (_: Exception) {}
+            if (isLoggedIn) AppContainer.auth.signOut()
             TokenManager.clear(this@ProfileActivity)
             startActivity(Intent(this@ProfileActivity, PhoneAuthActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

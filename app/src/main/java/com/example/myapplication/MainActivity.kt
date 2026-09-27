@@ -27,16 +27,14 @@ import com.example.myapplication.adapters.TopTabAdapter
 import com.example.myapplication.adapters.SubTabAdapter
 import com.example.myapplication.adapters.ExtraTabAdapter
 import com.example.myapplication.auth.TokenManager
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.push.PushTokenManager
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.utils.AuthGuard
 import com.example.myapplication.widgets.StrokeTextView
 import com.google.android.material.appbar.AppBarLayout
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.myapplication.data.AppContainer
 
 class MainActivity : BaseActivity() {
 
@@ -134,29 +132,10 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    /** Refreshes the cached profile in the background (a failure is silent — the cache stays). */
     private fun refreshUserProfile() {
-        val token = TokenManager.getToken(this) ?: return
-        lifecycleScope.launch {
-            try {
-                val response = RetrofitClient.build(this@MainActivity).getMe()
-                if (response.isSuccessful) {
-                    val user = response.body()?.user ?: return@launch
-                    TokenManager.save(
-                        this@MainActivity,
-                        token,
-                        user.name ?: TokenManager.getName(this@MainActivity),
-                        user.phone ?: TokenManager.getPhone(this@MainActivity),
-                        user.avatar ?: TokenManager.getAvatar(this@MainActivity),
-                        user.id.toString()
-                    )
-                }
-            } catch (e: Exception) {
-                android.util.Log.e("MainVM", "Boot error", e)
-                withContext(Dispatchers.Main) {
-                    vm.setError("خطأ في الإقلاع: ${e.javaClass.simpleName} - ${e.localizedMessage}")
-                }
-            }
-        }
+        if (!TokenManager.isLoggedIn(this)) return
+        lifecycleScope.launch { AppContainer.auth.fetchMe() }
     }
 
     private fun setupAdapters() {
@@ -807,43 +786,14 @@ class MainActivity : BaseActivity() {
     private fun loadFavoriteIds() {
         if (!TokenManager.isLoggedIn(this)) return
         lifecycleScope.launch {
-            try {
-                val api = RetrofitClient.build(this@MainActivity)
-                // /favorites is paginated as data.items + data.pagination — it is
-                // NOT a bare data[] array. Reading it as an array returned null
-                // and bailed out here, so no heart on the grid ever filled in.
-                // Walk every page so users with many favorites are covered.
-                val ids = withContext(Dispatchers.IO) {
-                    val collected = mutableSetOf<String>()
-                    var page = 1
-                    var lastPage = 1
-                    do {
-                        val response = api.getFavorites(page = page)
-                        if (!response.isSuccessful) break
-                        val data = response.body()?.data ?: break
-                        data.items.orEmpty().forEach { item ->
-                            if (item.id.isNotEmpty()) collected.add(item.id)
-                        }
-                        lastPage = data.pagination?.lastPage ?: 1
-                        page++
-                    } while (page <= lastPage && page <= 20) // hard safety cap
-                    collected
-                }
-                listingsAdapter.setFavoriteIds(ids)
-            } catch (_: Exception) {}
+            listingsAdapter.setFavoriteIds(AppContainer.favorites.ids())
         }
     }
 
     private fun toggleFavorite(listingId: String, add: Boolean) {
         AuthGuard.requireLogin(this) {
             lifecycleScope.launch {
-                try {
-                    val api = RetrofitClient.build(this@MainActivity)
-                    withContext(Dispatchers.IO) {
-                        if (add) api.addFavorite(com.example.myapplication.favorites.AddFavoriteRequest(listingId))
-                        else api.removeFavorite(listingId)
-                    }
-                } catch (_: Exception) {}
+                AppContainer.favorites.setFavorite(listingId, add)
             }
         }
     }

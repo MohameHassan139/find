@@ -65,7 +65,7 @@
 # Retrofit ships consumer rules in its own AAR, but the app's own service
 # interface uses Kotlin suspend functions, which R8 full mode can otherwise
 # strip the generic/continuation signature from.
--keep,allowobfuscation,allowshrinking interface com.example.myapplication.chat.api.FindApiService
+-keep,allowobfuscation,allowshrinking interface com.example.myapplication.data.remote.FindApiService
 -dontwarn okhttp3.internal.platform.**
 -dontwarn org.conscrypt.**
 -dontwarn org.bouncycastle.**

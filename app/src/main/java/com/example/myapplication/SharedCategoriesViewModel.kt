@@ -5,12 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.chat.api.RetrofitClient
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.json.JSONArray
-import org.json.JSONObject
+import com.example.myapplication.data.AppContainer
 
 /**
  * Lightweight ViewModel that only loads top-level categories.
@@ -24,30 +20,21 @@ class SharedCategoriesViewModel(app: Application) : AndroidViewModel(app) {
     init { loadCategories() }
 
     private fun loadCategories() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val res = RetrofitClient.apiService.getAppData()
-                if (res.isSuccessful) {
-                    val body = res.body()?.string() ?: return@launch
-                    val root = JSONObject(body)
-                    val data = root.optJSONObject("data") ?: root
-                    val arr = data.optJSONArray("categories") ?: JSONArray()
-                    val parsed = mutableListOf<ApiCategory>()
-                    for (i in 0 until arr.length()) {
-                        val o = arr.getJSONObject(i)
-                        val id = o.getInt("id")
-                        val nameAr = o.optString("name_ar", "")
-                        if (id == 0 || id == 1 || nameAr.trim() == "الرئيسية" || nameAr.trim() == "الرئيسيه") continue
-                        parsed.add(ApiCategory(
-                            id = id,
-                            nameAr = nameAr,
-                            nameEn = o.optString("name_en", "").ifEmpty { null },
-                            iconName = if (o.isNull("icon")) null else o.optString("icon").ifEmpty { null }
-                        ))
-                    }
-                    withContext(Dispatchers.Main) { _categories.value = parsed }
-                }
-            } catch (_: Exception) {}
+        viewModelScope.launch {
+            val data = AppContainer.catalog.appData().getOrNull() ?: return@launch
+            val arr = data.optJSONArray("categories") ?: return@launch
+            _categories.value = (0 until arr.length()).mapNotNull { i ->
+                val o = arr.optJSONObject(i) ?: return@mapNotNull null
+                val id = o.optInt("id")
+                val nameAr = o.optString("name_ar", "")
+                if (id == 0 || id == 1 || nameAr.trim() == "الرئيسية" || nameAr.trim() == "الرئيسيه") return@mapNotNull null
+                ApiCategory(
+                    id = id,
+                    nameAr = nameAr,
+                    nameEn = o.optString("name_en", "").ifEmpty { null },
+                    iconName = if (o.isNull("icon")) null else o.optString("icon").ifEmpty { null }
+                )
+            }
         }
     }
 }

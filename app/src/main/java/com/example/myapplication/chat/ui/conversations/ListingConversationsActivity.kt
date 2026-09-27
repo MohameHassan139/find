@@ -13,13 +13,14 @@ import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.chat.model.Conversation
 import com.example.myapplication.chat.ui.chat.ChatActivity
 import com.example.myapplication.chat.utils.DateUtils
 import com.example.myapplication.databinding.ActivityListingConversationsBinding
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
+import com.example.myapplication.data.AppContainer
+import com.example.myapplication.data.ApiResult
 
 class ListingConversationsActivity : BaseActivity() {
 
@@ -29,7 +30,6 @@ class ListingConversationsActivity : BaseActivity() {
     }
 
     private lateinit var binding: ActivityListingConversationsBinding
-    private lateinit var api: com.example.myapplication.chat.api.FindApiService
 
     private val chatLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -46,8 +46,6 @@ class ListingConversationsActivity : BaseActivity() {
         setContentView(binding.root)
         applyWindowInsets()
 
-        api = RetrofitClient.build(this)
-
         val listingId = intent.getStringExtra(EXTRA_LISTING_ID) ?: ""
         val listingTitle = intent.getStringExtra(EXTRA_LISTING_TITLE) ?: "رسائل الإعلان"
 
@@ -62,19 +60,15 @@ class ListingConversationsActivity : BaseActivity() {
     private fun loadConversations(listingId: String = intent.getStringExtra(EXTRA_LISTING_ID) ?: "") {
         showLoading()
         lifecycleScope.launch {
-            try {
-                val response = api.getConversations()
-                binding.swipeRefresh.isRefreshing = false
-                if (response.isSuccessful) {
-                    val all = response.body()?.data ?: emptyList()
-                    val filtered = all.filter { it.listingId == listingId }
+            val result = AppContainer.chat.conversations()
+            binding.swipeRefresh.isRefreshing = false
+            when (result) {
+                is ApiResult.Success -> {
+                    val filtered = result.data.filter { it.listingId == listingId }
                     if (filtered.isEmpty()) showEmpty() else showList(filtered)
-                } else {
-                    showError("تعذر التحميل: ${response.code()}")
                 }
-            } catch (e: Exception) {
-                binding.swipeRefresh.isRefreshing = false
-                showError("تعذر الاتصال بالخادم")
+                is ApiResult.HttpError -> showError("تعذر التحميل: ${result.code}")
+                is ApiResult.NetworkError -> showError("تعذر الاتصال بالخادم")
             }
         }
     }

@@ -10,19 +10,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.ApiListing
 import com.example.myapplication.ListingDetailActivity
-import com.example.myapplication.auth.ListingItem
 import com.example.myapplication.R
 import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.adapters.ListingsAdapter
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityFavoritesBinding
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.NavScreen
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.myapplication.data.AppContainer
+import com.example.myapplication.data.ApiResult
 
 class FavoritesActivity : BaseActivity() {
 
@@ -137,70 +135,33 @@ class FavoritesActivity : BaseActivity() {
         binding.rvFavorites.visibility = View.GONE
 
         lifecycleScope.launch {
-            try {
-                val api = RetrofitClient.build(this@FavoritesActivity)
-
-                // /favorites is data.items + data.pagination, not a bare data[]
-                // array — parsing it as an array always produced an empty list,
-                // which is why this screen showed the empty state permanently.
-                // Every page is walked so long favorites lists aren't truncated
-                // at the server's default per_page of 15.
-                val loaded = withContext(Dispatchers.IO) {
-                    val collected = mutableListOf<ApiListing>()
-                    var page = 1
-                    var lastPage = 1
-                    var failed = false
-                    do {
-                        val response = api.getFavorites(page = page)
-                        if (!response.isSuccessful) {
-                            failed = page == 1
-                            break
-                        }
-                        val data = response.body()?.data ?: break
-                        collected += data.items.orEmpty().map { it.toApiListing() }
-                        lastPage = data.pagination?.lastPage ?: 1
-                        page++
-                    } while (page <= lastPage && page <= 20) // hard safety cap
-                    if (failed) null else collected
-                }
-
-                binding.progressBar.visibility = View.GONE
-
-                if (loaded == null) {
-                    showError()
-                    return@launch
-                }
-
-                allFavorites = loaded
-                favoriteIds.clear()
-                allFavorites.forEach { favoriteIds.add(it.id) }
-                applyFilter()
-            } catch (_: Exception) {
-                binding.progressBar.visibility = View.GONE
+            val loaded = AppContainer.favorites.all().getOrNull()
+            binding.progressBar.visibility = View.GONE
+            if (loaded == null) {
                 showError()
+                return@launch
             }
+            allFavorites = loaded
+            favoriteIds.clear()
+            allFavorites.forEach { favoriteIds.add(it.id) }
+            applyFilter()
         }
     }
 
     private fun toggleFavorite(listingId: String, add: Boolean) {
         lifecycleScope.launch {
-            try {
-                val api = RetrofitClient.build(this@FavoritesActivity)
-                val response = withContext(Dispatchers.IO) {
-                    if (add) api.addFavorite(AddFavoriteRequest(listingId))
-                    else api.removeFavorite(listingId)
+            val result = AppContainer.favorites.setFavorite(listingId, add)
+            // On successful remove (404 = already gone), pull the item out of the list
+            val removed = result.isSuccess || (result as? ApiResult.HttpError)?.code == 404
+            if (!add && removed) {
+                favoriteIds.remove(listingId)
+                allFavorites = allFavorites.filter { it.id != listingId }
+                applyFilter()
+                if (allFavorites.isEmpty()) {
+                    binding.rvFavorites.visibility = View.GONE
+                    binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
                 }
-                // On successful remove, pull item out of the list
-                if (!add && (response.isSuccessful || response.code() == 404)) {
-                    favoriteIds.remove(listingId)
-                    allFavorites = allFavorites.filter { it.id != listingId }
-                    applyFilter()
-                    if (allFavorites.isEmpty()) {
-                        binding.rvFavorites.visibility = View.GONE
-                        binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
-                    }
-                }
-            } catch (_: Exception) {}
+            }
         }
     }
 
@@ -208,22 +169,4 @@ class FavoritesActivity : BaseActivity() {
         binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
         binding.tvEmpty.text = getString(R.string.error_connection_failed)
     }
-
-    /**
-     * Maps the typed favorites payload onto the adapter's display model.
-     * Replaces the old hand-rolled JSON walk, which is where the wrong
-     * `data[]` assumption lived.
-     */
-    private fun ListingItem.toApiListing() = ApiListing(
-        id = id,
-        title = title?.takeIf { it.isNotEmpty() },
-        price = price,
-        listingType = listingType?.takeIf { it.isNotEmpty() },
-        createdAt = createdAt?.takeIf { it.isNotEmpty() },
-        images = images.orEmpty(),
-        sellerName = seller?.name?.takeIf { it.isNotEmpty() },
-        sellerAvatar = seller?.avatar?.takeIf { it.isNotEmpty() },
-        regionNameAr = region?.nameAr?.takeIf { it.isNotEmpty() },
-        city = city?.takeIf { it.isNotEmpty() }
-    )
 }

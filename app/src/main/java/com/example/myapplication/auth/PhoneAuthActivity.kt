@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import com.example.myapplication.BaseActivity
@@ -15,14 +14,15 @@ import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.MainActivity
 import com.example.myapplication.NavScreen
 import com.example.myapplication.SharedCategoriesViewModel
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.crash.CrashReporting
 import com.example.myapplication.databinding.ActivityPhoneAuthBinding
 import com.example.myapplication.push.PushTokenManager
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
-import org.json.JSONObject
+import com.example.myapplication.utils.toast
+import com.example.myapplication.data.AppContainer
+import com.example.myapplication.data.ApiResult
 
 class PhoneAuthActivity : BaseActivity() {
 
@@ -95,7 +95,7 @@ class PhoneAuthActivity : BaseActivity() {
         val code = binding.etCountryCode.text.toString().trim()
         val number = binding.etPhone.text.toString().trim()
         if (number.isEmpty()) {
-            Toast.makeText(this, getString(R.string.enter_phone_number), Toast.LENGTH_SHORT).show()
+            toast(R.string.enter_phone_number)
             return
         }
         phoneNumber = "${code}${number}"
@@ -105,31 +105,18 @@ class PhoneAuthActivity : BaseActivity() {
     private fun requestOtp() {
         setPhoneLoading(true)
         lifecycleScope.launch {
-            try {
-                val response = RetrofitClient.build(this@PhoneAuthActivity).requestOtp(OtpRequest(phoneNumber))
-                if (response.isSuccessful) {
-                    showOtpStep()
-                } else if (response.code() == 429) {
-                    // 429 = 60s resend cooldown or the silent daily safety cap.
-                    // The server's `message` is already localized (Accept-Language),
-                    // so show it as-is. There is no attempt limit / temporary block
-                    // any more, so no "attempts left" or "N days" text.
-                    val serverMessage = response.errorBody()?.string()?.let {
-                        runCatching {
-                            val json = JSONObject(it)
-                            if (json.isNull("message")) null else json.optString("message")
-                        }.getOrNull()
-                    }?.takeIf { it.isNotBlank() }
-                    Toast.makeText(this@PhoneAuthActivity,
-                        serverMessage ?: getString(R.string.error_generic), Toast.LENGTH_LONG).show()
-                } else {
-                    Toast.makeText(this@PhoneAuthActivity,
-                        getString(R.string.otp_send_failed), Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                Toast.makeText(this@PhoneAuthActivity, getString(R.string.error_server_unreachable), Toast.LENGTH_SHORT).show()
-            } finally {
-                setPhoneLoading(false)
+            val result = AppContainer.auth.requestOtp(phoneNumber)
+            setPhoneLoading(false)
+            when {
+                result is ApiResult.Success -> showOtpStep()
+                // 429 = 60s resend cooldown or the silent daily safety cap.
+                // The server's `message` is already localized (Accept-Language),
+                // so show it as-is. There is no attempt limit / temporary block
+                // any more, so no "attempts left" or "N days" text.
+                result is ApiResult.HttpError && result.code == 429 ->
+                    toast(result.message ?: getString(R.string.error_generic), long = true)
+                result is ApiResult.HttpError -> toast(R.string.otp_send_failed)
+                else -> toast(R.string.error_server_unreachable)
             }
         }
     }
@@ -137,17 +124,16 @@ class PhoneAuthActivity : BaseActivity() {
     private fun handleVerifyOtp() {
         val code = binding.etOtp.text.toString().trim()
         if (code.length < 4) {
-            Toast.makeText(this, getString(R.string.enter_verification_code), Toast.LENGTH_SHORT).show()
+            toast(R.string.enter_verification_code)
             return
         }
         setOtpLoading(true)
         lifecycleScope.launch {
-            try {
-                val response = RetrofitClient.build(this@PhoneAuthActivity).verifyOtp(
-                    VerifyOtpRequest(phoneNumber, code)
-                )
-                if (response.isSuccessful) {
-                    val body = response.body()
+            val result = AppContainer.auth.verifyOtp(phoneNumber, code)
+            setOtpLoading(false)
+            when (result) {
+                is ApiResult.Success -> {
+                    val body = result.data
                     val token = body?.token
                     if (token != null) {
                         TokenManager.save(
@@ -160,18 +146,12 @@ class PhoneAuthActivity : BaseActivity() {
                         PushTokenManager.refreshAndUploadIfNeededAsync(this@PhoneAuthActivity)
                         goToMain()
                     } else {
-                        Toast.makeText(this@PhoneAuthActivity,
-                            body?.message ?: "فشل التحقق", Toast.LENGTH_SHORT).show()
+                        toast(body?.message ?: "فشل التحقق")
                     }
-                } else {
-                    Toast.makeText(this@PhoneAuthActivity,
-                        if (response.code() == 422) "رمز التحقق غير صحيح"
-                        else "خطأ: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
-            } catch (e: Exception) {
-                Toast.makeText(this@PhoneAuthActivity, getString(R.string.error_server_unreachable), Toast.LENGTH_SHORT).show()
-            } finally {
-                setOtpLoading(false)
+                is ApiResult.HttpError ->
+                    toast(if (result.code == 422) "رمز التحقق غير صحيح" else "خطأ: ${result.code}")
+                is ApiResult.NetworkError -> toast(R.string.error_server_unreachable)
             }
         }
     }

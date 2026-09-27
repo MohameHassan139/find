@@ -5,15 +5,16 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.chat.model.Conversation
 import com.example.myapplication.chat.utils.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.example.myapplication.data.AppContainer
+import com.example.myapplication.data.ApiResult
 
 class ConversationsViewModel(app: Application) : AndroidViewModel(app) {
 
-    private val api = RetrofitClient.build(app)
+    private val chat = AppContainer.chat
 
     private val _conversations = MutableLiveData<Result<List<Conversation>>>()
     val conversations: LiveData<Result<List<Conversation>>> = _conversations
@@ -32,23 +33,21 @@ class ConversationsViewModel(app: Application) : AndroidViewModel(app) {
     fun loadConversations() {
         _conversations.value = Result.Loading
         viewModelScope.launch {
-            try {
-                val response = api.getConversations()
-                if (response.isSuccessful) {
-                    allConversations = response.body()?.data ?: emptyList()
+            when (val result = chat.conversations()) {
+                is ApiResult.Success -> {
+                    allConversations = result.data
                     applyFilter(currentFilter)
-                } else {
-                    _conversations.value = Result.Error(
-                        when (response.code()) {
-                            401 -> "غير مصرح. يرجى تسجيل الدخول مجدداً"
-                            404 -> "لم يتم العثور على المحادثات"
-                            500 -> "خطأ في الخادم. حاول مرة أخرى"
-                            else -> "حدث خطأ: ${response.code()}"
-                        }, response.code()
-                    )
                 }
-            } catch (e: Exception) {
-                _conversations.value = Result.Error("تعذر الاتصال بالخادم. تحقق من اتصالك بالإنترنت")
+                is ApiResult.HttpError -> _conversations.value = Result.Error(
+                    when (result.code) {
+                        401 -> "غير مصرح. يرجى تسجيل الدخول مجدداً"
+                        404 -> "لم يتم العثور على المحادثات"
+                        500 -> "خطأ في الخادم. حاول مرة أخرى"
+                        else -> "حدث خطأ: ${result.code}"
+                    }, result.code
+                )
+                is ApiResult.NetworkError ->
+                    _conversations.value = Result.Error("تعذر الاتصال بالخادم. تحقق من اتصالك بالإنترنت")
             }
         }
     }
@@ -71,32 +70,11 @@ class ConversationsViewModel(app: Application) : AndroidViewModel(app) {
         applyFilter(currentFilter)
 
         viewModelScope.launch {
-            try {
-                val response = if (nextFav) {
-                    api.favoriteConversation(conversationId)
-                } else {
-                    api.unfavoriteConversation(conversationId)
-                }
-                if (response.isSuccessful) {
-                    val serverConv = response.body()?.data
-                    if (serverConv != null) {
-                        allConversations = allConversations.map {
-                            if (it.id == conversationId) serverConv else it
-                        }
-                        applyFilter(currentFilter)
-                    }
-                } else {
-                    // Revert
-                    allConversations = allConversations.map {
-                        if (it.id == conversationId) original else it
-                    }
-                    applyFilter(currentFilter)
-                }
-            } catch (_: Exception) {
-                // Revert
-                allConversations = allConversations.map {
-                    if (it.id == conversationId) original else it
-                }
+            val result = chat.setFavorite(conversationId, nextFav)
+            // Take the server's copy on success, otherwise revert the optimistic change.
+            val replacement = if (result is ApiResult.Success) result.data else original
+            if (replacement != null) {
+                allConversations = allConversations.map { if (it.id == conversationId) replacement else it }
                 applyFilter(currentFilter)
             }
         }
@@ -104,18 +82,12 @@ class ConversationsViewModel(app: Application) : AndroidViewModel(app) {
 
     fun deleteConversation(conversationId: String, onResult: ((Boolean) -> Unit)? = null) {
         viewModelScope.launch {
-            try {
-                val response = api.deleteConversation(conversationId)
-                if (response.isSuccessful) {
-                    allConversations = allConversations.filter { it.id != conversationId }
-                    applyFilter(currentFilter)
-                    onResult?.invoke(true)
-                } else {
-                    onResult?.invoke(false)
-                }
-            } catch (_: Exception) {
-                onResult?.invoke(false)
+            val deleted = chat.delete(conversationId).isSuccess
+            if (deleted) {
+                allConversations = allConversations.filter { it.id != conversationId }
+                applyFilter(currentFilter)
             }
+            onResult?.invoke(deleted)
         }
     }
 
@@ -140,32 +112,27 @@ class ConversationsViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             while (true) {
                 delay(30_000)
-                try {
-                    val response = api.getConversationUpdates()
-                    if (!response.isSuccessful) continue
-                    val updates = response.body()?.data ?: continue
-                    val liveIds = updates.map { it.id }.toSet()
-                    val knownIds = allConversations.map { it.id }.toSet()
-                    val hasNew = updates.any { it.id !in knownIds }
-                    if (hasNew) {
-                        loadConversations()
-                        continue
-                    }
-                    val byId = updates.associateBy { it.id }
-                    allConversations = allConversations
-                        .filter { liveIds.contains(it.id) }
-                        .map { conv ->
-                            val update = byId[conv.id] ?: return@map conv
-                            conv.copy(
-                                lastMessageAt = update.lastMessageAt ?: conv.lastMessageAt,
-                                myUnread = update.myUnread ?: conv.myUnread,
-                                isFavorite = update.isFavorite ?: conv.isFavorite
-                            )
-                        }
-                    applyFilter(currentFilter)
-                } catch (_: Exception) {
-                    // Offline/transient — next tick retries.
+                // Offline/transient failures are ignored — the next tick retries.
+                val updates = chat.conversationUpdates().getOrNull() ?: continue
+                val liveIds = updates.map { it.id }.toSet()
+                val knownIds = allConversations.map { it.id }.toSet()
+                val hasNew = updates.any { it.id !in knownIds }
+                if (hasNew) {
+                    loadConversations()
+                    continue
                 }
+                val byId = updates.associateBy { it.id }
+                allConversations = allConversations
+                    .filter { liveIds.contains(it.id) }
+                    .map { conv ->
+                        val update = byId[conv.id] ?: return@map conv
+                        conv.copy(
+                            lastMessageAt = update.lastMessageAt ?: conv.lastMessageAt,
+                            myUnread = update.myUnread ?: conv.myUnread,
+                            isFavorite = update.isFavorite ?: conv.isFavorite
+                        )
+                    }
+                applyFilter(currentFilter)
             }
         }
     }

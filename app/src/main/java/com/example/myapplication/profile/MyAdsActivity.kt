@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -26,7 +25,6 @@ import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.auth.ListingItem
 import com.example.myapplication.auth.UpdateStatusRequest
 import com.example.myapplication.auth.TokenManager
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityMyAdsBinding
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.ListingLocationFormatter
@@ -34,8 +32,11 @@ import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.NavScreen
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.myapplication.utils.PriceFormatter
+import com.example.myapplication.utils.RelativeTimeFormatter
+import com.example.myapplication.utils.toast
+import com.example.myapplication.data.AppContainer
+import com.example.myapplication.data.ApiResult
 
 class MyAdsActivity : BaseActivity() {
 
@@ -144,28 +145,15 @@ class MyAdsActivity : BaseActivity() {
         if (TokenManager.getToken(this) == null) { showEmpty("سجّل دخولك أولاً"); return }
         showLoading()
         lifecycleScope.launch {
-            try {
-                val collected = mutableListOf<ListingItem>()
-                var page = 1
-                var lastPage = 1
-                do {
-                    val response = RetrofitClient.build(this@MyAdsActivity).getMyListings(page = page)
-                    if (!response.isSuccessful) {
-                        showEmpty("تعذر التحميل: ${response.code()}")
-                        return@launch
-                    }
-                    val data = response.body()?.data
-                    collected += data?.items ?: emptyList()
-                    lastPage = data?.pagination?.lastPage ?: 1
-                    page += 1
-                } while (page <= lastPage && page <= 20) // safety cap, matches per_page=50
-
-                allAds = collected
-                binding.progressBar.visibility = View.GONE
-                if (allAds.isEmpty()) showEmpty("لا توجد إعلانات")
-                else applyFilter()
-            } catch (e: Exception) {
-                showEmpty("تعذر الاتصال بالخادم")
+            when (val result = AppContainer.listings.myListings()) {
+                is ApiResult.Success -> {
+                    allAds = result.data
+                    binding.progressBar.visibility = View.GONE
+                    if (allAds.isEmpty()) showEmpty("لا توجد إعلانات")
+                    else applyFilter()
+                }
+                is ApiResult.HttpError -> showEmpty("تعذر التحميل: ${result.code}")
+                is ApiResult.NetworkError -> showEmpty("تعذر الاتصال بالخادم")
             }
         }
     }
@@ -181,17 +169,14 @@ class MyAdsActivity : BaseActivity() {
     private fun deleteAd(item: ListingItem) {
         if (TokenManager.getToken(this) == null) return
         lifecycleScope.launch {
-            try {
-                val response = RetrofitClient.build(this@MyAdsActivity).deleteListing(item.id)
-                if (response.isSuccessful || response.code() == 204) {
+            when (AppContainer.listings.delete(item.id)) {
+                is ApiResult.Success -> {
                     allAds = allAds.filter { it.id != item.id }
                     applyFilter()
-                    Toast.makeText(this@MyAdsActivity, getString(R.string.deleted), Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this@MyAdsActivity, getString(R.string.error_delete_failed), Toast.LENGTH_SHORT).show()
+                    this@MyAdsActivity.toast(R.string.deleted)
                 }
-            } catch (e: Exception) {
-                Toast.makeText(this@MyAdsActivity, getString(R.string.error_connection_failed), Toast.LENGTH_SHORT).show()
+                is ApiResult.HttpError -> this@MyAdsActivity.toast(R.string.error_delete_failed)
+                is ApiResult.NetworkError -> this@MyAdsActivity.toast(R.string.error_connection_failed)
             }
         }
     }
@@ -211,13 +196,7 @@ class MyAdsActivity : BaseActivity() {
         updateLocalStatus(item.id, target)
 
         lifecycleScope.launch {
-            val succeeded = try {
-                val response = RetrofitClient.build(this@MyAdsActivity)
-                    .setListingStatus(item.id, UpdateStatusRequest.forVisible(visible))
-                response.isSuccessful
-            } catch (_: Exception) {
-                false
-            }
+            val succeeded = AppContainer.listings.setVisible(item.id, visible).isSuccess
 
             if (!succeeded) {
                 val reverted = if (target == UpdateStatusRequest.HIDDEN) {
@@ -226,11 +205,7 @@ class MyAdsActivity : BaseActivity() {
                     UpdateStatusRequest.HIDDEN
                 }
                 updateLocalStatus(item.id, reverted)
-                Toast.makeText(
-                    this@MyAdsActivity,
-                    getString(R.string.error_generic),
-                    Toast.LENGTH_SHORT
-                ).show()
+                this@MyAdsActivity.toast(R.string.error_generic)
             }
         }
     }
@@ -287,14 +262,10 @@ class MyAdsAdapter(
         val images = item.images ?: emptyList()
 
         holder.tvTitle.text = item.title ?: "—"
-        val priceVal = item.price
-        holder.tvPrice.text = if (priceVal != null) {
-            val formatted = if (priceVal % 1 == 0.0) priceVal.toLong().toString() else priceVal.toString()
-            formatted
-        } else "—"
+        holder.tvPrice.text = PriceFormatter.display(item.price)
         holder.tvSellerName.text = item.seller?.name ?: ""
         holder.tvLocation.text = ListingLocationFormatter.cityOnly(item.city)
-        holder.tvTime.text = formatTime(item.createdAt)
+        holder.tvTime.text = RelativeTimeFormatter.format(holder.itemView.context, item.createdAt)
 
         // Image navigation
         holder.imageIndex = 0
@@ -394,9 +365,7 @@ class MyAdsAdapter(
                 putExtra(AddAdActivity.EXTRA_LISTING_ID, item.id)
                 putExtra(AddAdActivity.EXTRA_TITLE, item.title ?: "")
                 putExtra(AddAdActivity.EXTRA_DESC, item.description ?: "")
-                putExtra(AddAdActivity.EXTRA_PRICE, item.price?.let {
-                    if (it % 1 == 0.0) it.toLong().toString() else it.toString()
-                } ?: "")
+                putExtra(AddAdActivity.EXTRA_PRICE, item.price?.let(PriceFormatter::plain) ?: "")
                 putExtra(AddAdActivity.EXTRA_CITY, item.city ?: "")
                 putExtra(AddAdActivity.EXTRA_TYPE, item.listingType ?: "offer")
                 putStringArrayListExtra(AddAdActivity.EXTRA_IMAGES, ArrayList(item.images ?: emptyList()))
@@ -406,21 +375,4 @@ class MyAdsAdapter(
     }
 
     override fun getItemCount() = items.size
-
-    private fun formatTime(dateStr: String?): String {
-        if (dateStr.isNullOrEmpty()) return ""
-        return try {
-            val fmt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.getDefault())
-            fmt.timeZone = TimeZone.getTimeZone("UTC")
-            val date = fmt.parse(dateStr) ?: return dateStr
-            val diff = (System.currentTimeMillis() - date.time) / 1000
-            when {
-                diff < 60 -> "الآن"
-                diff < 3600 -> "${diff / 60} دقيقة"
-                diff < 86400 -> "${diff / 3600} ساعة"
-                diff < 2592000 -> "${diff / 86400} يوم"
-                else -> SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
-            }
-        } catch (_: Exception) { dateStr }
-    }
 }

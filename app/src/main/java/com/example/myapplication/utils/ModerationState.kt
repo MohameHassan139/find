@@ -1,7 +1,7 @@
 package com.example.myapplication.utils
 
-import com.example.myapplication.chat.api.FindApiService
 import com.example.myapplication.chat.model.BlockedUserDto
+import com.example.myapplication.data.AppContainer
 
 /**
  * Process-wide, in-memory cache of the caller's blocked-user ids — lets
@@ -17,17 +17,11 @@ object ModerationState {
 
     fun cached(): List<BlockedUserDto> = blockedUsers
 
-    suspend fun refresh(api: FindApiService) {
-        try {
-            val response = api.getBlocks()
-            if (response.isSuccessful) {
-                val list = response.body()?.data ?: emptyList()
-                blockedUsers = list
-                blockedIds = list.map { it.id }.toSet()
-            }
-        } catch (_: Exception) {
-            // Keep whatever was cached before — next refresh() retries.
-        }
+    /** Re-reads the block list; on failure keeps what was cached before (next call retries). */
+    suspend fun refresh() {
+        val list = AppContainer.moderation.blockedUsers().getOrNull() ?: return
+        blockedUsers = list
+        blockedIds = list.map { it.id }.toSet()
     }
 
     fun markBlocked(user: BlockedUserDto) {

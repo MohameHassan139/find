@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog
 import com.example.myapplication.R
 import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.auth.TokenManager
+import com.example.myapplication.App
 
 object AuthGuard {
 
@@ -36,21 +37,25 @@ object AuthGuard {
 
     /**
      * Call this when a 401 is received from the API.
-     * Clears the stored token and prompts the user to re-login.
+     * Clears the stored token and prompts the user to re-login — once, even when several
+     * requests fail together, and only over a visible screen (a dialog can't be shown from
+     * the application context, which used to crash here).
      */
     fun onUnauthorized(context: Context) {
+        if (!TokenManager.isLoggedIn(context)) return
         TokenManager.clear(context)
-        AlertDialog.Builder(context)
-            .setTitle(context.getString(R.string.auth_guard_session_expired_title))
-            .setMessage(context.getString(R.string.auth_guard_session_expired_message))
-            .setPositiveButton(context.getString(R.string.auth_guard_go_login)) { _, _ ->
-                context.startActivity(
-                    Intent(context, PhoneAuthActivity::class.java).apply {
+        val activity = App.instance.currentActivity ?: return
+        AlertDialog.Builder(activity)
+            .setTitle(activity.getString(R.string.auth_guard_session_expired_title))
+            .setMessage(activity.getString(R.string.auth_guard_session_expired_message))
+            .setPositiveButton(activity.getString(R.string.auth_guard_go_login)) { _, _ ->
+                activity.startActivity(
+                    Intent(activity, PhoneAuthActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     }
                 )
             }
-            .setNegativeButton(context.getString(R.string.action_cancel), null)
+            .setNegativeButton(activity.getString(R.string.action_cancel), null)
             .show()
     }
 }

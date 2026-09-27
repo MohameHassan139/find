@@ -17,6 +17,7 @@ import com.example.myapplication.databinding.ActivityConversationsBinding
 import com.example.myapplication.push.FcmService
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.utils.toast
 
 class ConversationsActivity : BaseActivity() {
 
@@ -141,7 +142,7 @@ class ConversationsActivity : BaseActivity() {
             .setPositiveButton(getString(R.string.chat_delete)) { _, _ ->
                 viewModel.deleteConversation(conv.id) { success ->
                     if (!success) {
-                        android.widget.Toast.makeText(this, R.string.chat_delete_failed, android.widget.Toast.LENGTH_SHORT).show()
+                        toast(R.string.chat_delete_failed)
                         if (position != null) {
                             adapter.notifyItemChanged(position)
                         }

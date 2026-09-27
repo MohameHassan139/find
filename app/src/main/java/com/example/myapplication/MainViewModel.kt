@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.chat.api.RetrofitClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -14,6 +13,9 @@ import org.json.JSONObject
 
 import android.content.Context
 import android.content.res.Configuration
+import com.example.myapplication.data.ListingJson
+import com.example.myapplication.data.AppContainer
+import com.example.myapplication.data.ApiResult
 
 object MediaUrlHelper {
     const val MEDIA_BASE = "https://ocebfvgwgpebjxetnixc.supabase.co/storage/v1/object/public/listings-images/Finds-media/"
@@ -140,8 +142,6 @@ data class ApiListing(
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
 
-    private val apiPublic = RetrofitClient.apiService
-
     // ── Exposed state ─────────────────────────────────────────────────────────
 
     private val _categories = MutableLiveData<List<ApiCategory>>()
@@ -210,26 +210,17 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     private fun boot() {
         _isBootLoading.value = true
-        android.util.Log.d("MainVM", "Booting via Retrofit")
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                // Single bootstrap call: listings + categories (with nested
-                // sub_categories/filter_options) + regions (with nested cities).
-                val res = apiPublic.getAppData()
-                if (res.isSuccessful) {
-                    val bodyText = res.body()?.string() ?: ""
-                    android.util.Log.d("MainVM", "AppData RAW: $bodyText")
-
-                    val root = JSONObject(bodyText)
-                    val data = root.optJSONObject("data") ?: root
-
-                    val listingsArr = data.optJSONArray("listings") ?: JSONArray()
-                    allListingsPool = parseListings(listingsArr)
+            // Single bootstrap call: listings + categories (with nested
+            // sub_categories/filter_options) + regions (with nested cities).
+            when (val res = AppContainer.catalog.appData()) {
+                is ApiResult.Success -> try {
+                    val data = res.data
+                    allListingsPool = ListingJson.parseList(data.optJSONArray("listings"))
 
                     val catArr = data.optJSONArray("categories") ?: JSONArray()
-                    val parsed = parseCategoriesWithSubCategories(catArr)
                     // Robust filter for duplicate Home
-                    val filtered = parsed.filter {
+                    val filtered = parseCategoriesWithSubCategories(catArr).filter {
                         it.id != 1 && it.id != 0 &&
                         it.nameAr.trim() != "الرئيسية" &&
                         it.nameAr.trim() != "الرئيسيه"
@@ -245,30 +236,23 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                         _isBootLoading.value = false
                         if (catIdx == 0) fetchListings(reset = true)
                     }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        _isBootLoading.value = false
-                        _errorEvent.value = getApplication<Application>().getString(R.string.error_occurred)
-                    }
+                } catch (e: org.json.JSONException) {
+                    android.util.Log.e("MainVM", "Malformed app-data", e)
+                    showBootError(R.string.error_occurred)
                 }
-            } catch (e: Exception) {
-                android.util.Log.e("MainVM", "Boot error", e)
-                withContext(Dispatchers.Main) {
-                    _isBootLoading.value = false
-                    val app = getApplication<Application>()
-                    // Network failures (DNS, timeout, etc.) get the app's existing
-                    // "could not connect" copy; anything else (e.g. a malformed
-                    // response) falls back to a generic message — either way, never
-                    // the raw exception text, which isn't localized or user-friendly.
-                    _errorEvent.value = if (e is java.io.IOException) {
-                        app.getString(R.string.error_server_unreachable)
-                    } else {
-                        app.getString(R.string.error_occurred)
-                    }
-                }
+                // No answer at all gets the "could not connect" copy; anything else
+                // a generic message — never raw exception text.
+                is ApiResult.NetworkError -> showBootError(R.string.error_server_unreachable)
+                is ApiResult.HttpError -> showBootError(R.string.error_occurred)
             }
         }
     }
+
+    private suspend fun showBootError(@androidx.annotation.StringRes message: Int) =
+        withContext(Dispatchers.Main) {
+            _isBootLoading.value = false
+            _errorEvent.value = getApplication<Application>().getString(message)
+        }
 
     private fun extractIconName(obj: JSONObject): String? {
         val keys = listOf("icon", "icon_url", "image", "image_url")
@@ -416,7 +400,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 }
                 val cityName = targetCity?.nameAr
 
-                val res = apiPublic.getListingsCombined(
+                val res = AppContainer.catalog.listings(
                     page = currentPage,
                     perPage = PAGE_SIZE,
                     categoryId = cat?.id,
@@ -427,16 +411,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                     listingType = catType
                 )
 
-                if (res.isSuccessful) {
-                    val root = JSONObject(res.body()?.string() ?: "")
-                    // GET /listings wraps results as data: { items: [...], pagination: {...} }
-                    // (matches ListingsService.swift's DataObj on iOS) — data itself is an
-                    // object, not the array directly.
-                    val data = root.optJSONObject("data")
-                    val arr = data?.optJSONArray("items") ?: JSONArray()
-                    val pagination = data?.optJSONObject("pagination")
-                    val fetchedLast = pagination?.optInt("last_page", 1) ?: 1
-                    val rawListings = parseListings(arr)
+                if (res is ApiResult.Success) {
+                    val fetchedLast = res.data.lastPage
+                    val rawListings = res.data.items
 
                     // Merge into pool
                     val knownIds = allListingsPool.map { it.id }.toSet()
@@ -584,41 +561,5 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             }
         }
         return regs to cities
-    }
-
-    private fun parseListings(arr: JSONArray): List<ApiListing> {
-        val list = mutableListOf<ApiListing>()
-        for (i in 0 until arr.length()) {
-            val o = arr.getJSONObject(i)
-            val imgArr = o.optJSONArray("images") ?: JSONArray()
-            val imgs = mutableListOf<String>()
-            for (j in 0 until imgArr.length()) imgs.add(imgArr.optString(j))
-            
-            val seller = o.optJSONObject("seller")
-            val reg = o.optJSONObject("region")
-            
-            list.add(ApiListing(
-                id = o.optString("id", ""),
-                title = o.optString("title", ""),
-                price = o.optDouble("price", 0.0),
-                listingType = if (o.has("listing_type")) o.optString("listing_type", "") else o.optString("type", ""),
-                createdAt = o.optString("created_at", ""),
-                images = imgs,
-                sellerName = seller?.optString("name", ""),
-                sellerAvatar = seller?.optString("avatar", ""),
-                regionNameAr = reg?.optString("name_ar", ""),
-                city = if (o.has("city") && !o.isNull("city")) {
-                    val cObj = o.optJSONObject("city")
-                    if (cObj != null) cObj.optString("name_ar").ifEmpty { cObj.optString("name") }
-                    else o.optString("city", "")
-                } else "",
-                categoryId = if (o.has("category_id") && !o.isNull("category_id")) o.optInt("category_id") else null,
-                subCategoryId = if (o.has("sub_category_id") && !o.isNull("sub_category_id")) o.optInt("sub_category_id") else null,
-                filterOptionId = if (o.has("filter_option_id") && !o.isNull("filter_option_id")) o.optInt("filter_option_id") else null,
-                regionId = if (o.has("region_id") && !o.isNull("region_id")) o.optInt("region_id") else null,
-                description = o.optString("description", "")
-            ))
-        }
-        return list
     }
 }

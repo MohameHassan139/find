@@ -23,6 +23,7 @@ import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.example.myapplication.utils.toast
 
 class SearchActivity : BaseActivity() {
 
@@ -212,7 +213,7 @@ class SearchActivity : BaseActivity() {
 
         vm.errorEvent.observe(this) { msg ->
             if (!msg.isNullOrEmpty())
-                android.widget.Toast.makeText(this, msg, android.widget.Toast.LENGTH_SHORT).show()
+                toast(msg)
         }
     }
 

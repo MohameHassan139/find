@@ -5,16 +5,16 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.chat.model.Message
-import com.example.myapplication.chat.model.SendMessageRequest
 import com.example.myapplication.chat.utils.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.example.myapplication.data.AppContainer
+import com.example.myapplication.data.ApiResult
 
 class ChatViewModel(app: Application) : AndroidViewModel(app) {
 
-    private val api = RetrofitClient.build(app)
+    private val chat = AppContainer.chat
 
     private val _messages = MutableLiveData<Result<List<Message>>>()
     val messages: LiveData<Result<List<Message>>> = _messages
@@ -41,25 +41,21 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
     fun loadMessages() {
         _messages.value = Result.Loading
         viewModelScope.launch {
-            try {
-                val response = api.getMessages(conversationId, limit = 50)
-                if (response.isSuccessful) {
-                    val body = response.body()
+            when (val result = chat.messages(conversationId, limit = INITIAL_PAGE_SIZE)) {
+                is ApiResult.Success -> {
                     messageList.clear()
-                    messageList.addAll(body?.data ?: emptyList())
-                    _hasMoreOlder.value = body?.meta?.hasMore ?: false
+                    messageList.addAll(result.data?.data.orEmpty())
+                    _hasMoreOlder.value = result.data?.meta?.hasMore ?: false
                     _messages.value = Result.Success(messageList.toList())
-                } else {
-                    _messages.value = Result.Error(
-                        when (response.code()) {
-                            401 -> "غير مصرح"
-                            404 -> "المحادثة غير موجودة"
-                            else -> "خطأ في تحميل الرسائل"
-                        }, response.code()
-                    )
                 }
-            } catch (e: Exception) {
-                _messages.value = Result.Error("تعذر الاتصال بالخادم: ${e.javaClass.simpleName}: ${e.message}")
+                is ApiResult.HttpError -> _messages.value = Result.Error(
+                    when (result.code) {
+                        401 -> "غير مصرح"
+                        404 -> "المحادثة غير موجودة"
+                        else -> "خطأ في تحميل الرسائل"
+                    }, result.code
+                )
+                is ApiResult.NetworkError -> _messages.value = Result.Error("تعذر الاتصال بالخادم")
             }
         }
     }
@@ -70,23 +66,17 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
         if (isLoadingOlder || _hasMoreOlder.value != true) return
         isLoadingOlder = true
         viewModelScope.launch {
-            try {
-                val response = api.getMessages(conversationId, before = oldestId)
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    val knownIds = messageList.map { it.id }.toSet()
-                    val older = (body?.data ?: emptyList()).filter { it.id !in knownIds }
-                    if (older.isNotEmpty()) {
-                        messageList.addAll(0, older)
-                        _messages.value = Result.Success(messageList.toList())
-                    }
-                    _hasMoreOlder.value = body?.meta?.hasMore ?: false
+            // On failure stay silent — the user can just scroll up again to retry.
+            chat.messages(conversationId, before = oldestId).getOrNull()?.let { body ->
+                val knownIds = messageList.map { it.id }.toSet()
+                val older = body.data.orEmpty().filter { it.id !in knownIds }
+                if (older.isNotEmpty()) {
+                    messageList.addAll(0, older)
+                    _messages.value = Result.Success(messageList.toList())
                 }
-            } catch (_: Exception) {
-                // Silent — the user can just scroll up again to retry.
-            } finally {
-                isLoadingOlder = false
+                _hasMoreOlder.value = body.meta?.hasMore ?: false
             }
+            isLoadingOlder = false
         }
     }
 
@@ -94,27 +84,21 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
         if (body.isBlank()) return
         _sendResult.value = Result.Loading
         viewModelScope.launch {
-            try {
-                val response = api.sendMessage(conversationId, SendMessageRequest(body))
-                if (response.isSuccessful) {
-                    val msg = response.body()?.data
-                    if (msg != null) {
-                        messageList.add(msg)
-                        _messages.value = Result.Success(messageList.toList())
-                        _sendResult.value = Result.Success(msg)
-                    }
-                } else {
-                    _sendResult.value = Result.Error("فشل إرسال الرسالة")
+            when (val result = chat.send(conversationId, body)) {
+                is ApiResult.Success -> result.data?.let { msg ->
+                    messageList.add(msg)
+                    _messages.value = Result.Success(messageList.toList())
+                    _sendResult.value = Result.Success(msg)
                 }
-            } catch (e: Exception) {
-                _sendResult.value = Result.Error("تعذر إرسال الرسالة. تحقق من الاتصال")
+                is ApiResult.HttpError -> _sendResult.value = Result.Error("فشل إرسال الرسالة")
+                is ApiResult.NetworkError -> _sendResult.value = Result.Error("تعذر إرسال الرسالة. تحقق من الاتصال")
             }
         }
     }
 
     private fun markRead() {
         viewModelScope.launch {
-            try { api.markRead(conversationId) } catch (_: Exception) {}
+            chat.markRead(conversationId)
         }
     }
 
@@ -132,44 +116,26 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
             while (true) {
                 delay(5_000)
                 val newestId = messageList.lastOrNull()?.id ?: continue
-                try {
-                    val response = api.getMessages(conversationId, after = newestId)
-                    if (response.isSuccessful) {
-                        val knownIds = messageList.map { it.id }.toSet()
-                        val fresh = (response.body()?.data ?: emptyList())
-                            .filter { it.id !in knownIds }
-                        if (fresh.isNotEmpty()) {
-                            messageList.addAll(fresh)
-                            _messages.value = Result.Success(messageList.toList())
-                            markRead()
-                        }
-                    }
-                } catch (_: Exception) {
-                    // Offline/transient — next tick retries.
+                // Offline/transient failures are ignored — the next tick retries.
+                val body = chat.messages(conversationId, after = newestId).getOrNull() ?: continue
+                val knownIds = messageList.map { it.id }.toSet()
+                val fresh = body.data.orEmpty().filter { it.id !in knownIds }
+                if (fresh.isNotEmpty()) {
+                    messageList.addAll(fresh)
+                    _messages.value = Result.Success(messageList.toList())
+                    markRead()
                 }
             }
         }
     }
 
-    suspend fun setFavorite(isFavorite: Boolean): Boolean {
-        return try {
-            val response = if (isFavorite) {
-                api.favoriteConversation(conversationId)
-            } else {
-                api.unfavoriteConversation(conversationId)
-            }
-            response.isSuccessful
-        } catch (_: Exception) {
-            false
-        }
-    }
+    suspend fun setFavorite(isFavorite: Boolean): Boolean =
+        chat.setFavorite(conversationId, isFavorite).isSuccess
 
-    suspend fun deleteConversation(): Boolean {
-        return try {
-            val response = api.deleteConversation(conversationId)
-            response.isSuccessful
-        } catch (_: Exception) {
-            false
-        }
+    suspend fun deleteConversation(): Boolean =
+        chat.delete(conversationId).isSuccess
+
+    private companion object {
+        const val INITIAL_PAGE_SIZE = 50
     }
 }

@@ -4,12 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.chat.api.RetrofitClient
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.json.JSONArray
-import org.json.JSONObject
+import com.example.myapplication.data.AppContainer
+import com.example.myapplication.data.ApiResult
 
 private const val PAGE_SIZE = 20
 
@@ -48,21 +45,13 @@ class SearchViewModel : ViewModel() {
     init { loadRegions() }
 
     private fun loadRegions() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = RetrofitClient.apiService.getAppData()
-                if (response.isSuccessful) {
-                    val root = JSONObject(response.body()?.string() ?: "")
-                    val data = root.optJSONObject("data") ?: root
-                    val arr = data.optJSONArray("regions") ?: JSONArray()
-                    val regions = mutableListOf<RegionItem>()
-                    for (i in 0 until arr.length()) {
-                        val r = arr.getJSONObject(i)
-                        regions.add(RegionItem(r.getInt("id"), r.getString("name_ar")))
-                    }
-                    withContext(Dispatchers.Main) { _regions.value = regions }
-                }
-            } catch (_: Exception) {}
+        viewModelScope.launch {
+            val data = AppContainer.catalog.appData().getOrNull() ?: return@launch
+            val arr = data.optJSONArray("regions") ?: return@launch
+            _regions.value = (0 until arr.length()).mapNotNull { i ->
+                val r = arr.optJSONObject(i) ?: return@mapNotNull null
+                RegionItem(r.optInt("id"), r.optString("name_ar"))
+            }
         }
     }
 
@@ -114,84 +103,32 @@ class SearchViewModel : ViewModel() {
         val page = currentPage
 
         isFetching = true
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = RetrofitClient.apiService.searchListings(
-                    query = activeQuery,
-                    page = page,
-                    limit = PAGE_SIZE,
-                    regionId = activeRegionId,
-                    listingType = activeType
-                )
-                if (response.isSuccessful) {
-                    val body = JSONObject(response.body()?.string() ?: "")
-                    // GET /listings wraps results as data: { items: [...], pagination: {...} }
-                    // (matches ListingsService.swift's DataObj on iOS) — data itself is an
-                    // object, not the array directly. This was the actual search-returns-
-                    // nothing bug: optJSONArray("data") silently returns empty since "data"
-                    // is a JSON object here, not an array.
-                    val data = body.optJSONObject("data")
-                    val arr = data?.optJSONArray("items") ?: JSONArray()
-                    val pagination = data?.optJSONObject("pagination")
-                    val fetchedLastPage = pagination?.optInt("last_page", 1) ?: 1
-                    val fetched = parseListings(arr)
-                    withContext(Dispatchers.Main) {
-                        lastPage = fetchedLastPage
-                        val current = if (reset) emptyList() else (_results.value ?: emptyList())
-                        val combined = current + fetched
-                        _results.value = combined
-                        _isPagingLoading.value = false
-                        _bodyState.value = if (combined.isEmpty()) State.EMPTY else State.RESULTS
-                        isFetching = false
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        // Roll the page counter back so the next scroll retries
-                        // this page rather than skipping it.
-                        if (!reset) currentPage--
-                        _isPagingLoading.value = false
-                        _bodyState.value = if (reset) State.EMPTY else State.RESULTS
-                        isFetching = false
-                    }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    if (!reset) currentPage--
-                    _isPagingLoading.value = false
-                    _bodyState.value = if (reset) State.EMPTY else State.RESULTS
-                    _errorEvent.value = "تعذر البحث"
-                    isFetching = false
-                }
+        viewModelScope.launch {
+            val result = AppContainer.catalog.search(
+                query = activeQuery,
+                page = page,
+                limit = PAGE_SIZE,
+                regionId = activeRegionId,
+                listingType = activeType
+            )
+            if (result is ApiResult.Success) {
+                lastPage = result.data.lastPage
+                val current = if (reset) emptyList() else (_results.value ?: emptyList())
+                val combined = current + result.data.items
+                _results.value = combined
+                _bodyState.value = if (combined.isEmpty()) State.EMPTY else State.RESULTS
+            } else {
+                // Roll the page counter back so the next scroll retries
+                // this page rather than skipping it.
+                if (!reset) currentPage--
+                _bodyState.value = if (reset) State.EMPTY else State.RESULTS
+                // A plain HTTP error just shows "no results"; no answer / unreadable body
+                // also shows a message.
+                val silent = result is ApiResult.HttpError && result.code != ApiResult.UNREADABLE_BODY
+                if (!silent) _errorEvent.value = "تعذر البحث"
             }
+            _isPagingLoading.value = false
+            isFetching = false
         }
-    }
-
-    private fun parseListings(arr: JSONArray): List<ApiListing> {
-        val list = mutableListOf<ApiListing>()
-        for (i in 0 until arr.length()) {
-            val o = arr.getJSONObject(i)
-            val images = mutableListOf<String>()
-            val imgArr = o.optJSONArray("images")
-            if (imgArr != null) for (j in 0 until imgArr.length()) images.add(imgArr.getString(j))
-            val seller = o.optJSONObject("seller")
-            val region = o.optJSONObject("region")
-            list.add(ApiListing(
-                id = o.optString("id"),
-                title = o.optString("title").ifEmpty { null },
-                price = if (!o.isNull("price")) o.optDouble("price") else null,
-                listingType = o.optString("listing_type").ifEmpty { null },
-                createdAt = o.optString("created_at").ifEmpty { null },
-                images = images,
-                sellerName = seller?.optString("name")?.ifEmpty { null },
-                sellerAvatar = seller?.optString("avatar")?.ifEmpty { null },
-                regionNameAr = region?.optString("name_ar")?.ifEmpty { null },
-                city = if (o.has("city") && !o.isNull("city")) {
-                    val cObj = o.optJSONObject("city")
-                    if (cObj != null) cObj.optString("name_ar").ifEmpty { cObj.optString("name") }.ifEmpty { null }
-                    else o.optString("city").ifEmpty { null }
-                } else null
-            ))
-        }
-        return list
     }
 }

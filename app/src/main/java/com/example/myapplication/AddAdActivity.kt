@@ -12,7 +12,6 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.example.myapplication.BaseActivity
@@ -20,18 +19,17 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.auth.TokenManager
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityAddAdBinding
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
+import com.example.myapplication.utils.toast
+import com.example.myapplication.data.AppContainer
+import com.example.myapplication.data.ApiResult
 
 class AddAdActivity : BaseActivity() {
 
@@ -225,14 +223,14 @@ class AddAdActivity : BaseActivity() {
 
     private fun publishAd() {
         if (TokenManager.getToken(this) == null) {
-            Toast.makeText(this, getString(R.string.login_required_first), Toast.LENGTH_SHORT).show(); return
+            toast(R.string.login_required_first); return
         }
         val title = binding.etAdTitle.text.toString().trim()
         val desc = binding.etAdDescription.text.toString().trim()
         val price = binding.etPrice.text.toString().trim()
-        if (title.isEmpty()) { Toast.makeText(this, getString(R.string.ad_title_hint), Toast.LENGTH_SHORT).show(); return }
-        if (selectedLocation.isEmpty()) { Toast.makeText(this, getString(R.string.choose_location), Toast.LENGTH_SHORT).show(); return }
-        if (selectedCategory.isEmpty()) { Toast.makeText(this, getString(R.string.choose_category), Toast.LENGTH_SHORT).show(); return }
+        if (title.isEmpty()) { toast(R.string.ad_title_hint); return }
+        if (selectedLocation.isEmpty()) { toast(R.string.choose_location); return }
+        if (selectedCategory.isEmpty()) { toast(R.string.choose_category); return }
 
         setPublishing(true)
         lifecycleScope.launch {
@@ -247,12 +245,12 @@ class AddAdActivity : BaseActivity() {
                     uploadImage(uri, listingId)
                 }
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AddAdActivity, getString(R.string.ad_published), Toast.LENGTH_SHORT).show()
+                    this@AddAdActivity.toast(R.string.ad_published)
                     finish()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AddAdActivity, e.message ?: "خطأ في النشر", Toast.LENGTH_LONG).show()
+                    this@AddAdActivity.toast(e.message ?: "خطأ في النشر", long = true)
                     setPublishing(false)
                 }
             }
@@ -263,13 +261,13 @@ class AddAdActivity : BaseActivity() {
 
     private fun updateAd() {
         if (TokenManager.getToken(this) == null) {
-            Toast.makeText(this, getString(R.string.login_required_first), Toast.LENGTH_SHORT).show(); return
+            toast(R.string.login_required_first); return
         }
         val id = editingId ?: return
         val title = binding.etAdTitle.text.toString().trim()
         val desc = binding.etAdDescription.text.toString().trim()
         val price = binding.etPrice.text.toString().trim()
-        if (title.isEmpty()) { Toast.makeText(this, getString(R.string.ad_title_hint), Toast.LENGTH_SHORT).show(); return }
+        if (title.isEmpty()) { toast(R.string.ad_title_hint); return }
 
         setPublishing(true)
         lifecycleScope.launch {
@@ -278,19 +276,19 @@ class AddAdActivity : BaseActivity() {
                 newImageUris.forEachIndexed { i, uri ->
                     val uploadMsg = if (com.example.myapplication.utils.LocaleHelper.isArabic(this@AddAdActivity)) "جارٍ رفع الصورة ${i + 1} / ${newImageUris.size}..." else "Uploading image ${i + 1} / ${newImageUris.size}..."
                     setProgress(uploadMsg)
-                    uploadImageAndGetUrl(uri, id)?.let { newUrls.add(it) }
+                    uploadImage(uri, id)?.let { newUrls.add(it) }
                 }
                 val savingMsg = if (com.example.myapplication.utils.LocaleHelper.isArabic(this@AddAdActivity)) "جارٍ الحفظ..." else "Saving..."
                 setProgress(savingMsg)
                 patchListing(id, title, desc, price, existingImageUrls + newUrls)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AddAdActivity, getString(R.string.ad_updated), Toast.LENGTH_SHORT).show()
+                    this@AddAdActivity.toast(R.string.ad_updated)
                     setResult(Activity.RESULT_OK)
                     finish()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AddAdActivity, e.message ?: "خطأ في التحديث", Toast.LENGTH_LONG).show()
+                    this@AddAdActivity.toast(e.message ?: "خطأ في التحديث", long = true)
                     setPublishing(false)
                 }
             }
@@ -299,84 +297,55 @@ class AddAdActivity : BaseActivity() {
 
     // ── API ───────────────────────────────────────────────────────────────────
 
-    private suspend fun createListing(title: String, desc: String, price: String): String? =
-        withContext(Dispatchers.IO) {
-            val cityToSend = when {
-                selectedCityName.isNotEmpty() -> selectedCityName
-                selectedLocation.contains("/") -> selectedLocation.substringAfterLast("/").trim()
-                else -> selectedLocation
-            }
-            val body = JSONObject().apply {
-                put("title", title); put("description", desc)
-                put("listing_type", adType); put("city", cityToSend)
-                put("price", price.toDoubleOrNull() ?: 0.0)
-                put("category_id", selectedCategoryId)
-                put("region_id", selectedRegionId)
-                if (selectedSubCategoryId > 0) put("sub_category_id", selectedSubCategoryId)
-                if (selectedFilterOptionId > 0) put("filter_option_id", selectedFilterOptionId)
-                put("images", JSONArray())
-            }
-            val api = RetrofitClient.build(this@AddAdActivity)
-            val resp = api.createListing(body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
-            val respBody = resp.body()?.string() ?: return@withContext null
-            if (!resp.isSuccessful) throw Exception(
-                if (com.example.myapplication.utils.LocaleHelper.isArabic(this@AddAdActivity)) "فشل إنشاء الإعلان (${resp.code()})" else "Failed to create ad (${resp.code()})")
-            JSONObject(respBody).optJSONObject("data")?.optString("id")?.takeIf { it.isNotEmpty() }
-        }
+    private fun cityToSend(): String = when {
+        selectedCityName.isNotEmpty() -> selectedCityName
+        selectedLocation.contains("/") -> selectedLocation.substringAfterLast("/").trim()
+        else -> selectedLocation
+    }
 
-    private suspend fun patchListing(id: String, title: String, desc: String, price: String, images: List<String>) =
-        withContext(Dispatchers.IO) {
-            val cityToSend = when {
-                selectedCityName.isNotEmpty() -> selectedCityName
-                selectedLocation.contains("/") -> selectedLocation.substringAfterLast("/").trim()
-                else -> selectedLocation
-            }
-            val body = JSONObject().apply {
-                put("title", title); put("description", desc)
-                put("listing_type", adType); put("city", cityToSend.ifEmpty { null })
-                put("price", price.toDoubleOrNull() ?: 0.0)
-                put("images", JSONArray().apply { images.forEach { put(it) } })
-            }
-            val api = RetrofitClient.build(this@AddAdActivity)
-            val resp = api.updateListingFull(id, body.toString().toRequestBody("application/json".toMediaTypeOrNull()))
-            if (!resp.isSuccessful) throw Exception("فشل التحديث (${resp.code()})")
+    /** Creates the listing and returns its id; throws with a readable message on failure. */
+    private suspend fun createListing(title: String, desc: String, price: String): String? {
+        val body = JSONObject().apply {
+            put("title", title); put("description", desc)
+            put("listing_type", adType); put("city", cityToSend())
+            put("price", price.toDoubleOrNull() ?: 0.0)
+            put("category_id", selectedCategoryId)
+            put("region_id", selectedRegionId)
+            if (selectedSubCategoryId > 0) put("sub_category_id", selectedSubCategoryId)
+            if (selectedFilterOptionId > 0) put("filter_option_id", selectedFilterOptionId)
+            put("images", JSONArray())
         }
+        return when (val result = AppContainer.listings.create(body)) {
+            is ApiResult.Success -> result.data
+            is ApiResult.HttpError -> throw Exception(
+                if (com.example.myapplication.utils.LocaleHelper.isArabic(this)) "فشل إنشاء الإعلان (${result.code})" else "Failed to create ad (${result.code})")
+            is ApiResult.NetworkError -> throw Exception(getString(R.string.error_connection_failed))
+        }
+    }
 
-    private suspend fun uploadImageAndGetUrl(uri: Uri, listingId: String): String? =
-        withContext(Dispatchers.IO) {
-            val stream = contentResolver.openInputStream(uri) ?: return@withContext null
-            val bytes = stream.readBytes().also { stream.close() }
-            val mime = contentResolver.getType(uri) ?: "image/jpeg"
-            val api = RetrofitClient.build(this@AddAdActivity)
-            val resp = api.uploadListingImage(
-                MultipartBody.Part.createFormData("listing_id", listingId),
-                MultipartBody.Part.createFormData(
-                    "image", "img_${System.currentTimeMillis()}.jpg",
-                    bytes.toRequestBody(mime.toMediaTypeOrNull())
-                )
-            )
-            // Response envelope nests the URL under "data" (see
-            // ImageUploadController::store) — reading it off the root always
-            // returned empty, so edited listings silently dropped every newly
-            // added image.
-            JSONObject(resp.body()?.string() ?: return@withContext null)
-                .optJSONObject("data")?.optString("url")?.takeIf { it.isNotEmpty() }
+    /** Saves the edited fields and full image list; throws on failure. */
+    private suspend fun patchListing(id: String, title: String, desc: String, price: String, images: List<String>) {
+        val body = JSONObject().apply {
+            put("title", title); put("description", desc)
+            put("listing_type", adType); put("city", cityToSend().ifEmpty { null })
+            put("price", price.toDoubleOrNull() ?: 0.0)
+            put("images", JSONArray().apply { images.forEach { put(it) } })
         }
+        when (val result = AppContainer.listings.update(id, body)) {
+            is ApiResult.Success -> Unit
+            is ApiResult.HttpError -> throw Exception("فشل التحديث (${result.code})")
+            is ApiResult.NetworkError -> throw Exception(getString(R.string.error_connection_failed))
+        }
+    }
 
-    private suspend fun uploadImage(uri: Uri, listingId: String) =
-        withContext(Dispatchers.IO) {
-            val stream = contentResolver.openInputStream(uri) ?: return@withContext
-            val bytes = stream.readBytes().also { stream.close() }
-            val mime = contentResolver.getType(uri) ?: "image/jpeg"
-            val api = RetrofitClient.build(this@AddAdActivity)
-            api.uploadListingImage(
-                MultipartBody.Part.createFormData("listing_id", listingId),
-                MultipartBody.Part.createFormData(
-                    "image", "img_${System.currentTimeMillis()}.jpg",
-                    bytes.toRequestBody(mime.toMediaTypeOrNull())
-                )
-            )
-        }
+    /** Uploads one picked image to [listingId]; returns its URL, or null if it failed. */
+    private suspend fun uploadImage(uri: Uri, listingId: String): String? {
+        val bytes = withContext(Dispatchers.IO) {
+            runCatching { contentResolver.openInputStream(uri)?.use { it.readBytes() } }.getOrNull()
+        } ?: return null
+        val mime = contentResolver.getType(uri) ?: "image/jpeg"
+        return AppContainer.listings.uploadImage(listingId, bytes, mime).getOrNull()
+    }
 
     private fun setPublishing(on: Boolean) {
         binding.btnPublish.isEnabled = !on

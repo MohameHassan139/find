@@ -19,7 +19,6 @@ import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.MainViewModel
 import com.example.myapplication.NavScreen
 import com.example.myapplication.R
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.chat.model.BlockedUserDto
 import com.example.myapplication.chat.utils.DateUtils
 import com.example.myapplication.databinding.ActivityBlockedUsersBinding
@@ -66,8 +65,7 @@ class BlockedUsersActivity : BaseActivity() {
     private fun loadBlockedUsers() {
         showLoading()
         lifecycleScope.launch {
-            val api = RetrofitClient.build(this@BlockedUsersActivity)
-            ModerationState.refresh(api)
+            ModerationState.refresh()
             binding.swipeRefresh.isRefreshing = false
             val items = ModerationState.cached()
             if (items.isEmpty()) showEmpty() else showList(items)
@@ -75,8 +73,7 @@ class BlockedUsersActivity : BaseActivity() {
     }
 
     private fun unblock(user: BlockedUserDto) {
-        val api = RetrofitClient.build(this)
-        ModerationDialogs.unblock(this, api, user.id) {
+        ModerationDialogs.unblock(this, user.id) {
             val items = ModerationState.cached()
             if (items.isEmpty()) showEmpty() else showList(items)
         }

@@ -6,17 +6,18 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.CheckBox
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.auth.PhoneAuthActivity
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.auth.UpdateProfileRequest
-import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.launch
+import com.example.myapplication.utils.toast
+import com.example.myapplication.data.AppContainer
+import com.example.myapplication.data.ApiResult
 
 class CommunicationChannelsActivity : BaseActivity() {
 
@@ -127,29 +128,16 @@ class CommunicationChannelsActivity : BaseActivity() {
 
         // Reconcile with server (GET /auth/me) before wiring listeners
         lifecycleScope.launch {
-            try {
-                val response = RetrofitClient.build(this@CommunicationChannelsActivity).getMe()
-                val user = response.body()?.user
-                if (response.isSuccessful && user != null) {
-                    cbWhatsapp.isChecked = user.whatsappEnabled
-                    cbCall.isChecked = user.callEnabled
-                    prefs.edit()
-                        .putBoolean("whatsapp", user.whatsappEnabled)
-                        .putBoolean("call", user.callEnabled)
-                        .apply()
-                    TokenManager.save(
-                        this@CommunicationChannelsActivity,
-                        token,
-                        user.name ?: TokenManager.getName(this@CommunicationChannelsActivity),
-                        user.phone ?: TokenManager.getPhone(this@CommunicationChannelsActivity),
-                        user.avatar ?: TokenManager.getAvatar(this@CommunicationChannelsActivity),
-                        user.id.toString()
-                    )
-                }
-            } catch (_: Exception) {
-            } finally {
-                attachListeners()
+            // fetchMe() also refreshes the cached user in TokenManager.
+            AppContainer.auth.fetchMe().getOrNull()?.let { user ->
+                cbWhatsapp.isChecked = user.whatsappEnabled
+                cbCall.isChecked = user.callEnabled
+                prefs.edit()
+                    .putBoolean("whatsapp", user.whatsappEnabled)
+                    .putBoolean("call", user.callEnabled)
+                    .apply()
             }
+            attachListeners()
         }
     }
 
@@ -161,69 +149,31 @@ class CommunicationChannelsActivity : BaseActivity() {
      * and updates TokenManager so rest of app sees the new user state.
      */
     private fun syncChannelsToServer(whatsappEnabled: Boolean, callEnabled: Boolean) {
-        val token = TokenManager.getToken(this) ?: return
-        var name = TokenManager.getName(this)
+        if (TokenManager.getToken(this) == null) return
 
         lifecycleScope.launch {
-            try {
-                if (name.isEmpty()) {
-                    val meRes = RetrofitClient.build(this@CommunicationChannelsActivity).getMe()
-                    val meUser = meRes.body()?.user
-                    if (meUser != null && !meUser.name.isNullOrEmpty()) {
-                        name = meUser.name
-                        TokenManager.save(
-                            this@CommunicationChannelsActivity,
-                            token,
-                            name,
-                            meUser.phone ?: "",
-                            meUser.avatar ?: "",
-                            meUser.id.toString()
-                        )
-                    }
-                }
+            var name = TokenManager.getName(this@CommunicationChannelsActivity)
+            if (name.isEmpty()) {
+                name = AppContainer.auth.fetchMe().getOrNull()?.name.orEmpty()
+            }
+            // Guard against empty name — exactly as in iOS AppChannels.save()
+            if (name.isEmpty()) return@launch
 
-                // Guard against empty name — exactly as in iOS AppChannels.save()
-                if (name.isEmpty()) {
-                    return@launch
+            val request = UpdateProfileRequest(
+                name = name,
+                whatsappEnabled = whatsappEnabled,
+                callEnabled = callEnabled
+            )
+            // updateProfile() also refreshes the cached user in TokenManager.
+            when (val result = AppContainer.auth.updateProfile(request)) {
+                is ApiResult.Success -> result.data?.let { user ->
+                    prefs.edit()
+                        .putBoolean("whatsapp", user.whatsappEnabled)
+                        .putBoolean("call", user.callEnabled)
+                        .apply()
                 }
-
-                val response = RetrofitClient.build(this@CommunicationChannelsActivity).updateProfile(
-                    UpdateProfileRequest(
-                        name = name,
-                        whatsappEnabled = whatsappEnabled,
-                        callEnabled = callEnabled
-                    )
-                )
-
-                if (response.isSuccessful) {
-                    val user = response.body()?.user
-                    if (user != null) {
-                        TokenManager.save(
-                            this@CommunicationChannelsActivity,
-                            token,
-                            user.name ?: name,
-                            user.phone ?: TokenManager.getPhone(this@CommunicationChannelsActivity),
-                            user.avatar ?: TokenManager.getAvatar(this@CommunicationChannelsActivity),
-                            user.id.toString()
-                        )
-                        prefs.edit()
-                            .putBoolean("whatsapp", user.whatsappEnabled)
-                            .putBoolean("call", user.callEnabled)
-                            .apply()
-                    }
-                } else {
-                    Toast.makeText(
-                        this@CommunicationChannelsActivity,
-                        getString(R.string.error_save_failed),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            } catch (_: Exception) {
-                Toast.makeText(
-                    this@CommunicationChannelsActivity,
-                    getString(R.string.error_connection_failed),
-                    Toast.LENGTH_SHORT
-                ).show()
+                is ApiResult.HttpError -> this@CommunicationChannelsActivity.toast(R.string.error_save_failed)
+                is ApiResult.NetworkError -> this@CommunicationChannelsActivity.toast(R.string.error_connection_failed)
             }
         }
     }
