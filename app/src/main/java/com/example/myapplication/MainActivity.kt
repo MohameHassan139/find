@@ -12,7 +12,6 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
@@ -352,10 +351,6 @@ class MainActivity : BaseActivity() {
         binding.spinnerCity.visibility = View.GONE
         vm.selectCity(null)
         resetCityPill()
-    }
-
-    private fun showRegionRow() {
-        binding.llRegionRow.visibility = View.VISIBLE
     }
 
     private fun updateChipStyles(active: String?) {

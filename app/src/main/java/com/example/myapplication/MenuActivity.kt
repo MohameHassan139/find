@@ -7,10 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.os.LocaleListCompat
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.auth.PhoneAuthActivity
@@ -51,7 +48,7 @@ class MenuActivity : BaseActivity() {
             binding.btnLogin.visibility = View.GONE
         } else {
             binding.btnLogin.visibility = View.VISIBLE
-            binding.btnLogin.text = getString(R.string.menu_login)
+            binding.btnLogin.text = getString(R.string.login_create_account)
         }
 
         findViewById<android.widget.ImageButton>(R.id.btnBack)?.setOnClickListener {
@@ -66,17 +63,17 @@ class MenuActivity : BaseActivity() {
         binding.btnLogin.setOnClickListener {
             if (TokenManager.isLoggedIn(this)) {
                 AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.logout_confirm_title))
+                    .setTitle(getString(R.string.logout))
                     .setMessage(getString(R.string.logout_confirm_message))
-                    .setPositiveButton(getString(R.string.logout_confirm_yes)) { _, _ ->
+                    .setPositiveButton(getString(R.string.logout)) { _, _ ->
                         TokenManager.clear(this)
-                        binding.btnLogin.text = getString(R.string.menu_login)
+                        binding.btnLogin.text = getString(R.string.login_create_account)
                         startActivity(Intent(this, MainActivity::class.java).apply {
                             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                         })
                         finish()
                     }
-                    .setNegativeButton(getString(R.string.logout_confirm_no), null)
+                    .setNegativeButton(getString(R.string.action_cancel), null)
                     .show()
             } else {
                 startActivity(Intent(this, PhoneAuthActivity::class.java))

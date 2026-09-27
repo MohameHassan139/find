@@ -2,7 +2,6 @@ package com.example.myapplication
 
 import android.content.Context
 import android.graphics.Color
-import android.widget.TextView
 import androidx.activity.viewModels
 import android.os.Bundle
 import com.example.myapplication.utils.LocaleHelper

@@ -261,7 +261,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                     // response) falls back to a generic message — either way, never
                     // the raw exception text, which isn't localized or user-friendly.
                     _errorEvent.value = if (e is java.io.IOException) {
-                        app.getString(R.string.kt_str_6c8b9134)
+                        app.getString(R.string.error_server_unreachable)
                     } else {
                         app.getString(R.string.error_occurred)
                     }
@@ -370,13 +370,6 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         catCityId = city?.id
         catCityItem = city
         fetchListings(reset = true)
-    }
-
-    fun selectCityById(cityId: Int?) {
-        val city = if (cityId != null) {
-            _allCities.value?.find { (catRegId == null || it.regionId == catRegId) && it.id == cityId }
-        } else null
-        selectCity(city)
     }
 
     fun hasMorePages() = currentPage < lastPage

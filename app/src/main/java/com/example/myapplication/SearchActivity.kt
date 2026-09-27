@@ -13,15 +13,11 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.activity.viewModels
 import com.example.myapplication.BaseActivity
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.adapters.ListingsAdapter
-import com.example.myapplication.auth.PhoneAuthActivity
-import com.example.myapplication.auth.TokenManager
-import com.example.myapplication.chat.ui.conversations.ConversationsActivity
 import com.example.myapplication.databinding.ActivitySearchBinding
 import com.example.myapplication.utils.LocaleHelper
 import kotlinx.coroutines.Job

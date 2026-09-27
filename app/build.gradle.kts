@@ -119,37 +119,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
-// Copy logo images: "logo find light.png" -> drawable/ic_app_logo_full.png
-//                   "logo find dark.png"  -> drawable-night/ic_app_logo_full.png
-val logoLightFile = rootProject.file("ios code/logo find light.png")
-val logoDarkFile = rootProject.file("ios code/logo find dark.png")
-val androidLogoLight = project.file("src/main/res/drawable/ic_app_logo_full.png")
-val androidLogoDark = project.file("src/main/res/drawable-night/ic_app_logo_full.png")
-
-if (logoLightFile.exists()) {
-    try {
-        logoLightFile.copyTo(androidLogoLight, overwrite = true)
-    } catch (_: Exception) {}
-}
-if (logoDarkFile.exists()) {
-    try {
-        androidLogoDark.parentFile.mkdirs()
-        logoDarkFile.copyTo(androidLogoDark, overwrite = true)
-    } catch (_: Exception) {}
-}
-
-tasks.register("copyAppLogos") {
-    doLast {
-        if (logoLightFile.exists()) {
-            logoLightFile.copyTo(androidLogoLight, overwrite = true)
-        }
-        if (logoDarkFile.exists()) {
-            androidLogoDark.parentFile.mkdirs()
-            logoDarkFile.copyTo(androidLogoDark, overwrite = true)
-        }
-    }
-}
-
 val newIconResDir = rootProject.file("ios code/new icon/android/res")
 if (newIconResDir.exists()) {
     try {
@@ -176,6 +145,5 @@ tasks.register<Copy>("copyNewAppIcons") {
 }
 
 tasks.matching { it.name == "preBuild" }.configureEach {
-    dependsOn("copyAppLogos")
     dependsOn("copyNewAppIcons")
 }

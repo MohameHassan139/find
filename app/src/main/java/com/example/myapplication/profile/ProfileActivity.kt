@@ -5,17 +5,14 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
-import com.example.myapplication.MenuActivity
 import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.auth.UpdateProfileRequest
@@ -113,7 +110,7 @@ class ProfileActivity : BaseActivity() {
                         bytes.toRequestBody(mime.toMediaTypeOrNull())
                     )
                 } ?: run {
-                    Toast.makeText(this@ProfileActivity, getString(R.string.kt_str_c5572cc3), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ProfileActivity, getString(R.string.error_save_failed), Toast.LENGTH_SHORT).show()
                     return@launch
                 }
 
@@ -127,12 +124,12 @@ class ProfileActivity : BaseActivity() {
                         url,
                         TokenManager.getUserId(this@ProfileActivity)
                     )
-                    Toast.makeText(this@ProfileActivity, getString(R.string.kt_str_201aed2e), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ProfileActivity, getString(R.string.saved), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this@ProfileActivity, getString(R.string.kt_str_c5572cc3), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ProfileActivity, getString(R.string.error_save_failed), Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@ProfileActivity, getString(R.string.kt_str_338558d2), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ProfileActivity, getString(R.string.error_connection_failed), Toast.LENGTH_SHORT).show()
             } finally {
                 binding.profileContainer.isEnabled = true
             }
@@ -195,7 +192,7 @@ class ProfileActivity : BaseActivity() {
     private fun saveProfile() {
         val name = binding.etName.text.toString().trim()
         if (name.isEmpty()) {
-            Toast.makeText(this, getString(R.string.kt_str_a0139053), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.enter_name), Toast.LENGTH_SHORT).show()
             return
         }
         val token = TokenManager.getToken(this) ?: return
@@ -210,12 +207,12 @@ class ProfileActivity : BaseActivity() {
                     val user = response.body()?.user
                     TokenManager.save(this@ProfileActivity, token,
                         user?.name ?: name, user?.phone ?: "", user?.avatar ?: "")
-                    Toast.makeText(this@ProfileActivity, getString(R.string.kt_str_201aed2e), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ProfileActivity, getString(R.string.saved), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this@ProfileActivity, getString(R.string.kt_str_c5572cc3), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ProfileActivity, getString(R.string.error_save_failed), Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@ProfileActivity, getString(R.string.kt_str_338558d2), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ProfileActivity, getString(R.string.error_connection_failed), Toast.LENGTH_SHORT).show()
             } finally {
                 binding.btnSave.isEnabled = true
                 binding.btnSave.alpha = 1.0f

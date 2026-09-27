@@ -312,7 +312,6 @@ class ListingsAdapter(
         notifyItemRangeChanged(0, items.size, PAYLOAD_FAVORITE)
     }
 
-    fun getCurrentItems(): List<ApiListing> = items
     fun getItems(): List<ApiListing> = items
 
     private fun formatTime(dateStr: String?, ctx: android.content.Context? = null): String {

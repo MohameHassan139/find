@@ -15,7 +15,6 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -128,7 +127,7 @@ class AddAdActivity : BaseActivity() {
             if (selectedLocation.isNotEmpty()) binding.tvLocationText.text = selectedLocation
             val imgs = intent.getStringArrayListExtra(EXTRA_IMAGES) ?: arrayListOf()
             existingImageUrls.addAll(imgs)
-            binding.btnPublish.text = getString(R.string.kt_str_91d6db7f)
+            binding.btnPublish.text = getString(R.string.save_changes)
         }
 
         binding.etAdTitle.addTextChangedListener(object : android.text.TextWatcher {
@@ -226,14 +225,14 @@ class AddAdActivity : BaseActivity() {
 
     private fun publishAd() {
         if (TokenManager.getToken(this) == null) {
-            Toast.makeText(this, getString(R.string.kt_str_2098437d), Toast.LENGTH_SHORT).show(); return
+            Toast.makeText(this, getString(R.string.login_required_first), Toast.LENGTH_SHORT).show(); return
         }
         val title = binding.etAdTitle.text.toString().trim()
         val desc = binding.etAdDescription.text.toString().trim()
         val price = binding.etPrice.text.toString().trim()
-        if (title.isEmpty()) { Toast.makeText(this, getString(R.string.kt_str_fb538cc7), Toast.LENGTH_SHORT).show(); return }
-        if (selectedLocation.isEmpty()) { Toast.makeText(this, getString(R.string.kt_str_629e4b86), Toast.LENGTH_SHORT).show(); return }
-        if (selectedCategory.isEmpty()) { Toast.makeText(this, getString(R.string.kt_str_113aacf2), Toast.LENGTH_SHORT).show(); return }
+        if (title.isEmpty()) { Toast.makeText(this, getString(R.string.ad_title_hint), Toast.LENGTH_SHORT).show(); return }
+        if (selectedLocation.isEmpty()) { Toast.makeText(this, getString(R.string.choose_location), Toast.LENGTH_SHORT).show(); return }
+        if (selectedCategory.isEmpty()) { Toast.makeText(this, getString(R.string.choose_category), Toast.LENGTH_SHORT).show(); return }
 
         setPublishing(true)
         lifecycleScope.launch {
@@ -248,7 +247,7 @@ class AddAdActivity : BaseActivity() {
                     uploadImage(uri, listingId)
                 }
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AddAdActivity, getString(R.string.kt_str_03c580df), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AddAdActivity, getString(R.string.ad_published), Toast.LENGTH_SHORT).show()
                     finish()
                 }
             } catch (e: Exception) {
@@ -264,13 +263,13 @@ class AddAdActivity : BaseActivity() {
 
     private fun updateAd() {
         if (TokenManager.getToken(this) == null) {
-            Toast.makeText(this, getString(R.string.kt_str_2098437d), Toast.LENGTH_SHORT).show(); return
+            Toast.makeText(this, getString(R.string.login_required_first), Toast.LENGTH_SHORT).show(); return
         }
         val id = editingId ?: return
         val title = binding.etAdTitle.text.toString().trim()
         val desc = binding.etAdDescription.text.toString().trim()
         val price = binding.etPrice.text.toString().trim()
-        if (title.isEmpty()) { Toast.makeText(this, getString(R.string.kt_str_fb538cc7), Toast.LENGTH_SHORT).show(); return }
+        if (title.isEmpty()) { Toast.makeText(this, getString(R.string.ad_title_hint), Toast.LENGTH_SHORT).show(); return }
 
         setPublishing(true)
         lifecycleScope.launch {
@@ -285,7 +284,7 @@ class AddAdActivity : BaseActivity() {
                 setProgress(savingMsg)
                 patchListing(id, title, desc, price, existingImageUrls + newUrls)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AddAdActivity, getString(R.string.kt_str_1e253162), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AddAdActivity, getString(R.string.ad_updated), Toast.LENGTH_SHORT).show()
                     setResult(Activity.RESULT_OK)
                     finish()
                 }

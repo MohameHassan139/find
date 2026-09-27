@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.ApiListing
 import com.example.myapplication.ListingDetailActivity
 import com.example.myapplication.auth.ListingItem
-import com.example.myapplication.MenuActivity
 import com.example.myapplication.R
 import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.adapters.ListingsAdapter
@@ -24,7 +23,6 @@ import com.example.myapplication.NavScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 
 class FavoritesActivity : BaseActivity() {
 
@@ -208,7 +206,7 @@ class FavoritesActivity : BaseActivity() {
 
     private fun showError() {
         binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
-        binding.tvEmpty.text = getString(R.string.kt_str_338558d2)
+        binding.tvEmpty.text = getString(R.string.error_connection_failed)
     }
 
     /**

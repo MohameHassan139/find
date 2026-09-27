@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
-import com.example.myapplication.MenuActivity
 import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.chat.model.AppNotification
@@ -64,9 +63,9 @@ class NotificationsActivity : BaseActivity() {
                     api.markAllNotificationsRead()
                     // Refresh list after marking all read
                     loadNotifications(api)
-                    Toast.makeText(this@NotificationsActivity, getString(R.string.kt_str_17c3b29d), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@NotificationsActivity, getString(R.string.notifications_marked_read), Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
-                    Toast.makeText(this@NotificationsActivity, getString(R.string.kt_str_e066498f), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@NotificationsActivity, getString(R.string.error_update_failed), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -116,7 +115,7 @@ class NotificationsActivity : BaseActivity() {
         binding.progressBar.visibility = View.GONE
         binding.rvNotifications.visibility = View.GONE
         binding.tvEmpty.visibility = View.VISIBLE
-        binding.tvEmpty.text = getString(R.string.kt_str_e9867f64)
+        binding.tvEmpty.text = getString(R.string.notifications_empty)
     }
 
     private fun showError(msg: String) {

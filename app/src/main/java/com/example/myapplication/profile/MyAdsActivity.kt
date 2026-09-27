@@ -13,10 +13,8 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.appcompat.widget.SwitchCompat
-import com.example.myapplication.MenuActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -188,12 +186,12 @@ class MyAdsActivity : BaseActivity() {
                 if (response.isSuccessful || response.code() == 204) {
                     allAds = allAds.filter { it.id != item.id }
                     applyFilter()
-                    Toast.makeText(this@MyAdsActivity, getString(R.string.kt_str_3569a87c), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MyAdsActivity, getString(R.string.deleted), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this@MyAdsActivity, getString(R.string.kt_str_eb88417b), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MyAdsActivity, getString(R.string.error_delete_failed), Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@MyAdsActivity, getString(R.string.kt_str_338558d2), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MyAdsActivity, getString(R.string.error_connection_failed), Toast.LENGTH_SHORT).show()
             }
         }
     }

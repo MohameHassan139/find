@@ -24,7 +24,6 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
 
     /** True while an older page exists beyond what's loaded (meta.has_more). */
     private val _hasMoreOlder = MutableLiveData(false)
-    val hasMoreOlder: LiveData<Boolean> = _hasMoreOlder
 
     private var conversationId: String = ""
     private val messageList = mutableListOf<Message>()

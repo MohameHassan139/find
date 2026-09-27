@@ -7,9 +7,6 @@ import android.graphics.Typeface
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.myapplication.auth.PhoneAuthActivity
-import com.example.myapplication.auth.TokenManager
-import com.example.myapplication.chat.ui.conversations.ConversationsActivity
 import com.example.myapplication.utils.AuthGuard
 
 enum class NavScreen { HOME, ADD, CHAT, NONE }

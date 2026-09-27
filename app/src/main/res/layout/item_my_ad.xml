@@ -294,7 +294,7 @@
                     android:insetBottom="0dp"
                     android:gravity="center"
                     android:layout_marginTop="4dp"
-                    android:text="@string/btn_delete"
+                    android:text="@string/action_delete"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/white"

@@ -9,9 +9,6 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
 import com.example.myapplication.BaseActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.databinding.ActivityCategorySelectionBinding

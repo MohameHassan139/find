@@ -3,7 +3,6 @@ package com.example.myapplication
 import com.example.myapplication.R
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -12,7 +11,6 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -193,13 +191,13 @@ class ListingDetailActivity : BaseActivity() {
                     withContext(Dispatchers.Main) { bindListing(listing) }
                 } else {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@ListingDetailActivity, getString(R.string.kt_str_21a15161), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ListingDetailActivity, getString(R.string.error_load_listing), Toast.LENGTH_SHORT).show()
                         finishOrGoHome()
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@ListingDetailActivity, getString(R.string.kt_str_338558d2), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ListingDetailActivity, getString(R.string.error_connection_failed), Toast.LENGTH_SHORT).show()
                     finishOrGoHome()
                 }
             }
@@ -246,7 +244,7 @@ class ListingDetailActivity : BaseActivity() {
             if (callAvailable) {
                 startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")))
             } else {
-                Toast.makeText(this, getString(R.string.kt_str_5abe0148), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.phone_not_available), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -258,7 +256,7 @@ class ListingDetailActivity : BaseActivity() {
                 val num = phone!!.replace(Regex("[^\\d+]"), "")
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/$num")))
             } else {
-                Toast.makeText(this, getString(R.string.kt_str_d0f8a62d), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.whatsapp_not_available), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -401,7 +399,7 @@ class ListingDetailActivity : BaseActivity() {
                         .putExtra(com.example.myapplication.chat.ui.chat.ChatActivity.EXTRA_CONVERSATION, conversation)
                 )
             } catch (e: Exception) {
-                Toast.makeText(this@ListingDetailActivity, getString(R.string.kt_str_338558d2), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ListingDetailActivity, getString(R.string.error_connection_failed), Toast.LENGTH_SHORT).show()
             }
         }
     }

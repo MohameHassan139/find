@@ -352,7 +352,7 @@
                                     android:layout_height="28dp"
                                     android:layout_marginTop="5dp"
                                     android:src="@drawable/ic_channel_call"
-                                    android:contentDescription="@string/cd_call"
+                                    android:contentDescription="@string/channel_call"
                                     app:tint="@color/appbar_icon_tint" />
 
                                 <TextView
@@ -360,7 +360,7 @@
                                     style="@style/Find.Text.ActionLabel"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/btn_call"
+                                    android:text="@string/channel_call"
                                     android:textColor="@color/text_primary" />
                             </LinearLayout>
 
@@ -380,7 +380,7 @@
                                     android:layout_height="28dp"
                                     android:layout_marginTop="5dp"
                                     android:src="@drawable/ic_channel_whatsapp"
-                                    android:contentDescription="@string/cd_whatsapp"
+                                    android:contentDescription="@string/channel_whatsapp"
                                     app:tint="@color/appbar_icon_tint" />
 
                                 <TextView
@@ -388,7 +388,7 @@
                                     style="@style/Find.Text.ActionLabel"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/btn_whatsapp"
+                                    android:text="@string/channel_whatsapp"
                                     android:textColor="@color/text_primary" />
                             </LinearLayout>
 
@@ -407,7 +407,7 @@
                                     android:layout_width="28dp"
                                     android:layout_height="28dp"
                                     android:layout_marginTop="5dp"
-                                    android:contentDescription="@string/cd_chat"
+                                    android:contentDescription="@string/btn_chat"
                                     android:src="@drawable/ic_channel_chat"
                                     app:tint="@color/appbar_icon_tint" />
 

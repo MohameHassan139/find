@@ -1,12 +1,10 @@
 package com.example.myapplication.adapters
 
 import android.content.res.Configuration
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.ApiSubCategory
-import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemSubcategoryGridBinding
 import com.example.myapplication.utils.CategoryIconHelper
 import com.example.myapplication.utils.LocaleHelper

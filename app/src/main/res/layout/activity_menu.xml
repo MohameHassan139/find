@@ -45,7 +45,7 @@
                 android:layout_marginHorizontal="5dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/bg_menu_item"
-                android:text="@string/menu_login"
+                android:text="@string/login_create_account"
                 android:textColor="@color/find_active_blue"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -126,7 +126,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:text="@string/menu_my_ads"
+                    android:text="@string/my_ads_title"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -169,7 +169,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:text="@string/menu_favorites"
+                    android:text="@string/favorites_title"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />

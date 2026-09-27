@@ -73,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="@string/nav_add_ad"
+                android:text="@string/add_ad"
                 android:textColor="@color/nav_text_unselected" />
         </LinearLayout>
 

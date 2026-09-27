@@ -89,7 +89,7 @@
                 android:gravity="bottom|center_horizontal"
                 android:includeFontPadding="false"
                 android:paddingHorizontal="14dp"
-                android:text="@string/favorites_tab"
+                android:text="@string/favorites_title"
                 android:textColor="@color/chats_chip_text"
                 android:textSize="15sp" />
         </LinearLayout>
@@ -195,7 +195,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="44dp"
                 android:layout_marginTop="16dp"
-                android:text="@string/str_______________"
+                android:text="@string/action_retry"
                 android:paddingHorizontal="24dp"
                 android:backgroundTint="@color/find_primary"
                 style="@style/Widget.MaterialComponents.Button" />

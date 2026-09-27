@@ -5,12 +5,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
-import com.example.myapplication.MenuActivity
 import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.chat.api.RetrofitClient
 import com.example.myapplication.chat.model.Conversation
@@ -112,7 +110,7 @@ class ChatActivity : BaseActivity() {
         val otherAvatar = conversation.otherUser?.avatar
 
         binding.tvChatName.text = otherName ?: "محادثة"
-        binding.tvChatStatus.text = getString(R.string.kt_str_b30c86e0)
+        binding.tvChatStatus.text = getString(R.string.chat_status_placeholder)
 
         if (!otherAvatar.isNullOrEmpty()) {
             Glide.with(this).load(otherAvatar).placeholder(R.drawable.ic_avatar_placeholder)
@@ -227,7 +225,7 @@ class ChatActivity : BaseActivity() {
                     }
                 }
             }
-            .setNegativeButton(getString(R.string.logout_confirm_no), null)
+            .setNegativeButton(getString(R.string.action_cancel), null)
             .create()
 
         dialog.setOnShowListener {

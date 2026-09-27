@@ -20,7 +20,6 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import com.example.myapplication.R
 import kotlin.math.abs
 import kotlin.math.max
-import kotlin.math.min
 
 class FullScreenImageViewerDialog(
     private val activity: Activity,

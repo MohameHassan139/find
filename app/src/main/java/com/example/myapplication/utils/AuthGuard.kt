@@ -30,7 +30,7 @@ object AuthGuard {
                 }
                 context.startActivity(loginIntent)
             }
-            .setNegativeButton(context.getString(R.string.auth_guard_cancel), null)
+            .setNegativeButton(context.getString(R.string.action_cancel), null)
             .show()
     }
 
@@ -50,7 +50,7 @@ object AuthGuard {
                     }
                 )
             }
-            .setNegativeButton(context.getString(R.string.auth_guard_cancel), null)
+            .setNegativeButton(context.getString(R.string.action_cancel), null)
             .show()
     }
 }

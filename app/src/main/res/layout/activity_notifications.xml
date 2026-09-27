@@ -128,7 +128,7 @@
                         android:layout_marginBottom="40dp"
                         android:gravity="center"
                         android:paddingHorizontal="24dp"
-                        android:text="@string/kt_str_e9867f64"
+                        android:text="@string/notifications_empty"
                         android:textSize="18sp"
                         android:textColor="@color/find_gray_text"
                         android:drawableBottom="@drawable/ic_notifications_empty"

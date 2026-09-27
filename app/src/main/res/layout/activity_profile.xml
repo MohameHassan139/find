@@ -135,7 +135,7 @@
                 android:layout_height="52dp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/bg_btn_publish"
-                android:text="@string/ios_profile_update"
+                android:text="@string/profile_save_changes"
                 android:textSize="17sp"
                 android:textColor="@color/full_app_text"
                 android:textStyle="bold"

@@ -3,10 +3,8 @@ package com.example.myapplication
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
@@ -113,12 +111,12 @@ class SettingsActivity : BaseActivity() {
     private fun setupDeleteAccount() {
         findViewById<android.view.View>(R.id.btnDeleteAccount).setOnClickListener {
             androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle(getString(R.string.settings_delete_account_title))
+                .setTitle(getString(R.string.settings_delete_account))
                 .setMessage(getString(R.string.settings_delete_account_message))
-                .setPositiveButton(getString(R.string.settings_delete_account_confirm)) { _, _ ->
+                .setPositiveButton(getString(R.string.action_delete)) { _, _ ->
                     deleteAccountFromServer()
                 }
-                .setNegativeButton(getString(R.string.settings_delete_account_cancel), null)
+                .setNegativeButton(getString(R.string.action_cancel), null)
                 .show()
         }
     }

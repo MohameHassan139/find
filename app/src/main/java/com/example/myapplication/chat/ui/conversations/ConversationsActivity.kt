@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.BottomNavHelper
@@ -149,7 +148,7 @@ class ConversationsActivity : BaseActivity() {
                     }
                 }
             }
-            .setNegativeButton(getString(R.string.logout_confirm_no)) { _, _ ->
+            .setNegativeButton(getString(R.string.action_cancel)) { _, _ ->
                 if (position != null) {
                     adapter.notifyItemChanged(position)
                 }

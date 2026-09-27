@@ -13,7 +13,6 @@ import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.MainActivity
-import com.example.myapplication.MenuActivity
 import com.example.myapplication.NavScreen
 import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.chat.api.RetrofitClient
@@ -96,7 +95,7 @@ class PhoneAuthActivity : BaseActivity() {
         val code = binding.etCountryCode.text.toString().trim()
         val number = binding.etPhone.text.toString().trim()
         if (number.isEmpty()) {
-            Toast.makeText(this, getString(R.string.kt_str_7e371590), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.enter_phone_number), Toast.LENGTH_SHORT).show()
             return
         }
         phoneNumber = "${code}${number}"
@@ -125,10 +124,10 @@ class PhoneAuthActivity : BaseActivity() {
                         serverMessage ?: getString(R.string.error_generic), Toast.LENGTH_LONG).show()
                 } else {
                     Toast.makeText(this@PhoneAuthActivity,
-                        getString(R.string.kt_str_4605bbeb), Toast.LENGTH_SHORT).show()
+                        getString(R.string.otp_send_failed), Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@PhoneAuthActivity, getString(R.string.kt_str_6c8b9134), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@PhoneAuthActivity, getString(R.string.error_server_unreachable), Toast.LENGTH_SHORT).show()
             } finally {
                 setPhoneLoading(false)
             }
@@ -138,7 +137,7 @@ class PhoneAuthActivity : BaseActivity() {
     private fun handleVerifyOtp() {
         val code = binding.etOtp.text.toString().trim()
         if (code.length < 4) {
-            Toast.makeText(this, getString(R.string.kt_str_175b78ed), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.enter_verification_code), Toast.LENGTH_SHORT).show()
             return
         }
         setOtpLoading(true)
@@ -170,7 +169,7 @@ class PhoneAuthActivity : BaseActivity() {
                         else "خطأ: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@PhoneAuthActivity, getString(R.string.kt_str_6c8b9134), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@PhoneAuthActivity, getString(R.string.error_server_unreachable), Toast.LENGTH_SHORT).show()
             } finally {
                 setOtpLoading(false)
             }
@@ -185,7 +184,7 @@ class PhoneAuthActivity : BaseActivity() {
                 binding.tvResend.text = "إعادة الإرسال بعد ${ms / 1000}s"
             }
             override fun onFinish() {
-                binding.tvResend.text = getString(R.string.kt_str_9d645b32)
+                binding.tvResend.text = getString(R.string.resend_code)
                 binding.tvResend.isEnabled = true
             }
         }.start()

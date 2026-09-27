@@ -77,7 +77,7 @@ class CommunicationChannelsActivity : BaseActivity() {
                 startActivity(loginIntent)
                 finishWithPop()
             }
-            .setNegativeButton(getString(R.string.auth_guard_cancel)) { _, _ ->
+            .setNegativeButton(getString(R.string.action_cancel)) { _, _ ->
                 finishWithPop()
             }
             .create().apply { show() }
@@ -214,14 +214,14 @@ class CommunicationChannelsActivity : BaseActivity() {
                 } else {
                     Toast.makeText(
                         this@CommunicationChannelsActivity,
-                        getString(R.string.kt_str_c5572cc3),
+                        getString(R.string.error_save_failed),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
             } catch (_: Exception) {
                 Toast.makeText(
                     this@CommunicationChannelsActivity,
-                    getString(R.string.kt_str_338558d2),
+                    getString(R.string.error_connection_failed),
                     Toast.LENGTH_SHORT
                 ).show()
             }

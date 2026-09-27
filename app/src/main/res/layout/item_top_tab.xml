@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:includeFontPadding="false"
-        android:text="@string/str_label"
+        android:text="@string/tab_label_placeholder"
         android:textColor="@color/tab_label_inactive"
         android:textSize="16sp" />
 

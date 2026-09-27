@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="filter_row_height">56dp</dimen>
-    <dimen name="filter_row_padding">12dp</dimen>
     <dimen name="home_tab_height">44dp</dimen>
-    <dimen name="home_search_radius">22dp</dimen>
     <dimen name="language_stroke_selected">2dp</dimen>
     <!-- The design uses flat surfaces: a 0.5dp line under the header, a soft
          shadow/glow 9-patch around category cards, and no nav drop shadow. -->
@@ -12,6 +9,5 @@
     <dimen name="bottom_nav_elevation">0dp</dimen>
     <!-- Tab rows: 3dp divider under each yellow tab row, active indicator overlays it -->
     <dimen name="tab_row_strip">3dp</dimen>
-    <dimen name="tab_row_gap">3dp</dimen>
     <dimen name="ad_details_card_elevation">3dp</dimen>
 </resources>

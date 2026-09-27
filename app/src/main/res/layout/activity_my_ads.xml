@@ -68,7 +68,7 @@
                             android:layout_width="26dp"
                             android:layout_height="26dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_menu_myads"
+                            android:src="@drawable/ic_menu_my_ads"
                             app:tint="@color/tile_icon_tint" />
                     </FrameLayout>
 
@@ -98,7 +98,7 @@
                     android:layout_width="139dp"
                     android:layout_height="41dp"
                     android:layout_marginEnd="13dp"
-                    android:text="@string/ios_listing_type_offer_label"
+                    android:text="@string/listing_type_offers"
                     android:textSize="15sp"
                     android:textColor="@color/text_primary"
                     android:insetTop="0dp"
@@ -116,7 +116,7 @@
                     android:layout_width="139dp"
                     android:layout_height="41dp"
                     android:layout_marginStart="13dp"
-                    android:text="@string/ios_listing_type_request_label"
+                    android:text="@string/listing_type_requests"
                     android:textSize="15sp"
                     android:textColor="@color/tab_inactive_text"
                     android:insetTop="0dp"
@@ -164,7 +164,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="32dp"
-                        android:text="@string/ios_myAds_empty"
+                        android:text="@string/my_ads_empty"
                         android:textSize="16sp"
                         android:textColor="@color/text_secondary" />
 

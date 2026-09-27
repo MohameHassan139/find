@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BaseActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -102,7 +101,7 @@ class ListingConversationsActivity : BaseActivity() {
     private fun showEmpty() {
         binding.progressBar.visibility = View.GONE
         binding.tvEmpty.visibility = View.VISIBLE
-        binding.tvEmpty.text = getString(R.string.kt_str_0a896d74)
+        binding.tvEmpty.text = getString(R.string.no_conversations_for_ad)
         binding.rvConversations.visibility = View.GONE
     }
 

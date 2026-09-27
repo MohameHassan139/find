@@ -1,11 +1,8 @@
 package com.example.myapplication.adapters
 
-import android.graphics.Color
-import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.ApiCategory
 import com.example.myapplication.R
