@@ -201,12 +201,16 @@ class ListingDetailActivity : BaseActivity() {
         binding.tvPrice.text = PriceFormatter.display(l.price)
 
         val loc = ListingLocationFormatter.cityOnly(l.city)
+        val hasLoc = loc.isNotEmpty()
         binding.tvLocation.text = loc.ifEmpty { "—" }
-        binding.tvLocation.visibility = if (loc.isNotEmpty()) View.VISIBLE else View.GONE
+        binding.tvLocation.visibility = if (hasLoc) View.VISIBLE else View.GONE
+        binding.ivLocationIcon.visibility = if (hasLoc) View.VISIBLE else View.GONE
 
         val time = RelativeTimeFormatter.format(this, l.createdAt)
+        val hasTime = time.isNotEmpty()
         binding.tvTime.text = time.ifEmpty { "—" }
-        binding.tvTime.visibility = if (time.isNotEmpty()) View.VISIBLE else View.GONE
+        binding.tvTime.visibility = if (hasTime) View.VISIBLE else View.GONE
+        binding.ivTimeIcon.visibility = if (hasTime) View.VISIBLE else View.GONE
 
         binding.tvSellerName.text = l.sellerName ?: ""
         if (!l.sellerAvatar.isNullOrEmpty()) {

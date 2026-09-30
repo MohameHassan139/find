@@ -106,9 +106,6 @@ class MenuActivity : BaseActivity() {
             }
             startActivity(Intent.createChooser(shareIntent, getString(R.string.menu_share_app)))
         }
-        binding.menuAbout.setOnClickListener {
-            toast(R.string.menu_about)
-        }
         binding.menuContact.setOnClickListener {
             toast(R.string.menu_contact)
         }

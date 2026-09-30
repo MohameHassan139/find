@@ -87,22 +87,9 @@ class ListingsAdapter(
         b.tvType.text = if (isOffer) LocaleHelper.localizedName(ctx, "العرض", "Offer") else LocaleHelper.localizedName(ctx, "الطلب", "Request")
         b.tvType.setBackgroundColor(if (isOffer) COLOR_OFFER else COLOR_REQUEST)
 
-        // Seller name + avatar (right info panel)
-        val sellerName = item.sellerName ?: ""
-        val avatar = item.sellerAvatar
-        b.tvSeller.text = sellerName
-
-        if (!avatar.isNullOrEmpty()) {
-            Glide.with(b.ivAvatar.context)
-                .load(avatar)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.ic_avatar_placeholder)
-                .transition(com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade(200))
-                .circleCrop()
-                .into(b.ivAvatar)
-        } else {
-            b.ivAvatar.setImageResource(R.drawable.ic_avatar_placeholder)
-        }
+        // Seller name + avatar removed from the external card as requested
+        b.tvSeller.visibility = View.GONE
+        b.ivAvatar.visibility = View.GONE
 
         // Image gallery setup - preserve index if re-bound
         if (holder.imageUrls != item.images) {
