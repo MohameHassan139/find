@@ -199,6 +199,7 @@ class ListingDetailActivity : BaseActivity() {
         binding.tvTitle.text = l.title ?: ""
 
         binding.tvPrice.text = PriceFormatter.display(l.price)
+        binding.ivRiyalSymbol.visibility = if (l.price != null) View.VISIBLE else View.GONE
 
         val loc = ListingLocationFormatter.cityOnly(l.city)
         val hasLoc = loc.isNotEmpty()

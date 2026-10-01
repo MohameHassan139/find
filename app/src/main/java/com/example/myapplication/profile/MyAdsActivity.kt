@@ -273,6 +273,7 @@ class MyAdsAdapter(
         val btnDelete: View = view.findViewById(R.id.btnDelete)
         val switchActive: SwitchCompat = view.findViewById(R.id.switchActive)
         val tvActiveLabel: TextView = view.findViewById(R.id.tvActiveLabel)
+        val ivRiyalSymbol: View? = view.findViewById(R.id.ivRiyalSymbol)
 
         var currentImageIndex = 0
         var imageUrls: List<String> = emptyList()
@@ -302,6 +303,7 @@ class MyAdsAdapter(
 
         holder.tvTitle.text = item.title ?: "—"
         holder.tvPrice.text = PriceFormatter.display(item.price)
+        holder.ivRiyalSymbol?.visibility = if (item.price != null) View.VISIBLE else View.GONE
         holder.tvSellerName.text = item.seller?.name ?: ""
         holder.tvLocation.text = ListingLocationFormatter.cityOnly(item.city)
         holder.tvTime.text = RelativeTimeFormatter.format(context, item.createdAt)

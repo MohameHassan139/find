@@ -45,9 +45,11 @@
                     android:textSize="13.5sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_primary"
+                    android:lines="4"
+                    android:minLines="4"
                     android:maxLines="4"
                     android:ellipsize="end"
-                    android:gravity="start"
+                    android:gravity="top|start"
                     android:textAlignment="viewStart"
                     android:includeFontPadding="false"
                     android:lineSpacingMultiplier="0.80"
@@ -80,8 +82,8 @@
 
                         <ImageView
                             android:id="@+id/ivLocationIcon"
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:src="@drawable/ic_map_pin"
                             app:tint="@color/text_primary"
                             android:layout_marginEnd="4dp"
@@ -121,8 +123,8 @@
 
                         <ImageView
                             android:id="@+id/ivTimeIcon"
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:src="@drawable/ic_time"
                             app:tint="@color/text_primary"
                             android:layout_marginEnd="4dp"
@@ -155,8 +157,8 @@
 
                         <ImageView
                             android:id="@+id/ivRiyalSymbol"
-                            android:layout_width="16dp"
-                            android:layout_height="17dp"
+                            android:layout_width="18dp"
+                            android:layout_height="19dp"
                             android:src="@drawable/ic_currency_sar"
                             app:tint="@color/text_primary"
                             android:layout_marginEnd="3dp" />

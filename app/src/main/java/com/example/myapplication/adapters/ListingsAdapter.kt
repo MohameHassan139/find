@@ -77,6 +77,7 @@ class ListingsAdapter(
         b.tvTitle.text = item.title ?: "—"
 
         b.tvPrice.text = PriceFormatter.display(item.price)
+        b.ivRiyalSymbol.visibility = if (item.price != null) View.VISIBLE else View.GONE
 
         b.tvLocation.text = ListingLocationFormatter.cityOnly(item.city)
         b.tvTime.text = RelativeTimeFormatter.format(holder.itemView.context, item.createdAt)
