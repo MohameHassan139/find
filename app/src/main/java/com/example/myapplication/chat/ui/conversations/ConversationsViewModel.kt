@@ -12,6 +12,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.example.myapplication.data.AppContainer
 import com.example.myapplication.data.ApiResult
+import com.example.myapplication.BottomNavHelper
 
 class ConversationsViewModel(app: Application) : AndroidViewModel(app) {
 
@@ -31,24 +32,38 @@ class ConversationsViewModel(app: Application) : AndroidViewModel(app) {
         startPolling()
     }
 
-    fun loadConversations() {
-        _conversations.value = Result.Loading
+    fun loadConversations(isPullToRefresh: Boolean = false, onComplete: (() -> Unit)? = null) {
+        if (!isPullToRefresh && allConversations.isEmpty()) {
+            _conversations.value = Result.Loading
+        }
         viewModelScope.launch {
-            when (val result = chat.conversations()) {
-                is ApiResult.Success -> {
-                    allConversations = result.data
-                    applyFilter(currentFilter)
+            try {
+                when (val result = chat.conversations()) {
+                    is ApiResult.Success -> {
+                        allConversations = result.data
+                        BottomNavHelper.updateChatBadge(allConversations.sumOf { it.myUnread })
+                        applyFilter(currentFilter)
+                    }
+                    is ApiResult.HttpError -> {
+                        if (!isPullToRefresh && allConversations.isEmpty()) {
+                            _conversations.value = Result.Error(
+                                when (result.code) {
+                                    401 -> getApplication<Application>().getString(R.string.error_unauthorized_relogin)
+                                    404 -> getApplication<Application>().getString(R.string.chat_conversations_not_found)
+                                    500 -> getApplication<Application>().getString(R.string.error_server_try_again)
+                                    else -> getApplication<Application>().getString(R.string.error_failed_to_load, result.code)
+                                }, result.code
+                            )
+                        }
+                    }
+                    is ApiResult.NetworkError -> {
+                        if (!isPullToRefresh && allConversations.isEmpty()) {
+                            _conversations.value = Result.Error(getApplication<Application>().getString(R.string.error_network_check_connection))
+                        }
+                    }
                 }
-                is ApiResult.HttpError -> _conversations.value = Result.Error(
-                    when (result.code) {
-                        401 -> getApplication<Application>().getString(R.string.error_unauthorized_relogin)
-                        404 -> getApplication<Application>().getString(R.string.chat_conversations_not_found)
-                        500 -> getApplication<Application>().getString(R.string.error_server_try_again)
-                        else -> getApplication<Application>().getString(R.string.error_failed_to_load, result.code)
-                    }, result.code
-                )
-                is ApiResult.NetworkError ->
-                    _conversations.value = Result.Error(getApplication<Application>().getString(R.string.error_network_check_connection))
+            } finally {
+                onComplete?.invoke()
             }
         }
     }
@@ -133,6 +148,7 @@ class ConversationsViewModel(app: Application) : AndroidViewModel(app) {
                             isFavorite = update.isFavorite ?: conv.isFavorite
                         )
                     }
+                BottomNavHelper.updateChatBadge(allConversations.sumOf { it.myUnread })
                 applyFilter(currentFilter)
             }
         }

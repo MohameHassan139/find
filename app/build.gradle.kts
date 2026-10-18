@@ -99,6 +99,7 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.crashlytics)
     implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.play.services.auth.api.phone)
 
     // Jetpack Compose dependencies
     val composeBom = platform("androidx.compose:compose-bom:2024.12.01")
@@ -109,6 +110,7 @@ dependencies {
     // Renders @Preview (FindTypeSpecimenPreview in Type.kt) in Android Studio — debug only
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.compose.material3:material3")
+    implementation("dev.chrisbanes.haze:haze:1.3.1")
 
     // SVG loading (Coil + Coil SVG)
     implementation("io.coil-kt:coil:2.6.0")

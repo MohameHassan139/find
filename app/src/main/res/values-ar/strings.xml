@@ -14,7 +14,9 @@
     <string name="menu_contact">تواصل معنا</string>
 
     <!-- Add Ad Screen -->
-    <string name="images_label">الصور:</string>
+    <string name="images_label">صور الإعلان:</string>
+    <string name="cover_image_hint">اضغط على أي صورة لجعلها الصورة الرئيسية التي تظهر أولاً في قائمة الإعلانات</string>
+    <string name="cover_badge">الغلاف</string>
     <string name="add_image">إضافة صورة</string>
     <string name="ad_title_label">عنوان الإعلان:</string>
     <string name="ad_text_label">نص الإعلان:</string>

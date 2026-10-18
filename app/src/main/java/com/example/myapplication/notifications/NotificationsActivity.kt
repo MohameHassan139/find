@@ -86,13 +86,25 @@ class NotificationsActivity : BaseActivity() {
             }
         }
 
-        SwipeRefreshHelper.setup(binding.swipeRefresh) { loadNotifications() }
+        binding.swipeRefresh.setOnChildScrollUpCallback { _, _ ->
+            if (binding.rvNotifications.visibility == View.VISIBLE) {
+                binding.rvNotifications.canScrollVertically(-1)
+            } else if (binding.emptyScrollView.visibility == View.VISIBLE) {
+                binding.emptyScrollView.canScrollVertically(-1)
+            } else {
+                false
+            }
+        }
+
+        SwipeRefreshHelper.setup(binding.swipeRefresh) { loadNotifications(isPullToRefresh = true) }
 
         loadNotifications()
     }
 
-    private fun loadNotifications() {
-        showLoading()
+    private fun loadNotifications(isPullToRefresh: Boolean = false) {
+        if (!isPullToRefresh && adapter.currentList.isEmpty()) {
+            showLoading()
+        }
         lifecycleScope.launch {
             // 1. Send request to server to mark all notifications as read
             launch {
@@ -101,7 +113,8 @@ class NotificationsActivity : BaseActivity() {
 
             // 2. Load notifications
             val result = AppContainer.notifications.userData()
-            binding.swipeRefresh.isRefreshing = false
+            binding.progressBar.visibility = View.GONE
+            SwipeRefreshHelper.stopRefreshing(binding.swipeRefresh)
             when (result) {
                 is ApiResult.Success -> {
                     val payload = result.data
@@ -114,8 +127,20 @@ class NotificationsActivity : BaseActivity() {
 
                     if (items.isEmpty()) showEmpty() else showList(items)
                 }
-                is ApiResult.HttpError -> showError(getString(R.string.error_failed_to_load, result.code))
-                is ApiResult.NetworkError -> showError(getString(R.string.error_server_unreachable))
+                is ApiResult.HttpError -> {
+                    if (!isPullToRefresh && adapter.currentList.isEmpty()) {
+                        showError(getString(R.string.error_failed_to_load, result.code))
+                    } else {
+                        toast(getString(R.string.error_failed_to_load, result.code))
+                    }
+                }
+                is ApiResult.NetworkError -> {
+                    if (!isPullToRefresh && adapter.currentList.isEmpty()) {
+                        showError(getString(R.string.error_server_unreachable))
+                    } else {
+                        toast(R.string.error_server_unreachable)
+                    }
+                }
             }
         }
     }
@@ -123,12 +148,12 @@ class NotificationsActivity : BaseActivity() {
     private fun showLoading() {
         binding.progressBar.visibility = View.VISIBLE
         binding.rvNotifications.visibility = View.GONE
-        binding.tvEmpty.visibility = View.GONE
+        binding.emptyScrollView.visibility = View.GONE
     }
 
     private fun showList(items: List<AppNotification>) {
         binding.progressBar.visibility = View.GONE
-        binding.tvEmpty.visibility = View.GONE
+        binding.emptyScrollView.visibility = View.GONE
         binding.rvNotifications.visibility = View.VISIBLE
         adapter.submitList(items)
     }
@@ -136,14 +161,14 @@ class NotificationsActivity : BaseActivity() {
     private fun showEmpty() {
         binding.progressBar.visibility = View.GONE
         binding.rvNotifications.visibility = View.GONE
-        binding.tvEmpty.visibility = View.VISIBLE
+        binding.emptyScrollView.visibility = View.VISIBLE
         binding.tvEmpty.text = getString(R.string.notifications_empty)
     }
 
     private fun showError(msg: String) {
         binding.progressBar.visibility = View.GONE
         binding.rvNotifications.visibility = View.GONE
-        binding.tvEmpty.visibility = View.VISIBLE
+        binding.emptyScrollView.visibility = View.VISIBLE
         binding.tvEmpty.text = msg
     }
 }

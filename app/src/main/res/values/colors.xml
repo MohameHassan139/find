@@ -15,6 +15,11 @@
     <color name="find_gray_text">#757575</color>
     <color name="transparent">#00000000</color>
 
+    <!-- Cover image badge and border -->
+    <color name="cover_badge_bg">#ECC03D</color>
+    <color name="cover_badge_text">#FF000000</color>
+    <color name="cover_border">#ECC03D</color>
+
     <!-- Chat colors -->
     <color name="bg_screen">#F5F5F5</color>
     <color name="settings_bg">#F4F4F4</color>
@@ -56,6 +61,8 @@
 
     <!-- Icon tint — adapts automatically in dark mode via values-night override -->
     <color name="icon_tint_muted">#FF757575</color>
+    <!-- Pure contrast icon tint (Very Black in Light mode #000000, Very White in Dark mode #FFFFFF) -->
+    <color name="icon_pure">#FF000000</color>
 
     <!-- Profile colors -->
     

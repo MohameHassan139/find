@@ -85,7 +85,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_map_pin"
-                            app:tint="@color/text_primary"
+                            app:tint="@color/icon_pure"
                             android:layout_marginEnd="4dp"
                             android:importantForAccessibility="no" />
 
@@ -126,7 +126,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_time"
-                            app:tint="@color/text_primary"
+                            app:tint="@color/icon_pure"
                             android:layout_marginEnd="4dp"
                             android:importantForAccessibility="no" />
 
@@ -160,7 +160,7 @@
                             android:layout_width="18dp"
                             android:layout_height="19dp"
                             android:src="@drawable/ic_currency_sar"
-                            app:tint="@color/text_primary"
+                            app:tint="@color/icon_pure"
                             android:layout_marginEnd="3dp" />
 
                         <TextView

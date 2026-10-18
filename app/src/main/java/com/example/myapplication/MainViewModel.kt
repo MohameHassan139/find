@@ -358,7 +358,46 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     fun hasMorePages() = currentPage < lastPage
 
-    fun fetchListings(reset: Boolean = true) {
+    fun refreshHome(onComplete: (() -> Unit)? = null) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                when (val res = AppContainer.catalog.appData()) {
+                    is ApiResult.Success -> {
+                        val data = res.data
+                        allListingsPool = ListingJson.parseList(data.optJSONArray("listings"))
+
+                        val catArr = data.optJSONArray("categories") ?: JSONArray()
+                        val filtered = parseCategoriesWithSubCategories(catArr).filter {
+                            it.id != 1 && it.id != 0 &&
+                            it.nameAr.trim() != "الرئيسية" &&
+                            it.nameAr.trim() != "الرئيسيه"
+                        }
+
+                        val regionsArr = data.optJSONArray("regions") ?: JSONArray()
+                        val (regions, cities) = parseRegions(regionsArr)
+
+                        withContext(Dispatchers.Main) {
+                            _categories.value = filtered
+                            _regions.value = regions
+                            _allCities.value = cities
+                            fetchListings(reset = true, isPullToRefresh = true)
+                        }
+                    }
+                    is ApiResult.HttpError, is ApiResult.NetworkError -> {
+                        // Keep current listings on network failure
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("MainVM", "Error refreshing app data", e)
+            } finally {
+                withContext(Dispatchers.Main) {
+                    onComplete?.invoke()
+                }
+            }
+        }
+    }
+
+    fun fetchListings(reset: Boolean = true, isPullToRefresh: Boolean = false) {
         if (isFetching) return
 
         val isHomeFeed = catIdx == 0
@@ -384,9 +423,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
         if (reset) {
             currentPage = 1
-            _listings.value = emptyList()
-            _isFirstPageLoading.value = true
-            _isEmptyState.value = false
+            if (!isPullToRefresh) {
+                _listings.value = emptyList()
+                _isFirstPageLoading.value = true
+                _isEmptyState.value = false
+            }
         } else {
             currentPage++
             _isPagingLoading.value = true

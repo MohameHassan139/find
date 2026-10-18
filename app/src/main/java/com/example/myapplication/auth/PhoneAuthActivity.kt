@@ -1,35 +1,95 @@
 package com.example.myapplication.auth
 
-import com.example.myapplication.R
+import android.app.Activity
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.text.InputFilter
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import com.example.myapplication.BaseActivity
+import androidx.core.content.ContextCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
+import com.example.myapplication.BaseActivity
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.MainActivity
 import com.example.myapplication.NavScreen
+import com.example.myapplication.R
 import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.crash.CrashReporting
+import com.example.myapplication.data.ApiResult
+import com.example.myapplication.data.AppContainer
 import com.example.myapplication.databinding.ActivityPhoneAuthBinding
 import com.example.myapplication.push.PushTokenManager
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
-import kotlinx.coroutines.launch
 import com.example.myapplication.utils.toast
-import com.example.myapplication.data.AppContainer
-import com.example.myapplication.data.ApiResult
+import com.google.android.gms.auth.api.phone.SmsRetriever
+import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.android.gms.common.api.Status
+import kotlinx.coroutines.launch
+import java.util.regex.Pattern
 
 class PhoneAuthActivity : BaseActivity() {
+
+    companion object {
+        const val OTP_LENGTH = 4
+    }
 
     private lateinit var binding: ActivityPhoneAuthBinding
     private val sharedVm: SharedCategoriesViewModel by viewModels()
     private var phoneNumber = ""
     private var resendTimer: CountDownTimer? = null
+    private var isVerifyInFlight = false
+    private var isReceiverRegistered = false
+
+    private val smsConsentLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            val message = result.data?.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)
+            if (message != null) {
+                val matcher = Pattern.compile("(\\d{$OTP_LENGTH})").matcher(message)
+                if (matcher.find()) {
+                    val code = matcher.group(1)
+                    if (!code.isNullOrEmpty()) {
+                        binding.etOtp.setText(code)
+                        binding.etOtp.setSelection(code.length)
+                    }
+                }
+            }
+        }
+    }
+
+    private val smsConsentReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == SmsRetriever.SMS_RETRIEVED_ACTION) {
+                val extras = intent.extras ?: return
+                @Suppress("DEPRECATION")
+                val status = extras.get(SmsRetriever.EXTRA_STATUS) as? Status ?: return
+                when (status.statusCode) {
+                    CommonStatusCodes.SUCCESS -> {
+                        @Suppress("DEPRECATION")
+                        val consentIntent = extras.getParcelable<Intent>(SmsRetriever.EXTRA_CONSENT_INTENT)
+                        consentIntent?.let {
+                            try {
+                                smsConsentLauncher.launch(it)
+                            } catch (_: Exception) {}
+                        }
+                    }
+                    CommonStatusCodes.TIMEOUT -> {
+                        // 5-minute consent timeout must fail silently; user can still type code
+                    }
+                }
+            }
+        }
+    }
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.wrap(newBase))
@@ -68,6 +128,7 @@ class PhoneAuthActivity : BaseActivity() {
             }
         })
 
+        setupOtpField()
         showPhoneStep()
 
         binding.btnSendOtp.setOnClickListener { handleSendOtp() }
@@ -78,8 +139,25 @@ class PhoneAuthActivity : BaseActivity() {
         }
     }
 
+    private fun setupOtpField() {
+        binding.etOtp.filters = arrayOf(InputFilter.LengthFilter(OTP_LENGTH))
+        binding.etOtp.doAfterTextChanged { s ->
+            val text = s?.toString() ?: ""
+            val digitsOnly = text.filter { it.isDigit() }
+            if (digitsOnly != text) {
+                binding.etOtp.setText(digitsOnly)
+                binding.etOtp.setSelection(digitsOnly.length)
+                return@doAfterTextChanged
+            }
+            if (digitsOnly.length == OTP_LENGTH && !isVerifyInFlight) {
+                handleVerifyOtp()
+            }
+        }
+    }
+
     private fun showPhoneStep() {
         resendTimer?.cancel()
+        unregisterSmsConsentReceiver()
         binding.layoutPhone.visibility = View.VISIBLE
         binding.layoutOtp.visibility = View.GONE
     }
@@ -88,7 +166,45 @@ class PhoneAuthActivity : BaseActivity() {
         binding.layoutPhone.visibility = View.GONE
         binding.layoutOtp.visibility = View.VISIBLE
         binding.tvOtpHint.text = "${getString(R.string.send_otp_to)} \u200E$phoneNumber\u200E"
+        binding.etOtp.text?.clear()
         startResendTimer()
+        startSmsConsent()
+
+        binding.etOtp.post {
+            binding.etOtp.requestFocus()
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.showSoftInput(binding.etOtp, InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
+
+    private fun startSmsConsent() {
+        try {
+            SmsRetriever.getClient(this).startSmsUserConsent(null)
+        } catch (_: Exception) {}
+        registerSmsConsentReceiver()
+    }
+
+    private fun registerSmsConsentReceiver() {
+        if (isReceiverRegistered) return
+        val filter = IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION)
+        ContextCompat.registerReceiver(
+            this,
+            smsConsentReceiver,
+            filter,
+            SmsRetriever.SEND_PERMISSION,
+            null,
+            ContextCompat.RECEIVER_EXPORTED
+        )
+        isReceiverRegistered = true
+    }
+
+    private fun unregisterSmsConsentReceiver() {
+        if (isReceiverRegistered) {
+            try {
+                unregisterReceiver(smsConsentReceiver)
+            } catch (_: Exception) {}
+            isReceiverRegistered = false
+        }
     }
 
     private fun handleSendOtp() {
@@ -104,6 +220,7 @@ class PhoneAuthActivity : BaseActivity() {
 
     private fun requestOtp() {
         setPhoneLoading(true)
+        binding.tvResend.isEnabled = false
         lifecycleScope.launch {
             val result = AppContainer.auth.requestOtp(phoneNumber)
             setPhoneLoading(false)
@@ -115,43 +232,59 @@ class PhoneAuthActivity : BaseActivity() {
                 // any more, so no "attempts left" or "N days" text.
                 result is ApiResult.HttpError && result.code == 429 ->
                     toast(result.message ?: getString(R.string.error_generic), long = true)
-                result is ApiResult.HttpError -> toast(R.string.otp_send_failed)
-                else -> toast(R.string.error_server_unreachable)
+                result is ApiResult.HttpError -> {
+                    toast(R.string.otp_send_failed)
+                    if (binding.layoutOtp.visibility == View.VISIBLE) {
+                        binding.tvResend.isEnabled = true
+                    }
+                }
+                else -> {
+                    toast(R.string.error_server_unreachable)
+                    if (binding.layoutOtp.visibility == View.VISIBLE) {
+                        binding.tvResend.isEnabled = true
+                    }
+                }
             }
         }
     }
 
     private fun handleVerifyOtp() {
+        if (isVerifyInFlight) return
         val code = binding.etOtp.text.toString().trim()
-        if (code.length < 4) {
+        if (code.length != OTP_LENGTH) {
             toast(R.string.enter_verification_code)
             return
         }
+        isVerifyInFlight = true
         setOtpLoading(true)
         lifecycleScope.launch {
-            val result = AppContainer.auth.verifyOtp(phoneNumber, code)
-            setOtpLoading(false)
-            when (result) {
-                is ApiResult.Success -> {
-                    val body = result.data
-                    val token = body?.token
-                    if (token != null) {
-                        TokenManager.save(
-                            this@PhoneAuthActivity, token,
-                            body.user?.name ?: "", body.user?.phone ?: "",
-                            body.user?.avatar ?: "",
-                            body.user?.id?.toString() ?: ""
-                        )
-                        body.user?.id?.toString()?.let { CrashReporting.setUserId(it) }
-                        PushTokenManager.refreshAndUploadIfNeededAsync(this@PhoneAuthActivity)
-                        goToMain()
-                    } else {
-                        toast(body?.message ?: getString(R.string.verification_failed))
+            try {
+                val result = AppContainer.auth.verifyOtp(phoneNumber, code)
+                when (result) {
+                    is ApiResult.Success -> {
+                        val body = result.data
+                        val token = body?.token
+                        if (token != null) {
+                            TokenManager.save(
+                                this@PhoneAuthActivity, token,
+                                body.user?.name ?: "", body.user?.phone ?: "",
+                                body.user?.avatar ?: "",
+                                body.user?.id?.toString() ?: ""
+                            )
+                            body.user?.id?.toString()?.let { CrashReporting.setUserId(it) }
+                            PushTokenManager.refreshAndUploadIfNeededAsync(this@PhoneAuthActivity)
+                            goToMain()
+                        } else {
+                            toast(body?.message ?: getString(R.string.verification_failed))
+                        }
                     }
+                    is ApiResult.HttpError ->
+                        toast(if (result.code == 422) getString(R.string.invalid_verification_code) else getString(R.string.error_failed_to_load, result.code))
+                    is ApiResult.NetworkError -> toast(R.string.error_server_unreachable)
                 }
-                is ApiResult.HttpError ->
-                    toast(if (result.code == 422) getString(R.string.invalid_verification_code) else getString(R.string.error_failed_to_load, result.code))
-                is ApiResult.NetworkError -> toast(R.string.error_server_unreachable)
+            } finally {
+                isVerifyInFlight = false
+                setOtpLoading(false)
             }
         }
     }
@@ -214,5 +347,6 @@ class PhoneAuthActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         resendTimer?.cancel()
+        unregisterSmsConsentReceiver()
     }
 }

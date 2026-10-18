@@ -17,6 +17,7 @@ import com.example.myapplication.databinding.ActivityFavoritesBinding
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.utils.SwipeRefreshHelper
+import com.example.myapplication.utils.toast
 import com.example.myapplication.BottomNavHelper
 import com.example.myapplication.NavScreen
 import kotlinx.coroutines.launch
@@ -71,8 +72,18 @@ class FavoritesActivity : BaseActivity() {
         binding.rvFavorites.layoutManager = LinearLayoutManager(this)
         binding.rvFavorites.adapter = adapter
 
+        binding.swipeRefresh.setOnChildScrollUpCallback { _, _ ->
+            if (binding.rvFavorites.visibility == View.VISIBLE) {
+                binding.rvFavorites.canScrollVertically(-1)
+            } else if (binding.emptyScrollView.visibility == View.VISIBLE) {
+                binding.emptyScrollView.canScrollVertically(-1)
+            } else {
+                false
+            }
+        }
+
         SwipeRefreshHelper.setup(binding.swipeRefresh) {
-            loadFavorites()
+            loadFavorites(isPullToRefresh = true)
         }
 
         binding.btnFilterOffer.setOnClickListener {
@@ -124,32 +135,34 @@ class FavoritesActivity : BaseActivity() {
     private fun applyFilter() {
         val filtered = allFavorites.filter { it.listingType == currentFilter }
         if (filtered.isEmpty()) {
-            binding.swipeRefresh.isRefreshing = false
-            binding.swipeRefresh.visibility = View.GONE
+            binding.emptyScrollView.visibility = View.VISIBLE
             binding.rvFavorites.visibility = View.GONE
-            binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
+            binding.tvEmpty.text = getString(R.string.favorites_empty)
         } else {
-            binding.root.findViewById<View>(R.id.emptyView).visibility = View.GONE
-            binding.swipeRefresh.isRefreshing = false
-            binding.swipeRefresh.visibility = View.VISIBLE
+            binding.emptyScrollView.visibility = View.GONE
             binding.rvFavorites.visibility = View.VISIBLE
             adapter.updateData(filtered)
             adapter.setFavoriteIds(favoriteIds)
         }
     }
 
-    private fun loadFavorites() {
-        if (!binding.swipeRefresh.isRefreshing) {
+    private fun loadFavorites(isPullToRefresh: Boolean = false) {
+        if (!isPullToRefresh && allFavorites.isEmpty()) {
             binding.progressBar.visibility = View.VISIBLE
+            binding.emptyScrollView.visibility = View.GONE
+            binding.rvFavorites.visibility = View.GONE
         }
-        binding.root.findViewById<View>(R.id.emptyView).visibility = View.GONE
 
         lifecycleScope.launch {
             val loaded = AppContainer.favorites.all().getOrNull()
             binding.progressBar.visibility = View.GONE
-            binding.swipeRefresh.isRefreshing = false
+            SwipeRefreshHelper.stopRefreshing(binding.swipeRefresh)
             if (loaded == null) {
-                showError()
+                if (!isPullToRefresh && allFavorites.isEmpty()) {
+                    showError()
+                } else {
+                    toast(R.string.error_connection_failed)
+                }
                 return@launch
             }
             allFavorites = loaded
@@ -168,19 +181,13 @@ class FavoritesActivity : BaseActivity() {
                 favoriteIds.remove(listingId)
                 allFavorites = allFavorites.filter { it.id != listingId }
                 applyFilter()
-                if (allFavorites.isEmpty()) {
-                    binding.swipeRefresh.visibility = View.GONE
-                    binding.rvFavorites.visibility = View.GONE
-                    binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
-                }
             }
         }
     }
 
     private fun showError() {
-        binding.swipeRefresh.isRefreshing = false
-        binding.swipeRefresh.visibility = View.GONE
-        binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
+        binding.rvFavorites.visibility = View.GONE
+        binding.emptyScrollView.visibility = View.VISIBLE
         binding.tvEmpty.text = getString(R.string.error_connection_failed)
     }
 }

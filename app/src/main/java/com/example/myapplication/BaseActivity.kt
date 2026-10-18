@@ -64,6 +64,10 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LocaleHelper.wrap(newBase))
+    }
+
     private var origBottomNavMargin: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

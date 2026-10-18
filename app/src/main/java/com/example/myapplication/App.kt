@@ -23,6 +23,8 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        // Apply saved locale with Latin numbers
+        com.example.myapplication.utils.LocaleHelper.applyLocale(this)
         // Figma typography: Inter + Noto Sans Arabic on every screen (see Type.kt)
         FindTypefaceInflater.install(this)
         // Apply saved theme before any activity is created

@@ -8,10 +8,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.example.myapplication.BaseActivity
@@ -46,9 +48,13 @@ class AddAdActivity : BaseActivity() {
     private lateinit var binding: ActivityAddAdBinding
     private val sharedVm: SharedCategoriesViewModel by viewModels()
 
+    private data class GalleryItem(
+        val url: String? = null,
+        val uri: Uri? = null
+    )
+
     private var editingId: String? = null
-    private val existingImageUrls: MutableList<String> = mutableListOf()
-    private val newImageUris: MutableList<Uri> = mutableListOf()
+    private val galleryItems: MutableList<GalleryItem> = mutableListOf()
     private var selectedLocation = ""
     private var selectedCityName = ""
     private var selectedCategory = ""
@@ -61,7 +67,11 @@ class AddAdActivity : BaseActivity() {
     private val imagePickerLauncher = registerForActivityResult(
         ActivityResultContracts.GetMultipleContents()
     ) { uris ->
-        uris.filter { it !in newImageUris }.forEach { newImageUris.add(it) }
+        uris.forEach { uri ->
+            if (galleryItems.none { it.uri == uri }) {
+                galleryItems.add(GalleryItem(uri = uri))
+            }
+        }
         refreshImageGallery()
     }
 
@@ -124,7 +134,9 @@ class AddAdActivity : BaseActivity() {
             adType = intent.getStringExtra(EXTRA_TYPE) ?: "offer"
             if (selectedLocation.isNotEmpty()) binding.tvLocationText.text = selectedLocation
             val imgs = intent.getStringArrayListExtra(EXTRA_IMAGES) ?: arrayListOf()
-            existingImageUrls.addAll(imgs)
+            imgs.forEach { url ->
+                if (url.isNotBlank()) galleryItems.add(GalleryItem(url = url))
+            }
             binding.btnPublish.text = getString(R.string.save_changes)
         }
 
@@ -156,59 +168,53 @@ class AddAdActivity : BaseActivity() {
 
     private fun refreshImageGallery() {
         val gallery = binding.llImageGallery
-        val addBtn = gallery.findViewById<View>(R.id.llAddImageBtn)
         gallery.removeAllViews()
+
+        galleryItems.forEachIndexed { index, item ->
+            val isCover = (index == 0)
+            val itemView = layoutInflater.inflate(R.layout.item_add_ad_image, gallery, false)
+            val ivImage = itemView.findViewById<ImageView>(R.id.ivGalleryImage)
+            val vCoverBorder = itemView.findViewById<View>(R.id.vCoverBorder)
+            val tvCoverBadge = itemView.findViewById<TextView>(R.id.tvCoverBadge)
+            val btnRemove = itemView.findViewById<View>(R.id.btnRemoveImage)
+
+            vCoverBorder.visibility = if (isCover) View.VISIBLE else View.GONE
+            tvCoverBadge.visibility = if (isCover) View.VISIBLE else View.GONE
+
+            if (item.url != null) {
+                Glide.with(this).load(item.url).centerCrop().into(ivImage)
+            } else if (item.uri != null) {
+                Glide.with(this).load(item.uri).centerCrop().into(ivImage)
+            }
+
+            btnRemove.setOnClickListener {
+                galleryItems.removeAt(index)
+                refreshImageGallery()
+            }
+
+            itemView.setOnClickListener {
+                if (index > 0) {
+                    val selected = galleryItems.removeAt(index)
+                    galleryItems.add(0, selected)
+                    refreshImageGallery()
+                    scrollToStart()
+                }
+            }
+
+            gallery.addView(itemView)
+        }
+
+        // Add the "+ Add Image" button at the end
+        val addBtn = binding.llAddImageBtn
+        (addBtn.parent as? ViewGroup)?.removeView(addBtn)
         gallery.addView(addBtn)
-
-        val dp = resources.displayMetrics.density
-        val size = (72 * dp).toInt()
-        val margin = (8 * dp).toInt()
-        val closeSize = (22 * dp).toInt()
-
-        existingImageUrls.forEachIndexed { index, url ->
-            val frame = makeImageFrame(size, margin, closeSize)
-            Glide.with(this).load(url).centerCrop().into(frame.getChildAt(0) as ImageView)
-            (frame.getChildAt(1) as ImageView).setOnClickListener {
-                existingImageUrls.removeAt(index)
-                refreshImageGallery()
-            }
-            gallery.addView(frame)
-        }
-
-        newImageUris.toList().forEach { uri ->
-            val frame = makeImageFrame(size, margin, closeSize)
-            (frame.getChildAt(0) as ImageView).setImageURI(uri)
-            (frame.getChildAt(1) as ImageView).setOnClickListener {
-                newImageUris.remove(uri)
-                refreshImageGallery()
-            }
-            gallery.addView(frame)
-        }
     }
 
-    private fun makeImageFrame(size: Int, margin: Int, closeSize: Int): FrameLayout {
-        val frame = FrameLayout(this).apply {
-            layoutParams = LinearLayout.LayoutParams(size, size).apply { setMargins(0, 0, margin, 0) }
+    private fun scrollToStart() {
+        val isRtl = resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+        binding.hsvGallery.post {
+            binding.hsvGallery.fullScroll(if (isRtl) View.FOCUS_RIGHT else View.FOCUS_LEFT)
         }
-        val iv = ImageView(this).apply {
-            layoutParams = FrameLayout.LayoutParams(
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            scaleType = ImageView.ScaleType.CENTER_CROP
-            setBackgroundResource(R.drawable.bg_image_placeholder)
-            clipToOutline = true
-        }
-        val removeBtn = ImageView(this).apply {
-            layoutParams = FrameLayout.LayoutParams(closeSize, closeSize).apply {
-                gravity = android.view.Gravity.TOP or android.view.Gravity.END
-                setMargins(2, 2, 2, 2)
-            }
-            setImageResource(R.drawable.ic_remove_image)
-        }
-        frame.addView(iv)
-        frame.addView(removeBtn)
-        return frame
     }
 
     // ── Publish ───────────────────────────────────────────────────────────────
@@ -239,8 +245,11 @@ class AddAdActivity : BaseActivity() {
                 setProgress(creatingMsg)
                 val listingId = createListing(title, desc, price)
                     ?: throw Exception(getString(R.string.error_publish_failed))
-                newImageUris.forEachIndexed { i, uri ->
-                    val uploadMsg = getString(R.string.uploading_image_progress, i + 1, newImageUris.size)
+
+                // Upload images in order so the cover image (at index 0) is uploaded first
+                val urisToUpload = galleryItems.mapNotNull { it.uri }
+                urisToUpload.forEachIndexed { i, uri ->
+                    val uploadMsg = getString(R.string.uploading_image_progress, i + 1, urisToUpload.size)
                     setProgress(uploadMsg)
                     uploadImage(uri, listingId)
                 }
@@ -272,15 +281,24 @@ class AddAdActivity : BaseActivity() {
         setPublishing(true)
         lifecycleScope.launch {
             try {
-                val newUrls = mutableListOf<String>()
-                newImageUris.forEachIndexed { i, uri ->
-                    val uploadMsg = getString(R.string.uploading_image_progress, i + 1, newImageUris.size)
-                    setProgress(uploadMsg)
-                    uploadImage(uri, id)?.let { newUrls.add(it) }
+                val finalUrls = mutableListOf<String>()
+                val totalToUpload = galleryItems.count { it.uri != null }
+                var uploadedCount = 0
+
+                // Maintain exact order of galleryItems so cover is at index 0
+                for (item in galleryItems) {
+                    if (item.url != null) {
+                        finalUrls.add(item.url)
+                    } else if (item.uri != null) {
+                        uploadedCount++
+                        val uploadMsg = getString(R.string.uploading_image_progress, uploadedCount, totalToUpload)
+                        setProgress(uploadMsg)
+                        uploadImage(item.uri, id)?.let { finalUrls.add(it) }
+                    }
                 }
                 val savingMsg = getString(R.string.saving)
                 setProgress(savingMsg)
-                patchListing(id, title, desc, price, existingImageUrls + newUrls)
+                patchListing(id, title, desc, price, finalUrls)
                 withContext(Dispatchers.Main) {
                     this@AddAdActivity.toast(R.string.ad_updated)
                     setResult(Activity.RESULT_OK)

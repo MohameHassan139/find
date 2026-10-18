@@ -17,8 +17,10 @@ googleServices = "4.4.2"
 firebaseCrashlyticsPlugin = "3.0.6"
 firebaseBom = "34.17.0"
 coroutinesPlayServices = "1.7.3"
+playServicesAuthPhone = "18.1.0"
 
 [libraries]
+play-services-auth-api-phone = { group = "com.google.android.gms", name = "play-services-auth-api-phone", version.ref = "playServicesAuthPhone" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }

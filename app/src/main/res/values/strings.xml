@@ -14,7 +14,9 @@
     <string name="menu_contact">Contact Us</string>
 
     <!-- Add Ad Screen -->
-    <string name="images_label">Images:</string>
+    <string name="images_label">Ad images:</string>
+    <string name="cover_image_hint">Tap any image to make it the main image that appears first in listings</string>
+    <string name="cover_badge">Cover</string>
     <string name="add_image">Add Image</string>
     <string name="ad_title_label">Ad Title:</string>
     <string name="ad_text_label">Ad Text:</string>

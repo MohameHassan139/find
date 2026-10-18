@@ -17,6 +17,7 @@ import com.example.myapplication.databinding.ActivityConversationsBinding
 import com.example.myapplication.push.FcmService
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
+import com.example.myapplication.utils.SwipeRefreshHelper
 import com.example.myapplication.utils.toast
 
 class ConversationsActivity : BaseActivity() {
@@ -206,7 +207,7 @@ class ConversationsActivity : BaseActivity() {
 
     private fun setupObservers() {
         viewModel.conversations.observe(this) { result ->
-            binding.swipeRefresh.isRefreshing = false
+            SwipeRefreshHelper.stopRefreshing(binding.swipeRefresh)
             when (result) {
                 is Result.Loading -> showShimmer()
                 is Result.Success -> {
@@ -239,16 +240,27 @@ class ConversationsActivity : BaseActivity() {
     }
 
     private fun setupSwipeRefresh() {
-        binding.swipeRefresh.setOnRefreshListener { viewModel.loadConversations() }
-        binding.swipeRefresh.setColorSchemeResources(R.color.find_primary)
+        binding.swipeRefresh.setOnChildScrollUpCallback { _, _ ->
+            if (binding.rvConversations.visibility == View.VISIBLE) {
+                binding.rvConversations.canScrollVertically(-1)
+            } else if (binding.emptyScrollView.visibility == View.VISIBLE) {
+                binding.emptyScrollView.canScrollVertically(-1)
+            } else {
+                false
+            }
+        }
+        SwipeRefreshHelper.setup(binding.swipeRefresh) {
+            viewModel.loadConversations(isPullToRefresh = true) {
+                SwipeRefreshHelper.stopRefreshing(binding.swipeRefresh)
+            }
+        }
     }
 
     private fun showShimmer() {
         binding.shimmerLayout.visibility = View.VISIBLE
         binding.shimmerLayout.startShimmer()
         binding.rvConversations.visibility = View.GONE
-        binding.layoutEmpty.visibility = View.GONE
-        binding.layoutError.visibility = View.GONE
+        binding.emptyScrollView.visibility = View.GONE
     }
 
     private fun hideShimmer() {
@@ -258,12 +270,12 @@ class ConversationsActivity : BaseActivity() {
 
     private fun showContent() {
         binding.rvConversations.visibility = View.VISIBLE
-        binding.layoutEmpty.visibility = View.GONE
-        binding.layoutError.visibility = View.GONE
+        binding.emptyScrollView.visibility = View.GONE
     }
 
     private fun showEmpty() {
         binding.rvConversations.visibility = View.GONE
+        binding.emptyScrollView.visibility = View.VISIBLE
         binding.layoutEmpty.visibility = View.VISIBLE
         binding.layoutError.visibility = View.GONE
         if (viewModel.getCurrentFilter() == ConversationsViewModel.Filter.FAVORITE) {
@@ -275,6 +287,7 @@ class ConversationsActivity : BaseActivity() {
 
     private fun showError(message: String) {
         binding.rvConversations.visibility = View.GONE
+        binding.emptyScrollView.visibility = View.VISIBLE
         binding.layoutEmpty.visibility = View.GONE
         binding.layoutError.visibility = View.VISIBLE
         binding.tvErrorMessage.text = message

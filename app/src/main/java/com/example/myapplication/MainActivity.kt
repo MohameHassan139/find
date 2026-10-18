@@ -57,7 +57,7 @@ class MainActivity : BaseActivity() {
 
     private val gray = "#888888".toColorInt()
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(LocaleHelper.wrap(newBase))
+        super.attachBaseContext(newBase)
     }
 
     private val notificationPermissionLauncher = registerForActivityResult(
@@ -233,9 +233,14 @@ class MainActivity : BaseActivity() {
 
         setupProgressiveFilterStrips()
 
-        SwipeRefreshHelper.setup(binding.swipeRefreshListings) {
-            vm.fetchListings(reset = true)
+        val triggerHomeRefresh = {
+            vm.refreshHome {
+                SwipeRefreshHelper.stopRefreshing(binding.swipeRefreshListings)
+                SwipeRefreshHelper.stopRefreshing(binding.swipeRefreshEmpty)
+            }
         }
+        SwipeRefreshHelper.setup(binding.swipeRefreshListings) { triggerHomeRefresh() }
+        SwipeRefreshHelper.setup(binding.swipeRefreshEmpty) { triggerHomeRefresh() }
     }
 
     /**
@@ -247,7 +252,9 @@ class MainActivity : BaseActivity() {
         val strips = binding.llHomeFilterStrips
         binding.appBarFilters.addOnOffsetChangedListener(
             com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
-            binding.swipeRefreshListings.isEnabled = (verticalOffset == 0)
+            val atTop = (verticalOffset == 0)
+            binding.swipeRefreshListings.isEnabled = atTop
+            binding.swipeRefreshEmpty.isEnabled = atTop
             val scrolledAway = -verticalOffset
             for (i in 0 until strips.childCount) {
                 val row = strips.getChildAt(i)
@@ -368,12 +375,15 @@ class MainActivity : BaseActivity() {
         binding.llListingsShimmer.visibility = if (state == BodyState.LOADING)       View.VISIBLE else View.GONE
         binding.swipeRefreshListings.visibility = if (state == BodyState.ADS)        View.VISIBLE else View.GONE
         binding.rvListings.visibility        = if (state == BodyState.ADS)           View.VISIBLE else View.GONE
+        binding.swipeRefreshEmpty.visibility = if (state == BodyState.EMPTY)         View.VISIBLE else View.GONE
         binding.llEmptyState.visibility      = if (state == BodyState.EMPTY)         View.VISIBLE else View.GONE
         if (state == BodyState.LOADING) {
-            // A new query is loading — its results must start from the top.
-            binding.rvListings.stopScroll()
-            binding.rvListings.scrollToPosition(0)
-            startShimmer()
+            if (!binding.swipeRefreshListings.isRefreshing && !binding.swipeRefreshEmpty.isRefreshing) {
+                // A new query is loading — its results must start from the top.
+                binding.rvListings.stopScroll()
+                binding.rvListings.scrollToPosition(0)
+                startShimmer()
+            }
         } else {
             stopShimmer()
         }
@@ -447,7 +457,8 @@ class MainActivity : BaseActivity() {
 
         // No paging spinner under the list — pages append silently as you scroll.
         vm.listings.observe(this) { listings ->
-            binding.swipeRefreshListings.isRefreshing = false
+            SwipeRefreshHelper.stopRefreshing(binding.swipeRefreshListings)
+            SwipeRefreshHelper.stopRefreshing(binding.swipeRefreshEmpty)
             listingsAdapter.updateData(listings)
             // If a short page doesn't fill the screen the user can't scroll to
             // trigger the next one — keep filling until it does (or pages run out).
@@ -464,14 +475,16 @@ class MainActivity : BaseActivity() {
         }
 
         vm.isEmptyState.observe(this) { empty ->
-            binding.swipeRefreshListings.isRefreshing = false
+            SwipeRefreshHelper.stopRefreshing(binding.swipeRefreshListings)
+            SwipeRefreshHelper.stopRefreshing(binding.swipeRefreshEmpty)
             if (empty && pendingCategoryId == null && !isShowingSubGrid && vm.catIdx >= 0) {
                 applyBodyState(BodyState.EMPTY)
             }
         }
 
         vm.errorEvent.observe(this) { msg ->
-            binding.swipeRefreshListings.isRefreshing = false
+            SwipeRefreshHelper.stopRefreshing(binding.swipeRefreshListings)
+            SwipeRefreshHelper.stopRefreshing(binding.swipeRefreshEmpty)
             if (msg != null) {
                 androidx.appcompat.app.AlertDialog.Builder(this)
                     .setTitle(getString(R.string.error_data_title))
@@ -505,6 +518,7 @@ class MainActivity : BaseActivity() {
         subCategoryAdapter.updateData(cat.subCategories)
         buildSubTabs(cat)
         applyBodyState(BodyState.SUBCATEGORIES)
+        BottomNavHelper.setup(this, NavScreen.NONE)
     }
 
     fun resetToHome() {
@@ -516,6 +530,7 @@ class MainActivity : BaseActivity() {
         applyHomeFeedUi()
         applyBodyState(BodyState.LOADING)
         vm.fetchListings(reset = true)
+        BottomNavHelper.setup(this, NavScreen.HOME)
     }
 
     /** Home tab: all ads feed (no category grid). */
@@ -750,7 +765,7 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        BottomNavHelper.setup(this, NavScreen.HOME)
+        BottomNavHelper.setup(this, if (vm.catIdx == 0) NavScreen.HOME else NavScreen.NONE)
         loadFavoriteIds()
     }
 

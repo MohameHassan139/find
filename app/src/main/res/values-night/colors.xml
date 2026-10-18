@@ -10,6 +10,11 @@
     <!-- Client note: the icon box interior is black in dark mode -->
     <color name="category_icon_bg">#FF000000</color>
 
+    <!-- Cover image badge and border -->
+    <color name="cover_badge_bg">#ECC03D</color>
+    <color name="cover_badge_text">#FF000000</color>
+    <color name="cover_border">#ECC03D</color>
+
     <!-- Chat / UI colors -->
     <color name="bg_screen">#FF121212</color>
     <color name="settings_bg">#FF121212</color>
@@ -59,6 +64,8 @@
 
     <!-- Icon tint dark overrides -->
     <color name="icon_tint_muted">#FFAAAAAA</color>
+    <!-- Pure contrast icon tint (Very Black in Light mode #000000, Very White in Dark mode #FFFFFF) -->
+    <color name="icon_pure">#FFFFFFFF</color>
     <color name="error_red">#FFCF4444</color>
     <color name="toggle_active_green">#FF4CAF50</color>
     <color name="switch_inactive_track">#FF3E3E3E</color>

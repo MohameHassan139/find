@@ -39,6 +39,10 @@ class ListingRepository(private val api: FindApiService) {
         return ApiResult.Success(collected)
     }
 
+    /** Page 1 of GET /my-listings. Used for pull-to-refresh to replace the list. */
+    suspend fun myListingsPage(page: Int = 1): ApiResult<List<ListingItem>> =
+        apiCall({ api.getMyListings(page = page) }) { it.body()?.data?.items.orEmpty() }
+
     suspend fun delete(id: String): ApiResult<Unit> = apiCall { api.deleteListing(id) }
 
     /** Hide/unhide — PATCHes only `{"status": ...}`, never `images`. */

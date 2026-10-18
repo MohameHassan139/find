@@ -80,8 +80,17 @@ class MyAdsActivity : BaseActivity() {
         binding.btnEmptyAdd.setOnClickListener { openAddAd() }
         binding.ivEmptyAdd.setOnClickListener { openAddAd() }
         binding.rvAds.layoutManager = LinearLayoutManager(this)
+        binding.swipeRefresh.setOnChildScrollUpCallback { _, _ ->
+            if (binding.rvAds.visibility == View.VISIBLE) {
+                binding.rvAds.canScrollVertically(-1)
+            } else if (binding.emptyScrollView.visibility == View.VISIBLE) {
+                binding.emptyScrollView.canScrollVertically(-1)
+            } else {
+                false
+            }
+        }
         SwipeRefreshHelper.setup(binding.swipeRefresh) {
-            loadMyAds()
+            loadMyAds(isPullToRefresh = true)
         }
         loadMyAds()
     }
@@ -128,15 +137,11 @@ class MyAdsActivity : BaseActivity() {
     }
 
     private fun applyFilter() {
-        val filtered = allAds.filter { it.listingType == currentFilter }
+        val filtered = allAds.filter { (it.listingType ?: "offer").equals(currentFilter, ignoreCase = true) }
         if (filtered.isEmpty()) {
-            binding.swipeRefresh.isRefreshing = false
-            binding.swipeRefresh.visibility = View.GONE
             showEmpty(getString(R.string.empty_no_ads))
         } else {
-            binding.root.findViewById<View>(R.id.emptyView).visibility = View.GONE
-            binding.swipeRefresh.isRefreshing = false
-            binding.swipeRefresh.visibility = View.VISIBLE
+            binding.emptyScrollView.visibility = View.GONE
             binding.rvAds.visibility = View.VISIBLE
             binding.rvAds.adapter = MyAdsAdapter(filtered.toMutableList(),
                 onDelete = { item -> confirmDelete(item) },
@@ -149,29 +154,36 @@ class MyAdsActivity : BaseActivity() {
         }
     }
 
-    private fun loadMyAds() {
+    private fun loadMyAds(isPullToRefresh: Boolean = false) {
         if (TokenManager.getToken(this) == null) { 
-            binding.swipeRefresh.isRefreshing = false
+            SwipeRefreshHelper.stopRefreshing(binding.swipeRefresh)
             showEmpty(getString(R.string.login_required_first))
             return 
         }
-        showLoading()
+        if (!isPullToRefresh && allAds.isEmpty()) {
+            showLoading()
+        }
         lifecycleScope.launch {
-            when (val result = AppContainer.listings.myListings()) {
+            val result = if (isPullToRefresh) {
+                AppContainer.listings.myListingsPage(1)
+            } else {
+                AppContainer.listings.myListings()
+            }
+            binding.progressBar.visibility = View.GONE
+            SwipeRefreshHelper.stopRefreshing(binding.swipeRefresh)
+            when (result) {
                 is ApiResult.Success -> {
                     allAds = result.data
-                    binding.progressBar.visibility = View.GONE
-                    binding.swipeRefresh.isRefreshing = false
                     if (allAds.isEmpty()) showEmpty(getString(R.string.empty_no_ads))
                     else applyFilter()
                 }
                 is ApiResult.HttpError -> {
-                    binding.swipeRefresh.isRefreshing = false
-                    showEmpty(getString(R.string.error_failed_to_load, result.code))
+                    if (!isPullToRefresh && allAds.isEmpty()) showEmpty(getString(R.string.error_failed_to_load, result.code))
+                    else toast(getString(R.string.error_failed_to_load, result.code))
                 }
                 is ApiResult.NetworkError -> {
-                    binding.swipeRefresh.isRefreshing = false
-                    showEmpty(getString(R.string.error_server_unreachable))
+                    if (!isPullToRefresh && allAds.isEmpty()) showEmpty(getString(R.string.error_server_unreachable))
+                    else toast(R.string.error_server_unreachable)
                 }
             }
         }
@@ -235,18 +247,15 @@ class MyAdsActivity : BaseActivity() {
     }
 
     private fun showLoading() {
-        if (!binding.swipeRefresh.isRefreshing) {
-            binding.progressBar.visibility = View.VISIBLE
-        }
-        binding.root.findViewById<View>(R.id.emptyView).visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+        binding.emptyScrollView.visibility = View.GONE
+        binding.rvAds.visibility = View.GONE
     }
 
     private fun showEmpty(msg: String) {
-        binding.swipeRefresh.isRefreshing = false
-        binding.swipeRefresh.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
         binding.rvAds.visibility = View.GONE
-        binding.root.findViewById<View>(R.id.emptyView).visibility = View.VISIBLE
+        binding.emptyScrollView.visibility = View.VISIBLE
         binding.tvEmpty.text = msg
     }
 }

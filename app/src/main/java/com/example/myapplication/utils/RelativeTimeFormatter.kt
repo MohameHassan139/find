@@ -22,19 +22,20 @@ object RelativeTimeFormatter {
     // Locale.US so parsing never depends on the device's digit system.
     private val isoParser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
         .apply { timeZone = TimeZone.getTimeZone("UTC") }
-    private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
 
     @Synchronized
     fun format(context: Context, isoDate: String?): String {
         if (isoDate.isNullOrEmpty()) return ""
         val date = runCatching { isoParser.parse(isoDate.take(19)) }.getOrNull() ?: return ""
         val seconds = (System.currentTimeMillis() - date.time) / 1000
-        return when {
+        val raw = when {
             seconds < MINUTE -> context.getString(R.string.time_now)
-            seconds < HOUR -> context.getString(R.string.time_minutes, seconds / MINUTE)
-            seconds < DAY -> context.getString(R.string.time_hours, seconds / HOUR)
-            seconds < MONTH -> context.getString(R.string.time_days, seconds / DAY)
+            seconds < HOUR -> String.format(Locale.US, context.getString(R.string.time_minutes), seconds / MINUTE)
+            seconds < DAY -> String.format(Locale.US, context.getString(R.string.time_hours), seconds / HOUR)
+            seconds < MONTH -> String.format(Locale.US, context.getString(R.string.time_days), seconds / DAY)
             else -> dateFormat.format(date)
         }
+        return LocaleHelper.toEnglishNumbers(raw)
     }
 }

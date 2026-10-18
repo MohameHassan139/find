@@ -1,5 +1,6 @@
 package com.example.myapplication.chat.utils
 
+import com.example.myapplication.utils.LocaleHelper
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -9,20 +10,20 @@ object DateUtils {
         if (dateString.isNullOrEmpty()) return ""
         return try {
             val inputFormats = listOf(
-                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.getDefault()),
-                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()),
-                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.US),
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US),
+                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
             )
             var date: Date? = null
             for (fmt in inputFormats) {
                 fmt.timeZone = TimeZone.getTimeZone("UTC")
                 try { date = fmt.parse(dateString); break } catch (_: Exception) {}
             }
-            if (date == null) return dateString
-            val outputFmt = SimpleDateFormat("h:mm a", Locale.getDefault())
-            outputFmt.format(date)
+            if (date == null) return LocaleHelper.toEnglishNumbers(dateString)
+            val outputFmt = SimpleDateFormat("h:mm a", Locale.US)
+            LocaleHelper.toEnglishNumbers(outputFmt.format(date))
         } catch (e: Exception) {
-            dateString
+            LocaleHelper.toEnglishNumbers(dateString)
         }
     }
 
@@ -33,32 +34,33 @@ object DateUtils {
         if (dateString.isNullOrEmpty()) return ""
         return try {
             val inputFormats = listOf(
-                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.getDefault()),
-                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()),
-                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.US),
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US),
+                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
             )
             var date: Date? = null
             for (fmt in inputFormats) {
                 fmt.timeZone = TimeZone.getTimeZone("UTC")
                 try { date = fmt.parse(dateString); break } catch (_: Exception) {}
             }
-            if (date == null) return dateString
+            if (date == null) return LocaleHelper.toEnglishNumbers(dateString)
             val calendar = Calendar.getInstance()
             val today = Calendar.getInstance()
             calendar.time = date
-            return when {
+            val text = when {
                 isSameDay(calendar, today) -> {
-                    val fmt = SimpleDateFormat("h:mm a", Locale.getDefault())
+                    val fmt = SimpleDateFormat("h:mm a", Locale.US)
                     fmt.format(date)
                 }
                 isYesterday(calendar, today) -> yesterdayLabel
                 else -> {
-                    val fmt = SimpleDateFormat("dd/MM", Locale.getDefault())
+                    val fmt = SimpleDateFormat("dd/MM", Locale.US)
                     fmt.format(date)
                 }
             }
+            LocaleHelper.toEnglishNumbers(text)
         } catch (e: Exception) {
-            dateString
+            LocaleHelper.toEnglishNumbers(dateString)
         }
     }
 

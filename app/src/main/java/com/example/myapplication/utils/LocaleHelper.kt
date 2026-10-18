@@ -55,10 +55,12 @@ object LocaleHelper {
      * Apply the saved locale to the AppCompat framework.
      * Call this early in Application.onCreate() or in each Activity.onCreate()
      * BEFORE setContentView().
+     * Forces Latin numerals ("ar-u-nu-latn") so all app numbers remain in English.
      */
     fun applyLocale(context: Context) {
         val lang = getLanguage(context)
-        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(lang))
+        val tag = if (lang == "ar") "ar-u-nu-latn" else lang
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
     }
 
     /**
@@ -67,7 +69,8 @@ object LocaleHelper {
      */
     fun setLanguage(context: Context, languageCode: String) {
         saveLanguage(context, languageCode)
-        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(languageCode))
+        val tag = if (languageCode == "ar") "ar-u-nu-latn" else languageCode
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
     }
 
     /**
@@ -76,15 +79,44 @@ object LocaleHelper {
      */
     fun wrap(context: Context): Context {
         val lang = getLanguage(context)
-        val locale = Locale(lang)
+        val locale = if (lang == "ar") {
+            Locale.forLanguageTag("ar-u-nu-latn")
+        } else {
+            Locale(lang)
+        }
         Locale.setDefault(locale)
 
         val config = Configuration(context.resources.configuration)
         config.setLocale(locale)
         config.setLocales(LocaleList(locale))
-        config.setLayoutDirection(locale)
+        config.setLayoutDirection(if (lang == "ar") Locale("ar") else locale)
 
         return context.createConfigurationContext(config)
+    }
+
+    /**
+     * Replaces any Arabic-Indic ('٠'..'٩') and Eastern Arabic/Persian ('۰'..'۹')
+     * numerals with Western Latin/English digits ('0'..'9').
+     */
+    fun toEnglishNumbers(text: String?): String {
+        if (text.isNullOrEmpty()) return ""
+        val arabic = charArrayOf('٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩')
+        val persian = charArrayOf('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹')
+        val english = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+        val chars = text.toCharArray()
+        for (i in chars.indices) {
+            val c = chars[i]
+            val aIdx = arabic.indexOf(c)
+            if (aIdx != -1) {
+                chars[i] = english[aIdx]
+                continue
+            }
+            val pIdx = persian.indexOf(c)
+            if (pIdx != -1) {
+                chars[i] = english[pIdx]
+            }
+        }
+        return String(chars)
     }
 
     /**

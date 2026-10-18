@@ -199,17 +199,9 @@ class SearchActivity : BaseActivity() {
         }
     }
 
-    // ── SwipeRefresh ─────────────────────────────────────────────────────────
-
+    // ── Pull-to-refresh: not enabled on search results ───────────────────────
     private fun setupSwipeRefresh() {
-        SwipeRefreshHelper.setup(binding.swipeRefresh) {
-            val q = binding.etSearchQuery.text?.toString()?.trim() ?: ""
-            if (q.isNotBlank()) {
-                vm.search(q)
-            } else {
-                binding.swipeRefresh.isRefreshing = false
-            }
-        }
+        binding.swipeRefresh.isEnabled = false
     }
 
     // ── Observers ─────────────────────────────────────────────────────────────

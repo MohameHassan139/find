@@ -66,28 +66,43 @@
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/tvImagesHint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="@string/cover_image_hint"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
                 <!-- Scrollable Horizontal Gallery for images -->
                 <HorizontalScrollView
+                    android:id="@+id/hsvGallery"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
                     android:scrollbars="none">
 
                     <LinearLayout
                         android:id="@+id/llImageGallery"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
                         android:orientation="horizontal">
 
                         <!-- Add Image Button -->
                         <LinearLayout
                             android:id="@+id/llAddImageBtn"
-                            android:layout_width="72dp"
-                            android:layout_height="72dp"
+                            android:layout_width="68dp"
+                            android:layout_height="68dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
                             android:background="@drawable/bg_image_add_btn"
                             android:gravity="center"
                             android:orientation="vertical"
-                            android:layout_marginEnd="8dp"
                             android:clickable="true"
                             android:focusable="true">
 
@@ -335,7 +350,7 @@
         layout="@layout/layout_bottom_nav"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
+        android:layout_marginHorizontal="0dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -54,6 +54,7 @@
         <activity android:name=".AddAdActivity" android:exported="false" />
         <activity android:name=".LocationSelectionActivity" android:exported="false" />
         <activity android:name=".CategorySelectionActivity" android:exported="false" />
+        <activity android:name=".widgets.LiquidGlassTestActivity" android:exported="true" />
         <activity
             android:name=".ListingDetailActivity"
             android:exported="true"
