@@ -179,6 +179,24 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     // ── Filter state ──────────────────────────────────────────────────────────
 
+    var activeSearchQuery: String = ""
+        private set
+
+    val isSearching: Boolean get() = activeSearchQuery.isNotBlank()
+
+    fun search(query: String) {
+        val trimmed = query.trim()
+        if (trimmed == activeSearchQuery) return
+        activeSearchQuery = trimmed
+        fetchListings(reset = true)
+    }
+
+    fun clearSearch() {
+        if (activeSearchQuery.isEmpty()) return
+        activeSearchQuery = ""
+        fetchListings(reset = true)
+    }
+
     var catIdx: Int = 0
         private set
     var catSubIdx: Int? = null
@@ -400,6 +418,63 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun fetchListings(reset: Boolean = true, isPullToRefresh: Boolean = false) {
         if (isFetching) return
 
+        if (isSearching) {
+            if (reset) {
+                currentPage = 1
+                if (!isPullToRefresh) {
+                    _listings.value = emptyList()
+                    _isFirstPageLoading.value = true
+                    _isEmptyState.value = false
+                }
+            } else {
+                currentPage++
+                _isPagingLoading.value = true
+            }
+
+            isFetching = true
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    val res = AppContainer.catalog.search(
+                        query = activeSearchQuery,
+                        page = currentPage,
+                        limit = PAGE_SIZE,
+                        regionId = catRegId,
+                        listingType = catType
+                    )
+                    withContext(Dispatchers.Main) {
+                        if (res is ApiResult.Success) {
+                            lastPage = res.data.lastPage
+                            var newItems = res.data.items
+                            if (catRegId != null) {
+                                newItems = newItems.filter { it.regionId == null || it.regionId == catRegId }
+                            }
+                            val current = if (reset) emptyList() else (_listings.value ?: emptyList())
+                            val combined = current + newItems
+                            _listings.value = combined
+                            _isEmptyState.value = combined.isEmpty()
+                        } else {
+                            if (!reset) currentPage--
+                            if (reset) {
+                                _listings.value = emptyList()
+                                _isEmptyState.value = true
+                            }
+                        }
+                        _isFirstPageLoading.value = false
+                        _isPagingLoading.value = false
+                        isFetching = false
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        if (!reset) currentPage--
+                        _isFirstPageLoading.value = false
+                        _isPagingLoading.value = false
+                        isFetching = false
+                    }
+                }
+            }
+            return
+        }
+
         val isHomeFeed = catIdx == 0
         val cats = _categories.value
         if (!isHomeFeed) {
@@ -502,9 +577,18 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                     // back so the next scroll retries this page instead of
                     // skipping it — currentPage was incremented before the call.
                     withContext(Dispatchers.Main) { currentPage-- }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        _listings.value = emptyList()
+                        _isEmptyState.value = true
+                    }
                 }
             } catch (_: Exception) {
                 if (!reset) withContext(Dispatchers.Main) { currentPage-- }
+                else withContext(Dispatchers.Main) {
+                    _listings.value = emptyList()
+                    _isEmptyState.value = true
+                }
             } finally {
                 // Always clear the loading flags, on every exit path.
                 withContext(Dispatchers.Main) {

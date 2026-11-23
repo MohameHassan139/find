@@ -29,12 +29,18 @@ import com.example.myapplication.adapters.ExtraTabAdapter
 import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.push.PushTokenManager
+import com.example.myapplication.push.FcmService
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.utils.AuthGuard
 import com.example.myapplication.utils.SwipeRefreshHelper
 import com.example.myapplication.widgets.StrokeTextView
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import androidx.core.widget.addTextChangedListener
 import com.example.myapplication.data.AppContainer
 
 class MainActivity : BaseActivity() {
@@ -54,6 +60,7 @@ class MainActivity : BaseActivity() {
     private var regionItems: List<RegionItem> = emptyList()
     private var pendingCategoryId: Int? = null
     private var isShowingSubGrid = false
+    private var searchJob: Job? = null
 
     private val gray = "#888888".toColorInt()
     override fun attachBaseContext(newBase: Context) {
@@ -92,8 +99,10 @@ class MainActivity : BaseActivity() {
         lifecycleScope.launch { PushTokenManager.refreshAndUploadIfNeeded(this@MainActivity) }
         if (savedInstanceState == null) {
             handleDeepLink(intent)
+            handlePushNotificationIntent(intent)
         }
         handleIncomingCategoryIntent(intent)
+        handleSearchFocusIntent(intent)
         handleNavigationIntent(intent)
     }
 
@@ -108,16 +117,71 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setupSearch() {
-        binding.etSearch.isFocusable = false
-        binding.etSearch.isFocusableInTouchMode = false
+        binding.etSearch.isFocusable = true
+        binding.etSearch.isFocusableInTouchMode = true
+        binding.etSearch.isClickable = true
 
-        val searchIntent = Intent(this, SearchActivity::class.java)
         binding.llSearchContainer.setOnClickListener {
-            startWithPush(searchIntent)
+            binding.etSearch.requestFocus()
+            showKeyboard()
         }
-        binding.etSearch.setOnClickListener {
-            startWithPush(searchIntent)
+
+        binding.btnClearSearch.setOnClickListener {
+            binding.etSearch.setText("")
+            hideKeyboard()
+            vm.clearSearch()
         }
+
+        binding.etSearch.addTextChangedListener { text ->
+            val q = text?.toString()?.trim().orEmpty()
+            binding.btnClearSearch.visibility = if (q.isNotEmpty()) View.VISIBLE else View.GONE
+
+            searchJob?.cancel()
+            if (q.isEmpty()) {
+                if (vm.isSearching) {
+                    vm.clearSearch()
+                }
+            } else {
+                searchJob = lifecycleScope.launch {
+                    delay(400) // 400ms debounce matching iOS
+                    if (isShowingSubGrid) {
+                        isShowingSubGrid = false
+                        applyBodyState(BodyState.LOADING)
+                    }
+                    vm.search(q)
+                }
+            }
+        }
+
+        binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                hideKeyboard()
+                val q = binding.etSearch.text?.toString()?.trim().orEmpty()
+                searchJob?.cancel()
+                if (q.isNotEmpty()) {
+                    if (isShowingSubGrid) {
+                        isShowingSubGrid = false
+                        applyBodyState(BodyState.LOADING)
+                    }
+                    vm.search(q)
+                } else {
+                    vm.clearSearch()
+                }
+                true
+            } else false
+        }
+    }
+
+    private fun showKeyboard() {
+        binding.etSearch.post {
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.showSoftInput(binding.etSearch, InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(binding.etSearch.windowToken, 0)
     }
 
     /** Handle incoming category selection from HomeHeaderHelper on other screens */
@@ -200,6 +264,10 @@ class MainActivity : BaseActivity() {
         applyContentBottomInset()
 
         topTabAdapter = TopTabAdapter(emptyList(), 0) { cat ->
+            if (binding.etSearch.text?.isNotBlank() == true) {
+                binding.etSearch.setText("")
+                hideKeyboard()
+            }
             val cats = vm.categories.value ?: emptyList()
             val idx = if (cat == null) 0 else (cats.indexOf(cat) + 1)
             if (idx == 0) {
@@ -312,7 +380,7 @@ class MainActivity : BaseActivity() {
         nav.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
             val margin = (v.layoutParams as? android.view.ViewGroup.MarginLayoutParams)?.bottomMargin ?: 0
             val bottom = v.height + margin + extra
-            listOf(binding.rvListings, binding.rvCategoryGrid, binding.rvSubCategoryGrid).forEach { rv ->
+            listOf(binding.rvListings, binding.rvCategoryGrid, binding.rvSubCategoryGrid, binding.llEmptyState).forEach { rv ->
                 if (rv.paddingBottom != bottom) {
                     rv.setPadding(rv.paddingLeft, rv.paddingTop, rv.paddingRight, bottom)
                 }
@@ -404,9 +472,9 @@ class MainActivity : BaseActivity() {
             
             val pending = pendingCategoryId
             if (pending != null) {
+                pendingCategoryId = null
                 val cat = cats.find { it.id == pending }
                 if (cat != null && cat.subCategories.isNotEmpty()) {
-                    pendingCategoryId = null
                     isShowingSubGrid = true
                     subCategoryAdapter.updateData(cat.subCategories)
                     buildSubTabs(cat)
@@ -422,8 +490,11 @@ class MainActivity : BaseActivity() {
                 if (currentCat != null) {
                     subCategoryAdapter.updateData(currentCat.subCategories)
                     buildSubTabs(currentCat)
-                    if (isShowingSubGrid) {
+                    if (isShowingSubGrid && currentCat.subCategories.isNotEmpty()) {
                         applyBodyState(BodyState.SUBCATEGORIES)
+                    } else if (isShowingSubGrid && currentCat.subCategories.isEmpty()) {
+                        isShowingSubGrid = false
+                        showListingsMode()
                     } else {
                         binding.llFilterBar.visibility = View.VISIBLE
                         binding.llRegionRow.visibility = View.VISIBLE
@@ -508,20 +579,34 @@ class MainActivity : BaseActivity() {
     }
 
     private fun openCategory(cat: ApiCategory) {
+        if (binding.etSearch.text?.isNotBlank() == true) {
+            binding.etSearch.setText("")
+            hideKeyboard()
+        }
         scrollContentToTop()
         val cats = vm.categories.value ?: return
         val pos = cats.indexOf(cat)
         vm.selectTopCategory(pos + 1)
         topTabAdapter.update(cats, pos + 1)
         
-        isShowingSubGrid = true
-        subCategoryAdapter.updateData(cat.subCategories)
-        buildSubTabs(cat)
-        applyBodyState(BodyState.SUBCATEGORIES)
+        if (cat.subCategories.isEmpty()) {
+            isShowingSubGrid = false
+            buildSubTabs(cat)
+            showListingsMode()
+        } else {
+            isShowingSubGrid = true
+            subCategoryAdapter.updateData(cat.subCategories)
+            buildSubTabs(cat)
+            applyBodyState(BodyState.SUBCATEGORIES)
+        }
         BottomNavHelper.setup(this, NavScreen.NONE)
     }
 
     fun resetToHome() {
+        if (binding.etSearch.text?.isNotBlank() == true) {
+            binding.etSearch.setText("")
+            hideKeyboard()
+        }
         scrollContentToTop()
         val cats = vm.categories.value ?: emptyList()
         vm.selectTopCategory(0)
@@ -725,6 +810,7 @@ class MainActivity : BaseActivity() {
 
     companion object {
         const val EXTRA_CATEGORY_IDX = "extra_category_idx"
+        const val EXTRA_FOCUS_SEARCH = "extra_focus_search"
         private const val KEY_IS_SHOWING_SUB_GRID = "key_is_showing_sub_grid"
         /** Start loading the next page when this many rows remain below the viewport. */
         private const val PREFETCH_DISTANCE = 5
@@ -773,8 +859,39 @@ class MainActivity : BaseActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         handleDeepLink(intent)
+        handlePushNotificationIntent(intent)
         handleIncomingCategoryIntent(intent)
+        handleSearchFocusIntent(intent)
         handleNavigationIntent(intent)
+    }
+
+    private fun handleSearchFocusIntent(intent: Intent?) {
+        if (intent?.getBooleanExtra(EXTRA_FOCUS_SEARCH, false) == true) {
+            binding.etSearch.requestFocus()
+            showKeyboard()
+        }
+    }
+
+    private fun handlePushNotificationIntent(intent: Intent?) {
+        if (intent == null) return
+        val conversationId = intent.getStringExtra("conversation_id")
+            ?: intent.getStringExtra("target_id")
+            ?: intent.getStringExtra(FcmService.EXTRA_OPEN_CONVERSATION_ID)
+        val targetType = intent.getStringExtra("target_type")
+        if (!conversationId.isNullOrBlank() || targetType == "conversation") {
+            val targetId = conversationId ?: intent.getStringExtra("target_id")
+            intent.removeExtra("conversation_id")
+            intent.removeExtra("target_id")
+            intent.removeExtra("target_type")
+            intent.removeExtra(FcmService.EXTRA_OPEN_CONVERSATION_ID)
+            val chatIntent = Intent(this, com.example.myapplication.chat.ui.conversations.ConversationsActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                if (!targetId.isNullOrBlank()) {
+                    putExtra(FcmService.EXTRA_OPEN_CONVERSATION_ID, targetId)
+                }
+            }
+            startActivity(chatIntent)
+        }
     }
 
     private fun handleDeepLink(intent: Intent?) {
@@ -795,6 +912,9 @@ class MainActivity : BaseActivity() {
         val navScreenStr = intent.getStringExtra("EXTRA_NAV_SCREEN") ?: return
         intent.removeExtra("EXTRA_NAV_SCREEN")
         when (navScreenStr) {
+            "HOME" -> {
+                resetToHome()
+            }
             "ADD" -> {
                 startActivity(Intent(this, AddAdActivity::class.java))
                 @Suppress("DEPRECATION")

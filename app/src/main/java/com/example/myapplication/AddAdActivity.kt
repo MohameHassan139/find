@@ -43,6 +43,9 @@ class AddAdActivity : BaseActivity() {
         const val EXTRA_CITY = "listing_city"
         const val EXTRA_TYPE = "listing_type"
         const val EXTRA_IMAGES = "listing_images"
+        const val EXTRA_REGION_ID = "listing_region_id"
+        const val EXTRA_CATEGORY_ID = "listing_category_id"
+        const val EXTRA_SUB_CATEGORY_ID = "listing_sub_category_id"
     }
 
     private lateinit var binding: ActivityAddAdBinding
@@ -131,8 +134,41 @@ class AddAdActivity : BaseActivity() {
             binding.etAdDescription.setText(intent.getStringExtra(EXTRA_DESC) ?: "")
             binding.etPrice.setText(intent.getStringExtra(EXTRA_PRICE) ?: "")
             selectedLocation = intent.getStringExtra(EXTRA_CITY) ?: ""
+            selectedCityName = selectedLocation
+            selectedRegionId = intent.getIntExtra(EXTRA_REGION_ID, 1)
             adType = intent.getStringExtra(EXTRA_TYPE) ?: "offer"
             if (selectedLocation.isNotEmpty()) binding.tvLocationText.text = selectedLocation
+
+            val catId = intent.getIntExtra(EXTRA_CATEGORY_ID, 0)
+            val subId = intent.getIntExtra(EXTRA_SUB_CATEGORY_ID, -1)
+            if (catId > 0) {
+                selectedCategoryId = catId
+                selectedSubCategoryId = subId
+                sharedVm.categories.observe(this) { cats ->
+                    val cat = cats.find { it.id == catId }
+                    if (cat != null) {
+                        val sub = cat.subCategories.find { it.id == subId }
+                        val label = buildString {
+                            append(LocaleHelper.localizedName(this@AddAdActivity, cat.nameAr, cat.nameEn))
+                            if (sub != null) {
+                                append(" / ")
+                                append(LocaleHelper.localizedName(this@AddAdActivity, sub.nameAr, sub.nameEn))
+                            }
+                            if (adType.isNotEmpty()) {
+                                append(" / ")
+                                append(
+                                    if (adType == "offer") LocaleHelper.localizedName(this@AddAdActivity, "عرض", "Offer")
+                                    else LocaleHelper.localizedName(this@AddAdActivity, "طلب", "Request")
+                                )
+                            }
+                        }
+                        selectedCategory = label
+                        binding.tvCategoryText.text = label
+                        updatePublishButtonState()
+                    }
+                }
+            }
+
             val imgs = intent.getStringArrayListExtra(EXTRA_IMAGES) ?: arrayListOf()
             imgs.forEach { url ->
                 if (url.isNotBlank()) galleryItems.add(GalleryItem(url = url))

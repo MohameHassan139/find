@@ -395,6 +395,9 @@ class MyAdsAdapter(
                 putExtra(AddAdActivity.EXTRA_PRICE, item.price?.let(PriceFormatter::plain) ?: "")
                 putExtra(AddAdActivity.EXTRA_CITY, item.city ?: "")
                 putExtra(AddAdActivity.EXTRA_TYPE, item.listingType ?: "offer")
+                putExtra(AddAdActivity.EXTRA_REGION_ID, item.regionId ?: item.region?.id ?: 1)
+                putExtra(AddAdActivity.EXTRA_CATEGORY_ID, item.categoryId ?: 0)
+                putExtra(AddAdActivity.EXTRA_SUB_CATEGORY_ID, item.subCategoryId ?: -1)
                 putStringArrayListExtra(AddAdActivity.EXTRA_IMAGES, ArrayList(item.images ?: emptyList()))
             }
             onEdit(intent)

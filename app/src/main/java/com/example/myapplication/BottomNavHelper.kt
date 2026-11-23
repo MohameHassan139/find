@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import com.example.myapplication.auth.TokenManager
+import com.example.myapplication.chat.ui.conversations.ConversationsActivity
 import com.example.myapplication.data.AppContainer
 import com.example.myapplication.utils.AuthGuard
 import com.example.myapplication.widgets.LiquidGlassBottomBar
@@ -93,10 +94,7 @@ object BottomNavHelper {
             }
             NavScreen.ADD -> {
                 if (current == NavScreen.ADD) return
-                val targetIntent = Intent(activity, MainActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    putExtra("EXTRA_NAV_SCREEN", "ADD")
-                }
+                val targetIntent = Intent(activity, AddAdActivity::class.java)
                 AuthGuard.requireLogin(activity, targetIntent) {
                     activity.startActivity(targetIntent)
                     @Suppress("DEPRECATION")
@@ -105,10 +103,7 @@ object BottomNavHelper {
             }
             NavScreen.CHAT -> {
                 if (current == NavScreen.CHAT) return
-                val targetIntent = Intent(activity, MainActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    putExtra("EXTRA_NAV_SCREEN", "CHAT")
-                }
+                val targetIntent = Intent(activity, ConversationsActivity::class.java)
                 AuthGuard.requireLogin(activity, targetIntent) {
                     activity.startActivity(targetIntent)
                     @Suppress("DEPRECATION")

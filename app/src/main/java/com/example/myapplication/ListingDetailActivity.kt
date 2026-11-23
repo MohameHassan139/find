@@ -119,7 +119,11 @@ class ListingDetailActivity : BaseActivity() {
 
         // Search bar click
         binding.llHomeSearchContainer.setOnClickListener {
-            startWithPush(Intent(this, SearchActivity::class.java))
+            val intent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra(MainActivity.EXTRA_FOCUS_SEARCH, true)
+            }
+            startWithPush(intent)
         }
 
         // HomeHeaderHelper wires category tabs (rvHomeTopTabs) and search container
@@ -169,8 +173,66 @@ class ListingDetailActivity : BaseActivity() {
         }
         binding.btnFavoriteDetail.setOnClickListener(toggleFavorite)
         binding.ivFavoriteDetail.setOnClickListener(toggleFavorite)
-        binding.btnShareDetail.setOnClickListener {
+        binding.stickyBtnFavoriteDetail.setOnClickListener(toggleFavorite)
+        binding.stickyIvFavoriteDetail.setOnClickListener(toggleFavorite)
+
+        val onShare: (View) -> Unit = {
             shareListing()
+        }
+        binding.btnShareDetail.setOnClickListener(onShare)
+        binding.stickyBtnShareDetail.setOnClickListener(onShare)
+
+        setupStickyScroll()
+    }
+
+    private fun setupStickyScroll() {
+        binding.nsvContent.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+            val cardTop = binding.cardDetails.top
+            val headerBottom = binding.clShadedHeader.bottom
+            val row1Start = if (headerBottom > 0) cardTop + headerBottom else (cardTop + binding.llActionBar.top)
+            val shouldShowSticky = row1Start > 0 && scrollY >= row1Start
+
+            if (shouldShowSticky) {
+                if (binding.cvStickyActionBars.visibility != View.VISIBLE) {
+                    binding.cvStickyActionBars.alpha = 0f
+                    binding.cvStickyActionBars.visibility = View.VISIBLE
+                    binding.cvStickyActionBars.animate().alpha(1f).setDuration(120).start()
+                }
+
+                // Check if the ad has an image
+                val hasImages = binding.cvImageContainer.visibility == View.VISIBLE
+                val row1Height = if (binding.stickyLlActionBar.height > 0) {
+                    binding.stickyLlActionBar.height
+                } else {
+                    (60 * resources.displayMetrics.density).toInt()
+                }
+
+                val row2Start = cardTop + binding.rlFavoriteAndIndicator.top
+                val shouldShowRow2 = !hasImages || (scrollY >= (row2Start - row1Height))
+
+                if (shouldShowRow2) {
+                    if (binding.stickyRlFavoriteAndIndicator.visibility != View.VISIBLE) {
+                        binding.stickyDivider.visibility = View.VISIBLE
+                        binding.stickyRlFavoriteAndIndicator.alpha = 0f
+                        binding.stickyRlFavoriteAndIndicator.visibility = View.VISIBLE
+                        binding.stickyRlFavoriteAndIndicator.animate().alpha(1f).setDuration(150).start()
+                    }
+                } else {
+                    if (binding.stickyRlFavoriteAndIndicator.visibility == View.VISIBLE) {
+                        binding.stickyDivider.visibility = View.GONE
+                        binding.stickyRlFavoriteAndIndicator.visibility = View.GONE
+                        binding.stickyRlFavoriteAndIndicator.alpha = 1f
+                    }
+                }
+            } else {
+                if (binding.cvStickyActionBars.visibility != View.GONE) {
+                    binding.cvStickyActionBars.visibility = View.GONE
+                    binding.cvStickyActionBars.alpha = 1f
+                    binding.stickyDivider.visibility = View.GONE
+                    binding.stickyRlFavoriteAndIndicator.visibility = View.GONE
+                    binding.stickyRlFavoriteAndIndicator.alpha = 1f
+                }
+            }
         }
     }
 
@@ -230,18 +292,22 @@ class ListingDetailActivity : BaseActivity() {
         // Call button — grey out if no phone or call disabled
         val callAvailable = !phone.isNullOrEmpty() && l.callEnabled
         setContactButtonState(binding.ivCall, binding.tvCall, callAvailable)
-        binding.btnCall.setOnClickListener {
+        setContactButtonState(binding.stickyIvCall, binding.stickyTvCall, callAvailable)
+        val onCall: (View) -> Unit = {
             if (callAvailable) {
                 startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")))
             } else {
                 toast(R.string.phone_not_available)
             }
         }
+        binding.btnCall.setOnClickListener(onCall)
+        binding.stickyBtnCall.setOnClickListener(onCall)
 
         // WhatsApp button — grey out if not enabled
         val waAvailable = !phone.isNullOrEmpty() && l.whatsappEnabled
         setContactButtonState(binding.ivWhatsapp, binding.tvWhatsapp, waAvailable)
-        binding.btnWhatsapp.setOnClickListener {
+        setContactButtonState(binding.stickyIvWhatsapp, binding.stickyTvWhatsapp, waAvailable)
+        val onWhatsapp: (View) -> Unit = {
             if (waAvailable) {
                 val num = phone!!.replace(Regex("[^\\d+]"), "")
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/$num")))
@@ -249,12 +315,18 @@ class ListingDetailActivity : BaseActivity() {
                 toast(R.string.whatsapp_not_available)
             }
         }
+        binding.btnWhatsapp.setOnClickListener(onWhatsapp)
+        binding.stickyBtnWhatsapp.setOnClickListener(onWhatsapp)
 
         // Chat always available
-        binding.ivChat.setColorFilter(androidx.core.content.ContextCompat.getColor(this, R.color.appbar_icon_tint))
-        binding.btnChat.setOnClickListener {
+        val chatColor = androidx.core.content.ContextCompat.getColor(this, R.color.appbar_icon_tint)
+        binding.ivChat.setColorFilter(chatColor)
+        binding.stickyIvChat.setColorFilter(chatColor)
+        val onChat: (View) -> Unit = {
             startConversation(l.id)
         }
+        binding.btnChat.setOnClickListener(onChat)
+        binding.stickyBtnChat.setOnClickListener(onChat)
 
         updateNavigationArrows()
 
@@ -270,21 +342,32 @@ class ListingDetailActivity : BaseActivity() {
         val canGoPrev = siblingIds.isNotEmpty() && currentIndex > 0
         val canGoNext = siblingIds.isNotEmpty() && currentIndex in 0 until (siblingIds.size - 1)
 
-        binding.btnPrev.isEnabled = canGoPrev
-        binding.btnPrev.alpha = if (canGoPrev) 1.0f else 0.22f
-        binding.btnPrev.setOnClickListener {
+        val onPrev: (View) -> Unit = {
             if (canGoPrev) {
                 navigateToSibling(currentIndex - 1)
             }
         }
-
-        binding.btnNext.isEnabled = canGoNext
-        binding.btnNext.alpha = if (canGoNext) 1.0f else 0.22f
-        binding.btnNext.setOnClickListener {
+        val onNext: (View) -> Unit = {
             if (canGoNext) {
                 navigateToSibling(currentIndex + 1)
             }
         }
+
+        binding.btnPrev.isEnabled = canGoPrev
+        binding.btnPrev.alpha = if (canGoPrev) 1.0f else 0.22f
+        binding.btnPrev.setOnClickListener(onPrev)
+
+        binding.stickyBtnPrev.isEnabled = canGoPrev
+        binding.stickyBtnPrev.alpha = if (canGoPrev) 1.0f else 0.22f
+        binding.stickyBtnPrev.setOnClickListener(onPrev)
+
+        binding.btnNext.isEnabled = canGoNext
+        binding.btnNext.alpha = if (canGoNext) 1.0f else 0.22f
+        binding.btnNext.setOnClickListener(onNext)
+
+        binding.stickyBtnNext.isEnabled = canGoNext
+        binding.stickyBtnNext.alpha = if (canGoNext) 1.0f else 0.22f
+        binding.stickyBtnNext.setOnClickListener(onNext)
     }
 
     private fun navigateToSibling(newIndex: Int) {
@@ -292,6 +375,9 @@ class ListingDetailActivity : BaseActivity() {
         currentIndex = newIndex
         val newId = siblingIds[newIndex]
         currentListingId = newId
+        binding.cvStickyActionBars.visibility = View.GONE
+        binding.stickyDivider.visibility = View.GONE
+        binding.stickyRlFavoriteAndIndicator.visibility = View.GONE
         updateNavigationArrows()
         loadListing(newId)
         if (TokenManager.isLoggedIn(this)) {
@@ -311,6 +397,9 @@ class ListingDetailActivity : BaseActivity() {
         if (currentIndex == -1 && siblingIds.isNotEmpty()) {
             currentIndex = siblingIds.indexOf(listingId)
         }
+        binding.cvStickyActionBars.visibility = View.GONE
+        binding.stickyDivider.visibility = View.GONE
+        binding.stickyRlFavoriteAndIndicator.visibility = View.GONE
         updateNavigationArrows()
         loadListing(listingId)
         if (TokenManager.isLoggedIn(this)) {
@@ -371,6 +460,27 @@ class ListingDetailActivity : BaseActivity() {
             return
         }
         lifecycleScope.launch {
+            // First check if an existing conversation with this advertiser already exists
+            val sId = currentListing?.sellerId
+            val sName = currentListing?.sellerName?.trim()
+            if ((sId != null && sId != 0) || !sName.isNullOrBlank()) {
+                val existing = AppContainer.chat.conversations().let { res ->
+                    if (res is ApiResult.Success) {
+                        res.data.firstOrNull { conv ->
+                            (sId != null && sId != 0 && conv.otherUser?.id == sId) ||
+                            (!sName.isNullOrBlank() && conv.otherUser?.name?.trim().equals(sName, ignoreCase = true))
+                        }
+                    } else null
+                }
+                if (existing != null) {
+                    startActivity(
+                        Intent(this@ListingDetailActivity, ChatActivity::class.java)
+                            .putExtra(ChatActivity.EXTRA_CONVERSATION, existing)
+                    )
+                    return@launch
+                }
+            }
+
             when (val result = AppContainer.chat.startConversation(listingId)) {
                 is ApiResult.Success -> {
                     val conversation = result.data
@@ -407,11 +517,12 @@ class ListingDetailActivity : BaseActivity() {
     }
 
     private fun updateFavoriteIcon() {
-        binding.ivFavoriteDetail.setImageResource(
-            if (isFavorited) R.drawable.ic_favorite_bookmark_selected
-            else R.drawable.ic_favorite_bookmark_unselected
-        )
+        val res = if (isFavorited) R.drawable.ic_favorite_bookmark_selected
+                  else R.drawable.ic_favorite_bookmark_unselected
+        binding.ivFavoriteDetail.setImageResource(res)
         binding.ivFavoriteDetail.clearColorFilter()
+        binding.stickyIvFavoriteDetail.setImageResource(res)
+        binding.stickyIvFavoriteDetail.clearColorFilter()
     }
 
     private fun shareListing() {

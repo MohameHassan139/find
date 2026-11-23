@@ -10,6 +10,8 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.chat.model.Conversation
 import com.example.myapplication.chat.utils.DateUtils
+import com.example.myapplication.chat.utils.LastSentManager
+import com.example.myapplication.auth.TokenManager
 import com.example.myapplication.databinding.ItemConversationBinding
 
 class ConversationsAdapter(
@@ -47,10 +49,17 @@ class ConversationsAdapter(
                 conv.lastMessageAt,
                 itemView.context.getString(R.string.yesterday)
             )
-            // Whether the LAST message was sent by me isn't in this endpoint's
-            // shape anymore (no last_sender_id) — my_unread == 0 is the best
-            // available proxy: either I sent last, or I've already read theirs.
-            val isSentByMe = unreadCount == 0
+            // Only display checkmarks for messages sent by the user, never for incoming messages (matching iOS ConversationRow).
+            val myUserId = TokenManager.getUserId(itemView.context)
+            val myUserIdInt = myUserId.toIntOrNull()
+            val isSentByMe = when {
+                unreadCount > 0 -> false
+                myUserIdInt != null && conv.lastMessageSenderUserId != null -> conv.lastMessageSenderUserId == myUserIdInt
+                !conv.lastSenderId.isNullOrEmpty() && myUserId.isNotEmpty() -> conv.lastSenderId == myUserId
+                !conv.lastMessageSenderId.isNullOrEmpty() && myUserId.isNotEmpty() -> conv.lastMessageSenderId == myUserId
+                conv.isLastMessageFromMe != null -> conv.isLastMessageFromMe
+                else -> LastSentManager.isLastMessageMine(itemView.context, conv.id, conv.lastMessage)
+            }
 
             if (unreadCount > 0) {
                 b.tvTime.visibility = View.GONE
@@ -69,15 +78,31 @@ class ConversationsAdapter(
                 b.tvUnreadBadge.visibility = View.GONE
 
                 if (isSentByMe) {
-                    // The other party's unread count isn't exposed by this
-                    // endpoint (no buyer_unread/seller_unread anymore), so we
-                    // can no longer distinguish "sent, unread" (gray) from
-                    // "read" (blue) here — always show read/blue.
                     b.ivCheck.visibility = View.VISIBLE
-                    b.ivCheck.setColorFilter(
-                        android.graphics.Color.parseColor("#007AFF"),
-                        android.graphics.PorterDuff.Mode.SRC_IN
-                    )
+                    val status = conv.lastMessageStatus ?: if (LastSentManager.isLastMessageRead(itemView.context, conv.id)) "read" else "sent"
+                    when (status) {
+                        "read" -> {
+                            b.ivCheck.setImageResource(R.drawable.ic_double_check)
+                            b.ivCheck.setColorFilter(
+                                android.graphics.Color.parseColor("#007AFF"),
+                                android.graphics.PorterDuff.Mode.SRC_IN
+                            )
+                        }
+                        "delivered" -> {
+                            b.ivCheck.setImageResource(R.drawable.ic_double_check)
+                            b.ivCheck.setColorFilter(
+                                android.graphics.Color.parseColor("#8E8E93"),
+                                android.graphics.PorterDuff.Mode.SRC_IN
+                            )
+                        }
+                        else -> { // "sent"
+                            b.ivCheck.setImageResource(R.drawable.ic_single_check)
+                            b.ivCheck.setColorFilter(
+                                android.graphics.Color.parseColor("#8E8E93"),
+                                android.graphics.PorterDuff.Mode.SRC_IN
+                            )
+                        }
+                    }
                 } else {
                     b.ivCheck.visibility = View.GONE
                 }

@@ -103,6 +103,8 @@
                 android:layout_height="wrap_content"
                 android:text="9:00 م"
                 android:textSize="15sp"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center_horizontal"
                 android:textColor="@color/chats_item_time" />
 
             <TextView
@@ -112,18 +114,25 @@
                 android:text="الأحد"
                 android:textSize="15sp"
                 android:textStyle="bold"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center_horizontal"
                 android:textColor="#FF3B30"
                 android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tvUnreadBadge"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="22dp"
+                android:minWidth="22dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="6dp"
                 android:text="1"
-                android:textSize="13sp"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
-                android:gravity="center"
                 android:background="@drawable/bg_badge"
                 android:layout_marginTop="4dp"
                 android:visibility="gone" />

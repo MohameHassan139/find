@@ -44,12 +44,7 @@ class MenuActivity : BaseActivity() {
         BottomNavHelper.setup(this, NavScreen.NONE)
 
         // Hide top login box when already logged in to prevent duplicate "الملف الشخصي" box
-        if (TokenManager.isLoggedIn(this)) {
-            binding.btnLogin.visibility = View.GONE
-        } else {
-            binding.btnLogin.visibility = View.VISIBLE
-            binding.btnLogin.text = getString(R.string.login_create_account)
-        }
+        updateLoginButtonVisibility()
 
         findViewById<android.widget.ImageButton>(R.id.btnBack)?.setOnClickListener {
             finishMenuActivity()
@@ -118,7 +113,17 @@ class MenuActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (TokenManager.isLoggedIn(this)) fetchNotifBadge()
+        updateLoginButtonVisibility()
+        binding.tvNotifBadge.visibility = View.GONE
+    }
+
+    private fun updateLoginButtonVisibility() {
+        if (TokenManager.isLoggedIn(this)) {
+            binding.btnLogin.visibility = View.GONE
+        } else {
+            binding.btnLogin.visibility = View.VISIBLE
+            binding.btnLogin.text = getString(R.string.login_create_account)
+        }
     }
 
     private fun fetchNotifBadge() {

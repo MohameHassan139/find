@@ -125,7 +125,11 @@ open class BaseActivity : AppCompatActivity() {
             )
             if (!search.hasOnClickListeners()) {
                 search.setOnClickListener {
-                    startWithPush(Intent(this, SearchActivity::class.java))
+                    val intent = Intent(this, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                        putExtra(MainActivity.EXTRA_FOCUS_SEARCH, true)
+                    }
+                    startWithPush(intent)
                 }
             }
         }

@@ -28,6 +28,11 @@
     <string name="price">Enter price</string>
     <string name="username_placeholder">Username</string>
     <string name="chat_status_placeholder">Last seen at 1:00PM</string>
+    <string name="chat_status_online">Online</string>
+    <string name="chat_status_offline">Offline</string>
+    <string name="chat_status_last_seen_today">Last seen today at %s</string>
+    <string name="chat_status_last_seen_yesterday">Last seen yesterday at %s</string>
+    <string name="chat_status_last_seen_date">Last seen %s</string>
     <string name="error_occurred">An error occurred</string>
     <string name="action_retry">Retry</string>
     <string name="chat_message_hint">Type a message...</string>

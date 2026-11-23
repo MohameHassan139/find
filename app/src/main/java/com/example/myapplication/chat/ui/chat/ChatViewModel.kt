@@ -26,13 +26,19 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
     /** True while an older page exists beyond what's loaded (meta.has_more). */
     private val _hasMoreOlder = MutableLiveData(false)
 
+    private val _otherUserLastSeen = MutableLiveData<String?>()
+    val otherUserLastSeen: LiveData<String?> = _otherUserLastSeen
+
     private var conversationId: String = ""
     private val messageList = mutableListOf<Message>()
     private var isLoadingOlder = false
     private var pollingStarted = false
 
-    fun init(convId: String) {
+    fun init(convId: String, initialLastSeen: String? = null) {
         conversationId = convId
+        if (!initialLastSeen.isNullOrEmpty()) {
+            _otherUserLastSeen.value = initialLastSeen
+        }
         loadMessages()
         markRead()
         startPolling()
@@ -116,15 +122,39 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             while (true) {
                 delay(5_000)
-                val newestId = messageList.lastOrNull()?.id ?: continue
-                // Offline/transient failures are ignored — the next tick retries.
-                val body = chat.messages(conversationId, after = newestId).getOrNull() ?: continue
-                val knownIds = messageList.map { it.id }.toSet()
-                val fresh = body.data.orEmpty().filter { it.id !in knownIds }
-                if (fresh.isNotEmpty()) {
-                    messageList.addAll(fresh)
-                    _messages.value = Result.Success(messageList.toList())
-                    markRead()
+                // Also poll for online/last-seen status
+                try {
+                    val updates = chat.conversationUpdates().getOrNull()
+                    val myUpdate = updates?.find { it.id == conversationId }
+                    if (myUpdate?.otherUserLastSeenAt != null) {
+                        _otherUserLastSeen.postValue(myUpdate.otherUserLastSeenAt)
+                    }
+                } catch (_: Exception) {}
+
+                // Polling re-reads the newest page so the ticks on
+                // my messages already on screen move sent → delivered → read (matching iOS ChatService).
+                val body = chat.messages(conversationId, limit = INITIAL_PAGE_SIZE).getOrNull() ?: continue
+                val responseMessages = body.data.orEmpty()
+                if (responseMessages.isNotEmpty()) {
+                    var hasChanges = false
+                    val knownIds = messageList.map { it.id }.toSet()
+                    val newMessages = responseMessages.filter { it.id !in knownIds }
+                    if (newMessages.isNotEmpty()) {
+                        messageList.addAll(newMessages)
+                        hasChanges = true
+                        markRead()
+                    }
+                    // Sync sent→delivered→read status flips on existing messages
+                    for (updated in responseMessages) {
+                        val idx = messageList.indexOfFirst { it.id == updated.id }
+                        if (idx != -1 && messageList[idx].status != updated.status) {
+                            messageList[idx] = updated
+                            hasChanges = true
+                        }
+                    }
+                    if (hasChanges) {
+                        _messages.value = Result.Success(messageList.toList())
+                    }
                 }
             }
         }

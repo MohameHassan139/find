@@ -40,7 +40,17 @@ class ConversationsViewModel(app: Application) : AndroidViewModel(app) {
             try {
                 when (val result = chat.conversations()) {
                     is ApiResult.Success -> {
-                        allConversations = result.data
+                        val previous = allConversations.associateBy { it.id }
+                        val merged = result.data.map { fresh ->
+                            val old = previous[fresh.id]
+                            if (old != null && old.lastMessageAt == fresh.lastMessageAt) {
+                                fresh.copy(
+                                    lastMessageSenderUserId = fresh.lastMessageSenderUserId ?: old.lastMessageSenderUserId,
+                                    lastMessageStatus = fresh.lastMessageStatus ?: old.lastMessageStatus
+                                )
+                            } else fresh
+                        }
+                        allConversations = unifyConversationsByOtherUser(merged)
                         BottomNavHelper.updateChatBadge(allConversations.sumOf { it.myUnread })
                         applyFilter(currentFilter)
                     }
@@ -142,15 +152,43 @@ class ConversationsViewModel(app: Application) : AndroidViewModel(app) {
                     .filter { liveIds.contains(it.id) }
                     .map { conv ->
                         val update = byId[conv.id] ?: return@map conv
+                        val updatedOtherUser = if (update.otherUserLastSeenAt != null) {
+                            conv.otherUser?.copy(lastSeenAt = update.otherUserLastSeenAt)
+                        } else conv.otherUser
                         conv.copy(
                             lastMessageAt = update.lastMessageAt ?: conv.lastMessageAt,
                             myUnread = update.myUnread ?: conv.myUnread,
-                            isFavorite = update.isFavorite ?: conv.isFavorite
+                            isFavorite = update.isFavorite ?: conv.isFavorite,
+                            lastMessageSenderUserId = update.lastMessageSenderUserId ?: conv.lastMessageSenderUserId,
+                            lastMessageStatus = update.lastMessageStatus ?: conv.lastMessageStatus,
+                            otherUser = updatedOtherUser
                         )
                     }
                 BottomNavHelper.updateChatBadge(allConversations.sumOf { it.myUnread })
                 applyFilter(currentFilter)
             }
         }
+    }
+
+    private fun unifyConversationsByOtherUser(list: List<Conversation>): List<Conversation> {
+        val grouped = list.groupBy { conv ->
+            val userId = conv.otherUser?.id?.takeIf { it != 0 }?.toString()
+            val userName = conv.otherUser?.name?.trim()?.lowercase()
+            userId ?: userName ?: conv.id
+        }
+        return grouped.values.map { group ->
+            if (group.size == 1) {
+                group[0]
+            } else {
+                val sorted = group.sortedByDescending { it.lastMessageAt ?: "" }
+                val primary = sorted.first()
+                val totalUnread = group.sumOf { it.myUnread }
+                val anyFav = group.any { it.isFavorite }
+                primary.copy(
+                    myUnread = totalUnread,
+                    isFavorite = anyFav
+                )
+            }
+        }.sortedByDescending { it.lastMessageAt ?: "" }
     }
 }

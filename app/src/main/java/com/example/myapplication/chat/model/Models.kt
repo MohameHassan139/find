@@ -27,7 +27,12 @@ data class Conversation(
     @SerializedName("last_message_at") val lastMessageAt: String?,
     @SerializedName("my_unread") val myUnread: Int = 0,
     @SerializedName("is_favorite") val isFavorite: Boolean = false,
-    @SerializedName("favorited_at") val favoritedAt: String? = null
+    @SerializedName("favorited_at") val favoritedAt: String? = null,
+    @SerializedName("last_sender_id") val lastSenderId: String? = null,
+    @SerializedName("last_message_sender_id") val lastMessageSenderId: String? = null,
+    @SerializedName("last_message_sender_user_id") val lastMessageSenderUserId: Int? = null,
+    @SerializedName("is_last_message_from_me") val isLastMessageFromMe: Boolean? = null,
+    @SerializedName("last_message_status") val lastMessageStatus: String? = null
 ) : Parcelable {
     @Suppress("DEPRECATION")
     constructor(parcel: Parcel) : this(
@@ -39,6 +44,15 @@ data class Conversation(
         parcel.readString(),
         parcel.readInt(),
         parcel.readByte() != 0.toByte(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readValue(Int::class.java.classLoader) as? Int,
+        when (parcel.readByte().toInt()) {
+            1 -> true
+            0 -> false
+            else -> null
+        },
         parcel.readString()
     )
 
@@ -52,6 +66,15 @@ data class Conversation(
         parcel.writeInt(myUnread)
         parcel.writeByte(if (isFavorite) 1 else 0)
         parcel.writeString(favoritedAt)
+        parcel.writeString(lastSenderId)
+        parcel.writeString(lastMessageSenderId)
+        parcel.writeValue(lastMessageSenderUserId)
+        parcel.writeByte(when (isLastMessageFromMe) {
+            true -> 1
+            false -> 0
+            null -> -1
+        }.toByte())
+        parcel.writeString(lastMessageStatus)
     }
 
     override fun describeContents() = 0
@@ -96,7 +119,9 @@ data class ConversationUpdate(
     @SerializedName("last_message_at") val lastMessageAt: String?,
     @SerializedName("my_unread") val myUnread: Int? = null,
     @SerializedName("other_user_last_seen_at") val otherUserLastSeenAt: String? = null,
-    @SerializedName("is_favorite") val isFavorite: Boolean? = false
+    @SerializedName("is_favorite") val isFavorite: Boolean? = false,
+    @SerializedName("last_message_sender_user_id") val lastMessageSenderUserId: Int? = null,
+    @SerializedName("last_message_status") val lastMessageStatus: String? = null
 )
 
 // ─── Messages ─────────────────────────────────────────────────────────────────

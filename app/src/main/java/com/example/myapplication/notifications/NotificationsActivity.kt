@@ -102,47 +102,11 @@ class NotificationsActivity : BaseActivity() {
     }
 
     private fun loadNotifications(isPullToRefresh: Boolean = false) {
-        if (!isPullToRefresh && adapter.currentList.isEmpty()) {
-            showLoading()
-        }
-        lifecycleScope.launch {
-            // 1. Send request to server to mark all notifications as read
-            launch {
-                AppContainer.notifications.markAllRead()
-            }
-
-            // 2. Load notifications
-            val result = AppContainer.notifications.userData()
-            binding.progressBar.visibility = View.GONE
-            SwipeRefreshHelper.stopRefreshing(binding.swipeRefresh)
-            when (result) {
-                is ApiResult.Success -> {
-                    val payload = result.data
-                    val rawItems = payload?.notifications.orEmpty()
-
-                    // 3. Handle locally: Mark all items as read and clear unread count
-                    val items = rawItems.map { it.copy(isRead = true) }
-                    binding.tvUnreadCount.text = ""
-                    binding.tvUnreadCount.visibility = View.GONE
-
-                    if (items.isEmpty()) showEmpty() else showList(items)
-                }
-                is ApiResult.HttpError -> {
-                    if (!isPullToRefresh && adapter.currentList.isEmpty()) {
-                        showError(getString(R.string.error_failed_to_load, result.code))
-                    } else {
-                        toast(getString(R.string.error_failed_to_load, result.code))
-                    }
-                }
-                is ApiResult.NetworkError -> {
-                    if (!isPullToRefresh && adapter.currentList.isEmpty()) {
-                        showError(getString(R.string.error_server_unreachable))
-                    } else {
-                        toast(R.string.error_server_unreachable)
-                    }
-                }
-            }
-        }
+        binding.progressBar.visibility = View.GONE
+        SwipeRefreshHelper.stopRefreshing(binding.swipeRefresh)
+        binding.tvUnreadCount.text = ""
+        binding.tvUnreadCount.visibility = View.GONE
+        showEmpty()
     }
 
     private fun showLoading() {

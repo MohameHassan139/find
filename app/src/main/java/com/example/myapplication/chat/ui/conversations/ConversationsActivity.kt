@@ -15,6 +15,9 @@ import com.example.myapplication.chat.ui.chat.ChatActivity
 import com.example.myapplication.chat.utils.Result
 import com.example.myapplication.databinding.ActivityConversationsBinding
 import com.example.myapplication.push.FcmService
+import com.example.myapplication.push.PushEvents
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import com.example.myapplication.utils.HomeHeaderHelper
 import com.example.myapplication.utils.LocaleHelper
 import com.example.myapplication.utils.SwipeRefreshHelper
@@ -51,6 +54,22 @@ class ConversationsActivity : BaseActivity() {
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener {
             startMenuActivity()
         }
+
+        lifecycleScope.launch {
+            PushEvents.messageReceived.collect {
+                viewModel.loadConversations(isPullToRefresh = true)
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val currentList = (viewModel.conversations.value as? Result.Success)?.data
+        if (!currentList.isNullOrEmpty()) {
+            openConversationFromPushIfPending(currentList)
+        }
+        viewModel.loadConversations(isPullToRefresh = true)
     }
 
     private val chatLauncher = registerForActivityResult(
@@ -212,6 +231,8 @@ class ConversationsActivity : BaseActivity() {
                 is Result.Loading -> showShimmer()
                 is Result.Success -> {
                     hideShimmer()
+                    val totalUnread = result.data.sumOf { it.myUnread }
+                    BottomNavHelper.updateChatBadge(totalUnread)
                     if (result.data.isEmpty()) showEmpty() else {
                         showContent()
                         adapter.submitList(result.data)
@@ -229,9 +250,22 @@ class ConversationsActivity : BaseActivity() {
     /** Deep-link from a tapped push notification (see FcmService) — one-shot: the extra is
      * removed immediately so it doesn't re-fire on later list refreshes/rotations. */
     private fun openConversationFromPushIfPending(conversations: List<com.example.myapplication.chat.model.Conversation>) {
-        val openId = intent.getStringExtra(FcmService.EXTRA_OPEN_CONVERSATION_ID) ?: return
+        val openId = intent.getStringExtra(FcmService.EXTRA_OPEN_CONVERSATION_ID)
+            ?: intent.getStringExtra("conversation_id")
+            ?: intent.getStringExtra("target_id")
+            ?: return
         intent.removeExtra(FcmService.EXTRA_OPEN_CONVERSATION_ID)
-        val conversation = conversations.find { it.id == openId } ?: return
+        intent.removeExtra("conversation_id")
+        intent.removeExtra("target_id")
+        val conversation = conversations.find { it.id == openId }
+            ?: com.example.myapplication.chat.model.Conversation(
+                id = openId,
+                listingId = null,
+                listingTitle = null,
+                otherUser = null,
+                lastMessage = null,
+                lastMessageAt = null
+            )
         val chatIntent = Intent(this, ChatActivity::class.java).apply {
             putExtra(ChatActivity.EXTRA_CONVERSATION, conversation)
         }

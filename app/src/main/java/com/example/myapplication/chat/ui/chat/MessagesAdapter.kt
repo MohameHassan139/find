@@ -27,9 +27,12 @@ class MessagesAdapter(private val context: Context) :
         }
     }
 
-    private fun isMine(msg: Message): Boolean {
-        if (myUserId.isEmpty() || msg.senderId.isNullOrEmpty()) return false
-        return myUserId == msg.senderId
+    fun isMine(msg: Message): Boolean {
+        if (myUserId.isNotEmpty()) {
+            if (!msg.senderId.isNullOrEmpty() && myUserId == msg.senderId) return true
+            if (msg.senderUserId != null && msg.senderUserId != 0 && myUserId == msg.senderUserId.toString()) return true
+        }
+        return false
     }
 
     private fun isRtl(): Boolean {
@@ -92,9 +95,30 @@ class MessagesAdapter(private val context: Context) :
                 layoutReceived.visibility = View.GONE
                 tvSent.text = msg.text
                 tvTimeSent.text = DateUtils.formatMessageTime(msg.createdAt)
-                ivRead.setImageResource(
-                    if (msg.isRead) R.drawable.ic_double_check else R.drawable.ic_single_check
-                )
+                val status = msg.status ?: if (msg.isRead) "read" else "sent"
+                when (status) {
+                    "read" -> {
+                        ivRead.setImageResource(R.drawable.ic_double_check)
+                        ivRead.setColorFilter(
+                            ContextCompat.getColor(context, R.color.chats_chip_selected_border),
+                            android.graphics.PorterDuff.Mode.SRC_IN
+                        )
+                    }
+                    "delivered" -> {
+                        ivRead.setImageResource(R.drawable.ic_double_check)
+                        ivRead.setColorFilter(
+                            ContextCompat.getColor(context, R.color.text_secondary),
+                            android.graphics.PorterDuff.Mode.SRC_IN
+                        )
+                    }
+                    else -> { // "sent"
+                        ivRead.setImageResource(R.drawable.ic_single_check)
+                        ivRead.setColorFilter(
+                            ContextCompat.getColor(context, R.color.text_secondary),
+                            android.graphics.PorterDuff.Mode.SRC_IN
+                        )
+                    }
+                }
 
                 // Sent message bubble tail: bottom-left in RTL (AR), bottom-right in LTR (EN)
                 val tailOnLeft = rtl

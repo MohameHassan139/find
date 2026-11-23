@@ -11,6 +11,8 @@ import com.example.myapplication.R
 import com.example.myapplication.SharedCategoriesViewModel
 import com.example.myapplication.chat.model.Conversation
 import com.example.myapplication.chat.model.ReportTargetType
+import com.example.myapplication.chat.utils.DateUtils
+import com.example.myapplication.chat.utils.LastSentManager
 import com.example.myapplication.chat.utils.Result
 import com.example.myapplication.databinding.ActivityChatBinding
 import com.example.myapplication.utils.HomeHeaderHelper
@@ -25,6 +27,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kotlinx.coroutines.launch
+import com.example.myapplication.push.PushEvents
+import com.example.myapplication.push.FcmService
+import android.app.NotificationManager
 import com.example.myapplication.utils.toast
 
 class ChatActivity : BaseActivity() {
@@ -61,7 +66,35 @@ class ChatActivity : BaseActivity() {
         setupKeyboardHandling()
         HomeHeaderHelper.attach(this, binding.root, sharedVm.categories)
 
-        viewModel.init(conversation.id)
+        viewModel.init(conversation.id, conversation.otherUser?.lastSeenAt)
+
+        lifecycleScope.launch {
+            PushEvents.messageReceived.collect { convId ->
+                if (convId.isEmpty() || convId == conversation.id) {
+                    viewModel.loadMessages()
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        FcmService.activeConversationId = conversation.id
+        (getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager)?.cancel(conversation.id.hashCode())
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (FcmService.activeConversationId == conversation.id) {
+            FcmService.activeConversationId = null
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (FcmService.activeConversationId == conversation.id) {
+            FcmService.activeConversationId = null
+        }
     }
 
     private fun setupKeyboardHandling() {
@@ -107,7 +140,7 @@ class ChatActivity : BaseActivity() {
         val otherAvatar = conversation.otherUser?.avatar
 
         binding.tvChatName.text = otherName ?: getString(R.string.chat_default_name)
-        binding.tvChatStatus.text = getString(R.string.chat_status_placeholder)
+        updateStatus(conversation.otherUser?.lastSeenAt)
 
         if (!otherAvatar.isNullOrEmpty()) {
             Glide.with(this).load(otherAvatar).placeholder(R.drawable.ic_avatar_placeholder)
@@ -121,6 +154,16 @@ class ChatActivity : BaseActivity() {
 
         binding.btnChatModeration.visibility = View.VISIBLE
         binding.btnChatModeration.setOnClickListener { showChatOptionsMenu() }
+    }
+
+    private fun updateStatus(lastSeenAt: String?) {
+        val (statusText, isOnline) = DateUtils.formatLastSeen(lastSeenAt, this)
+        binding.tvChatStatus.text = statusText
+        if (isOnline) {
+            binding.tvChatStatus.setTextColor(ContextCompat.getColor(this, R.color.toggle_active_green))
+        } else {
+            binding.tvChatStatus.setTextColor(ContextCompat.getColor(this, R.color.text_secondary))
+        }
     }
 
     private fun showChatOptionsMenu() {
@@ -258,6 +301,7 @@ class ChatActivity : BaseActivity() {
         binding.btnSend.setOnClickListener {
             val text = binding.etMessage.text.toString().trim()
             if (text.isNotEmpty()) {
+                LastSentManager.recordSent(this, conversation.id, text, isRead = false)
                 viewModel.sendMessage(text)
                 binding.etMessage.setText("")
             }
@@ -268,6 +312,7 @@ class ChatActivity : BaseActivity() {
             if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEND) {
                 val text = binding.etMessage.text.toString().trim()
                 if (text.isNotEmpty()) {
+                    LastSentManager.recordSent(this, conversation.id, text, isRead = false)
                     viewModel.sendMessage(text)
                     binding.etMessage.setText("")
                 }
@@ -279,12 +324,26 @@ class ChatActivity : BaseActivity() {
     }
 
     private fun setupObservers() {
+        viewModel.otherUserLastSeen.observe(this) { lastSeen ->
+            updateStatus(lastSeen)
+        }
+
         viewModel.messages.observe(this) { result ->
             when (result) {
                 is Result.Loading -> showShimmer()
                 is Result.Success -> {
                     hideShimmer()
                     showContent()
+                    val list = result.data
+                    if (list.isNotEmpty()) {
+                        val lastMsg = list.last()
+                        val isMyMsg = adapter.isMine(lastMsg)
+                        if (isMyMsg) {
+                            LastSentManager.recordSent(this@ChatActivity, conversation.id, lastMsg.text ?: "", lastMsg.isRead)
+                        } else {
+                            LastSentManager.recordReceived(this@ChatActivity, conversation.id, lastMsg.text ?: "")
+                        }
+                    }
                     // loadOlderMessages() prepends history (same last message,
                     // more items, different first message) — don't yank the
                     // user back to the bottom when that happens.

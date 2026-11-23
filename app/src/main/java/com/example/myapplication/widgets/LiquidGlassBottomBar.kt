@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -171,18 +172,16 @@ fun LiquidGlassBottomBar(
         val highlightWidth = 95.dp
         val halfHighlightWidth = highlightWidth / 2f
 
-        // Exact tab centers relative to the root Box
-        val homeCenter: Dp = if (isRtl) {
-            barMarginHorizontal + innerPaddingHorizontal + (singleTabWidth * 2.5f)
-        } else {
-            barMarginHorizontal + innerPaddingHorizontal + (singleTabWidth * 0.5f)
-        }
+        // Exact tab centers relative to the root Box's Start edge.
+        // In Compose with Alignment.CenterStart and placeRelative offset,
+        // Start is Left in LTR and Right in RTL.
+        // In both LTR and RTL, Row lays out children from Start to End:
+        // Tab 0 (Home) is at 0.5f * singleTabWidth from Start,
+        // Tab 1 (Add) is at 1.5f * singleTabWidth from Start,
+        // Tab 2 (Chat) is at 2.5f * singleTabWidth from Start.
+        val homeCenter: Dp = barMarginHorizontal + innerPaddingHorizontal + (singleTabWidth * 0.5f)
         val addCenter: Dp = barMarginHorizontal + innerPaddingHorizontal + (singleTabWidth * 1.5f)
-        val chatCenter: Dp = if (isRtl) {
-            barMarginHorizontal + innerPaddingHorizontal + (singleTabWidth * 0.5f)
-        } else {
-            barMarginHorizontal + innerPaddingHorizontal + (singleTabWidth * 2.5f)
-        }
+        val chatCenter: Dp = barMarginHorizontal + innerPaddingHorizontal + (singleTabWidth * 2.5f)
 
         val targetCenter: Dp = when (activeTab) {
             NavScreen.HOME -> homeCenter
@@ -442,23 +441,29 @@ private fun BottomTabCell(
                     modifier = Modifier.size(28.dp)
                 )
 
-                // Chat Badge: Red capsule with white bold 10.sp text, max "99",
-                // padding 5.dp horizontal and 2.dp vertical, offset (x = 20.dp, y = -28.dp) from Chats icon center.
+                // Chat Badge: Red capsule with white bold 10.sp text, max "99+",
+                // positioned at top-trailing corner of Chats icon, comfortably inside the bar bounds.
                 if (chatBadge > 0) {
+                    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
                     Box(
                         modifier = Modifier
-                            .align(Alignment.Center)
-                            .offset(x = 20.dp, y = (-28).dp)
-                            .background(Color.Red, shape = CircleShape)
-                            .padding(horizontal = 5.dp, vertical = 2.dp),
+                            .align(if (isRtl) Alignment.TopStart else Alignment.TopEnd)
+                            .offset(
+                                x = if (isRtl) (-3).dp else 3.dp,
+                                y = 0.dp
+                            )
+                            .sizeIn(minWidth = 16.dp, minHeight = 16.dp)
+                            .background(Color(0xFFFF3B30), shape = RoundedCornerShape(percent = 50))
+                            .padding(horizontal = 4.dp, vertical = 1.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = if (chatBadge > 99) "99" else "$chatBadge",
+                            text = if (chatBadge > 99) "99+" else "$chatBadge",
                             color = Color.White,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = fontFamily,
+                            lineHeight = 10.sp,
                             maxLines = 1
                         )
                     }

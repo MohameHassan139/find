@@ -46,9 +46,13 @@ object HomeHeaderHelper {
         val rvTabs = rootView.findViewById<RecyclerView>(R.id.rvHomeTopTabs) ?: return
         val shimmer = rootView.findViewById<View>(R.id.llHomeTabShimmer)
 
-        // Search bar → open SearchActivity
+        // Search bar → open MainActivity with search focused
         searchContainer.setOnClickListener {
-            activity.startActivity(Intent(activity, SearchActivity::class.java))
+            val intent = Intent(activity, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra(MainActivity.EXTRA_FOCUS_SEARCH, true)
+            }
+            activity.startActivity(intent)
             activity.overridePendingTransition(0, 0)
         }
 

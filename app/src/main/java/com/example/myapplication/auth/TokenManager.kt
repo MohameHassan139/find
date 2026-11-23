@@ -44,7 +44,10 @@ object TokenManager {
     fun getAvatar(context: Context): String =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY_AVATAR, "") ?: ""
 
-    fun isLoggedIn(context: Context) = getToken(context) != null
+    fun isLoggedIn(context: Context): Boolean {
+        val t = getToken(context)
+        return !t.isNullOrBlank()
+    }
 
     /**
      * Refreshes the cached profile after a server call (me / update profile), keeping

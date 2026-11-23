@@ -32,6 +32,9 @@ class FcmService : FirebaseMessagingService() {
     companion object {
         const val EXTRA_OPEN_CONVERSATION_ID = "extra_open_conversation_id"
 
+        @Volatile
+        var activeConversationId: String? = null
+
         fun ensureChannel(context: Context) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
             val manager = context.getSystemService(NotificationManager::class.java) ?: return
@@ -56,9 +59,16 @@ class FcmService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+        val conversationId = message.data["conversation_id"] ?: message.data["target_id"]
+        PushEvents.notifyMessageReceived(conversationId ?: "")
+
+        // If the user is currently looking at this conversation, do not show a notification banner
+        if (!conversationId.isNullOrBlank() && conversationId == activeConversationId) {
+            return
+        }
+
         val body = message.notification?.body ?: message.data["body"] ?: return
         val title = message.notification?.title ?: message.data["title"] ?: getString(R.string.app_name)
-        val conversationId = message.data["conversation_id"]
 
         ensureChannel(applicationContext)
 

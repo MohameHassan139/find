@@ -73,4 +73,59 @@ object DateUtils {
         yesterday.add(Calendar.DAY_OF_YEAR, -1)
         return isSameDay(c1, yesterday)
     }
+
+    /**
+     * Formats last seen timestamp.
+     * Returns Pair(displayText, isOnline).
+     */
+    fun formatLastSeen(dateString: String?, context: android.content.Context): Pair<String, Boolean> {
+        if (dateString.isNullOrEmpty()) {
+            return Pair(context.getString(com.example.myapplication.R.string.chat_status_offline), false)
+        }
+        return try {
+            val inputFormats = listOf(
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.US),
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US),
+                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+            )
+            var date: Date? = null
+            for (fmt in inputFormats) {
+                fmt.timeZone = TimeZone.getTimeZone("UTC")
+                try { date = fmt.parse(dateString); break } catch (_: Exception) {}
+            }
+            if (date == null) {
+                return Pair(LocaleHelper.toEnglishNumbers(dateString), false)
+            }
+
+            val diffMillis = System.currentTimeMillis() - date.time
+            // If active within 120 seconds (matching iOS AppPresence.onlineThreshold), show "Online"
+            if (diffMillis in -60_000..120_000) {
+                return Pair(context.getString(com.example.myapplication.R.string.chat_status_online), true)
+            }
+
+            val calendar = Calendar.getInstance()
+            val today = Calendar.getInstance()
+            calendar.time = date
+
+            val timeFmt = SimpleDateFormat("h:mm a", Locale.getDefault())
+            val formattedTime = LocaleHelper.toEnglishNumbers(timeFmt.format(date))
+
+            val text = when {
+                isSameDay(calendar, today) -> {
+                    context.getString(com.example.myapplication.R.string.chat_status_last_seen_today, formattedTime)
+                }
+                isYesterday(calendar, today) -> {
+                    context.getString(com.example.myapplication.R.string.chat_status_last_seen_yesterday, formattedTime)
+                }
+                else -> {
+                    val dateFmt = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    val formattedDate = LocaleHelper.toEnglishNumbers(dateFmt.format(date))
+                    context.getString(com.example.myapplication.R.string.chat_status_last_seen_date, formattedDate)
+                }
+            }
+            Pair(text, false)
+        } catch (e: Exception) {
+            Pair(LocaleHelper.toEnglishNumbers(dateString), false)
+        }
+    }
 }

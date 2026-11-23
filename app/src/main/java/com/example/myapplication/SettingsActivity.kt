@@ -67,6 +67,12 @@ class SettingsActivity : BaseActivity() {
         setupDeleteAccount()
     }
 
+    override fun onResume() {
+        super.onResume()
+        setupNavigation()
+        setupDeleteAccount()
+    }
+
     private fun setupAppBar() {
         findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener { finishWithPop() }
         findViewById<android.widget.ImageButton>(R.id.btnMenu).setOnClickListener { finishWithPop() }
@@ -78,11 +84,21 @@ class SettingsActivity : BaseActivity() {
         }
 
         findViewById<android.view.View>(R.id.rowChannels).setOnClickListener {
-            startWithPush(Intent(this, CommunicationChannelsActivity::class.java))
+            if (TokenManager.isLoggedIn(this)) {
+                startWithPush(Intent(this, CommunicationChannelsActivity::class.java))
+            } else {
+                com.example.myapplication.utils.AuthGuard.requireLogin(this) {}
+            }
         }
 
-        findViewById<android.view.View>(R.id.rowBlockedUsers).setOnClickListener {
-            startWithPush(Intent(this, com.example.myapplication.moderation.BlockedUsersActivity::class.java))
+        val rowBlocked = findViewById<android.view.View>(R.id.rowBlockedUsers)
+        if (TokenManager.isLoggedIn(this)) {
+            rowBlocked.visibility = android.view.View.VISIBLE
+            rowBlocked.setOnClickListener {
+                startWithPush(Intent(this, com.example.myapplication.moderation.BlockedUsersActivity::class.java))
+            }
+        } else {
+            rowBlocked.visibility = android.view.View.GONE
         }
     }
 
@@ -110,7 +126,13 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun setupDeleteAccount() {
-        findViewById<android.view.View>(R.id.btnDeleteAccount).setOnClickListener {
+        val btnDeleteAccount = findViewById<android.view.View>(R.id.btnDeleteAccount) ?: return
+        if (!TokenManager.isLoggedIn(this)) {
+            btnDeleteAccount.visibility = android.view.View.GONE
+            return
+        }
+        btnDeleteAccount.visibility = android.view.View.VISIBLE
+        btnDeleteAccount.setOnClickListener {
             androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle(getString(R.string.settings_delete_account))
                 .setMessage(getString(R.string.settings_delete_account_message))
