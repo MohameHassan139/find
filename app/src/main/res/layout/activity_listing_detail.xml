@@ -208,13 +208,14 @@
                             android:textColor="@color/text_primary"
                             android:textSize="20sp"
                             android:lineSpacingMultiplier="1.15"
-                            android:maxLines="4"
+                            android:minLines="2"
+                            android:maxLines="2"
                             android:ellipsize="end"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent" />
 
-                        <!-- Avatar (Seller logo, size 24x24, top dynamically under tvTitle, start 186.5dp) -->
+                        <!-- Avatar (Seller logo, size 24x24, fixed below 2-line title so header height is uniform across all ads) -->
                         <ImageView
                             android:id="@+id/ivAvatar"
                             android:layout_width="24dp"

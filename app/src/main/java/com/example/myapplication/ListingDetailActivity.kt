@@ -41,6 +41,7 @@ class ListingDetailActivity : BaseActivity() {
     private var currentIndex: Int = -1
     private val sharedVm: SharedCategoriesViewModel by viewModels()
     private var currentListing: DetailListing? = null
+    private var isTitleExpanded = false
     companion object {
         const val EXTRA_LISTING_ID = "listing_id"
         const val EXTRA_CURRENT_INDEX = "current_index"
@@ -256,9 +257,94 @@ class ListingDetailActivity : BaseActivity() {
 
     // ── Bind ──────────────────────────────────────────────────────────────────
 
+    private fun setupExpandableTitle(fullTitle: String) {
+        isTitleExpanded = false
+        val tv = binding.tvTitle
+        tv.minLines = 2
+        tv.maxLines = 2
+        tv.ellipsize = android.text.TextUtils.TruncateAt.END
+        tv.text = fullTitle
+        tv.setOnClickListener(null)
+        tv.isClickable = false
+
+        if (fullTitle.isEmpty()) return
+
+        tv.post {
+            val layout = tv.layout ?: return@post
+            val isTruncated = layout.lineCount > 2 ||
+                (layout.lineCount == 2 && layout.getEllipsisCount(1) > 0)
+            if (!isTruncated) return@post
+
+            val seeMoreLabel = getString(R.string.see_more)
+            val seeLessLabel = getString(R.string.see_less)
+            val accentColor = androidx.core.content.ContextCompat.getColor(this, R.color.find_primary)
+            val scale = 0.65f
+
+            fun buildStyledSuffix(prefix: String, label: String): android.text.SpannableStringBuilder {
+                return android.text.SpannableStringBuilder(prefix).apply {
+                    val start = length
+                    append(label)
+                    setSpan(
+                        android.text.style.RelativeSizeSpan(scale),
+                        start, length,
+                        android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    setSpan(
+                        android.text.style.ForegroundColorSpan(accentColor),
+                        start, length,
+                        android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    setSpan(
+                        android.text.style.StyleSpan(android.graphics.Typeface.BOLD),
+                        start, length,
+                        android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+            }
+
+            // Compute exact 2nd-line cutoff so "... المزيد" / "... See more" sits inline on line 2
+            val line1End = layout.getLineEnd(0).coerceIn(0, fullTitle.length)
+            val line2Start = layout.getLineStart(1).coerceIn(0, fullTitle.length)
+            val line2End = layout.getLineEnd(1).coerceIn(line2Start, fullTitle.length)
+            val line1Part = fullTitle.substring(0, line1End)
+            val line2Raw = fullTitle.substring(line2Start, line2End).trimEnd('\n', ' ')
+
+            val availWidth = (tv.width - tv.paddingStart - tv.paddingEnd).toFloat()
+            val paint = tv.paint
+            val ellipsisWidth = paint.measureText("... ")
+            val labelWidth = paint.measureText(seeMoreLabel) * scale
+            val safetyPad = 8f * resources.displayMetrics.density
+            val maxLine2TextWidth = (availWidth - ellipsisWidth - labelWidth - safetyPad).coerceAtLeast(0f)
+
+            var cut = line2Raw.length
+            while (cut > 0 && paint.measureText(line2Raw, 0, cut) > maxLine2TextWidth) {
+                cut--
+            }
+            val line2Trimmed = line2Raw.substring(0, cut).trimEnd()
+            val collapsedSpannable = buildStyledSuffix("$line1Part$line2Trimmed... ", seeMoreLabel)
+            val expandedSpannable = buildStyledSuffix("$fullTitle ", seeLessLabel)
+
+            tv.ellipsize = null
+            tv.text = collapsedSpannable
+            tv.isClickable = true
+            tv.setOnClickListener {
+                isTitleExpanded = !isTitleExpanded
+                if (isTitleExpanded) {
+                    tv.minLines = 1
+                    tv.maxLines = Int.MAX_VALUE
+                    tv.text = expandedSpannable
+                } else {
+                    tv.minLines = 2
+                    tv.maxLines = 2
+                    tv.text = collapsedSpannable
+                }
+            }
+        }
+    }
+
     private fun bindListing(l: DetailListing) {
         currentListing = l
-        binding.tvTitle.text = l.title ?: ""
+        setupExpandableTitle(l.title ?: "")
 
         binding.tvPrice.text = PriceFormatter.display(l.price)
         binding.ivRiyalSymbol.visibility = if (l.price != null) View.VISIBLE else View.GONE
@@ -586,6 +672,11 @@ class ListingDetailActivity : BaseActivity() {
         binding.vpImages.offscreenPageLimit = 1
 
         setupDotsIndicator(images.size, 0)
+        binding.vpImages.setCurrentItem(0, false)
+        binding.vpImages.post {
+            binding.vpImages.setCurrentItem(0, false)
+            updateDotsIndicator(0)
+        }
 
         val callback = object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {

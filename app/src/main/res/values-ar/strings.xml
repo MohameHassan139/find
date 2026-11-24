@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">فايندز</string>
+    <string name="see_more">المزيد</string>
+    <string name="see_less">أقل</string>
     <string name="search_hint">ابحث..</string>
     <string name="add_ad">أضف إعلان</string>
     <!-- Menu screen -->

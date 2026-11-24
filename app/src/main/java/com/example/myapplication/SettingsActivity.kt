@@ -84,21 +84,19 @@ class SettingsActivity : BaseActivity() {
         }
 
         findViewById<android.view.View>(R.id.rowChannels).setOnClickListener {
-            if (TokenManager.isLoggedIn(this)) {
-                startWithPush(Intent(this, CommunicationChannelsActivity::class.java))
-            } else {
-                com.example.myapplication.utils.AuthGuard.requireLogin(this) {}
+            val target = Intent(this, CommunicationChannelsActivity::class.java)
+            com.example.myapplication.utils.AuthGuard.requireLogin(this, target) {
+                startWithPush(target)
             }
         }
 
         val rowBlocked = findViewById<android.view.View>(R.id.rowBlockedUsers)
-        if (TokenManager.isLoggedIn(this)) {
-            rowBlocked.visibility = android.view.View.VISIBLE
-            rowBlocked.setOnClickListener {
-                startWithPush(Intent(this, com.example.myapplication.moderation.BlockedUsersActivity::class.java))
+        rowBlocked.visibility = android.view.View.VISIBLE
+        rowBlocked.setOnClickListener {
+            val target = Intent(this, com.example.myapplication.moderation.BlockedUsersActivity::class.java)
+            com.example.myapplication.utils.AuthGuard.requireLogin(this, target) {
+                startWithPush(target)
             }
-        } else {
-            rowBlocked.visibility = android.view.View.GONE
         }
     }
 

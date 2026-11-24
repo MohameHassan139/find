@@ -280,96 +280,92 @@
         </LinearLayout>
 
         <!-- Region row — shown after chips row is visible -->
-        <HorizontalScrollView
+        <LinearLayout
             android:id="@+id/llRegionRow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/home_tab_height"
-            android:scrollbars="none"
-            android:overScrollMode="never"
-            android:fillViewport="true"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:gravity="start|center_vertical"
+            android:layoutDirection="locale"
+            android:paddingHorizontal="10dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="5dp"
             android:background="@drawable/bg_tab_row"
             android:visibility="gone">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/spinnerRegion"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:gravity="start|center_vertical"
-                android:paddingHorizontal="10dp"
-                android:paddingTop="0dp"
-                android:paddingBottom="5dp">
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_spinner_pill"
+                android:paddingHorizontal="12dp"
+                android:clickable="true"
+                android:focusable="true">
 
-                <LinearLayout
-                    android:id="@+id/spinnerRegion"
-                    android:layout_width="182dp"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/bg_spinner_pill"
-                    android:paddingHorizontal="14dp"
-                    android:clickable="true"
-                    android:focusable="true">
+                <TextView
+                    android:id="@+id/tvRegionLabel"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textAlignment="viewStart"
+                    android:text="@string/all_regions"
+                    android:textSize="15sp"
+                    android:textColor="@color/tab_row_text" />
 
-                    <TextView
-                        android:id="@+id/tvRegionLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:includeFontPadding="false"
-                        android:text="@string/all_regions"
-                        android:textSize="16sp"
-                        android:textColor="@color/tab_row_text" />
+                <ImageView
+                    android:id="@+id/ivRegionChevron"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="@color/tab_row_text" />
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1" />
-
-                    <ImageView
-                        android:id="@+id/ivRegionChevron"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_chevron_right"
-                        app:tint="@color/tab_row_text" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/spinnerCity"
-                    android:layout_width="182dp"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/bg_spinner_pill"
-                    android:paddingHorizontal="14dp"
-                    android:layout_marginStart="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/tvCityLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:includeFontPadding="false"
-                        android:text="@string/all_cities"
-                        android:textSize="16sp"
-                        android:textColor="@color/tab_row_text" />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1" />
-
-                    <ImageView
-                        android:id="@+id/ivCityChevron"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_chevron_right"
-                        app:tint="@color/tab_row_text" />
-
-                </LinearLayout>
             </LinearLayout>
-        </HorizontalScrollView>
+
+            <LinearLayout
+                android:id="@+id/spinnerCity"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_spinner_pill"
+                android:paddingHorizontal="12dp"
+                android:layout_marginStart="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvCityLabel"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textAlignment="viewStart"
+                    android:text="@string/all_cities"
+                    android:textSize="15sp"
+                    android:textColor="@color/tab_row_text" />
+
+                <ImageView
+                    android:id="@+id/ivCityChevron"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="@color/tab_row_text" />
+
+            </LinearLayout>
+        </LinearLayout>
 
         <!-- Boot shimmer -->
         <LinearLayout
@@ -499,8 +495,8 @@
                         android:minHeight="300dp"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:paddingTop="40dp"
-                        android:paddingBottom="30dp">
+                        android:paddingTop="24dp"
+                        android:paddingBottom="110dp">
 
                         <TextView
                             android:id="@+id/tvEmptyNoAds"

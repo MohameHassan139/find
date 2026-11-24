@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">finds</string>
+    <string name="see_more">See more</string>
+    <string name="see_less">See less</string>
     <string name="search_hint">Search..</string>
     <string name="add_ad">Add Ad</string>
     <!-- Menu screen -->

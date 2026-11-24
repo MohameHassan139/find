@@ -18,6 +18,18 @@ object ListingJson {
         return (0 until arr.length()).mapNotNull { i -> arr.optJSONObject(i)?.let(::parse) }
     }
 
+    private fun extractOrderedImages(o: JSONObject): List<String> {
+        val rawImages = o.stringList("images")
+        val cover = o.stringOrNull("cover_image") ?: o.stringOrNull("thumbnail") ?: o.stringOrNull("cover")
+        return if (!cover.isNullOrEmpty() && rawImages.contains(cover) && rawImages.indexOf(cover) > 0) {
+            listOf(cover) + rawImages.filter { it != cover }
+        } else if (!cover.isNullOrEmpty() && !rawImages.contains(cover)) {
+            listOf(cover) + rawImages
+        } else {
+            rawImages
+        }
+    }
+
     /** GET /listings/{id} `data` → the ad-details model (adds seller contact fields). */
     fun parseDetail(o: JSONObject): DetailListing {
         val seller = o.optJSONObject("seller")
@@ -29,7 +41,7 @@ object ListingJson {
             price = o.doubleOrNull("price"),
             listingType = o.stringOrNull("listing_type"),
             createdAt = o.stringOrNull("created_at"),
-            images = o.stringList("images"),
+            images = extractOrderedImages(o),
             sellerName = seller?.stringOrNull("name"),
             sellerAvatar = seller?.stringOrNull("avatar"),
             sellerPhone = seller?.stringOrNull("phone"),
@@ -50,7 +62,7 @@ object ListingJson {
             price = o.doubleOrNull("price"),
             listingType = o.stringOrNull("listing_type") ?: o.stringOrNull("type"),
             createdAt = o.stringOrNull("created_at"),
-            images = o.stringList("images"),
+            images = extractOrderedImages(o),
             sellerName = seller?.stringOrNull("name"),
             sellerAvatar = seller?.stringOrNull("avatar"),
             regionNameAr = regionObj?.stringOrNull("name_ar") ?: o.stringOrNull("region_name") ?: o.stringOrNull("region"),

@@ -456,8 +456,7 @@ class MainActivity : BaseActivity() {
             stopShimmer()
         }
 
-        val showBackToParent = (state == BodyState.EMPTY) && (vm.catIdx > 0) && (vm.catSubIdx != null)
-        binding.btnBackToParent.visibility = if (showBackToParent) View.VISIBLE else View.GONE
+        binding.btnBackToParent.visibility = if (state == BodyState.EMPTY) View.VISIBLE else View.GONE
     }
 
     private fun observeViewModel() {
@@ -572,9 +571,24 @@ class MainActivity : BaseActivity() {
         }
 
         binding.btnBackToParent.setOnClickListener {
-            val cats = vm.categories.value ?: return@setOnClickListener
-            val currentCat = cats.getOrNull(vm.catIdx - 1) ?: return@setOnClickListener
-            openCategory(currentCat)
+            if (vm.isSearching || binding.etSearch.text?.isNotBlank() == true) {
+                binding.etSearch.setText("")
+                hideKeyboard()
+                vm.clearSearch()
+                return@setOnClickListener
+            }
+
+            val cats = vm.categories.value
+            val currentCat = if (vm.catIdx > 0) cats?.getOrNull(vm.catIdx - 1) else null
+
+            if (currentCat != null && (vm.catSubIdx != null || vm.catType != null || vm.catRegId != null || vm.catCityId != null)) {
+                vm.catType = null
+                openCategory(currentCat)
+                return@setOnClickListener
+            }
+
+            vm.catType = null
+            resetToHome()
         }
     }
 
